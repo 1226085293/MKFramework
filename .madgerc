@@ -1,0 +1,8 @@
+{
+	"detectiveOptions": {
+		"ts": {
+			"mixedImports": true,
+			"skipTypeImports": true
+		}
+	}
+}

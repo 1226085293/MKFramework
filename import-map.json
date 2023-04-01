@@ -1,0 +1,5 @@
+{
+	"imports": {
+		"mk": "./assets/@framework/mk.ts"
+	}
+}

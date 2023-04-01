@@ -1,0 +1,23 @@
+{
+	/* Base configuration. Do not edit this field. */
+	"extends": "./temp/tsconfig.cocos.json",
+	"types": ["./declare/"],
+	/* Add your custom configuration here. */
+	"compilerOptions": {
+		"target": "es6",
+		"lib": ["es2015", "es2017", "ES2020", "ES2022", "dom"],
+		"module": "commonjs",
+		"sourceMap": true,
+		"noEmit": true,
+		"strict": true,
+		"noImplicitAny": false,
+		"downlevelIteration": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"isolatedModules": true,
+		"paths": {
+			"mk": ["./declare/mk.d.ts"]
+		}
+	}
+}

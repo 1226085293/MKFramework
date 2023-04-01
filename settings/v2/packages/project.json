@@ -1,0 +1,21 @@
+{
+  "__version__": "1.0.2",
+  "script": {
+    "useDefineForClassFields": true,
+    "allowDeclareFields": true,
+    "importMap": "project://import-map.json",
+    "loose": true
+  },
+  "general": {
+    "designResolution": {
+      "fitWidth": false,
+      "width": 1624,
+      "height": 750
+    }
+  },
+  "fbx": {
+    "legacyFbxImporter": {
+      "visible": true
+    }
+  }
+}

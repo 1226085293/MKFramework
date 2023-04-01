@@ -1,0 +1,33 @@
+{
+  "creator": {
+    "version": "3.6.3"
+  },
+  "scripts": {
+    "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",
+    "prettier 全局格式化": "npx prettier --write ./assets/**/*.ts",
+    "查找循环依赖": "npx madge --circular --extensions ts ./assets/",
+    "开启 http 服务器": "npx ts-node tool/script/websocket_server/index.ts",
+    "生成 proto": "npx ts-node ./tool/script/generate_proto/index.ts ./proto ./assets/resources/config/proto 0 test 100"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.34.4",
+    "@typescript-eslint/eslint-plugin": "^5.34.0",
+    "@typescript-eslint/parser": "^5.34.0",
+    "eslint": "^8.22.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "madge": "^5.0.1",
+    "prettier": "^2.7.1",
+    "protobufjs-cli": "^1.0.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  },
+  "name": "mk_framework",
+  "type": "module",
+  "uuid": "0db88ab0-0e0d-4a27-98dc-7d2c966dad01",
+  "version": "3.6.3",
+  "dependencies": {
+    "protobufjs": "^7.1.2"
+  }
+}

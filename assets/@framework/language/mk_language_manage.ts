@@ -1,0 +1,200 @@
+import { EDITOR } from "cc/env";
+import global_config from "../../@config/global_config";
+import * as cc from "cc";
+import mk_event_target from "../mk_event_target";
+import mk_instance_base from "../mk_instance_base";
+import mk_logger from "../mk_logger";
+import cache from "../resources/mk_asset";
+
+namespace _mk_language_manage {
+	/** 多语言类型类型 */
+	export type type_type = string | number | symbol;
+
+	/** 事件协议 */
+	export interface event_protocol {
+		/** 切换语言 */
+		switch_language(): void;
+		/** 文本数据变更 */
+		label_data_change(): void;
+		/** 纹理数据变更 */
+		texture_data_change(): void;
+	}
+}
+
+/** 多语言管理 */
+class mk_language_manage extends mk_instance_base {
+	/* --------------- public --------------- */
+	/** 事件 */
+	event = new mk_event_target<_mk_language_manage.event_protocol>();
+	/** 文本数据 */
+	label_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
+	/** 纹理数据 */
+	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
+	/** 当前语言类型 */
+	get type(): global_config.language.type {
+		return this._language;
+	}
+
+	set type(value_) {
+		this._set_curr_type(value_);
+	}
+
+	/* --------------- private --------------- */
+	/** 日志 */
+	private _log = new mk_logger("language");
+	/** 当前语言类型 */
+	private _language = global_config.language.default_type;
+
+	/* ------------------------------- 功能 ------------------------------- */
+	/**
+	 * 获取文本
+	 * @param type_ 类型
+	 * @param mark_s_ 标识
+	 * @param config_ 配置
+	 * @returns
+	 */
+	get_label(type_: _mk_language_manage.type_type, mark_s_: string, config_?: Partial<mk_language_manage_.label_config>): string {
+		const config = new mk_language_manage_.label_config(config_);
+		let result_s: string = this.label_data_tab[type_]?.[mark_s_]?.[global_config.language.type[config.language]];
+
+		// 不存在配置
+		if (!result_s) {
+			if (mark_s_) {
+				this._log.debug(`${global_config.language.type[config.language]} 下的文本 ${mark_s_} 未配置！`);
+			}
+			return mark_s_;
+		}
+
+		// 替换参数
+		config.args_ss?.forEach((v_s, k_n) => {
+			result_s = result_s.replace(`${global_config.language.args_head_s}${k_n}${global_config.language.args_tail_s}`, v_s);
+		});
+
+		return result_s;
+	}
+
+	/**
+	 * 获取纹理
+	 * @param type_ 类型
+	 * @param mark_s_ 标记
+	 * @param language_ 语言
+	 * @returns
+	 */
+	async get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_ = this._language): Promise<cc.SpriteFrame | null> {
+		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
+
+		if (!path_s) {
+			this._log.error(`${global_config.language.type[language_]} 下的纹理 ${mark_s_} 未配置！`);
+			return null;
+		}
+
+		if (EDITOR) {
+			const asset = await cache.get(path_s + ".png", cc.ImageAsset);
+
+			if (asset) {
+				const sprite_frame = new cc.SpriteFrame();
+				const texture2d = new cc.Texture2D();
+
+				texture2d.image = asset;
+				sprite_frame.texture = texture2d;
+
+				return sprite_frame;
+			}
+		} else {
+			const asset = await cache.get(path_s, cc.SpriteFrame);
+
+			if (asset) {
+				return asset;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 添加文本数据
+	 * @param type_ 类型
+	 * @param data_ 数据
+	 */
+	add_label(type_: _mk_language_manage.type_type, data_: mk_language_manage_.data_struct): void {
+		this.label_data_tab[type_] = data_;
+
+		// 事件通知
+		this.event.emit(this.event.key.label_data_change);
+	}
+
+	/**
+	 * 添加纹理数据
+	 * @param type_ 类型
+	 * @param data_ 数据
+	 */
+	add_texture(type_: _mk_language_manage.type_type, data_: mk_language_manage_.data_struct): void {
+		this.texture_data_tab[type_] = data_;
+
+		// 事件通知
+		this.event.emit(this.event.key.texture_data_change);
+	}
+
+	/* ------------------------------- get/set ------------------------------- */
+	private _set_curr_type(value_: global_config.language.type): void {
+		if (this._language === value_) {
+			return;
+		}
+		this._language = value_;
+
+		// 事件通知
+		this.event.emit(this.event.key.switch_language);
+	}
+}
+
+export namespace mk_language_manage_ {
+	/** 多语言数据结构 */
+	export type data_struct<T extends _mk_language_manage.type_type = any> = {
+		[k in T]: { [k in keyof typeof global_config.language.type]: string };
+	};
+
+	/** 获取文本配置 */
+	export class label_config {
+		constructor(init_?: Partial<label_config>) {
+			Object.assign(this, init_);
+		}
+
+		/** 语言类型 */
+		language = mk_language_manage.instance().type;
+		/** 参数 */
+		args_ss?: string[];
+	}
+
+	/** 多语言数据 */
+	export abstract class base_data<CT extends data_struct> {
+		constructor(init_: CT) {
+			this.data = init_;
+		}
+
+		/** 多语言键 */
+		key: { [key in keyof CT]: key } = new Proxy(Object.create(null), {
+			get: (target, key) => key,
+		});
+
+		/** 多语言数据 */
+		data: data_struct<keyof CT>;
+	}
+
+	/** 多语言纹理数据 */
+	export class texture_data<CT extends data_struct> extends base_data<CT> {
+		constructor(type_: string, init_: CT) {
+			super(init_);
+			mk_language_manage.instance().add_texture(type_, init_);
+		}
+	}
+
+	/** 多语言文本数据 */
+	export class label_data<CT extends data_struct> extends base_data<CT> {
+		constructor(type_: string, init_: CT) {
+			super(init_);
+			mk_language_manage.instance().add_label(type_, init_);
+		}
+	}
+}
+
+export default mk_language_manage.instance();
