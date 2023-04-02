@@ -18,8 +18,7 @@ export class resources_module_ui_stack extends mk.module.view_base {
 	}
 
 	create(): void {
-		mk.ui_manage.regis(resources_module_ui_stack_demo, {
-			prefab: "db://assets/resources/module/module/ui_stack/ui/resources_module_ui_stack_demo",
+		mk.ui_manage.regis(resources_module_ui_stack_demo, "db://assets/resources/module/module/ui_stack/ui/resources_module_ui_stack_demo", {
 			parent: this.nodes.layout,
 		});
 	}

@@ -152,7 +152,9 @@ export class mk_view_base extends mk_life_cycle {
 
 	/** 模块配置 */
 	set config(config_: _mk_view_base.create_config) {
-		super.config = config_;
+		if (config_.static_b !== undefined) {
+			this._static_b = config_.static_b;
+		}
 		if (config_.view_config) {
 			this._view_config.prefab_tab = config_.view_config.prefab_tab ?? this._view_config.prefab_tab;
 			this._view_config.type_s = config_.view_config.type_s ?? this._view_config.type_s;

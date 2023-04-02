@@ -1,6 +1,6 @@
 {
 	/* Base configuration. Do not edit this field. */
-	"include": ["../../assets/@framework", "../../declare/", "../../temp/declarations"],
+	"include": ["../../temp/declarations", "../../declare/", "../../assets/@framework"],
 	/* Add your custom configuration here. */
 	"compilerOptions": {
 		"target": "es6",
@@ -18,8 +18,5 @@
 		"outDir": "./dist/",
 		"skipLibCheck": true,
 		"declaration": true
-		// "paths": {
-		// 	"mk": ["./assets/@framework/mk"]
-		// }
 	}
 }

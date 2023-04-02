@@ -1,6 +1,10 @@
 import * as cc from "cc";
 import { DEBUG } from "cc/env";
 
+/**
+ * 全局配置
+ * @internal
+ */
 namespace global_config {
 	/** 常量 */
 	export namespace constant {

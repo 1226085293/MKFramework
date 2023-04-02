@@ -33,15 +33,41 @@ export namespace 默认 {
 
 	class array_extend<CT> extends Array<CT> {
 		private _init_data!: array_init_config;
-		/** 任务数组 */
-		private _task_fs: (() => void)[] = [];
-		/** 任务执行状态 */
-		private _task_run_b = false;
+		/** 存在视图组件 */
+		private _item_view_type: cc.Constructor<mk.module.view_base> | null = null;
+		/** 节点池 */
+		private _node_pool!: mk.obj_pool<cc.Node>;
+		/** 任务管线 */
+		private _task_pipeline = new mk.task.pipeline();
 		/* ------------------------------- 功能 ------------------------------- */
-
 		/** 初始化 */
-		init(init_: array_init_config): void {
+		async init(init_: array_init_config): Promise<void> {
 			this._init_data = new array_init_config(init_);
+			this._item_view_type = this._init_data.item.getComponent(mk.module.view_base)?.constructor as any;
+
+			// 模块
+			if (this._item_view_type) {
+				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, {
+					repeat_b: true,
+					pool_init_fill_n: 8,
+					parent: this._init_data.root,
+				});
+			}
+			// 节点
+			else {
+				this._node_pool = new mk.obj_pool<cc.Node>({
+					create_f: () => {
+						return cc.instantiate(this._init_data.item);
+					},
+					clear_f: (node_as) => {
+						node_as.forEach((v) => {
+							v.destroy();
+							v.removeFromParent();
+						});
+					},
+					init_fill_n: 8,
+				});
+			}
 
 			// 注册事件
 			global_event.on(global_event.key.restart, this._event_restart, this);
@@ -52,57 +78,53 @@ export namespace 默认 {
 			// 注销事件
 			global_event.removeAll(this);
 
-			this._task_fs = [];
-			await this._add_task(() => {
-				if (!this._init_data.root.children) {
+			await this._task_pipeline.add(async () => {
+				if (!this._init_data.root.children.length) {
 					return;
 				}
-				for (const v of this._init_data.root.children) {
-					const view_comp = v.getComponent(mk.module.view_base) as any as mk.module.view_base;
 
-					view_comp?.["_close"]({
-						first_b: true,
-						destroy_children_b: true,
-					});
+				// 模块
+				if (this._item_view_type) {
+					for (const v of this._init_data.root.children) {
+						await mk.ui_manage.close(v);
+					}
+					await mk.ui_manage.unregis(this._item_view_type);
 				}
-				this._init_data.root.destroyAllChildren();
-				this._init_data.root.removeAllChildren();
+				// 节点
+				else {
+					this._init_data.root.destroyAllChildren();
+					await this._node_pool.clear();
+				}
 			});
 		}
 
 		push(...args_as_: any[]): number {
 			const result_n: number = super.push(...args_as_);
-
-			this._bind(result_n - args_as_.length, result_n);
 			/** 备份数据 */
 			const backup_as: any[] = args_as_.slice();
 
-			this._add_task(async () => {
-				backup_as.forEach((v) => {
-					this._create_item(v);
-				});
+			this._bind(result_n - args_as_.length, result_n);
+
+			this._task_pipeline.add(async () => {
+				for (const v of backup_as) {
+					await this._create_item(v);
+				}
 			});
 			return result_n;
 		}
 
 		pop(): CT | undefined {
 			this._unbind(this.length - 1, this.length);
-			this._add_task(async () => {
-				const node = this._init_data.root.children[this._init_data.root.children.length - 1];
-
-				node.destroy();
-				node.removeFromParent();
+			this._task_pipeline.add(async () => {
+				this._delete_item(this._init_data.root.children[this._init_data.root.children.length - 1]);
 			});
 			return super.pop();
 		}
 
 		shift(): CT | undefined {
 			this._unbind(0, 1);
-			this._add_task(async () => {
-				const node = this._init_data.root.children[0];
-
-				node.destroy();
-				node.removeFromParent();
+			this._task_pipeline.add(async () => {
+				this._delete_item(this._init_data.root.children[0]);
 			});
 			return super.shift();
 		}
@@ -114,9 +136,9 @@ export namespace 默认 {
 			/** 备份数据 */
 			const backup_as: any[] = args_as_.slice();
 
-			this._add_task(async () => {
+			this._task_pipeline.add(async () => {
 				for (let k_n = backup_as.length; k_n--; ) {
-					const node = this._create_item(backup_as[k_n]);
+					const node = await this._create_item(backup_as[k_n]);
 
 					node.setSiblingIndex(0);
 				}
@@ -131,7 +153,7 @@ export namespace 默认 {
 			}, []);
 
 			temp_as.sort((va: typeof temp_as[0], vb: typeof temp_as[0]) => compare_f_(va.data, vb.data));
-			this._add_task(() => {
+			this._task_pipeline.add(() => {
 				const old_children_as = this._init_data.root.children.slice();
 
 				temp_as.forEach((v, k_n) => {
@@ -154,43 +176,26 @@ export namespace 默认 {
 				this._bind(start_n_, args_as_.length);
 				backup_as = args_as_.slice();
 			}
-			this._add_task(async () => {
+			this._task_pipeline.add(async () => {
 				// 删除
 				{
 					const remove_as = this._init_data.root.children.slice(start_n_, start_n_ + count_n);
 
 					for (const v of remove_as) {
-						v.destroy();
-						v.removeFromParent();
+						this._delete_item(v);
 					}
 				}
 
 				// 添加
 				if (backup_as) {
 					for (let k_n = 0; k_n < backup_as.length; ++k_n) {
-						const node = this._create_item(backup_as[k_n]);
+						const node = await this._create_item(backup_as[k_n]);
 
 						node.setSiblingIndex(start_n_ + k_n);
 					}
 				}
 			});
 			return result_as!;
-		}
-
-		/** 添加任务 */
-		private async _add_task(task_f_: () => void): Promise<void | Promise<void>> {
-			if (!this._init_data) {
-				mk.logger.error("初始化未完成");
-				return;
-			}
-			this._task_fs.push(task_f_);
-			if (!this._task_run_b) {
-				this._task_run_b = true;
-				while (this._task_fs.length) {
-					await this._task_fs.shift()!();
-				}
-				this._task_run_b = false;
-			}
 		}
 
 		/** 绑定 */
@@ -202,7 +207,7 @@ export namespace 默认 {
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
 				// 下标监听修改
 				monitor.on(this, k_n, (value) => {
-					this._add_task(async () => {
+					this._task_pipeline.add(async () => {
 						this._init_data!.root.children[k_n].getComponent(mk.module.view_base)?.init?.(value);
 						this._init_data.item_update_f?.(this._init_data.root.children[k_n], value);
 					});
@@ -221,30 +226,38 @@ export namespace 默认 {
 			}
 		}
 
-		/** 创建新节点 */
-		private _create_item(init_data_?: any): cc.Node {
-			const node = cc.instantiate(this._init_data.item);
-			const view_comp = node.getComponent(mk.module.view_base) as any as mk.module.view_base;
+		/** 创建新项目 */
+		private async _create_item(init_data_?: any): Promise<cc.Node> {
+			let node!: cc.Node;
 
-			// 初始化视图
-			this._init_data.root.addChild(node);
+			// 模块
+			if (this._item_view_type) {
+				const view_comp = await mk.ui_manage.open(this._item_view_type, { init: init_data_ });
 
-			// 初始化视图组件
-			if (view_comp) {
-				view_comp.config = {
-					static_b: false,
-					view_config: null!,
-				};
+				node = view_comp.node;
+			}
+			// 节点
+			else {
+				node = await this._node_pool.get();
 
-				view_comp?.["_open"]({
-					first_b: true,
-					init: init_data_,
-				});
+				this._init_data.root.addChild(node);
 			}
 
 			// 回调函数
 			this._init_data.item_update_f?.(node, init_data_);
 			return node;
+		}
+
+		/** 删除新项目 */
+		private async _delete_item(node_: cc.Node): Promise<void> {
+			// 模块
+			if (this._item_view_type) {
+				await mk.ui_manage.close(node_);
+			}
+			// 节点
+			else {
+				await this._node_pool.put(node_);
+			}
 		}
 
 		/* ------------------------------- 全局事件 ------------------------------- */
@@ -262,7 +275,7 @@ export namespace 默认 {
 		event_child_update = new cc.EventHandler();
 	}
 
-	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
+	export async function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): Promise<void> {
 		/** 容器节点 */
 		let layout_node: cc.Node | null = node_;
 
@@ -285,7 +298,7 @@ export namespace 默认 {
 		{
 			// 初始化数据
 			target_[key_] = array_as as any;
-			array_as.init({
+			await array_as.init({
 				root: layout_node,
 				item: item_node,
 				item_update_f: (node, data) => {
@@ -315,11 +328,10 @@ export namespace 默认 {
 					if (layout_node?.isValid) {
 						layout_node.addChild(item_node);
 					} else {
-						const view_comp = item_node.getComponent(mk.module.view_base) as any as mk.module.view_base;
+						const view_comp = item_node.getComponent(mk.module.view_base);
 
 						if (view_comp) {
 							await view_comp?.["_close"]({
-								first_b: true,
 								destroy_children_b: true,
 							});
 						}

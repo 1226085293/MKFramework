@@ -537,9 +537,9 @@ export namespace mk_bundle_ {
 			this.data?.clear();
 
 			// 销毁对象池
-			for (const key in this.node_pool_tab) {
-				if (Object.prototype.hasOwnProperty.call(this.node_pool_tab, key)) {
-					this.node_pool_tab[key].clear();
+			for (const k_s in this.node_pool_tab) {
+				if (Object.prototype.hasOwnProperty.call(this.node_pool_tab, k_s)) {
+					this.node_pool_tab[k_s].clear();
 				}
 			}
 			this.node_pool_tab = cc.js.createMap();

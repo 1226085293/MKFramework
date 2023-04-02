@@ -21,7 +21,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	/** 日志 */
 	protected abstract _log: mk_logger;
 	/** 初始化数据 */
-	protected _init?: mk_audio_base_.init_config;
+	protected _init_config?: mk_audio_base_.init_config;
 	/** 音频组 */
 	protected _group_map = new Map<number, mk_audio_base_.group>();
 	/* ------------------------------- 功能 ------------------------------- */
@@ -34,13 +34,13 @@ abstract class mk_audio_base extends mk_instance_base {
 
 	/**
 	 * 初始化
-	 * @param init_
+	 * @param config_ 初始化配置
 	 */
-	init(init_: mk_audio_base_.init_config): void {
-		this._init = init_;
+	init(config_: mk_audio_base_.init_config): void {
+		this._init_config = config_;
 		// 重置编辑器视图
 		if (EDITOR) {
-			cc.CCClass.Attr.setClassAttr(mk_audio_base_._unit, "type", "enumList", cc.Enum.getList(cc.Enum(this._init.type)));
+			cc.CCClass.Attr.setClassAttr(mk_audio_base_._unit, "type", "enumList", cc.Enum.getList(cc.Enum(this._init_config.type)));
 		}
 	}
 
@@ -58,7 +58,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	add(url_s_: string, config_?: mk_audio_base_.add_config): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
 	add(url_ss_: string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
 	async add(url_: string | string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
-		if (EDITOR || !this._init) {
+		if (EDITOR || !this._init_config) {
 			return null;
 		}
 
@@ -123,7 +123,7 @@ abstract class mk_audio_base extends mk_instance_base {
 		const audio = audio_ as mk_audio_base_._unit;
 
 		// 参数安检
-		if (!this._init || !audio_?.clip) {
+		if (!this._init_config || !audio_?.clip) {
 			return false;
 		}
 
@@ -176,7 +176,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	/** 添加音频单元 */
 	protected _add(audio_: mk_audio_base_._unit, group_ns_?: ReadonlyArray<number>): boolean {
 		// 参数安检
-		if (!this._init || !audio_ || audio_.init_b || !audio_.clip) {
+		if (!this._init_config || !audio_ || audio_.init_b || !audio_.clip) {
 			return false;
 		}
 

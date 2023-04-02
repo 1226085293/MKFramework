@@ -3,7 +3,6 @@ export { default as bezier } from "./tool_bezier_curve";
 export { default as byte } from "./tool_byte";
 export { default as enum } from "./tool_enum";
 export { default as func } from "./tool_func";
-export { default as game } from "./tool_game";
 export { default as object } from "./tool_object";
 export { default as string } from "./tool_string";
 export { default as codec } from "./codec/tool_codec";

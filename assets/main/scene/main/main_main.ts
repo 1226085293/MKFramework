@@ -40,20 +40,10 @@ export class main_main extends mk.module.view_base {
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	onLoad(): void {
-		mk.ui_manage.regis(resources_audio, {
-			prefab: "db://assets/resources/module/audio/resources_audio.prefab",
-		});
-		mk.ui_manage.regis(resources_language, {
-			prefab: "db://assets/resources/module/language/resources_language.prefab",
-		});
-		mk.ui_manage.regis(resources_module, {
-			prefab: "db://assets/resources/module/module/resources_module.prefab",
-		});
-		mk.ui_manage.regis(resources_network_view, {
-			prefab: "db://assets/resources/module/network/resources_network.prefab",
-		});
-		mk.ui_manage.regis(resources_guide, {
-			prefab: "db://assets/resources/module/guide/resources_guide.prefab",
-		});
+		mk.ui_manage.regis(resources_audio, "db://assets/resources/module/audio/resources_audio.prefab");
+		mk.ui_manage.regis(resources_language, "db://assets/resources/module/language/resources_language.prefab");
+		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab");
+		mk.ui_manage.regis(resources_network_view, "db://assets/resources/module/network/resources_network.prefab");
+		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab");
 	}
 }

@@ -50,10 +50,10 @@ class mk_layer extends cc.Component {
 	/* ------------------------------- static ------------------------------- */
 	/**
 	 * 初始化
-	 * @param init_data_ 初始化数据
+	 * @param data_ 初始化数据
 	 */
-	static init(init_data_: mk_layer_.init_data): void {
-		mk_layer._init_data = init_data_;
+	static init(data_: mk_layer_.init_data): void {
+		mk_layer._init_data = data_;
 	}
 
 	/* ------------------------------- 生命周期 ------------------------------- */

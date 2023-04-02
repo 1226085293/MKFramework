@@ -163,17 +163,16 @@ export class mk_life_cycle extends mk_layer {
 	create?(): void | Promise<void>;
 
 	/**
-	 *
 	 * 初始化（所有依赖 init_data 初始化的逻辑都应在此进行）
-	 * @param init_ 初始化配置
+	 * @param data_ 初始化数据
 	 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
 	 * - 动态模块：onLoad 后，open 前调用
 	 */
 	// @ts-ignore
-	init(init_?: typeof this.init_data): void | Promise<void>;
-	async init(init_?: typeof this.init_data): Promise<void> {
+	init(data_?: any): void | Promise<void>;
+	async init(data_?: any): Promise<void> {
 		await this._load_task.task;
-		this.init_data = init_;
+		this.init_data = data_;
 	}
 
 	/** 打开（init 后执行，在此处执行无需 init_data 支持的模块初始化操作） */
@@ -194,8 +193,13 @@ export class mk_life_cycle extends mk_layer {
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
-	/** 打开模块 */
-	protected async _open(config_?: _mk_life_cycle.open_config): Promise<void> {
+	/**
+	 * 打开模块
+	 * @param config_ 关闭配置
+	 * @returns
+	 * @internal
+	 */
+	async _open(config_?: _mk_life_cycle.open_config): Promise<void> {
 		// 状态安检
 		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) {
 			return;
@@ -228,8 +232,13 @@ export class mk_life_cycle extends mk_layer {
 		}
 	}
 
-	/** 关闭模块 */
-	protected async _close(config_?: _mk_life_cycle.close_config): Promise<void> {
+	/**
+	 * 关闭模块
+	 * @param config_ 关闭配置
+	 * @returns
+	 * @internal
+	 */
+	async _close(config_?: _mk_life_cycle.close_config): Promise<void> {
 		// 状态安检
 		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.closing | _mk_life_cycle.run_state.close)) {
 			return;

@@ -221,7 +221,7 @@ export class event_target<CT> extends cc_2.EventTarget {
     hasEventListener<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
     // (undocumented)
     key: {
-        [key in keyof CT]: key;
+        [k in keyof CT]: k;
     };
     // (undocumented)
     off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void;
@@ -231,6 +231,11 @@ export class event_target<CT> extends cc_2.EventTarget {
     once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any): typeof callback_ | null;
     request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
 }
+
+// Warning: (ae-forgotten-export) The symbol "mk_game" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const game: mk_game;
 
 declare namespace guide {
     export {
@@ -300,15 +305,11 @@ export namespace language_ {
         constructor(init_: CT);
         data: data_struct<keyof CT>;
         key: {
-            [key in keyof CT]: key;
+            [k in keyof CT]: k;
         };
     }
     // Warning: (ae-forgotten-export) The symbol "_mk_language_manage" needs to be exported by the entry point mk_export.d.ts
-    export type data_struct<T extends _mk_language_manage.type_type = any> = {
-        [k in T]: {
-            [k in keyof typeof global_config.language.type]: string;
-        };
-    };
+    export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
     export class label_config {
         constructor(init_?: Partial<label_config>);
         args_ss?: string[];
@@ -454,7 +455,7 @@ class mk_language_texture extends mk_language_base {
 class mk_layer extends cc_2.Component {
     get child_layer_n(): number;
     set child_layer_n(value_n_: number);
-    static init(init_data_: mk_layer_.init_data): void;
+    static init(data_: mk_layer_.init_data): void;
     // (undocumented)
     protected static _init_data?: mk_layer_.init_data;
     get init_editor(): void;
@@ -476,11 +477,12 @@ namespace mk_layer_ {
 class mk_life_cycle extends mk_layer {
     constructor(...args: any[]);
     close?(): void | Promise<void>;
-    protected _close(config_?: _mk_life_cycle.close_config): Promise<void>;
+    // @internal
+    _close(config_?: _mk_life_cycle.close_config): Promise<void>;
     // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export.d.ts
     set config(config_: _mk_life_cycle.create_config);
     create?(): void | Promise<void>;
-    init(init_?: typeof mk_life_cycle.init_data): void | Promise<void>;
+    init(data_?: any): void | Promise<void>;
     init_data?: any;
     protected _late_close?(): void | Promise<void>;
     protected _late_open?(): void | Promise<void>;
@@ -489,7 +491,8 @@ class mk_life_cycle extends mk_layer {
     // (undocumented)
     onLoad(): void;
     open?(): void | Promise<void>;
-    protected _open(config_?: _mk_life_cycle.open_config): Promise<void>;
+    // @internal
+    _open(config_?: _mk_life_cycle.open_config): Promise<void>;
     get open_b(): boolean;
     protected _open_task: mk_status_task<void>;
     protected _state: _mk_life_cycle.run_state;
@@ -518,7 +521,8 @@ abstract class mk_network_base<CT extends codec_base = codec_base> extends insta
     protected _message(event_: any): Promise<void>;
     protected _open(event_: any): void;
     protected abstract _reset_socket(): void;
-    protected _send(data_: Parameters<CT["encode"]>[0]): void;
+    // @internal
+    _send(data_: Parameters<CT["encode"]>[0]): void;
     // (undocumented)
     protected _set_write_sleep_b(value_b_: boolean): void;
     protected abstract _socket: any;
@@ -528,7 +532,8 @@ abstract class mk_network_base<CT extends codec_base = codec_base> extends insta
     protected _timer_reconnect(): void;
     protected _timer_send(): Promise<void>;
     protected _trigger_wait_task(data_: any): void;
-    protected _wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(key_: T, timeout_ms_n_?: number): Promise<T2 | null> | null;
+    // @internal
+    _wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(key_: T, timeout_ms_n_?: number): Promise<T2 | null> | null;
     protected _write_as: any[];
     protected _write_sleep2_b: boolean;
 }
@@ -737,8 +742,8 @@ export { network }
 // @public
 export class obj_pool<CT> {
     // Warning: (ae-forgotten-export) The symbol "_mk_obj_pool" needs to be exported by the entry point mk_export.d.ts
-    constructor(init_: Partial<_mk_obj_pool.config<CT>>);
-    clear(): void;
+    constructor(init_: _mk_obj_pool.config<CT>);
+    clear(): Promise<void>;
     get(): Promise<CT>;
     put(obj_: any): Promise<void>;
 }
@@ -746,7 +751,7 @@ export class obj_pool<CT> {
 // @public (undocumented)
 export namespace obj_pool {
     export class sync<CT> {
-        constructor(init_?: Partial<_mk_obj_pool.sync.config<CT>>);
+        constructor(init_?: _mk_obj_pool.sync.config<CT>);
         clear(): void;
         get(): CT;
         put(obj_: CT): void;
@@ -782,7 +787,8 @@ export const ui_manage: mk_ui_manage;
 
 // @public (undocumented)
 export namespace ui_manage_ {
-    export interface close_config<CT extends cc_2.Constructor<mk_view_base>> {
+    export class close_config<CT extends cc_2.Constructor<mk_view_base>> {
+        constructor(init_?: close_config<CT>);
         all_b?: boolean;
         destroy_b?: boolean;
         destroy_children_b?: boolean;
@@ -797,17 +803,16 @@ export namespace ui_manage_ {
     export class regis_config<CT extends cc_2.Constructor<mk_view_base>> {
         constructor(init_?: Partial<regis_config<CT>>);
         load_config?: asset_.get_config<cc_2.Prefab>;
-        load_prefab_b: boolean;
         parent: cc_2.Node | undefined;
         pool_fill_n: number;
         pool_init_fill_n: number;
         pool_max_hold_n: number;
-        prefab?: cc_2.Prefab | string | ({
-            [k in CT["type_s"]]: cc_2.Prefab | string;
-        } & {
-            default: cc_2.Prefab | string;
-        });
         repeat_b: boolean;
+    }
+    export class regis_data<CT extends cc_2.Constructor<mk_view_base>> extends regis_config<CT> {
+        constructor(init_?: Partial<regis_data<CT>>);
+        // Warning: (ae-forgotten-export) The symbol "_mk_ui_manage" needs to be exported by the entry point mk_export.d.ts
+        source: _mk_ui_manage.source_type<CT>;
     }
 }
 

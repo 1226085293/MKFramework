@@ -5,6 +5,7 @@ import global_event from "../../@config/global_event";
 import mk_instance_base from "../mk_instance_base";
 import mk_logger from "../mk_logger";
 import bundle from "./mk_bundle";
+import mk_game from "../mk_game";
 
 namespace _mk_asset {
 	/** loadRemote 配置类型 */
@@ -54,6 +55,15 @@ class mk_asset extends mk_instance_base {
 
 					// 跳过外部资源
 					if (!self._asset_manage_map.has(this.nativeUrl || this._uuid)) {
+						return result;
+					}
+
+					// 重启期间直接销毁
+					if (mk_game.restarting_b) {
+						// 等待场景关闭后释放资源
+						Promise.all(global_event.request(global_event.key.wait_close_scene)).then((v) => {
+							mk_asset.instance().release(this);
+						});
 						return result;
 					}
 
@@ -358,6 +368,33 @@ class mk_asset extends mk_instance_base {
 		});
 	}
 
+	/**
+	 * 释放资源
+	 * @param asset_ 释放的资源
+	 */
+	release(asset_: cc.Asset | cc.Asset[]): void {
+		const asset_as: cc.Asset[] = Array.isArray(asset_) ? asset_ : [asset_];
+
+		asset_as.forEach((v) => {
+			// 释放动态图集中的资源
+			if (cc.dynamicAtlasManager?.enabled) {
+				if (v instanceof cc.SpriteFrame) {
+					cc.dynamicAtlasManager.deleteAtlasSpriteFrame(v);
+				} else if (v instanceof cc.Texture2D) {
+					cc.dynamicAtlasManager.deleteAtlasTexture(v);
+				}
+			}
+
+			for (let k_n = 0; k_n < v.refCount; k_n++) {
+				v.decRef(false);
+			}
+			// 释放资源（禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的）
+			cc.assetManager.releaseAsset(v);
+
+			mk_logger.log("释放资源", v.name, v.nativeUrl, v._uuid);
+		});
+	}
+
 	/** 资源初始化 */
 	private _asset_init<T extends cc.Asset>(asset_: T): T {
 		/** 已加载资源 */
@@ -379,14 +416,18 @@ class mk_asset extends mk_instance_base {
 		}
 	}
 
-	/** 自动释放资源 */
-	private _auto_release_asset(): void {
+	/**
+	 * 自动释放资源
+	 * @param force_b_ 强制
+	 * @returns
+	 */
+	private _auto_release_asset(force_b_ = false): void {
 		/** 当前时间 */
 		const current_time_ms_n = Date.now();
 
 		for (const [k_s, v] of this._asset_release_map.entries()) {
 			// 当前及之后的资源没超过生命时长
-			if (current_time_ms_n - v.join_time_ms_n < global_config.resources.cache_lifetime_ms_n) {
+			if (!force_b_ && current_time_ms_n - v.join_time_ms_n < global_config.resources.cache_lifetime_ms_n) {
 				break;
 			}
 
@@ -399,19 +440,8 @@ class mk_asset extends mk_instance_base {
 
 			// 更新资源管理表
 			this._asset_manage_map.delete(v.asset.nativeUrl || v.asset._uuid);
-
-			// 释放动态图集中的资源
-			if (cc.dynamicAtlasManager?.enabled) {
-				if (v.asset instanceof cc.SpriteFrame) {
-					cc.dynamicAtlasManager.deleteAtlasSpriteFrame(v.asset);
-				} else if (v.asset instanceof cc.Texture2D) {
-					cc.dynamicAtlasManager.deleteAtlasTexture(v.asset);
-				}
-			}
-
-			// 释放资源（禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的）
-			v.asset.decRef(false);
-			cc.assetManager.releaseAsset(v.asset);
+			// 释放资源
+			this.release(v.asset);
 		}
 	}
 
@@ -420,7 +450,7 @@ class mk_asset extends mk_instance_base {
 		// 等待场景关闭
 		await Promise.all(global_event.request(global_event.key.wait_close_scene));
 		// 释放资源
-		this._auto_release_asset();
+		this._auto_release_asset(true);
 		// 清理定时器
 		clearInterval(this._release_timer);
 		// 释放没有用到的资源

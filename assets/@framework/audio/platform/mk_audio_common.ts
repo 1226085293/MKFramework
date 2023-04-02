@@ -21,8 +21,8 @@ class mk_audio_common extends mk_audio_base {
 	/** AudioSource 对象池 */
 	private _audio_source_pool!: mk_obj_pool.sync<cc.AudioSource>;
 	/* ------------------------------- 功能 ------------------------------- */
-	async init(init_: mk_audio_base_.init_config): Promise<void> {
-		super.init(init_);
+	async init(config_: mk_audio_base_.init_config): Promise<void> {
+		super.init(config_);
 		if (EDITOR) {
 			return;
 		}

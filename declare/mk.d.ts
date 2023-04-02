@@ -1,3 +1,5 @@
+//@ts-nocheck
+import global_config from "../assets/@config/global_config";
 import * as cc_2 from 'cc';
 
 export declare const asset: mk_asset;
@@ -368,7 +370,7 @@ export declare const dynamic_module: mk_dynamic_module;
 
 export declare class event_target<CT> extends cc_2.EventTarget {
     key: {
-        [key in keyof CT]: key;
+        [k in keyof CT]: k;
     };
     on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any, once_b_?: boolean): typeof callback_ | null;
     once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any): typeof callback_ | null;
@@ -382,96 +384,9 @@ export declare class event_target<CT> extends cc_2.EventTarget {
     private _request_single;
 }
 
-declare namespace global_config {
-    /** 常量 */
-    namespace constant {
-        /** 显示左下角调试信息 */
-        const show_debug_info = false;
-    }
-    /** 音频 */
-    namespace audio {
-        /** 音频组 */
-        enum group {
-            /** 音效 */
-            effect = -2,
-            /** 音乐 */
-            music = -1
-        }
-    }
-    /** 资源 */
-    namespace resources {
-        /** bundle信息 */
-        const bundle: {
-            [k in keyof {
-                internal: any;
-                resources: any;
-            }]: k;
-        };
-        /** 缓存生命时长 */
-        const cache_lifetime_ms_n = 1000;
-    }
-    /** 视图 */
-    namespace view {
-        /** 视图层类型 */
-        enum layer_type {
-            内容 = 0,
-            窗口 = 1,
-            提示 = 2,
-            引导 = 3,
-            警告 = 4,
-            加载 = 5
-        }
-        /** 遮罩预制体路径 */
-        const mask_prefab_path_s = "db://assets/resources/module/@common/mask/resources_common_mask.prefab";
-        /** 适配开关 */
-        const adaptation_switch_b = true;
-        /** 初始设计尺寸 */
-        const original_design_size: cc_2.Size;
-        /** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错） */
-        const blocking_warning_time_ms_n: number;
-    }
-    /** 多语言配置 */
-    namespace language {
-        /** 语种 */
-        enum type {
-            /** 中文(中华人民共和国) */
-            zh_cn = 0,
-            /** 英语(美国) */
-            en_us = 1
-        }
-        /** 默认语言 */
-        const default_type: type;
-        /** 参数标识前缀 */
-        const args_head_s = "{";
-        /** 参数标识后缀 */
-        const args_tail_s = "}";
-    }
-    /** 日志 */
-    namespace log {
-        /** 初始限制打印模块 */
-        const limit_log_module_ss: string[];
-        /** 使用浏览器接口 */
-        const debug_use_browser_b = false;
-        /** 日志缓存行数 */
-        const cache_row_n = 100;
-        /** 报错日志上传地址 */
-        const error_upload_addr_s = "";
-    }
-    /** 网络 */
-    namespace network {
-        /** 消息头 */
-        interface proto_head {
-            /** 消息 id */
-            __id: number;
-            /** 消息序列号 */
-            __sequence?: number;
-        }
-        /** 消息头键 */
-        const proto_head_key_tab: {
-            [key in keyof proto_head]: key;
-        };
-    }
-}
+export declare const game: mk_game;
+
+/* Excluded from this release type: global_config */
 
 declare namespace guide {
     export {
@@ -592,11 +507,7 @@ export { language }
 
 export declare namespace language_ {
     /** 多语言数据结构 */
-    export type data_struct<T extends _mk_language_manage.type_type = any> = {
-        [k in T]: {
-            [k in keyof typeof global_config.language.type]: string;
-        };
-    };
+    export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
     /** 获取文本配置 */
     export class label_config {
         constructor(init_?: Partial<label_config>);
@@ -610,7 +521,7 @@ export declare namespace language_ {
         constructor(init_: CT);
         /** 多语言键 */
         key: {
-            [key in keyof CT]: key;
+            [k in keyof CT]: k;
         };
         /** 多语言数据 */
         data: data_struct<keyof CT>;
@@ -718,9 +629,18 @@ declare class mk_asset extends instance_base {
     get<T extends cc_2.Asset>(path_s_: string, args2_: cc_2.Constructor<T> | asset_.get_config<T>): Promise<T | null>;
     /** 获取文件夹资源 */
     get_dir<T extends cc_2.Asset>(path_s_: string, args2_: cc_2.Constructor<T> | asset_.get_dir_config<T>): Promise<T[] | null>;
+    /**
+     * 释放资源
+     * @param asset_ 释放的资源
+     */
+    release(asset_: cc_2.Asset | cc_2.Asset[]): void;
     /** 资源初始化 */
     private _asset_init;
-    /** 自动释放资源 */
+    /**
+     * 自动释放资源
+     * @param force_b_ 强制
+     * @returns
+     */
     private _auto_release_asset;
     private _event_restart;
 }
@@ -746,7 +666,7 @@ declare abstract class mk_audio_base extends instance_base {
     /** 日志 */
     protected abstract _log: logger;
     /** 初始化数据 */
-    protected _init?: audio_.init_config;
+    protected _init_config?: audio_.init_config;
     /** 音频组 */
     protected _group_map: Map<number, audio_.group>;
     /** 暂停 */
@@ -757,9 +677,9 @@ declare abstract class mk_audio_base extends instance_base {
     protected abstract _get_audio_unit<T extends audio_._unit>(init_?: Partial<audio_._unit>): T;
     /**
      * 初始化
-     * @param init_
+     * @param config_ 初始化配置
      */
-    init(init_: audio_.init_config): void;
+    init(config_: audio_.init_config): void;
     /** 获取组音频 */
     get_group(group_n_: number): audio_.group;
     /** 添加音频单元（添加后应该随视图自动释放） */
@@ -883,6 +803,14 @@ declare class mk_dynamic_module extends instance_base {
      * @returns
      */
     all<T extends Promise<any>>(module_: T): Awaited<T>;
+}
+
+declare class mk_game extends instance_base {
+    /** 重启中 */
+    private _restarting_b;
+    /** 重启中 */
+    get restarting_b(): boolean;
+    restart(): Promise<void>;
 }
 
 /** 引导步骤基类 */
@@ -1164,9 +1092,9 @@ declare class mk_layer extends cc_2.Component {
     private _ui_transform;
     /**
      * 初始化
-     * @param init_data_ 初始化数据
+     * @param data_ 初始化数据
      */
-    static init(init_data_: mk_layer_.init_data): void;
+    static init(data_: mk_layer_.init_data): void;
     onLoad(): void;
     /** 初始化编辑器 */
     protected _init_editor(): void;
@@ -1219,13 +1147,12 @@ declare class mk_life_cycle extends mk_layer {
      */
     create?(): void | Promise<void>;
     /**
-     *
      * 初始化（所有依赖 init_data 初始化的逻辑都应在此进行）
-     * @param init_ 初始化配置
+     * @param data_ 初始化数据
      * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
      * - 动态模块：onLoad 后，open 前调用
      */
-    init(init_?: typeof mk_life_cycle.init_data): void | Promise<void>;
+    init(data_?: any): void | Promise<void>;
     /** 打开（init 后执行，在此处执行无需 init_data 支持的模块初始化操作） */
     open?(): void | Promise<void>;
     /** 关闭（可外部调用） */
@@ -1234,10 +1161,8 @@ declare class mk_life_cycle extends mk_layer {
     protected _late_open?(): void | Promise<void>;
     /** 关闭后 */
     protected _late_close?(): void | Promise<void>;
-    /** 打开模块 */
-    protected _open(config_?: _mk_life_cycle.open_config): Promise<void>;
-    /** 关闭模块 */
-    protected _close(config_?: _mk_life_cycle.close_config): Promise<void>;
+    /* Excluded from this release type: _open */
+    /* Excluded from this release type: _close */
     /** 递归 open */
     private _recursive_open;
     /** 递归 close */
@@ -1529,19 +1454,8 @@ declare abstract class mk_network_base<CT extends codec_base = codec_base> exten
     connect(addr_s_: string): void;
     /** 断开 */
     close(): void;
-    /**
-     * 发送
-     * @param data_ 发送数据
-     * @returns
-     */
-    protected _send(data_: Parameters<CT["encode"]>[0]): void;
-    /**
-     * 等待消息
-     * @param key_ 消息键
-     * @param timeout_ms_n_ 超时时间
-     * @returns
-     */
-    protected _wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(key_: T, timeout_ms_n_?: number): Promise<T2 | null> | null;
+    /* Excluded from this release type: _send */
+    /* Excluded from this release type: _wait */
     /** socket 准备完成 */
     protected _open(event_: any): void;
     /** socket 消息 */
@@ -1702,37 +1616,71 @@ declare namespace mk_network_base_ {
 declare namespace _mk_obj_pool {
     /** 配置 */
     class config<CT> {
-        constructor(init_?: Partial<config<CT>>);
+        constructor(init_?: config<CT>);
         /** 返回新对象 */
         create_f: () => CT | Promise<CT>;
-        /** 重置对象（在 create_f 后以及 put 时调用） */
+        /**
+         * 重置对象
+         * @remarks
+         * 在 create_f 后以及 put 时调用
+         */
         reset_f?: (obj: CT, create_b: boolean) => CT | Promise<CT>;
         /** 释放回调 */
-        clear_f?: (obj_as: CT[]) => void;
-        /** 剩余对象池数量不足时扩充数量 */
-        fill_n: number;
-        /** 最大保留数量（可节省内存占用，-1为不启用） */
-        max_hold_n: number;
-        /** 初始化扩充数量 */
-        init_fill_n: number;
+        clear_f?: (obj_as: CT[]) => void | Promise<void>;
+        /**
+         * 剩余对象池数量不足时扩充数量
+         * @defaultValue 32
+         */
+        fill_n?: number | undefined;
+        /**
+         * 最大保留数量
+         * @remarks
+         * 可节省内存占用，-1为不启用
+         * @defaultValue
+         * -1
+         */
+        max_hold_n?: number | undefined;
+        /**
+         * 初始化扩充数量
+         * @defaultValue
+         * 0
+         */
+        init_fill_n?: number | undefined;
     }
     /** 同步模块 */
     namespace sync {
         /** 配置 */
         class config<CT> {
-            constructor(init_?: Partial<config<CT>>);
+            constructor(init_?: config<CT>);
             /** 返回新对象 */
             create_f: () => CT;
-            /** 重置对象（在 create_f 后以及 put 时调用） */
+            /**
+             * 重置对象
+             * @remarks
+             * 在 create_f 后以及 put 时调用
+             */
             reset_f?: (obj: CT, create_b: boolean) => CT;
             /** 释放回调 */
             clear_f?: (obj_as: CT[]) => void;
-            /** 剩余对象池数量不足时扩充数量 */
-            fill_n: number;
-            /** 最大保留数量（可节省内存占用，-1为不启用） */
-            max_hold_n: number;
-            /** 初始化扩充数量 */
-            init_fill_n: number;
+            /**
+             * 剩余对象池数量不足时扩充数量
+             * @defaultValue 32
+             */
+            fill_n?: number | undefined;
+            /**
+             * 最大保留数量
+             * @remarks
+             * 可节省内存占用，-1为不启用
+             * @defaultValue
+             * -1
+             */
+            max_hold_n?: number | undefined;
+            /**
+             * 初始化扩充数量
+             * @defaultValue
+             * 0
+             */
+            init_fill_n?: number | undefined;
         }
     }
 }
@@ -1898,8 +1846,12 @@ declare class mk_ui_manage extends instance_base {
     constructor();
     /** 初始化状态 */
     private static _init_b;
-    /** 资源路径解析（在未注册模块时获取注册配置会使用此函数自动注册） */
-    prefab_path_resolution_f?: <T extends cc_2.Constructor<mk_view_base>>(target: T) => null | Partial<ui_manage_.regis_config<T>>;
+    /**
+     * 获取模块注册数据
+     * @remarks
+     * open 未注册模块时会使用此函数获取注册数据自动注册
+     */
+    get_regis_data_f?: <T extends cc_2.Constructor<mk_view_base>>(key: T) => ui_manage_.regis_data<T>;
     /** 日志 */
     private _log;
     /** 模块注册表 */
@@ -1919,35 +1871,57 @@ declare class mk_ui_manage extends instance_base {
     /** 当前模块列表表 */
     private _ui_map;
     /**
-     * 模块注册
+     * 注册模块
      * @param key_ 模块名
-     * @param config_ 模块配置，prefab | prefab_all 必存其一
+     * @param source_ 模块来源
+     * @param config_ 模块配置
      * @returns
      */
-    regis<T extends cc_2.Constructor<mk_view_base>>(key_: T, config_: Partial<ui_manage_.regis_config<T>>): Promise<void> | null;
+    regis<T extends cc_2.Constructor<mk_view_base>>(key_: T, source_: _mk_ui_manage.source_type<T>, config_?: Partial<ui_manage_.regis_config<T>>): Promise<void>;
+    /**
+     * 取消注册模块
+     * @param key_ 模块键
+     * @returns
+     */
+    unregis<T extends cc_2.Constructor<mk_view_base>>(key_: T): Promise<void>;
     /** 获取所有模块 */
     get(): ReadonlyArray<mk_view_base>;
-    /** 获取指定模块 */
+    /**
+     * 获取指定模块
+     * @param key_ 模块键
+     * @param type_ 模块类型
+     */
     get<T extends cc_2.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T, type_?: T["type_s"]): T2 | null;
-    /** 获取指定模块列表 */
+    /**
+     * 获取指定模块列表
+     * @param key_ 模块键列表 [type]
+     * @param type_ 模块类型
+     */
     get<T extends cc_2.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T[], type_?: T["type_s"]): ReadonlyArray<T2>;
     /**
      * 打开模块
-     * @param key_ 模块名
+     * @param key_ 模块类型，必须经过 {@inheritdoc mk_ui_manage.regis} 接口注册过
      * @returns
      */
     open<T extends cc_2.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
     /**
      * 关闭 ui
-     * @param args_ ui
-     * @param config_ 配置
+     * @param args_ 节点/模块类型/模块实例
+     * @param config 配置
      * @returns
      */
     close<T extends cc_2.Constructor<mk_view_base>, T2 extends mk_view_base>(args_: cc_2.Node | T | T2, config_?: ui_manage_.close_config<T>): Promise<boolean>;
-    private _get;
-    private _close;
-    private _open;
     private _event_restart;
+}
+
+declare namespace _mk_ui_manage {
+    type source_type<T extends {
+        type_s?: string;
+    } | {}> = cc_2.Prefab | string | cc_2.Node | (T extends {
+        type_s: string;
+    } ? Record<T["type_s"], cc_2.Prefab | string | cc_2.Node> & {
+        default: cc_2.Prefab | string | cc_2.Node;
+    } : never);
 }
 
 /** 视图基类 */
@@ -2130,17 +2104,21 @@ export { network }
 
 /** 对象池（异步） */
 export declare class obj_pool<CT> {
-    constructor(init_: Partial<_mk_obj_pool.config<CT>>);
+    constructor(init_: _mk_obj_pool.config<CT>);
     /** 对象存储列表 */
     private _obj_as;
     /** 初始化数据 */
     private _init_data;
-    /** 导入对象 */
+    /**
+     * 导入对象
+     * @param obj_ 添加对象
+     * @returns
+     */
     put(obj_: any): Promise<void>;
     /** 获取对象 */
     get(): Promise<CT>;
     /** 清空数据 */
-    clear(): void;
+    clear(): Promise<void>;
     /** 添加对象 */
     private _add;
     /** 删除对象 */
@@ -2150,7 +2128,7 @@ export declare class obj_pool<CT> {
 export declare namespace obj_pool {
     /** 对象池（同步） */
     export class sync<CT> {
-        constructor(init_?: Partial<_mk_obj_pool.sync.config<CT>>);
+        constructor(init_?: _mk_obj_pool.sync.config<CT>);
         /** 对象存储列表 */
         private _obj_as;
         /** 初始化数据 */
@@ -2218,14 +2196,18 @@ export declare const ui_manage: mk_ui_manage;
 
 export declare namespace ui_manage_ {
     /** 关闭ui配置 */
-    export interface close_config<CT extends cc_2.Constructor<mk_view_base>> {
+    export class close_config<CT extends cc_2.Constructor<mk_view_base>> {
+        constructor(init_?: close_config<CT>);
         /** 类型 */
         type?: CT["type_s"];
         /** 关闭全部指定类型的模块 */
         all_b?: boolean;
         /** 销毁节点 */
         destroy_b?: boolean;
-        /** 销毁动态子节点（默认回收） */
+        /** 销毁动态子节点
+         * @defaultValue
+         * destroy_b
+         */
         destroy_children_b?: boolean;
     }
     /** 打开ui配置 */
@@ -2241,26 +2223,45 @@ export declare namespace ui_manage_ {
     /** 模块注册配置 */
     export class regis_config<CT extends cc_2.Constructor<mk_view_base>> {
         constructor(init_?: Partial<regis_config<CT>>);
-        /** 默认预制体路径|资源 */
-        prefab?: cc_2.Prefab | string | ({
-            [k in CT["type_s"]]: cc_2.Prefab | string;
-        } & {
-            default: cc_2.Prefab | string;
-        });
-        /** 重复打开 */
+        /**
+         * 重复打开
+         * @defaultValue
+         * false
+         */
         repeat_b: boolean;
         /** 默认父节点（默认 canvas 节点） */
+        /**
+         * 默认父节点
+         * @defaultValue
+         * Canvas 节点
+         */
         parent: cc_2.Node | undefined;
-        /** 加载资源 */
-        load_prefab_b: boolean;
         /** 加载配置 */
         load_config?: asset_.get_config<cc_2.Prefab>;
-        /** 对象池：剩余对象池数量不足时扩充数量，默认值 = repeat_b ? 32 : 1 */
+        /**
+         * 对象池数量不足时扩充数量
+         * @defaultValue
+         * this.repeat_b ? 8 : 1
+         */
         pool_fill_n: number;
-        /** 对象池：最大保留数量（不足时添加，-1为不启用） */
+        /**
+         * 对象池最大保留数量
+         * @defaultValue
+         * -1: 不启用
+         */
         pool_max_hold_n: number;
-        /** 对象池：初始化扩充数量 */
+        /**
+         * 对象池初始化扩充数量
+         * @defaultValue
+         * 1
+         */
         pool_init_fill_n: number;
+    }
+    /** 模块注册数据 */
+    export class regis_data<CT extends cc_2.Constructor<mk_view_base>> extends regis_config<CT> {
+        constructor(init_?: Partial<regis_data<CT>>);
+        /** 来源 */
+        source: _mk_ui_manage.source_type<CT>;
     }
 }
 

@@ -1,7 +1,7 @@
 import * as cc from "cc";
 
 class mk_event_target<CT> extends cc.EventTarget {
-	key: { [key in keyof CT]: key } = new Proxy(Object.create(null), {
+	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
 		get: (target, key) => key,
 	});
 

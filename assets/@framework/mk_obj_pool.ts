@@ -1,50 +1,84 @@
 namespace _mk_obj_pool {
 	/** 配置 */
 	export class config<CT> {
-		constructor(init_?: Partial<config<CT>>) {
+		constructor(init_?: config<CT>) {
 			Object.assign(this, init_);
 		}
 
 		/** 返回新对象 */
 		create_f!: () => CT | Promise<CT>;
-		/** 重置对象（在 create_f 后以及 put 时调用） */
+		/**
+		 * 重置对象
+		 * @remarks
+		 * 在 create_f 后以及 put 时调用
+		 */
 		reset_f?: (obj: CT, create_b: boolean) => CT | Promise<CT>;
 		/** 释放回调 */
-		clear_f?: (obj_as: CT[]) => void;
-		/** 剩余对象池数量不足时扩充数量 */
-		fill_n = 32;
-		/** 最大保留数量（可节省内存占用，-1为不启用） */
-		max_hold_n = -1;
-		/** 初始化扩充数量 */
-		init_fill_n = 0;
+		clear_f?: (obj_as: CT[]) => void | Promise<void>;
+		/**
+		 * 剩余对象池数量不足时扩充数量
+		 * @defaultValue 32
+		 */
+		fill_n? = 32;
+		/**
+		 * 最大保留数量
+		 * @remarks
+		 * 可节省内存占用，-1为不启用
+		 * @defaultValue
+		 * -1
+		 */
+		max_hold_n? = -1;
+		/**
+		 * 初始化扩充数量
+		 * @defaultValue
+		 * 0
+		 */
+		init_fill_n? = 0;
 	}
 	/** 同步模块 */
 	export namespace sync {
 		/** 配置 */
 		export class config<CT> {
-			constructor(init_?: Partial<config<CT>>) {
+			constructor(init_?: config<CT>) {
 				Object.assign(this, init_);
 			}
 
 			/** 返回新对象 */
 			create_f!: () => CT;
-			/** 重置对象（在 create_f 后以及 put 时调用） */
+			/**
+			 * 重置对象
+			 * @remarks
+			 * 在 create_f 后以及 put 时调用
+			 */
 			reset_f?: (obj: CT, create_b: boolean) => CT;
 			/** 释放回调 */
 			clear_f?: (obj_as: CT[]) => void;
-			/** 剩余对象池数量不足时扩充数量 */
-			fill_n = 32;
-			/** 最大保留数量（可节省内存占用，-1为不启用） */
-			max_hold_n = -1;
-			/** 初始化扩充数量 */
-			init_fill_n = 0;
+			/**
+			 * 剩余对象池数量不足时扩充数量
+			 * @defaultValue 32
+			 */
+			fill_n? = 32;
+			/**
+			 * 最大保留数量
+			 * @remarks
+			 * 可节省内存占用，-1为不启用
+			 * @defaultValue
+			 * -1
+			 */
+			max_hold_n? = -1;
+			/**
+			 * 初始化扩充数量
+			 * @defaultValue
+			 * 0
+			 */
+			init_fill_n? = 0;
 		}
 	}
 }
 
 /** 对象池（异步） */
 class mk_obj_pool<CT> {
-	constructor(init_: Partial<_mk_obj_pool.config<CT>>) {
+	constructor(init_: _mk_obj_pool.config<CT>) {
 		this._init_data = new _mk_obj_pool.config(init_);
 		if (this._init_data.init_fill_n! > 0) {
 			this._add(this._init_data.init_fill_n);
@@ -57,7 +91,11 @@ class mk_obj_pool<CT> {
 	/** 初始化数据 */
 	private _init_data!: _mk_obj_pool.config<CT>;
 	/* ------------------------------- 功能 ------------------------------- */
-	/** 导入对象 */
+	/**
+	 * 导入对象
+	 * @param obj_ 添加对象
+	 * @returns
+	 */
 	async put(obj_: any): Promise<void> {
 		if (!obj_) {
 			return;
@@ -79,10 +117,12 @@ class mk_obj_pool<CT> {
 	}
 
 	/** 清空数据 */
-	clear(): void {
+	async clear(): Promise<void> {
 		const obj_as = this._obj_as.splice(0, this._obj_as.length);
 
-		this._init_data.clear_f?.(obj_as);
+		if (obj_as.length) {
+			await this._init_data.clear_f?.(obj_as);
+		}
 	}
 
 	/** 添加对象 */
@@ -102,14 +142,16 @@ class mk_obj_pool<CT> {
 	private _del(start_n_: number, end_n_: number): void {
 		const obj_as = this._obj_as.splice(start_n_, end_n_ - start_n_);
 
-		this._init_data.clear_f?.(obj_as);
+		if (obj_as.length) {
+			this._init_data.clear_f?.(obj_as);
+		}
 	}
 }
 
 namespace mk_obj_pool {
 	/** 对象池（同步） */
 	export class sync<CT> {
-		constructor(init_?: Partial<_mk_obj_pool.sync.config<CT>>) {
+		constructor(init_?: _mk_obj_pool.sync.config<CT>) {
 			this._init_data = new _mk_obj_pool.sync.config(init_);
 			if (this._init_data.init_fill_n! > 0) {
 				this._add(this._init_data.init_fill_n);
@@ -147,7 +189,9 @@ namespace mk_obj_pool {
 		clear(): void {
 			const obj_as = this._obj_as.splice(0, this._obj_as.length);
 
-			this._init_data.clear_f?.(obj_as);
+			if (obj_as.length) {
+				this._init_data.clear_f?.(obj_as);
+			}
 		}
 
 		/** 添加对象 */
@@ -167,7 +211,9 @@ namespace mk_obj_pool {
 		private _del(start_n_: number, end_n_: number): void {
 			const obj_as = this._obj_as.splice(start_n_, end_n_ - start_n_);
 
-			this._init_data.clear_f?.(obj_as);
+			if (obj_as.length) {
+				this._init_data.clear_f?.(obj_as);
+			}
 		}
 	}
 }

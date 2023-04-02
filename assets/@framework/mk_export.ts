@@ -19,3 +19,4 @@ export { default as guide_manage } from "./guide/mk_guide_manage";
 export type { mk_guide_manage_ as guide_manage_ } from "./guide/mk_guide_manage";
 export { default as dynamic_module } from "./mk_dynamic_module";
 export { default as guide } from "./guide/mk_guide";
+export { default as game } from "./mk_game";

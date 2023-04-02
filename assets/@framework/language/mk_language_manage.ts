@@ -149,9 +149,7 @@ class mk_language_manage extends mk_instance_base {
 
 export namespace mk_language_manage_ {
 	/** 多语言数据结构 */
-	export type data_struct<T extends _mk_language_manage.type_type = any> = {
-		[k in T]: { [k in keyof typeof global_config.language.type]: string };
-	};
+	export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
 
 	/** 获取文本配置 */
 	export class label_config {
@@ -172,7 +170,7 @@ export namespace mk_language_manage_ {
 		}
 
 		/** 多语言键 */
-		key: { [key in keyof CT]: key } = new Proxy(Object.create(null), {
+		key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
 			get: (target, key) => key,
 		});
 

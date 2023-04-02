@@ -125,7 +125,7 @@ namespace _mk_network_base {
 		 * @returns
 		 */
 		send<T = Parameters<CT["encode"]>[0]>(data_: T): void {
-			this._network["_send"](data_);
+			this._network._send(data_);
 		}
 
 		/**
@@ -135,8 +135,8 @@ namespace _mk_network_base {
 		 * @returns
 		 */
 		request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null {
-			this._network["_send"](data_);
-			return this._network["_wait"](data_, timeout_ms_n_);
+			this._network._send(data_);
+			return this._network._wait(data_, timeout_ms_n_);
 		}
 
 		// @ts-ignore
@@ -251,8 +251,9 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 	 * 发送
 	 * @param data_ 发送数据
 	 * @returns
+	 * @internal
 	 */
-	protected _send(data_: Parameters<CT["encode"]>[0]): void {
+	_send(data_: Parameters<CT["encode"]>[0]): void {
 		this._write_as.push(data_);
 
 		// 更新状态
@@ -266,9 +267,10 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 	 * @param key_ 消息键
 	 * @param timeout_ms_n_ 超时时间
 	 * @returns
+	 * @internal
 	 */
 	// @ts-ignore
-	protected _wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(
+	_wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(
 		key_: T,
 		timeout_ms_n_ = this.config.wait_timeout_ms_n
 		// @ts-ignore
@@ -647,7 +649,7 @@ export namespace mk_network_base_ {
 		/** 发送 */
 		send(data_: Parameters<CT["encode"]>[0]): void {
 			if (this._send_interval_ms_n === 0) {
-				this._network["_send"](data_);
+				this._network._send(data_);
 				return;
 			} else {
 				this._mess_as.push(data_);
@@ -657,7 +659,7 @@ export namespace mk_network_base_ {
 			if (this._send_interval_ms_n > 0 && !this._send_timer) {
 				this._send_timer = setInterval(() => {
 					while (this._mess_as.length) {
-						this._network["_send"](this._mess_as.shift());
+						this._network._send(this._mess_as.shift());
 					}
 					this._send_timer = null;
 				});
@@ -671,7 +673,7 @@ export namespace mk_network_base_ {
 			}
 
 			while (this._mess_as.length) {
-				this._network["_send"](this._mess_as.shift());
+				this._network._send(this._mess_as.shift());
 			}
 		}
 	}
