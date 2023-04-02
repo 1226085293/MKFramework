@@ -376,7 +376,7 @@ class mk_asset extends mk_instance_base {
 		const asset_as: cc.Asset[] = Array.isArray(asset_) ? asset_ : [asset_];
 
 		asset_as.forEach((v) => {
-			if (v.isValid) {
+			if (!v.isValid) {
 				return;
 			}
 
@@ -396,6 +396,8 @@ class mk_asset extends mk_instance_base {
 
 			// 释放资源（禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的）
 			cc.assetManager.releaseAsset(v);
+			// 更新资源管理表
+			this._asset_manage_map.delete(v.nativeUrl || v._uuid);
 
 			this._log.debug("释放资源", v.name, v.nativeUrl, v._uuid);
 		});
@@ -444,8 +446,6 @@ class mk_asset extends mk_instance_base {
 				return;
 			}
 
-			// 更新资源管理表
-			this._asset_manage_map.delete(v.asset.nativeUrl || v.asset._uuid);
 			// 释放资源
 			this.release(v.asset);
 		}

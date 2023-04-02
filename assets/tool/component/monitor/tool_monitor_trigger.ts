@@ -3,8 +3,9 @@ import { EDITOR } from "cc/env";
 import * as cc from "cc";
 import tool from "../../tool";
 import tool_monitor_data_method from "./data_method/tool_monitor_data_method";
-import { tool_monitor_trigger_event } from "./tool_monitor_trigger_event";
 import mk from "mk";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { tool_monitor_trigger_event } from "./tool_monitor_trigger_event";
 const { ccclass, property } = _decorator;
 
 export namespace _tool_monitor_trigger {
@@ -234,7 +235,7 @@ export class tool_monitor_trigger extends cc.Component {
 	 * @param event_ 触发事件
 	 * @returns
 	 */
-	monitor(target_: cc.Node, data_key_s_: string): void {
+	async monitor(target_: cc.Node, data_key_s_: string): Promise<void> {
 		/** 触发事件 */
 		const event = tool_monitor_data_method[this.event.type_s]?.[this.event.event_s];
 
@@ -245,7 +246,7 @@ export class tool_monitor_trigger extends cc.Component {
 
 		// 清理事件
 		if (this._monitor_data) {
-			mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
+			await mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
 			this._monitor_data = null;
 		}
 

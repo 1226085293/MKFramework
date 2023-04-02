@@ -378,6 +378,18 @@ export class mk_ui_manage extends mk_instance_base {
 			});
 			this._ui_hidden_length_n = this._ui_show_as.length;
 		}
+
+		// 更新管理器数据
+		{
+			this._ui_show_as.push(view_comp);
+			let ui_as = this._ui_map.get(key_);
+
+			if (!ui_as) {
+				this._ui_map.set(key_, (ui_as = []));
+			}
+			ui_as.push(view_comp);
+		}
+
 		// 启动模块
 		{
 			// 模块配置
@@ -400,17 +412,6 @@ export class mk_ui_manage extends mk_instance_base {
 					first_b: true,
 				});
 			}
-		}
-
-		// 更新管理器数据
-		{
-			this._ui_show_as.push(view_comp);
-			let ui_as = this._ui_map.get(key_);
-
-			if (!ui_as) {
-				this._ui_map.set(key_, (ui_as = []));
-			}
-			ui_as.push(view_comp);
 		}
 
 		return exit_callback_f(true);

@@ -1294,7 +1294,7 @@ declare class mk_monitor extends instance_base {
      * @param key_ 监听键
      * @param target_ 绑定目标
      */
-    off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
+    off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): Promise<void>;
     /**
      * 取消监听数据更新
      * @param value_ 监听对象
@@ -1302,7 +1302,7 @@ declare class mk_monitor extends instance_base {
      * @param on_callback_f_ on 触发回调
      * @param target_ 绑定目标
      */
-    off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
+    off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
     /**
      * 清理对象绑定的数据
      * @param target_ 绑定对象
@@ -1405,8 +1405,8 @@ declare namespace _mk_monitor {
         desc: PropertyDescriptor;
         /** 绑定监听 */
         monitor_as?: type_monitor_data<any>[];
-        /** 修改状态 */
-        modify_b?: boolean;
+        /** 修改计数 */
+        modify_count_n: number;
         /** 禁用状态 （仅用于 on_callback_f） */
         disabled_b?: boolean;
     }

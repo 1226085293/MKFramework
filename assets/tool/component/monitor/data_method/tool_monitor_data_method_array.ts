@@ -85,8 +85,8 @@ export namespace 默认 {
 
 				// 模块
 				if (this._item_view_type) {
-					for (const v of this._init_data.root.children) {
-						await mk.ui_manage.close(v);
+					while (this._init_data.root.children.length) {
+						await mk.ui_manage.close(this._init_data.root.children[0]);
 					}
 					await mk.ui_manage.unregis(this._item_view_type);
 				}
@@ -323,19 +323,12 @@ export namespace 默认 {
 					target_[key_] = [...(target_[key_] as any)] as any;
 
 					// 还原子节点
-					array_as.destroy();
+					await array_as.destroy();
 
 					if (layout_node?.isValid) {
 						layout_node.addChild(item_node);
 					} else {
-						const view_comp = item_node.getComponent(mk.module.view_base);
-
-						if (view_comp) {
-							await view_comp?.["_close"]({
-								destroy_children_b: true,
-							});
-						}
-						item_node.destroy();
+						await mk.ui_manage.close(item_node);
 					}
 				},
 				target_
