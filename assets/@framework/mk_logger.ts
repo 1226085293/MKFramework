@@ -2,7 +2,7 @@ import { DEBUG, EDITOR } from "cc/env";
 import global_config from "../@config/global_config";
 import * as cc from "cc";
 import mk_instance_base from "./mk_instance_base";
-import http from "./network/mk_http";
+import mk_http from "./network/mk_http";
 
 namespace _mk_logger {
 	export enum level {
@@ -116,7 +116,7 @@ class mk_logger extends mk_instance_base {
 
 				// 上传错误日志
 				if (global_config.log.error_upload_addr_s) {
-					http.post(global_config.log.error_upload_addr_s, {
+					mk_http.post(global_config.log.error_upload_addr_s, {
 						body: JSON.stringify(this._cache_ss),
 					});
 
