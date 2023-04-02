@@ -1,4 +1,5 @@
 import mk_event_target from "../mk_event_target";
+import { logger } from "../mk_export";
 import mk_status_task from "./mk_status_task";
 
 namespace _mk_task_pipeline {
@@ -73,9 +74,16 @@ class mk_task_pipeline {
 		while (this._task_as.length) {
 			/** 当前任务 */
 			const task = this._task_as.shift()!;
+			/** 任务返回 */
+			let task_result: any;
 
 			// 完成任务
-			task.task.finish(true, await task.task_f());
+			try {
+				task_result = await task.task_f();
+			} catch (error) {
+				logger.error("任务执行失败，跳过", error, task.task_f);
+			}
+			task.task.finish(true, task_result);
 
 			// 已经暂停
 			if (this._pause_b) {

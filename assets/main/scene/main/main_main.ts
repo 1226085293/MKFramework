@@ -23,18 +23,18 @@ export class main_main extends mk.module.view_base {
 				label_s: "多语言(language)",
 				view: resources_language,
 			},
-			{
-				label_s: "模块管理",
-				view: resources_module,
-			},
-			{
-				label_s: "网络",
-				view: resources_network_view,
-			},
-			{
-				label_s: "引导",
-				view: resources_guide,
-			},
+			// {
+			// 	label_s: "模块管理",
+			// 	view: resources_module,
+			// },
+			// {
+			// 	label_s: "网络",
+			// 	view: resources_network_view,
+			// },
+			// {
+			// 	label_s: "引导",
+			// 	view: resources_guide,
+			// },
 		] as typeof resources_main_item.prototype.data[],
 	};
 

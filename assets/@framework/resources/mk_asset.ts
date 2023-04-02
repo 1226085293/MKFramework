@@ -376,6 +376,10 @@ class mk_asset extends mk_instance_base {
 		const asset_as: cc.Asset[] = Array.isArray(asset_) ? asset_ : [asset_];
 
 		asset_as.forEach((v) => {
+			if (v.isValid) {
+				return;
+			}
+
 			// 释放动态图集中的资源
 			if (cc.dynamicAtlasManager?.enabled) {
 				if (v instanceof cc.SpriteFrame) {
@@ -385,13 +389,15 @@ class mk_asset extends mk_instance_base {
 				}
 			}
 
+			// 更新引用计数
 			for (let k_n = 0; k_n < v.refCount; k_n++) {
 				v.decRef(false);
 			}
+
 			// 释放资源（禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的）
 			cc.assetManager.releaseAsset(v);
 
-			mk_logger.log("释放资源", v.name, v.nativeUrl, v._uuid);
+			this._log.debug("释放资源", v.name, v.nativeUrl, v._uuid);
 		});
 	}
 

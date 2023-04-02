@@ -81,7 +81,7 @@ namespace global_config {
 		/** 初始限制打印模块 */
 		export const limit_log_module_ss = ["monitor"];
 		/** 使用浏览器接口 */
-		export const debug_use_browser_b = false; // DEBUG;
+		export const debug_use_browser_b = DEBUG;
 		/** 日志缓存行数 */
 		export const cache_row_n = 100;
 		/** 报错日志上传地址 */

@@ -17,7 +17,14 @@ class mk_game extends mk_instance_base {
 		await Promise.all(global_event.request(global_event.key.restart));
 		await Promise.all(global_event.request(global_event.key.wait_close_scene));
 		cc.director.getScene()?.destroy();
+
+		// if (HTML5) {
+		// 	location.reload();
+		// } else {
+		// 	cc.game.restart();
+		// }
 		cc.game.restart();
+
 		this._restarting_b = false;
 	}
 }

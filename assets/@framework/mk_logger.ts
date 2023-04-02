@@ -47,19 +47,19 @@ class mk_logger extends mk_instance_base {
 		if (global_config.log.debug_use_browser_b) {
 			this.debug = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.debug]].bind(
 				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.debug, false)
+				this._get_log_head(mk_logger_.level.debug, true)
 			);
 			this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
 				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.log, false)
+				this._get_log_head(mk_logger_.level.log, true)
 			);
 			this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
 				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.warn, false)
+				this._get_log_head(mk_logger_.level.warn, true)
 			);
 			this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
 				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.error, false)
+				this._get_log_head(mk_logger_.level.error, true)
 			);
 		}
 	}
@@ -348,10 +348,11 @@ class mk_logger extends mk_instance_base {
 		mk_logger._add_log_cache(level_, head_s, ...args_as_);
 		// 打印日志
 		log_f(head_s, ...args_as_);
-		// 错误日志打印堆栈
-		if (level_ === mk_logger_.level.error) {
-			console.error(new Error());
-		}
+
+		// // 错误日志打印堆栈
+		// if (level_ === mk_logger_.level.error) {
+		// 	console.error(new Error());
+		// }
 	}
 }
 

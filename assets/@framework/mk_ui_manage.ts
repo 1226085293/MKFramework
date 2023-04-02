@@ -582,6 +582,11 @@ export class mk_ui_manage extends mk_instance_base {
 				destroy_children_b: config.destroy_children_b,
 			});
 
+			// 节点已在生命周期内被销毁
+			if (!v.node?.isValid) {
+				continue;
+			}
+
 			// 移除父节点
 			v.node.removeFromParent();
 

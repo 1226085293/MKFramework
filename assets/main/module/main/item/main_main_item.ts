@@ -19,12 +19,21 @@ export class resources_main_item extends mk.module.view_base {
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	init(init_?: typeof this.init_data): void {
+		this._log.log("init");
 		// 不存在多语言则删除组件
 		if (!mk.language_manage.label_data_tab[cc.js.getClassName(main_main)]?.[this.init_data.label_s]) {
 			this.nodes.label.getComponent(mk.language.label)?.destroy();
 		}
 
 		Object.assign(this.data, this.init_data);
+	}
+
+	open(): void | Promise<void> {
+		this._log.log("open");
+	}
+
+	close(): void | Promise<void> {
+		this._log.log("close");
 	}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
