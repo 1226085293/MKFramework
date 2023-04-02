@@ -7,8 +7,6 @@ const jsonc = require("jsonc-parser");
 
 // 参数：[ 输出生成信息(0: 不输出, 1: 输出) ]
 (async () => {
-	/** 输出生成信息 */
-	const output_info_b = argv[2] === "1";
 	/** package.json */
 	const package_config = jsonc.parse(fs.readFileSync("./package.json", "utf-8"));
 	/** tsconfig.json */
@@ -27,7 +25,7 @@ const jsonc = require("jsonc-parser");
 	// 删除生成的声明文件，否则会影响生成
 	fs.removeSync(dts_path_s);
 	// 生成 d.ts
-	child_process.execSync(`npx api-extractor run --local ${output_info_b ? "--diagnostics" : ""}`);
+	child_process.execSync(`npx api-extractor run --local --diagnostics`);
 
 	/** 声明文件 */
 	let dts_file_s = fs.readFileSync(dts_path_s, "utf-8");

@@ -208,7 +208,10 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 	protected _state = mk_network_base_.status.closed;
 	/** 地址 */
 	protected _addr_s!: string;
-	/** 写入睡眠状态 */
+	/**
+	 * 写入睡眠状态
+	 * @internal
+	 */
 	protected _write_sleep2_b = true;
 	/** 写入队列 */
 	protected _write_as: any[] = [];

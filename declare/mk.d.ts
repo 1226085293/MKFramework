@@ -1433,8 +1433,7 @@ declare abstract class mk_network_base<CT extends codec_base = codec_base> exten
     protected _state: mk_network_base_.status;
     /** 地址 */
     protected _addr_s: string;
-    /** 写入睡眠状态 */
-    protected _write_sleep2_b: boolean;
+    /* Excluded from this release type: _write_sleep2_b */
     /** 写入队列 */
     protected _write_as: any[];
     /** 重连计数 */

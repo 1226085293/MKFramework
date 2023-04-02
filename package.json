@@ -10,7 +10,6 @@
     "生成 proto": "npx ts-node ./tool/script/generate_proto/index.ts ./proto ./assets/resources/config/proto 0 test 100"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.34.4",
     "@typescript-eslint/eslint-plugin": "^5.34.0",
     "@typescript-eslint/parser": "^5.34.0",
     "eslint": "^8.22.0",

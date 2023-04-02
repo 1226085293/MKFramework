@@ -535,6 +535,7 @@ abstract class mk_network_base<CT extends codec_base = codec_base> extends insta
     // @internal
     _wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(key_: T, timeout_ms_n_?: number): Promise<T2 | null> | null;
     protected _write_as: any[];
+    // @internal
     protected _write_sleep2_b: boolean;
 }
 
