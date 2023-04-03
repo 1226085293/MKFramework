@@ -1,5 +1,3 @@
-//@ts-nocheck
-import global_config from "../assets/@config/global_config";
 import * as cc_2 from 'cc';
 
 export declare const asset: mk_asset;
@@ -607,6 +605,7 @@ export declare namespace logger_ {
  * 资源管理器
  * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
  * - 统一加载接口为 get、get_dir
+ * @public
  */
 declare class mk_asset extends instance_base {
     constructor();
