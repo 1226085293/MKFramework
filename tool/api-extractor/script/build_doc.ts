@@ -7,6 +7,10 @@ const jsonc = require("jsonc-parser");
 
 // 参数：[ 输出生成信息(0: 不输出, 1: 输出) ]
 (async () => {
+	if (!fs.existsSync("./temp")) {
+		child_process.execSync(`npx ts-node ./script/build_dts.ts`);
+	}
+
 	// 删除输出文件夹
 	fs.removeSync(path.join("./temp", "md"));
 	// 生成 md 文件

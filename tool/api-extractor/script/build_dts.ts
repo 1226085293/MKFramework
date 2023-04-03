@@ -21,7 +21,7 @@ const jsonc = require("jsonc-parser");
 	// 删除输出文件夹
 	fs.removeSync(ts_config.compilerOptions.outDir);
 	// 编译 ts
-	child_process.execSync("tsc");
+	child_process.execSync("npx -p typescript tsc");
 	// 删除生成的声明文件，否则会影响生成
 	fs.removeSync(dts_path_s);
 	// 生成 d.ts
