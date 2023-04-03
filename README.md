@@ -11,6 +11,7 @@ muzzik 开发的 cocos creator 游戏开发框架，目前处于开发阶段
 ### 初始化
 
 1. `cd tool\api-extractor`
+
 2. `npm i`
 
 ### 运行
@@ -21,10 +22,12 @@ muzzik 开发的 cocos creator 游戏开发框架，目前处于开发阶段
 
 ### 初始化
 
-1. 确保安装了 [dotnet 6.0](https://dotnet.microsoft.com/en-us/download) 及以上版本
+1. `cd tool\doc-website`
 
-2. 控制台执行 `dotnet tool update -g docfx`
+2. `npm i`
 
 ### 运行
 
-1. `npm run 构建框架文档`
+1. `cd tool\api-extractor & npm run 构建框架文档`
+
+2. `cd tool\doc-website & npm run start`

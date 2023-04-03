@@ -491,5 +491,4 @@ export namespace mk_asset_ {
 	export type get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
 }
 
-/** {@link URL}  */
 export default mk_asset.instance();
