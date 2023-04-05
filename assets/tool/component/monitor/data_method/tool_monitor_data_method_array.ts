@@ -201,7 +201,7 @@ export namespace 默认 {
 		/** 绑定 */
 		private _bind(start_n_: number, end_n_: number): void {
 			if (this.length < end_n_) {
-				mk.logger.error("参数错误");
+				mk.log.error("参数错误");
 				return;
 			}
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
@@ -218,7 +218,7 @@ export namespace 默认 {
 		/** 解绑 */
 		private _unbind(start_n_: number, end_n_: number): void {
 			if (this.length < end_n_) {
-				mk.logger.error("参数错误");
+				mk.log.error("参数错误");
 				return;
 			}
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
@@ -284,7 +284,7 @@ export namespace 默认 {
 		}
 
 		if (!layout_node?.children.length) {
-			mk.logger.error("不存在子节点");
+			mk.log.error("不存在子节点");
 			return;
 		}
 		/** 原数组 */

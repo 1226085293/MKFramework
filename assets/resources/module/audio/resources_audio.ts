@@ -191,9 +191,9 @@ export class resources_audio extends mk.module.view_base {
 
 	private _data_music_pause_b(value_b_: boolean): void {
 		if (value_b_) {
-			mk.audio.get_group(global_config.audio.group.music).pause();
+			mk.audio.get_group(global_config.audio.type.music).pause();
 		} else {
-			mk.audio.get_group(global_config.audio.group.music).play(mk.audio_.state.pause);
+			mk.audio.get_group(global_config.audio.type.music).play(mk.audio_.state.pause);
 			// 更新状态
 			this.data.music.stop_b = false;
 		}
@@ -201,9 +201,9 @@ export class resources_audio extends mk.module.view_base {
 
 	private _data_music_stop_b(value_b_: boolean): void {
 		if (value_b_) {
-			mk.audio.get_group(global_config.audio.group.music).stop();
+			mk.audio.get_group(global_config.audio.type.music).stop();
 		} else {
-			mk.audio.get_group(global_config.audio.group.music).play(mk.audio_.state.pause | mk.audio_.state.stop);
+			mk.audio.get_group(global_config.audio.type.music).play(mk.audio_.state.pause | mk.audio_.state.stop);
 			// 更新状态
 			this.data.music.pause_b = false;
 		}
@@ -211,9 +211,9 @@ export class resources_audio extends mk.module.view_base {
 
 	private _data_effect_pause_b(value_b_: boolean): void {
 		if (value_b_) {
-			mk.audio.get_group(global_config.audio.group.effect).pause();
+			mk.audio.get_group(global_config.audio.type.effect).pause();
 		} else {
-			mk.audio.get_group(global_config.audio.group.effect).play(mk.audio_.state.pause);
+			mk.audio.get_group(global_config.audio.type.effect).play(mk.audio_.state.pause);
 			// 重新播放分组 0
 			if (!this.data.effect.stop_b) {
 				mk.audio.get_group(resources_config.audio.group.test).play(mk.audio_.state.stop);
@@ -223,9 +223,9 @@ export class resources_audio extends mk.module.view_base {
 
 	private _data_effect_stop_b(value_b_: boolean): void {
 		if (value_b_) {
-			mk.audio.get_group(global_config.audio.group.effect).stop();
+			mk.audio.get_group(global_config.audio.type.effect).stop();
 		} else {
-			mk.audio.get_group(global_config.audio.group.effect).stop(false);
+			mk.audio.get_group(global_config.audio.type.effect).stop(false);
 			// 更新状态
 			this.data.effect.pause_b = false;
 			// 重新播放分组 0
@@ -236,11 +236,11 @@ export class resources_audio extends mk.module.view_base {
 	}
 
 	private _data_music_volume_n(value_n_: number): void {
-		mk.audio.get_group(global_config.audio.group.music).volume_n = value_n_;
+		mk.audio.get_group(global_config.audio.type.music).volume_n = value_n_;
 	}
 
 	private _data_effect_volume_n(value_n_: number): void {
-		mk.audio.get_group(global_config.audio.group.effect).volume_n = value_n_;
+		mk.audio.get_group(global_config.audio.type.effect).volume_n = value_n_;
 	}
 
 	private _data_group_stop_b(value_b_: boolean): void {

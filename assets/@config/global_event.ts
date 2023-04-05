@@ -114,4 +114,6 @@ class event<CT> extends cc.EventTarget {
 	}
 }
 
-export default self["global_event"] = new event<global_event_protocol>();
+const global_event = (self["global_event"] = new event<global_event_protocol>());
+
+export default global_event;

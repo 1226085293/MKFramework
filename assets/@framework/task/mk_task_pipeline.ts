@@ -1,5 +1,5 @@
 import mk_event_target from "../mk_event_target";
-import mk_logger from "../mk_logger";
+import { mk_log } from "../mk_logger";
 import mk_status_task from "./mk_status_task";
 
 namespace _mk_task_pipeline {
@@ -81,7 +81,7 @@ class mk_task_pipeline {
 			try {
 				task_result = await task.task_f();
 			} catch (error) {
-				mk_logger.error("任务执行失败，跳过", error, task.task_f);
+				mk_log.error("任务执行失败，跳过", error, task.task_f);
 			}
 			task.task.finish(true, task_result);
 

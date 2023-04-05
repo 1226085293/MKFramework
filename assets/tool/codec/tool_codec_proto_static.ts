@@ -22,12 +22,12 @@ class codec_proto_static extends mk.codec_base {
 	private _mess_path_map = new Map<any, string>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
-	encode(data_: any): ArrayBuffer | void {
+	encode(data_: any): ArrayBuffer | null {
 		const mess = this._mess_map.get(data_[global_config.network.proto_head_key_tab.__id]);
 
 		if (!mess) {
 			this._log.error("未找到消息号为" + data_[global_config.network.proto_head_key_tab.__id] + "的已注册消息!");
-			return;
+			return null;
 		}
 
 		// 添加消息头
@@ -36,7 +36,7 @@ class codec_proto_static extends mk.codec_base {
 		// 校验数据
 		if (this._config.send_verify_b && mess.verify(data_)) {
 			this._log.error("发送数据校验未通过", this._mess_path_map.get(mess), data_);
-			return;
+			return null;
 		}
 
 		/** 消息数据 */
@@ -46,7 +46,7 @@ class codec_proto_static extends mk.codec_base {
 	}
 
 	/** 解码 */
-	decode(data_: ArrayBuffer): global_config.network.proto_head | void {
+	decode(data_: ArrayBuffer): global_config.network.proto_head | null {
 		/** 消息体 */
 		const data_uint8_as = new Uint8Array(data_);
 		/** 消息号 */
@@ -56,14 +56,14 @@ class codec_proto_static extends mk.codec_base {
 
 		if (!mess) {
 			this._log.error("未找到消息号为" + id_n + "的已注册消息!");
-			return;
+			return null;
 		}
 
 		const data = this._config.decrypt_f?.(mess.decode(data_uint8_as)) ?? mess.decode(data_uint8_as);
 
 		if (this._config.recv_verify_b && mess.verify(data)) {
 			this._log.error("接收包数据校验未通过, 请联系服务端协调!");
-			return;
+			return null;
 		}
 
 		return data;

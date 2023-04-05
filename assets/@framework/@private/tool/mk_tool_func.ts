@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import mk_logger from "../../mk_logger";
+import { mk_log } from "../../mk_logger";
 import mk_instance_base from "../../mk_instance_base";
 
 /** 函数扩展 */
@@ -62,7 +62,7 @@ class mk_tool_func extends mk_instance_base {
 					if (error === "中断") {
 						return;
 					}
-					mk_logger.error(error);
+					mk_log.error(error);
 				}
 				return result;
 			};
@@ -108,7 +108,7 @@ class mk_tool_func extends mk_instance_base {
 			target_[key_s_] = (...args_as: any[]) => {
 				/** 定时器 */
 				const timer = setTimeout(() => {
-					mk_logger.error(`${cc.js.getClassName(target_)}:${key_s_} 执行超时`, target_);
+					mk_log.error(`${cc.js.getClassName(target_)}:${key_s_} 执行超时`, target_);
 				}, time_ms_n_);
 
 				const result = old_f.call(target_, ...args_as);

@@ -1,5 +1,5 @@
 import mk_instance_base from "../../mk_instance_base";
-import mk_logger from "../../mk_logger";
+import { mk_log } from "../../mk_logger";
 
 class mk_tool_object extends mk_instance_base {
 	/** 克隆对象 */
@@ -59,7 +59,7 @@ class mk_tool_object extends mk_instance_base {
 	/** 重置数据（class 数据才会生效，注意构造内的 this 对象不是 data_） */
 	reset<T extends { constructor: any }>(data_: T, assign_b_ = true): typeof assign_b_ extends true ? null : T {
 		if (!data_?.constructor) {
-			mk_logger.error("数据类型错误");
+			mk_log.error("数据类型错误");
 			return null!;
 		}
 

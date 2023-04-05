@@ -21,7 +21,7 @@ export namespace 进度更新 {
 		const slider = node_.getComponent(cc.Slider);
 
 		if (!(progress ?? slider)) {
-			mk.logger.error("不存在组件");
+			mk.log.error("不存在组件");
 			return;
 		}
 

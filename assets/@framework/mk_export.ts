@@ -10,7 +10,7 @@ export { default as codec_base, mk_codec_base_ as codec_base_ } from "./mk_codec
 export { default as data_sharer } from "./mk_data_sharer";
 export { default as event_target } from "./mk_event_target";
 export { default as instance_base } from "./mk_instance_base";
-export { default as logger, mk_logger_ as logger_ } from "./mk_logger";
+export { default as logger, mk_logger_ as logger_, mk_log as log } from "./mk_logger";
 export { default as monitor } from "./mk_monitor";
 export { default as obj_pool } from "./mk_obj_pool";
 export { default as storage } from "./mk_storage";

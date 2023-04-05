@@ -14,8 +14,8 @@ namespace global_config {
 
 	/** 音频 */
 	export namespace audio {
-		/** 音频组 */
-		export enum group {
+		/** 音频类型 */
+		export enum type {
 			/** 音效 */
 			effect = -2,
 			/** 音乐 */
@@ -24,7 +24,7 @@ namespace global_config {
 	}
 
 	/** 资源 */
-	export namespace resources {
+	export namespace asset {
 		/** bundle信息 */
 		export const bundle: {
 			[k in keyof { internal: any; resources: any }]: k;
@@ -48,10 +48,15 @@ namespace global_config {
 			加载,
 		}
 
-		/** 遮罩预制体路径 */
-		export const mask_prefab_path_s = "db://assets/resources/module/@common/mask/resources_common_mask.prefab";
-		/** 适配开关 */
-		export const adaptation_switch_b = true;
+		/** 层间隔 */
+		export const layer_spacing_n = 100;
+		/** 默认遮罩 */
+		export const mask_data_tab = {
+			node_name_s: "遮罩",
+			prefab_path_s: "db://assets/resources/module/@common/mask/resources_common_mask.prefab",
+		};
+		/** 自动适配开关 */
+		export const auto_adaptation_switch_b = true;
 		/** 初始设计尺寸 */
 		export const original_design_size = cc.size();
 		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错） */
@@ -78,10 +83,6 @@ namespace global_config {
 
 	/** 日志 */
 	export namespace log {
-		/** 初始限制打印模块 */
-		export const limit_log_module_ss = ["monitor"];
-		/** 使用浏览器接口 */
-		export const debug_use_browser_b = DEBUG;
 		/** 日志缓存行数 */
 		export const cache_row_n = 100;
 		/** 报错日志上传地址 */

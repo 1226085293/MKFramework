@@ -3,7 +3,7 @@ import mk from "mk";
 import protobufjs from "protobufjs/light.js";
 import global_config from "../../@config/global_config";
 
-/** 编解码器-protobuf(动态) */
+/** 编解码器-protobufjs(动态) */
 class codec_proto extends mk.codec_base {
 	/**
 	 * @param args_ json-module 或者 json 文件夹路径
@@ -48,7 +48,7 @@ class codec_proto extends mk.codec_base {
 					type: cc.JsonAsset,
 					completed_f: (error, asset_as) => {
 						if (error) {
-							mk.logger.error("加载proto文件失败, 请检查路径是否正确!");
+							mk.log.error("加载proto文件失败, 请检查路径是否正确!");
 							return;
 						}
 						let count_n = 0;
@@ -58,7 +58,7 @@ class codec_proto extends mk.codec_base {
 								if (!error) {
 									this._read_type(this._mess, root);
 								} else {
-									mk.logger.warn(error);
+									mk.log.warn(error);
 								}
 								++count_n;
 							});
@@ -88,19 +88,19 @@ class codec_proto extends mk.codec_base {
 	/* -------------------------------segmentation------------------------------- */
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
-	async encode(data_: { id: string | number; data: any }): Promise<ArrayBuffer | void> {
+	async encode(data_: { id: string | number; data: any }): Promise<ArrayBuffer | null> {
 		await this._init_task;
 		/** 消息类型 */
-		let mess: protobufjs.Type | void;
+		let mess: protobufjs.Type | null | undefined;
 
 		if (typeof data_.id === "number") {
 			mess = this._mess_map.get(data_.id);
 		} else {
 			mess = await this._find_mess(data_.id);
 		}
-		// 安检
+
 		if (!mess) {
-			return;
+			return null;
 		}
 
 		// 将消息号加入消息体
@@ -110,7 +110,7 @@ class codec_proto extends mk.codec_base {
 		// 校验数据
 		if (this._config.send_verify_b && mess.verify(data_.data)) {
 			this._log.error("发送数据校验未通过", mess.fullName, data_.data);
-			return;
+			return null;
 		}
 
 		/** 消息数据 */
@@ -120,7 +120,7 @@ class codec_proto extends mk.codec_base {
 	}
 
 	/** 解码 */
-	decode(data_: ArrayBuffer): global_config.network.proto_head | void {
+	decode(data_: ArrayBuffer): global_config.network.proto_head | null {
 		/** 消息体 */
 		const data_uint8_as = new Uint8Array(data_);
 		/** 消息号 */
@@ -130,14 +130,14 @@ class codec_proto extends mk.codec_base {
 
 		if (!mess) {
 			this._log.error("未找到消息号为 " + id_n + " 的已注册消息!");
-			return;
+			return null;
 		}
 
 		const data = this._config.decrypt_f?.(mess.decode(data_uint8_as)) ?? mess.decode(data_uint8_as);
 
 		if (this._config.recv_verify_b && mess.verify(data)) {
 			this._log.error("接收包数据校验未通过, 请联系服务端协调!");
-			return;
+			return null;
 		}
 
 		return data;
@@ -161,7 +161,7 @@ class codec_proto extends mk.codec_base {
 		const same_mess = this._mess_map.get(mess_.fieldsById[1].getOption("default"));
 
 		if (same_mess) {
-			mk.logger.error(`${same_mess.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
+			mk.log.error(`${same_mess.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
 			return false;
 		}
 		return true;
@@ -200,12 +200,12 @@ class codec_proto extends mk.codec_base {
 	}
 
 	/** 查找消息类型 */
-	private async _find_mess(mess_s_: string): Promise<protobufjs.Type | void> {
+	private async _find_mess(mess_s_: string): Promise<protobufjs.Type | null> {
 		// 安检
 		const mess_ss = mess_s_.split(`.`);
 
 		if (mess_ss.length < 2) {
-			return;
+			return null;
 		}
 		// 查找
 		let mess: any = this._mess;
@@ -213,13 +213,13 @@ class codec_proto extends mk.codec_base {
 		await this._init_task;
 		for (let k_n = 0; k_n < mess_ss.length - 1; ++k_n) {
 			if (!mess[mess_ss[k_n]] || !(mess = mess[mess_ss[k_n]].nested)) {
-				mk.logger.error("未找到名为" + mess_s_ + "的已注册消息!");
-				return;
+				mk.log.error("未找到名为" + mess_s_ + "的已注册消息!");
+				return null;
 			}
 		}
 		if (!(mess = mess[mess_ss[mess_ss.length - 1]])) {
-			mk.logger.error("未找到名为" + mess_s_ + "的已注册消息!");
-			return;
+			mk.log.error("未找到名为" + mess_s_ + "的已注册消息!");
+			return null;
 		}
 		return mess;
 	}

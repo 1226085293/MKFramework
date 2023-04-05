@@ -1,11 +1,12 @@
 import mk_instance_base from "../mk_instance_base";
-import mk_logger from "../mk_logger";
+import mk_logger, { mk_log } from "../mk_logger";
 import mk_event_target from "../mk_event_target";
 import mk_network_base from "../network/mk_network_base";
 import { EDITOR, PREVIEW } from "cc/env";
 import * as cc from "cc";
 import mk_status_task from "../task/mk_status_task";
 import mk_data_sharer from "../mk_data_sharer";
+import mk_tool_func from "../@private/tool/mk_tool_func";
 
 namespace _mk_bundle {
 	export interface event_protocol {
@@ -117,16 +118,12 @@ class mk_bundle extends mk_instance_base {
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
-	 * 添加bundle数据
-	 * @param info_ bundle 信息
+	 * 设置 bundle 数据
+	 * @param bundle_ bundle 信息
 	 */
-	add(info_: Partial<mk_bundle_.bundle_info>): void {
-		const info = info_ as mk_bundle_.bundle_info;
-		/** bundle 信息 */
-		const bundle = Object.assign(this.bundle_map.get(info.bundle_s) ?? new mk_bundle_.bundle_info(), info);
-
+	set(bundle_: mk_bundle_.bundle_info): void {
 		// 加入 bundle 表
-		this.bundle_map.set(bundle.bundle_s, bundle);
+		this.bundle_map.set(bundle_.bundle_s, bundle_);
 	}
 
 	/**
@@ -134,7 +131,7 @@ class mk_bundle extends mk_instance_base {
 	 * @param args_ bundle 名 | 加载配置
 	 * @returns
 	 */
-	async load(args_: string | Partial<mk_bundle_.load_config>): Promise<cc.AssetManager.Bundle | null> {
+	async load(args_: string | mk_bundle_.load_config): Promise<cc.AssetManager.Bundle | null> {
 		/** 加载配置 */
 		const load_config =
 			typeof args_ === "string"
@@ -290,20 +287,30 @@ class mk_bundle extends mk_instance_base {
 	}
 
 	/** 重新加载 bundle */
-	async reload(info_: Partial<mk_bundle_.bundle_info>): Promise<cc.AssetManager.Bundle | null> {
+	async reload(bundle_: string | mk_bundle_.bundle_info): Promise<cc.AssetManager.Bundle | null> {
 		if (PREVIEW) {
-			return null;
-		}
-
-		if (this.bundle_s === info_.bundle_s) {
-			this._log.error("不能在重载 bundle 的场景内进行重载");
 			return null;
 		}
 
 		await this._engine_init_task;
 
 		/** bundle 信息 */
-		const bundle_info: mk_bundle_.bundle_info = new mk_bundle_.bundle_info(info_)!;
+		let bundle_info: mk_bundle_.bundle_info;
+
+		// 参数转换
+		if (typeof bundle_ === "string") {
+			bundle_info = new mk_bundle_.bundle_info({
+				bundle_s: bundle_,
+			});
+		} else {
+			bundle_info = new mk_bundle_.bundle_info(bundle_);
+		}
+
+		if (this.bundle_s === bundle_info.bundle_s) {
+			this._log.error("不能在重载 bundle 的场景内进行重载");
+			return null;
+		}
+
 		/** bundle 脚本表 */
 		const bundle_script_tab: Record<string, any> = {};
 		/** js 系统 */
@@ -312,7 +319,7 @@ class mk_bundle extends mk_instance_base {
 		const script_cache_tab: Record<string, any> = system_js[Reflect.ownKeys(system_js).find((v) => typeof v === "symbol")];
 
 		// 更新 bundle 信息
-		this.add(bundle_info);
+		this.set(bundle_info);
 
 		// 初始化 bundle 脚本表
 		Object.keys(script_cache_tab).forEach((v_s) => {
@@ -414,7 +421,7 @@ class mk_bundle extends mk_instance_base {
 export namespace mk_bundle_ {
 	/** bundle 信息 */
 	export class bundle_info {
-		constructor(init_?: Partial<bundle_info>) {
+		constructor(init_: bundle_info) {
 			Object.assign(this, init_);
 
 			if (!this.origin_s) {
@@ -423,23 +430,23 @@ export namespace mk_bundle_ {
 		}
 
 		/** bundle名（getBundle 时使用） */
-		bundle_s = "resources";
+		bundle_s!: string;
 		/** 版本 */
 		version_s?: string;
 		/** 资源路径（loadBundle 使用，默认为 bundle_s） */
-		origin_s!: string;
+		origin_s?: string;
 		/** 管理器 */
 		manage?: bundle_manage_base;
 	}
 
 	/** load 配置 */
 	export class load_config {
-		constructor(init_?: Partial<load_config>) {
+		constructor(init_: load_config) {
 			Object.assign(this, init_);
 		}
 
 		/** bundle名（getBundle 时使用） */
-		bundle_s = "resources";
+		bundle_s!: string;
 		/** 加载回调 */
 		progress_callback_f?: (curr_n: number, total_n: number) => void;
 	}
@@ -451,7 +458,7 @@ export namespace mk_bundle_ {
 		}
 
 		/** bundle名（getBundle 时使用） */
-		bundle_s = "resources";
+		bundle_s!: string;
 		/** 预加载 */
 		preload_b?: boolean;
 		/** 加载回调 */
@@ -467,18 +474,21 @@ export namespace mk_bundle_ {
 	/** bundle 管理器基类 */
 	export abstract class bundle_manage_base {
 		constructor() {
-			if (EDITOR) {
-				this.open();
-				return;
-			}
-
 			// 添加至 bundle 数据
 			setTimeout(() => {
-				mk_bundle.instance().add({
+				if (EDITOR && this.name_s === mk_bundle.instance().bundle_s) {
+					this.open();
+				}
+
+				mk_bundle.instance().set({
 					bundle_s: this.name_s,
 					manage: this,
 				});
 			}, 0);
+
+			if (EDITOR) {
+				return;
+			}
 
 			// 对象池
 			this.node_pool_tab = new Proxy(
@@ -493,8 +503,8 @@ export namespace mk_bundle_ {
 				}
 			) as any;
 
-			// 初始化状态
-			this._init_b = true;
+			// 自动执行生命周期
+			mk_tool_func.run_parent_func(this, ["open", "close"]);
 		}
 
 		/* --------------- public --------------- */
@@ -510,24 +520,28 @@ export namespace mk_bundle_ {
 		network?: mk_network_base;
 		/** 数据获取器 */
 		data?: mk_data_sharer;
-		/* --------------- private --------------- */
-		/** 初始化状态 */
-		private _init_b = false;
 		/* ------------------------------- 生命周期 ------------------------------- */
-		/** bundle 加载回调 */
-		open(): boolean | null | Promise<boolean | null> {
-			if (!EDITOR && (!this._init_b || this.valid_b)) {
-				return false;
+		/** 加载回调 */
+		open(): void | Promise<void> {
+			if (EDITOR && this.name_s !== "main") {
+				throw "中断";
 			}
+
+			if (this.valid_b) {
+				mk_log.error("bundle 已经加载");
+				throw "中断";
+			}
+
 			this.valid_b = true;
-			return true;
 		}
 
-		/** bundle 销毁回调 */
+		/** 卸载回调 */
 		close(): boolean | null | Promise<boolean | null> {
-			if (!this._init_b || !this.valid_b) {
-				return false;
+			if (!this.valid_b) {
+				mk_log.error("bundle 已经卸载");
+				throw "中断";
 			}
+
 			this.valid_b = false;
 
 			// 清理事件

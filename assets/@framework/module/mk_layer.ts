@@ -1,13 +1,28 @@
 import { EDITOR } from "cc/env";
 import * as cc from "cc";
+import global_config from "../../@config/global_config";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, executeInEditMode } = cc._decorator;
+
+export namespace _mk_layer {
+	/** 全局配置 */
+	export interface global_config {
+		/** 层级类型枚举 */
+		layer_type: any;
+		/** 层间隔 */
+		layer_spacing_n: number;
+	}
+}
 
 /** 层级管理 */
 @ccclass
 class mk_layer extends cc.Component {
 	/* --------------- static --------------- */
-	protected static _init_data?: mk_layer_.init_data;
+	static config: _mk_layer.global_config = {
+		layer_type: global_config.view.layer_type,
+		layer_spacing_n: global_config.view.layer_spacing_n,
+	};
+
 	/* --------------- 属性 --------------- */
 	/** 初始化编辑器 */
 	@property({
@@ -47,15 +62,6 @@ class mk_layer extends cc.Component {
 	private _child_layer_n = 0;
 
 	private _ui_transform!: cc.UITransform;
-	/* ------------------------------- static ------------------------------- */
-	/**
-	 * 初始化
-	 * @param data_ 初始化数据
-	 */
-	static init(data_: mk_layer_.init_data): void {
-		mk_layer._init_data = data_;
-	}
-
 	/* ------------------------------- 生命周期 ------------------------------- */
 	onLoad() {
 		// 初始化数据
@@ -67,40 +73,23 @@ class mk_layer extends cc.Component {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 初始化编辑器 */
 	protected _init_editor(): void {
-		if (!mk_layer._init_data) {
-			return;
-		}
-
 		// 初始化数据
 		this._ui_transform = this.node.getComponent(cc.UITransform) ?? this.node.addComponent(cc.UITransform);
 
 		// 更新编辑器
 		if (EDITOR) {
 			// 层类型
-			cc.CCClass.Attr.setClassAttr(mk_layer, "layer_type_n", "enumList", cc.Enum.getList(cc.Enum(mk_layer._init_data.layer_type)));
+			cc.CCClass.Attr.setClassAttr(mk_layer, "layer_type_n", "enumList", cc.Enum.getList(cc.Enum(mk_layer.config.layer_type)));
 		}
 	}
 
 	/** 更新渲染优先级 */
 	private _update_priority(): void {
-		if (!mk_layer._init_data) {
-			return;
-		}
 		/** 当前顺序 */
-		const curr_priority_n = this.layer_type_n * mk_layer._init_data.layer_spacing_n + this._child_layer_n;
+		const curr_priority_n = this.layer_type_n * mk_layer.config.layer_spacing_n + this._child_layer_n;
 
 		// 更新 priority
 		this._ui_transform.priority = curr_priority_n;
-	}
-}
-
-export namespace mk_layer_ {
-	/** 初始化数据 */
-	export interface init_data {
-		/** 层级类型枚举 */
-		layer_type: any;
-		/** 层间隔 */
-		layer_spacing_n: number;
 	}
 }
 

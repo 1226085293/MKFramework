@@ -62,7 +62,6 @@ export namespace audio_ {
         set volume_n(value_n_: number);
     }
     export interface init_config {
-        group: Record<string | number, string | number>;
         type: Record<string | number, string | number>;
     }
     export interface play_config {
@@ -116,8 +115,7 @@ export namespace audio_ {
         state: state;
         stop_group_n: number | null;
         get total_time_s_n(): number;
-        // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
-        type: global_config.audio.group;
+        type: number;
         abstract update_volume(): void;
         use_play_b?: boolean;
         get volume_n(): number;
@@ -139,10 +137,10 @@ export const bundle: mk_bundle;
 // @public (undocumented)
 export namespace bundle_ {
     export class bundle_info {
-        constructor(init_?: Partial<bundle_info>);
+        constructor(init_: bundle_info);
         bundle_s: string;
         manage?: bundle_manage_base;
-        origin_s: string;
+        origin_s?: string;
         version_s?: string;
     }
     export abstract class bundle_manage_base {
@@ -153,11 +151,11 @@ export namespace bundle_ {
         abstract name_s: string;
         network?: mk_network_base;
         node_pool_tab: Record<string, cc_2.NodePool>;
-        open(): boolean | null | Promise<boolean | null>;
+        open(): void | Promise<void>;
         valid_b: boolean;
     }
     export class load_config {
-        constructor(init_?: Partial<load_config>);
+        constructor(init_: load_config);
         bundle_s: string;
         progress_callback_f?: (curr_n: number, total_n: number) => void;
     }
@@ -303,12 +301,13 @@ export { language }
 export namespace language_ {
     export abstract class base_data<CT extends data_struct> {
         constructor(init_: CT);
-        data: data_struct<keyof CT>;
+        data: data_struct<Exclude<keyof CT, symbol>>;
         key: {
             [k in keyof CT]: k;
         };
     }
     // Warning: (ae-forgotten-export) The symbol "_mk_language_manage" needs to be exported by the entry point mk_export.d.ts
+    // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
     export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
     export class label_config {
         constructor(init_?: Partial<label_config>);
@@ -329,27 +328,24 @@ export namespace language_ {
 export const language_manage: mk_language_manage;
 
 // @public (undocumented)
+export const log: logger;
+
+// @public (undocumented)
 export class logger extends instance_base {
     constructor(name_s_: string);
-    static debug(...args_as_: any[]): void;
+    // Warning: (ae-forgotten-export) The symbol "_mk_logger" needs to be exported by the entry point mk_export.d.ts
+    static config: _mk_logger.global_config;
     // (undocumented)
     debug(...args_as_: any[]): void;
-    static error(...args_as_: any[]): void;
     // (undocumented)
     error(...args_as_: any[]): void;
-    static init(error_handling_f_?: (...args_as: any[]) => any): void;
-    // Warning: (ae-forgotten-export) The symbol "_mk_logger" needs to be exported by the entry point mk_export.d.ts
-    static level_n: _mk_logger.level;
-    static limit_log_module(module_ss_: string[]): void;
-    static log(...args_as_: any[]): void;
+    static limit(module_ss_: string[]): void;
     // (undocumented)
     log(...args_as_: any[]): void;
-    static log_only_module(module_ss_: string[]): void;
-    static stack(): void;
+    static only(module_ss_: string[]): void;
     time_end(name_s_: string, ...args_as_: any[]): void;
     time_log(name_s_: string, ...args_as_: any[]): void;
     time_start(name_s_: string, ...args_as_: any[]): void;
-    static warn(...args_as_: any[]): void;
     // (undocumented)
     warn(...args_as_: any[]): void;
 }
@@ -455,9 +451,8 @@ class mk_language_texture extends mk_language_base {
 class mk_layer extends cc_2.Component {
     get child_layer_n(): number;
     set child_layer_n(value_n_: number);
-    static init(data_: mk_layer_.init_data): void;
     // (undocumented)
-    protected static _init_data?: mk_layer_.init_data;
+    static config: _mk_layer.global_config;
     get init_editor(): void;
     protected _init_editor(): void;
     layer_type_n: number;
@@ -466,8 +461,8 @@ class mk_layer extends cc_2.Component {
 }
 
 // @public (undocumented)
-namespace mk_layer_ {
-    interface init_data {
+namespace _mk_layer {
+    interface global_config {
         layer_spacing_n: number;
         layer_type: any;
     }
@@ -635,11 +630,12 @@ class mk_view_base extends mk_life_cycle {
     get auto_widget_b(): boolean;
     set auto_widget_b(value_b_: boolean);
     close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "_mk_view_base" needs to be exported by the entry point mk_export.d.ts
+    //
+    // (undocumented)
+    static config: _mk_view_base.global_config;
     set config(config_: _mk_view_base.create_config);
     data?: any;
-    static init(data_: mk_view_base_.init_data, config_?: Partial<mk_view_base_.init_config>): void;
-    // (undocumented)
-    protected static _init_data: mk_view_base_.init_data & mk_view_base_.init_config;
     protected _init_editor(): void;
     // (undocumented)
     protected _late_close?(): Promise<void>;
@@ -652,24 +648,12 @@ class mk_view_base extends mk_life_cycle {
     protected _view_config: mk_view_base_.view_config;
     get wind_b(): boolean;
     set wind_b(value_b_: boolean);
-    // Warning: (ae-forgotten-export) The symbol "_mk_view_base" needs to be exported by the entry point mk_export.d.ts
-    //
     // (undocumented)
     wind_config: _mk_view_base.wind_config;
 }
 
 // @public (undocumented)
 namespace mk_view_base_ {
-    interface init_config {
-        mask_node_name_s?: string;
-        mask_prefab_path_s?: string;
-        window_animation_tab?: {
-            open?: Record<string, (value: cc_2.Node) => void | Promise<void>>;
-            close?: Record<string, (value: cc_2.Node) => void | Promise<void>>;
-        };
-    }
-    type init_data = mk_layer_.init_data;
-    // (undocumented)
     class view_config {
         constructor(init_?: Partial<view_config>);
         prefab_tab?: Record<string, cc_2.Prefab | string> & {
@@ -713,7 +697,7 @@ class mk_websocket_wx<CT extends codec_base = codec_base> extends mk_network_bas
 declare namespace module_2 {
     export {
         mk_layer as layer,
-        mk_layer_ as layer_,
+        _mk_layer as layer_,
         mk_life_cycle as life_cycle,
         mk_scene_drive as scene_drive,
         mk_view_base as view_base,

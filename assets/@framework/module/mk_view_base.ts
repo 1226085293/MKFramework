@@ -1,11 +1,12 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import mk_tool from "../@private/tool/mk_tool";
-import type { mk_layer_ } from "./mk_layer";
 import { mk_life_cycle, _mk_life_cycle } from "./mk_life_cycle";
 import dynamic_module from "../mk_dynamic_module";
 import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
+import type { _mk_layer } from "./mk_layer";
+import global_config from "../../@config/global_config";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 
 const { ccclass, property } = cc._decorator;
@@ -18,6 +19,24 @@ namespace _mk_view_base {
 	export interface create_config extends _mk_life_cycle.create_config {
 		/** 视图配置 */
 		view_config: mk_view_base_.view_config;
+	}
+
+	/** 全局配置 */
+	export interface global_config extends _mk_layer.global_config {
+		/** 默认遮罩 */
+		mask_data_tab: {
+			/** 节点名 */
+			node_name_s?: string;
+			/** 预制体路径 */
+			prefab_path_s: string;
+		};
+		/** 窗口动画 */
+		readonly window_animation_tab: Readonly<{
+			/** 打开动画 */
+			open: Record<string, (value: cc.Node) => void | Promise<void>>;
+			/** 关闭动画 */
+			close: Record<string, (value: cc.Node) => void | Promise<void>>;
+		}>;
 	}
 
 	/** 窗口配置 */
@@ -76,7 +95,20 @@ namespace _mk_view_base {
 @ccclass
 export class mk_view_base extends mk_life_cycle {
 	/* --------------- static --------------- */
-	protected static _init_data: mk_view_base_.init_data & mk_view_base_.init_config;
+	static config: _mk_view_base.global_config = {
+		layer_type: global_config.view.layer_type,
+		layer_spacing_n: global_config.view.layer_spacing_n,
+		mask_data_tab: global_config.view.mask_data_tab,
+		window_animation_tab: {
+			open: {
+				无: null!,
+			},
+			close: {
+				无: null!,
+			},
+		},
+	};
+
 	/* --------------- 属性 --------------- */
 	/** 窗口 */
 	@property({
@@ -177,26 +209,12 @@ export class mk_view_base extends mk_life_cycle {
 	private _quote_asset_as: cc.Asset[] = [];
 	/** 引用对象 */
 	private _quote_object_as: _mk_view_base.release_object_type[] = [];
-	/* ------------------------------- static ------------------------------- */
-	/**
-	 * 初始化
-	 * @param data_ 初始化数据
-	 */
-	static init(data_: mk_view_base_.init_data, config_?: Partial<mk_view_base_.init_config>): void {
-		super.init(data_);
-
-		mk_view_base._init_data = {
-			...data_,
-			...config_,
-		};
-	}
-
 	/* ------------------------------- 生命周期 ------------------------------- */
 	open(): void | Promise<void>;
 	async open(): Promise<void> {
 		// 打开动画
 		if (this.wind_b && this.wind_config?.open_animation_s) {
-			await mk_view_base._init_data.window_animation_tab?.open?.[this.wind_config.open_animation_s]?.(this.node);
+			await mk_view_base.config.window_animation_tab?.open?.[this.wind_config.open_animation_s]?.(this.node);
 		}
 	}
 
@@ -216,7 +234,7 @@ export class mk_view_base extends mk_life_cycle {
 	protected async _late_close?(): Promise<void> {
 		// 关闭动画
 		if (this.wind_b && this.wind_config?.close_animation_s) {
-			await mk_view_base._init_data.window_animation_tab?.close?.[this.wind_config.close_animation_s]?.(this.node);
+			await mk_view_base.config.window_animation_tab?.close?.[this.wind_config.close_animation_s]?.(this.node);
 		}
 
 		// 重置数据
@@ -306,27 +324,27 @@ export class mk_view_base extends mk_life_cycle {
 	/** 初始化编辑器 */
 	protected _init_editor(): void {
 		super._init_editor();
-		if (!mk_view_base._init_data) {
+		if (!mk_view_base.config) {
 			return;
 		}
 
 		// 初始化数据
 		{
 			// 窗口动画枚举
-			if (mk_view_base._init_data.window_animation_tab) {
+			if (mk_view_base.config.window_animation_tab) {
 				// 打开
-				if (mk_view_base._init_data.window_animation_tab.open) {
+				if (mk_view_base.config.window_animation_tab.open) {
 					_mk_view_base.wind_config.animation_enum_tab.open = cc.Enum(
-						mk_tool.enum.obj_to_enum(mk_view_base._init_data.window_animation_tab.open)
+						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.open)
 					);
 					if (this.wind_config && !this.wind_config.open_animation_s) {
 						this.wind_config.open_animation_s = Object.keys(_mk_view_base.wind_config.animation_enum_tab.open)[0];
 					}
 				}
 				// 关闭
-				if (mk_view_base._init_data.window_animation_tab.close) {
+				if (mk_view_base.config.window_animation_tab.close) {
 					_mk_view_base.wind_config.animation_enum_tab.close = cc.Enum(
-						mk_tool.enum.obj_to_enum(mk_view_base._init_data.window_animation_tab.close)
+						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.close)
 					);
 					if (this.wind_config && !this.wind_config.close_animation_s) {
 						this.wind_config.close_animation_s = Object.keys(_mk_view_base.wind_config.animation_enum_tab.close)[0];
@@ -340,8 +358,8 @@ export class mk_view_base extends mk_life_cycle {
 			// 遮罩类型
 			if (this.wind_b) {
 				// 窗口动画
-				if (mk_view_base._init_data.window_animation_tab) {
-					if (mk_view_base._init_data.window_animation_tab.open) {
+				if (mk_view_base.config.window_animation_tab) {
+					if (mk_view_base.config.window_animation_tab.open) {
 						cc.CCClass.Attr.setClassAttr(
 							_mk_view_base.wind_config,
 							"open_animation_n",
@@ -349,7 +367,7 @@ export class mk_view_base extends mk_life_cycle {
 							cc.Enum.getList(_mk_view_base.wind_config.animation_enum_tab.open)
 						);
 					}
-					if (mk_view_base._init_data.window_animation_tab.close) {
+					if (mk_view_base.config.window_animation_tab.close) {
 						cc.CCClass.Attr.setClassAttr(
 							_mk_view_base.wind_config,
 							"close_animation_n",
@@ -378,10 +396,10 @@ export class mk_view_base extends mk_life_cycle {
 	private async _set_auto_mask_b(value_b_: boolean): Promise<void> {
 		// 添加遮罩
 		if (value_b_) {
-			if (!mk_view_base._init_data.mask_prefab_path_s) {
+			if (!mk_view_base.config.mask_data_tab.prefab_path_s) {
 				return;
 			}
-			const prefab = await mk_asset.get(mk_view_base._init_data.mask_prefab_path_s, cc.Prefab);
+			const prefab = await mk_asset.get(mk_view_base.config.mask_data_tab.prefab_path_s, cc.Prefab);
 
 			if (!prefab) {
 				return;
@@ -389,8 +407,8 @@ export class mk_view_base extends mk_life_cycle {
 			const node = cc.instantiate(prefab);
 
 			// 设置节点名
-			if (mk_view_base._init_data.mask_node_name_s) {
-				node.name = mk_view_base._init_data.mask_node_name_s;
+			if (mk_view_base.config.mask_data_tab.node_name_s) {
+				node.name = mk_view_base.config.mask_data_tab.node_name_s;
 			}
 			// 添加到父节点
 			this.node.addChild(node);
@@ -424,24 +442,7 @@ export class mk_view_base extends mk_life_cycle {
 }
 
 export namespace mk_view_base_ {
-	/** 初始化数据 */
-	export type init_data = mk_layer_.init_data;
-
-	/** 初始化配置 */
-	export interface init_config {
-		/** 遮罩节点名 */
-		mask_node_name_s?: string;
-		/** 遮罩预制体路径 */
-		mask_prefab_path_s?: string;
-		/** 窗口动画 */
-		window_animation_tab?: {
-			/** 打开动画 */
-			open?: Record<string, (value: cc.Node) => void | Promise<void>>;
-			/** 关闭动画 */
-			close?: Record<string, (value: cc.Node) => void | Promise<void>>;
-		};
-	}
-
+	/** 视图模块配置 */
 	export class view_config {
 		constructor(init_?: Partial<view_config>) {
 			Object.assign(this, init_);

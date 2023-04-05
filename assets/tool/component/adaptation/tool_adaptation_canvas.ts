@@ -54,7 +54,7 @@ export default class tool_adaptation_canvas extends cc.Component {
 }
 
 // 自动添加至场景节点
-if (!EDITOR && global_config.view.adaptation_switch_b) {
+if (!EDITOR && global_config.view.auto_adaptation_switch_b) {
 	cc.director.on(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
 		const canvas_node = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
 

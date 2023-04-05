@@ -1,8 +1,12 @@
+//@ts-nocheck
+import global_config from "../assets/@config/global_config";
 import * as cc_2 from 'cc';
 
 export declare const asset: mk_asset;
 
 export declare namespace asset_ {
+    /** 加载文件夹配置 */
+    export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
     /** 加载配置 */
     export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
         /** 资源类型 */
@@ -20,8 +24,6 @@ export declare namespace asset_ {
         /** 远程配置（存在配置则为远程资源） */
         remote_option?: _mk_asset.load_remote_option_type;
     }
-    /** 加载文件夹配置 */
-    export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
 }
 
 export declare const audio: mk_audio_base;
@@ -40,8 +42,6 @@ export declare namespace audio_ {
     export interface init_config {
         /** 类型枚举 */
         type: Record<string | number, string | number>;
-        /** 组枚举 */
-        group: Record<string | number, string | number>;
     }
     /** 安全音频单元 */
     export interface unit {
@@ -134,7 +134,7 @@ export declare namespace audio_ {
         /** 音频资源 */
         clip: cc_2.AudioClip | null;
         /** 音频类型 */
-        type: global_config.audio.group;
+        type: number;
         /** 事件对象 */
         _event?: event_target<event_protocol>;
         /** 分组 */
@@ -246,19 +246,19 @@ export declare const bundle: mk_bundle;
 export declare namespace bundle_ {
     /** bundle 信息 */
     export class bundle_info {
-        constructor(init_?: Partial<bundle_info>);
+        constructor(init_: bundle_info);
         /** bundle名（getBundle 时使用） */
         bundle_s: string;
         /** 版本 */
         version_s?: string;
         /** 资源路径（loadBundle 使用，默认为 bundle_s） */
-        origin_s: string;
+        origin_s?: string;
         /** 管理器 */
         manage?: bundle_manage_base;
     }
     /** load 配置 */
     export class load_config {
-        constructor(init_?: Partial<load_config>);
+        constructor(init_: load_config);
         /** bundle名（getBundle 时使用） */
         bundle_s: string;
         /** 加载回调 */
@@ -295,11 +295,9 @@ export declare namespace bundle_ {
         network?: mk_network_base;
         /** 数据获取器 */
         data?: data_sharer;
-        /** 初始化状态 */
-        private _init_b;
-        /** bundle 加载回调 */
-        open(): boolean | null | Promise<boolean | null>;
-        /** bundle 销毁回调 */
+        /** 加载回调 */
+        open(): void | Promise<void>;
+        /** 卸载回调 */
         close(): boolean | null | Promise<boolean | null>;
     }
 }
@@ -522,7 +520,7 @@ export declare namespace language_ {
             [k in keyof CT]: k;
         };
         /** 多语言数据 */
-        data: data_struct<keyof CT>;
+        data: data_struct<Exclude<keyof CT, symbol>>;
     }
     /** 多语言纹理数据 */
     export class texture_data<CT extends data_struct> extends base_data<CT> {
@@ -536,10 +534,14 @@ export declare namespace language_ {
 
 export declare const language_manage: mk_language_manage;
 
+export declare const log: logger;
+
 export declare class logger extends instance_base {
     constructor(name_s_: string);
-    /** 日志等级 */
-    static level_n: _mk_logger.level;
+    /** 全局配置 */
+    static config: _mk_logger.global_config;
+    /** 初始化状态 */
+    private static _init_b;
     /** 所有 log 对象 */
     private static _log_map;
     /** 日志缓存 */
@@ -554,25 +556,10 @@ export declare class logger extends instance_base {
     private _log_func_tab;
     /** 计时信息 */
     private _time_map;
-    /**
-     * 初始化
-     * @param error_handling_f_ 错误处理函数
-     */
-    static init(error_handling_f_?: (...args_as: any[]) => any): void;
-    /** 只日志模块 */
-    static log_only_module(module_ss_: string[]): void;
-    /** 限制日志模块 */
-    static limit_log_module(module_ss_: string[]): void;
-    /** 调试打印 */
-    static debug(...args_as_: any[]): void;
-    /** 日志打印 */
-    static log(...args_as_: any[]): void;
-    /** 警告打印 */
-    static warn(...args_as_: any[]): void;
-    /** 错误打印 */
-    static error(...args_as_: any[]): void;
-    /** 堆栈打印 */
-    static stack(): void;
+    /** 只限模块 */
+    static only(module_ss_: string[]): void;
+    /** 限制模块 */
+    static limit(module_ss_: string[]): void;
     /**
      * 添加日志缓存
      * @param level_ 等级
@@ -605,12 +592,11 @@ export declare namespace logger_ {
  * 资源管理器
  * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
  * - 统一加载接口为 get、get_dir
- * @public
  */
 declare class mk_asset extends instance_base {
     constructor();
-    /** 初始化状态 */
-    private static _init_b;
+    /** 全局配置 */
+    static config: _mk_asset.global_config;
     /** 日志 */
     private _log;
     /** 管理表 */
@@ -649,6 +635,11 @@ declare namespace _mk_asset {
     type load_remote_option_type = cc_2.__private._cocos_core_asset_manager_shared__IRemoteOptions;
     /** loadAny 请求类型 */
     type load_any_request_type = cc_2.__private._cocos_core_asset_manager_shared__IRequest;
+    /** 全局配置 */
+    interface global_config {
+        /** 缓存生命时长 */
+        cache_lifetime_ms_n: number;
+    }
     /** 释放信息 */
     class release_info {
         constructor(init_?: Partial<release_info>);
@@ -664,10 +655,10 @@ declare abstract class mk_audio_base extends instance_base {
     constructor();
     /** 日志 */
     protected abstract _log: logger;
-    /** 初始化数据 */
-    protected _init_config?: audio_.init_config;
     /** 音频组 */
     protected _group_map: Map<number, audio_.group>;
+    /** 初始化数据 */
+    protected _init_config: audio_.init_config;
     /** 暂停 */
     abstract pause(audio_: audio_.unit): void;
     /** 停止 */
@@ -732,16 +723,16 @@ declare class mk_bundle extends instance_base {
     /** 当前场景名 */
     private _scene_s;
     /**
-     * 添加bundle数据
-     * @param info_ bundle 信息
+     * 设置 bundle 数据
+     * @param bundle_ bundle 信息
      */
-    add(info_: Partial<bundle_.bundle_info>): void;
+    set(bundle_: bundle_.bundle_info): void;
     /**
      * 加载 bundle
      * @param args_ bundle 名 | 加载配置
      * @returns
      */
-    load(args_: string | Partial<bundle_.load_config>): Promise<cc_2.AssetManager.Bundle | null>;
+    load(args_: string | bundle_.load_config): Promise<cc_2.AssetManager.Bundle | null>;
     /**
      * 切换场景
      * @param scene_s_ 场景名
@@ -750,7 +741,7 @@ declare class mk_bundle extends instance_base {
      */
     load_scene(scene_s_: string, config_?: Partial<bundle_.switch_scene_config>): Promise<boolean>;
     /** 重新加载 bundle */
-    reload(info_: Partial<bundle_.bundle_info>): Promise<cc_2.AssetManager.Bundle | null>;
+    reload(bundle_: string | bundle_.bundle_info): Promise<cc_2.AssetManager.Bundle | null>;
     private _set_bundle_s;
     private _set_scene_s;
 }
@@ -1005,7 +996,7 @@ declare class mk_language_manage extends instance_base {
 
 declare namespace _mk_language_manage {
     /** 多语言类型类型 */
-    type type_type = string | number | symbol;
+    type type_type = string | number;
     /** 事件协议 */
     interface event_protocol {
         /** 切换语言 */
@@ -1078,7 +1069,7 @@ declare class mk_language_texture extends mk_language_base {
 
 /** 层级管理 */
 declare class mk_layer extends cc_2.Component {
-    protected static _init_data?: mk_layer_.init_data;
+    static config: _mk_layer.global_config;
     /** 初始化编辑器 */
     get init_editor(): void;
     /** 层类型 */
@@ -1089,11 +1080,6 @@ declare class mk_layer extends cc_2.Component {
     /** 层级 */
     private _child_layer_n;
     private _ui_transform;
-    /**
-     * 初始化
-     * @param data_ 初始化数据
-     */
-    static init(data_: mk_layer_.init_data): void;
     onLoad(): void;
     /** 初始化编辑器 */
     protected _init_editor(): void;
@@ -1101,9 +1087,9 @@ declare class mk_layer extends cc_2.Component {
     private _update_priority;
 }
 
-declare namespace mk_layer_ {
-    /** 初始化数据 */
-    interface init_data {
+declare namespace _mk_layer {
+    /** 全局配置 */
+    interface global_config {
         /** 层级类型枚举 */
         layer_type: any;
         /** 层间隔 */
@@ -1242,6 +1228,17 @@ declare namespace _mk_logger {
         start_time_ms_n: number;
         /** 上次毫秒 */
         last_time_ms_n: number;
+    }
+    /** 全局配置 */
+    interface global_config {
+        /** 日志等级 */
+        level_n: _mk_logger.level;
+        /** 日志缓存行数 */
+        cache_row_n: number;
+        /** 错误处理函数 */
+        error_handling_f?: (...args_as: any[]) => any;
+        /** 错误上次地址 */
+        error_upload_addr_s?: string;
     }
 }
 
@@ -1924,7 +1921,7 @@ declare namespace _mk_ui_manage {
 
 /** 视图基类 */
 declare class mk_view_base extends mk_life_cycle {
-    protected static _init_data: mk_view_base_.init_data & mk_view_base_.init_config;
+    static config: _mk_view_base.global_config;
     /** 窗口 */
     get wind_b(): boolean;
     set wind_b(value_b_: boolean);
@@ -1954,11 +1951,6 @@ declare class mk_view_base extends mk_life_cycle {
     private _quote_asset_as;
     /** 引用对象 */
     private _quote_object_as;
-    /**
-     * 初始化
-     * @param data_ 初始化数据
-     */
-    static init(data_: mk_view_base_.init_data, config_?: Partial<mk_view_base_.init_config>): void;
     open(): void | Promise<void>;
     /**
      * 关闭
@@ -1989,6 +1981,23 @@ declare namespace _mk_view_base {
         /** 视图配置 */
         view_config: mk_view_base_.view_config;
     }
+    /** 全局配置 */
+    interface global_config extends _mk_layer.global_config {
+        /** 默认遮罩 */
+        mask_data_tab: {
+            /** 节点名 */
+            node_name_s?: string;
+            /** 预制体路径 */
+            prefab_path_s: string;
+        };
+        /** 窗口动画 */
+        readonly window_animation_tab: Readonly<{
+            /** 打开动画 */
+            open: Record<string, (value: cc_2.Node) => void | Promise<void>>;
+            /** 关闭动画 */
+            close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
+        }>;
+    }
     /** 窗口配置 */
     class wind_config {
         /** 窗口动画枚举表 */
@@ -2010,22 +2019,7 @@ declare namespace _mk_view_base {
 }
 
 declare namespace mk_view_base_ {
-    /** 初始化数据 */
-    type init_data = mk_layer_.init_data;
-    /** 初始化配置 */
-    interface init_config {
-        /** 遮罩节点名 */
-        mask_node_name_s?: string;
-        /** 遮罩预制体路径 */
-        mask_prefab_path_s?: string;
-        /** 窗口动画 */
-        window_animation_tab?: {
-            /** 打开动画 */
-            open?: Record<string, (value: cc_2.Node) => void | Promise<void>>;
-            /** 关闭动画 */
-            close?: Record<string, (value: cc_2.Node) => void | Promise<void>>;
-        };
-    }
+    /** 视图模块配置 */
     class view_config {
         constructor(init_?: Partial<view_config>);
         /** 所有预制体路径|资源 */
@@ -2076,7 +2070,7 @@ declare namespace mk_websocket_wx_ {
 declare namespace module_2 {
     export {
         mk_layer as layer,
-        mk_layer_ as layer_,
+        _mk_layer as layer_,
         mk_life_cycle as life_cycle,
         mk_scene_drive as scene_drive,
         mk_view_base as view_base,

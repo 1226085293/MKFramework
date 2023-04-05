@@ -1,17 +1,23 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
-import global_config from "../../@config/global_config";
 import global_event from "../../@config/global_event";
 import mk_instance_base from "../mk_instance_base";
 import mk_logger from "../mk_logger";
 import bundle from "./mk_bundle";
 import mk_game from "../mk_game";
+import global_config from "../../@config/global_config";
 
 namespace _mk_asset {
 	/** loadRemote 配置类型 */
 	export type load_remote_option_type = cc.__private._cocos_core_asset_manager_shared__IRemoteOptions;
 	/** loadAny 请求类型 */
 	export type load_any_request_type = cc.__private._cocos_core_asset_manager_shared__IRequest;
+
+	/** 全局配置 */
+	export interface global_config {
+		/** 缓存生命时长 */
+		cache_lifetime_ms_n: number;
+	}
 
 	/** 释放信息 */
 	export class release_info {
@@ -38,59 +44,60 @@ class mk_asset extends mk_instance_base {
 		if (EDITOR) {
 			return;
 		}
-		// 初始化
-		if (!mk_asset._init_b) {
-			mk_asset._init_b = true;
 
-			// 重载 decRef 函数
-			{
-				/** 当前对象 */
-				// eslint-disable-next-line @typescript-eslint/no-this-alias
-				const self = this;
-				/** decRef 原函数 */
-				const origin_f = cc.Asset.prototype.decRef;
+		// 重载 decRef 函数
+		{
+			/** 当前对象 */
+			// eslint-disable-next-line @typescript-eslint/no-this-alias
+			const self = this;
+			/** decRef 原函数 */
+			const origin_f = cc.Asset.prototype.decRef;
 
-				cc.Asset.prototype.decRef = function (this: cc.Asset, ...args_as: any[]) {
-					const result = origin_f.call(this, ...args_as);
+			cc.Asset.prototype.decRef = function (this: cc.Asset, ...args_as: any[]) {
+				const result = origin_f.call(this, ...args_as);
 
-					// 跳过外部资源
-					if (!self._asset_manage_map.has(this.nativeUrl || this._uuid)) {
-						return result;
-					}
-
-					// 重启期间直接销毁
-					if (mk_game.restarting_b) {
-						// 等待场景关闭后释放资源
-						Promise.all(global_event.request(global_event.key.wait_close_scene)).then((v) => {
-							mk_asset.instance().release(this);
-						});
-						return result;
-					}
-
-					// 加载后默认引用加 2 防止资源自动释放
-					if (this.refCount === 1) {
-						self._asset_release_map.set(
-							this.nativeUrl || this._uuid,
-							new _mk_asset.release_info({
-								asset: this,
-							})
-						);
-					}
+				// 跳过外部资源
+				if (!self._asset_manage_map.has(this.nativeUrl || this._uuid)) {
 					return result;
-				};
-			}
+				}
 
-			// 定时自动释放资源
-			this._release_timer = setInterval(this._auto_release_asset.bind(this), global_config.resources.cache_lifetime_ms_n);
+				// 重启期间直接销毁
+				if (mk_game.restarting_b) {
+					// 等待场景关闭后释放资源
+					Promise.all(global_event.request(global_event.key.wait_close_scene)).then((v) => {
+						mk_asset.instance().release(this);
+					});
+					return result;
+				}
 
-			// 事件监听
-			global_event.once(global_event.key.restart, this._event_restart, mk_asset.instance());
+				// 加载后默认引用加 2 防止资源自动释放
+				if (this.refCount === 1) {
+					self._asset_release_map.set(
+						this.nativeUrl || this._uuid,
+						new _mk_asset.release_info({
+							asset: this,
+						})
+					);
+				}
+				return result;
+			};
 		}
+
+		// 定时自动释放资源
+		this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset.config.cache_lifetime_ms_n);
+
+		// 事件监听
+		setTimeout(() => {
+			global_event.once(global_event.key.restart, this._event_restart, mk_asset.instance());
+		}, 0);
 	}
 
 	/* --------------- static --------------- */
-	/** 初始化状态 */
-	private static _init_b = false;
+	/** 全局配置 */
+	static config: _mk_asset.global_config = {
+		cache_lifetime_ms_n: global_config.asset.cache_lifetime_ms_n,
+	};
+
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log = new mk_logger("cache");
@@ -435,7 +442,7 @@ class mk_asset extends mk_instance_base {
 
 		for (const [k_s, v] of this._asset_release_map.entries()) {
 			// 当前及之后的资源没超过生命时长
-			if (!force_b_ && current_time_ms_n - v.join_time_ms_n < global_config.resources.cache_lifetime_ms_n) {
+			if (!force_b_ && current_time_ms_n - v.join_time_ms_n < mk_asset.config.cache_lifetime_ms_n) {
 				break;
 			}
 
@@ -467,6 +474,9 @@ class mk_asset extends mk_instance_base {
 }
 
 export namespace mk_asset_ {
+	/** 加载文件夹配置 */
+	export type get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
+
 	/** 加载配置 */
 	export interface get_config<T extends cc.Asset = cc.Asset, T2 = T> {
 		/** 资源类型 */
@@ -486,9 +496,6 @@ export namespace mk_asset_ {
 		/** 远程配置（存在配置则为远程资源） */
 		remote_option?: _mk_asset.load_remote_option_type;
 	}
-
-	/** 加载文件夹配置 */
-	export type get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
 }
 
 export default mk_asset.instance();

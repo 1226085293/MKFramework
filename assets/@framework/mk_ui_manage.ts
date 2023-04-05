@@ -20,17 +20,10 @@ export class mk_ui_manage extends mk_instance_base {
 	constructor() {
 		super();
 
-		if (!mk_ui_manage._init_b) {
-			mk_ui_manage._init_b = true;
-
-			// 事件监听
-			global_event.on(global_event.key.restart, this._event_restart, this);
-		}
+		// 事件监听
+		global_event.on(global_event.key.restart, this._event_restart, this);
 	}
 
-	/* --------------- static --------------- */
-	/** 初始化状态 */
-	private static _init_b = false;
 	/* --------------- public --------------- */
 	/**
 	 * 获取模块注册数据

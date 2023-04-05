@@ -1,8 +1,8 @@
 import { DEBUG, EDITOR } from "cc/env";
-import global_config from "../@config/global_config";
 import * as cc from "cc";
 import mk_instance_base from "./mk_instance_base";
 import mk_http from "./network/mk_http";
+import global_config from "../@config/global_config";
 
 namespace _mk_logger {
 	export enum level {
@@ -23,6 +23,7 @@ namespace _mk_logger {
 		/** warn 及以上 */
 		warn_up = warn | error,
 	}
+
 	/** 计时日志 */
 	export interface time_log {
 		/** 开始时间 */
@@ -30,11 +31,24 @@ namespace _mk_logger {
 		/** 上次毫秒 */
 		last_time_ms_n: number;
 	}
+
+	/** 全局配置 */
+	export interface global_config {
+		/** 日志等级 */
+		level_n: _mk_logger.level;
+		/** 日志缓存行数 */
+		cache_row_n: number;
+		/** 错误处理函数 */
+		error_handling_f?: (...args_as: any[]) => any;
+		/** 错误上次地址 */
+		error_upload_addr_s?: string;
+	}
 }
 
 class mk_logger extends mk_instance_base {
 	constructor(name_s_: string) {
 		super();
+
 		// 初始化数据
 		this._name_s = name_s_;
 		mk_logger._log_map.set(name_s_, this);
@@ -44,80 +58,35 @@ class mk_logger extends mk_instance_base {
 		}
 
 		// 输出定位
-		if (global_config.log.debug_use_browser_b) {
-			this.debug = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.debug]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.debug, true)
-			);
-			this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.log, true)
-			);
-			this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.warn, true)
-			);
-			this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.error, true)
-			);
-		}
-	}
-
-	/* --------------- static --------------- */
-	/** 日志等级 */
-	static level_n = DEBUG ? _mk_logger.level.debug_up : _mk_logger.level.log_up;
-
-	/** 所有 log 对象 */
-	private static _log_map = new Map<string, mk_logger>();
-	/** 日志缓存 */
-	private static _cache_ss: string[] = [];
-	/** 唯一日志模块 */
-	private static _log_only_module_ss: string[] = [];
-	/** 限制日志模块 */
-	private static _limit_log_module_ss: string[] = global_config.log.limit_log_module_ss;
-	/* --------------- private --------------- */
-	/** 日志模块名 */
-	private _name_s!: string;
-	/** 日志函数表 */
-	private _log_func_tab = {
-		debug: {
-			target: console,
-			debug: console.debug,
-			log: console.log,
-			warn: console.warn,
-			error: console.error,
-		},
-		release: {
-			target: cc,
-			debug: cc.debug,
-			log: cc.log,
-			warn: cc.warn,
-			error: cc.error,
-		},
-	};
-
-	/** 计时信息 */
-	private _time_map = new Map<string, _mk_logger.time_log>();
-	/* --------------- public --------------- */
-	/* ------------------------------- static ------------------------------- */
-	/**
-	 * 初始化
-	 * @param error_handling_f_ 错误处理函数
-	 */
-	static init(error_handling_f_?: (...args_as: any[]) => any): void {
-		const logger_a = mk_logger.instance("default");
+		this.debug = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.debug]].bind(
+			this._log_func_tab["debug"]["target"],
+			this._get_log_head(mk_logger_.level.debug, true)
+		);
+		this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
+			this._log_func_tab["debug"]["target"],
+			this._get_log_head(mk_logger_.level.log, true)
+		);
+		this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
+			this._log_func_tab["debug"]["target"],
+			this._get_log_head(mk_logger_.level.warn, true)
+		);
+		this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
+			this._log_func_tab["debug"]["target"],
+			this._get_log_head(mk_logger_.level.error, true)
+		);
 
 		// 错误监听
-		{
+		if (!mk_logger._init_b) {
+			mk_logger._init_b = true;
+
 			const upload_f = (...args_as: any[]): void => {
 				// 添加日志缓存
-				mk_logger._add_log_cache(_mk_logger.level.error, logger_a._get_log_head(_mk_logger.level.error, true), args_as);
+				mk_logger._add_log_cache(_mk_logger.level.error, mk_log._get_log_head(_mk_logger.level.error, true), args_as);
 
 				// 上传错误日志
-				if (global_config.log.error_upload_addr_s) {
-					mk_http.post(global_config.log.error_upload_addr_s, {
-						body: JSON.stringify(this._cache_ss),
+				if (mk_logger.config.error_upload_addr_s) {
+					mk_http.post(mk_logger.config.error_upload_addr_s, {
+						body: JSON.stringify(mk_logger._cache_ss),
 					});
 
 					// 清空日志缓存
@@ -125,7 +94,7 @@ class mk_logger extends mk_instance_base {
 				}
 
 				// 错误处理
-				error_handling_f_?.(...args_as);
+				mk_logger.config.error_handling_f?.(...args_as);
 			};
 
 			if (cc.sys.isBrowser) {
@@ -156,41 +125,58 @@ class mk_logger extends mk_instance_base {
 		}
 	}
 
-	/** 只日志模块 */
-	static log_only_module(module_ss_: string[]): void {
+	/* --------------- static --------------- */
+	/** 全局配置 */
+	static config: _mk_logger.global_config = {
+		level_n: _mk_logger.level.debug_up,
+		cache_row_n: global_config.log.cache_row_n,
+		error_upload_addr_s: global_config.log.error_upload_addr_s,
+	};
+
+	/** 初始化状态 */
+	private static _init_b = false;
+	/** 所有 log 对象 */
+	private static _log_map = new Map<string, mk_logger>();
+	/** 日志缓存 */
+	private static _cache_ss: string[] = [];
+	/** 唯一日志模块 */
+	private static _log_only_module_ss: string[] = [];
+	/** 限制日志模块 */
+	private static _limit_log_module_ss: string[] = [];
+	/* --------------- private --------------- */
+	/** 日志模块名 */
+	private _name_s!: string;
+	/** 日志函数表 */
+	private _log_func_tab = {
+		debug: {
+			target: console,
+			debug: console.debug,
+			log: console.log,
+			warn: console.warn,
+			error: console.error,
+		},
+		release: {
+			target: cc,
+			debug: cc.debug,
+			log: cc.log,
+			warn: cc.warn,
+			error: cc.error,
+		},
+	};
+
+	/** 计时信息 */
+	private _time_map = new Map<string, _mk_logger.time_log>();
+	/* ------------------------------- static ------------------------------- */
+	/** 只限模块 */
+	static only(module_ss_: string[]): void {
 		mk_logger._log_only_module_ss = module_ss_;
 		mk_logger._limit_log_module_ss = [];
 	}
 
-	/** 限制日志模块 */
-	static limit_log_module(module_ss_: string[]): void {
+	/** 限制模块 */
+	static limit(module_ss_: string[]): void {
 		mk_logger._log_only_module_ss = [];
 		mk_logger._limit_log_module_ss = module_ss_;
-	}
-
-	/** 调试打印 */
-	static debug(...args_as_: any[]): void {
-		mk_logger.instance("").debug(...args_as_);
-	}
-
-	/** 日志打印 */
-	static log(...args_as_: any[]): void {
-		mk_logger.instance("").log(...args_as_);
-	}
-
-	/** 警告打印 */
-	static warn(...args_as_: any[]): void {
-		mk_logger.instance("").warn(...args_as_);
-	}
-
-	/** 错误打印 */
-	static error(...args_as_: any[]): void {
-		mk_logger.instance("").error(...args_as_);
-	}
-
-	/** 堆栈打印 */
-	static stack(): void {
-		console.log(new Error());
 	}
 
 	/**
@@ -201,7 +187,7 @@ class mk_logger extends mk_instance_base {
 	 * @returns
 	 */
 	private static _add_log_cache(level_: mk_logger_.level, head_s_: string, ...args_as_: any[]): void {
-		if (!args_as_?.length || global_config.log.cache_row_n <= 0) {
+		if (!args_as_?.length || mk_logger.config.cache_row_n <= 0) {
 			return;
 		}
 
@@ -236,7 +222,7 @@ class mk_logger extends mk_instance_base {
 		mk_logger._cache_ss.push(content_s);
 
 		// 超出缓存删除顶部日志
-		if (mk_logger._cache_ss.length > global_config.log.cache_row_n) {
+		if (mk_logger._cache_ss.length > mk_logger.config.cache_row_n) {
 			mk_logger._cache_ss.splice(0, 1);
 		}
 	}
@@ -319,7 +305,7 @@ class mk_logger extends mk_instance_base {
 		let log_f: (...args_as: any) => void;
 
 		// 打印等级限制
-		if (!(mk_logger.level_n & level_)) {
+		if (!(mk_logger.config.level_n & level_)) {
 			return;
 		}
 		// 打印模块限制
@@ -348,11 +334,6 @@ class mk_logger extends mk_instance_base {
 		mk_logger._add_log_cache(level_, head_s, ...args_as_);
 		// 打印日志
 		log_f(head_s, ...args_as_);
-
-		// // 错误日志打印堆栈
-		// if (level_ === mk_logger_.level.error) {
-		// 	console.error(new Error());
-		// }
 	}
 }
 
@@ -360,5 +341,7 @@ export namespace mk_logger_ {
 	export const level = _mk_logger.level;
 	export type level = _mk_logger.level;
 }
+
+export const mk_log = mk_logger.instance("default");
 
 export default mk_logger;

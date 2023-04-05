@@ -1,5 +1,5 @@
 import mk_instance_base from "./mk_instance_base";
-import mk_logger from "./mk_logger";
+import { mk_log } from "./mk_logger";
 
 /** 动态模块（用以解除循环引用） */
 class mk_dynamic_module extends mk_instance_base {
@@ -22,7 +22,7 @@ class mk_dynamic_module extends mk_instance_base {
 				if (module_export_tab) {
 					return module_export_tab["default"][key];
 				}
-				mk_logger.error("模块未加载完成");
+				mk_log.error("模块未加载完成");
 				return null;
 			},
 			set: (target, key, value) => {
@@ -30,7 +30,7 @@ class mk_dynamic_module extends mk_instance_base {
 					module_export_tab["default"][key] = value;
 					return true;
 				}
-				mk_logger.error("模块未加载完成");
+				mk_log.error("模块未加载完成");
 				return false;
 			},
 		});
@@ -60,7 +60,7 @@ class mk_dynamic_module extends mk_instance_base {
 							if (module_export_tab) {
 								return module_export_tab[key][key2];
 							}
-							mk_logger.error("模块未加载完成");
+							mk_log.error("模块未加载完成");
 							return null;
 						},
 						set: (target2, key2, value) => {
@@ -68,7 +68,7 @@ class mk_dynamic_module extends mk_instance_base {
 								module_export_tab[key][key2] = value;
 								return true;
 							}
-							mk_logger.error("模块未加载完成");
+							mk_log.error("模块未加载完成");
 							return false;
 						},
 					});

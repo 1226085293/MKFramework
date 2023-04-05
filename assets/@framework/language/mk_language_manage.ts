@@ -8,7 +8,7 @@ import cache from "../resources/mk_asset";
 
 namespace _mk_language_manage {
 	/** 多语言类型类型 */
-	export type type_type = string | number | symbol;
+	export type type_type = string | number;
 
 	/** 事件协议 */
 	export interface event_protocol {
@@ -30,6 +30,7 @@ class mk_language_manage extends mk_instance_base {
 	label_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
 	/** 纹理数据 */
 	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
+
 	/** 当前语言类型 */
 	get type(): global_config.language.type {
 		return this._language;
@@ -60,7 +61,7 @@ class mk_language_manage extends mk_instance_base {
 		// 不存在配置
 		if (!result_s) {
 			if (mark_s_) {
-				this._log.debug(`${global_config.language.type[config.language]} 下的文本 ${mark_s_} 未配置！`);
+				this._log.warn(`${type_}.${mark_s_}.${global_config.language.type[config.language]}下的文本未配置！`);
 			}
 			return mark_s_;
 		}
@@ -84,7 +85,7 @@ class mk_language_manage extends mk_instance_base {
 		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
 
 		if (!path_s) {
-			this._log.error(`${global_config.language.type[language_]} 下的纹理 ${mark_s_} 未配置！`);
+			this._log.error(`${type_}.${mark_s_}.${global_config.language.type[language_]}下的纹理未配置！`);
 			return null;
 		}
 
@@ -175,7 +176,7 @@ export namespace mk_language_manage_ {
 		});
 
 		/** 多语言数据 */
-		data: data_struct<keyof CT>;
+		data: data_struct<Exclude<keyof CT, symbol>>;
 	}
 
 	/** 多语言纹理数据 */

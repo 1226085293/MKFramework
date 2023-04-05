@@ -4,9 +4,9 @@ import { EDITOR } from "cc/env";
 import mk_event_target from "../mk_event_target";
 import mk_logger from "../mk_logger";
 import * as cc from "cc";
-import global_config from "../../@config/global_config";
 import global_event from "../../@config/global_event";
 import mk_tool from "../@private/tool/mk_tool";
+import global_config from "../../@config/global_config";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,10 +20,12 @@ abstract class mk_audio_base extends mk_instance_base {
 	/* --------------- protected --------------- */
 	/** 日志 */
 	protected abstract _log: mk_logger;
-	/** 初始化数据 */
-	protected _init_config?: mk_audio_base_.init_config;
 	/** 音频组 */
 	protected _group_map = new Map<number, mk_audio_base_.group>();
+	/** 初始化数据 */
+	protected _init_config: mk_audio_base_.init_config = {
+		type: global_config.audio.type,
+	};
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 暂停 */
 	abstract pause(audio_: mk_audio_base_.unit): void;
@@ -220,8 +222,6 @@ export namespace mk_audio_base_ {
 	export interface init_config {
 		/** 类型枚举 */
 		type: Record<string | number, string | number>;
-		/** 组枚举 */
-		group: Record<string | number, string | number>;
 	}
 
 	/** 安全音频单元 */
@@ -328,7 +328,7 @@ export namespace mk_audio_base_ {
 
 		/** 音频类型 */
 		@property({ displayName: "音频类型", type: cc.Enum({}) })
-		type = global_config.audio.group.effect;
+		type = 0;
 
 		/* --------------- public --------------- */
 		/** 事件对象 */
