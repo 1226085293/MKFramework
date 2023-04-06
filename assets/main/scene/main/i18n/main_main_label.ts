@@ -1,4 +1,3 @@
-import mk from "mk";
 import * as cc from "cc";
 import { main_main } from "../main_main";
 

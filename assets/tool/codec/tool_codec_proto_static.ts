@@ -1,5 +1,4 @@
 import { DEBUG } from "cc/env";
-import mk from "mk";
 import protobufjs from "protobufjs/minimal.js";
 import global_config from "../../@config/global_config";
 

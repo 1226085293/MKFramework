@@ -1,7 +1,6 @@
 import nodes from "./main_main_item_nodes";
 import { _decorator } from "cc";
 import * as cc from "cc";
-import mk from "mk";
 import { main_main } from "../../../scene/main/main_main";
 const { ccclass, property } = _decorator;
 

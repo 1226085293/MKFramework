@@ -2,7 +2,6 @@ import nodes from "./resources_audio_nodes";
 import * as cc from "cc";
 import { _decorator } from "cc";
 import global_config from "../../../@config/global_config";
-import mk from "mk";
 import resources_config from "../../config/resources_config";
 const { ccclass, property } = _decorator;
 

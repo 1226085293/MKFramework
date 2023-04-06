@@ -1,5 +1,4 @@
 import * as cc from "cc";
-import mk from "mk";
 
 /** 网格线段 */
 class tool_mesh_line extends mk.instance_base {

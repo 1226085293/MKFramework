@@ -1,5 +1,4 @@
 import { _decorator } from "cc";
-import mk from "mk";
 import operate from "./step/resources_guide_operate";
 import resources_guide_step1 from "./step/resources_guide_step1";
 import resources_guide_step2 from "./step/resources_guide_step2";

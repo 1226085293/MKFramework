@@ -1,4 +1,3 @@
-import mk from "mk";
 import * as cc from "cc";
 import { resources_language } from "../resources_language";
 

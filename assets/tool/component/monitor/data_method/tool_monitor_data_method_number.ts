@@ -1,7 +1,6 @@
 import monitor from "../../../../@framework/mk_monitor";
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
-import mk from "mk";
 
 const { ccclass, property } = cc._decorator;
 

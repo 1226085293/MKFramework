@@ -1,4 +1,3 @@
-import mk from "mk";
 
 class tool_object {
 	/** 克隆对象 */

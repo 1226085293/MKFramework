@@ -3,7 +3,6 @@ import { EDITOR } from "cc/env";
 import * as cc from "cc";
 import tool from "../../tool";
 import tool_monitor_data_method from "./data_method/tool_monitor_data_method";
-import mk from "mk";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { tool_monitor_trigger_event } from "./tool_monitor_trigger_event";
 const { ccclass, property } = _decorator;

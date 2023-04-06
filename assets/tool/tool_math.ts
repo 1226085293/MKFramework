@@ -1,4 +1,3 @@
-import mk from "mk";
 
 class tool_math extends mk.instance_base {
 	/**

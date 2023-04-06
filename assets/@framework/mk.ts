@@ -27,5 +27,6 @@ if (!EDITOR) {
 	});
 }
 
-// 注册到全局方便调试
+// 注册到全局
+// @ts-ignore
 export default self["mk"] = mk;

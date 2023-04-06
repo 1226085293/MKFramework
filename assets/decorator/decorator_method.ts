@@ -1,4 +1,3 @@
-import mk from "mk";
 
 /** 方法装饰器 */
 class decorator_method extends mk.instance_base {

@@ -1,6 +1,7 @@
 //@ts-nocheck
-import global_config from "../assets/@config/global_config";
-import * as cc_2 from 'cc';
+///<reference path="../assets/@config/global_config.ts"/>
+///<reference path="../temp/declarations/cc.d.ts"/>
+declare namespace mk {
 
 export declare const asset: mk_asset;
 
@@ -1839,8 +1840,6 @@ declare class mk_touch_mask extends cc_2.Component {
 
 declare class mk_ui_manage extends instance_base {
     constructor();
-    /** 初始化状态 */
-    private static _init_b;
     /**
      * 获取模块注册数据
      * @remarks
@@ -2258,3 +2257,5 @@ export declare namespace ui_manage_ {
 }
 
 export { }
+
+}

@@ -1,5 +1,4 @@
 import { _decorator } from "cc";
-import mk from "mk";
 import { resources_module_layer_control } from "./layer_control/resources_module_layer_control";
 import { resources_module_life_cycle } from "./life_cycle/resources_module_life_cycle";
 import { resources_module_show_alone } from "./show_alone/resources_module_show_alone";
