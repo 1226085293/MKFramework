@@ -11,6 +11,7 @@
     "isPlugin": true,
     "executionScope": "global",
     "loadPluginInWeb": true,
-    "loadPluginInNative": true
+    "loadPluginInNative": true,
+    "loadPluginInEditor": true
   }
 }

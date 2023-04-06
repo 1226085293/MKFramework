@@ -1,4 +1,5 @@
 import { _decorator } from "cc";
+import mk from "mk";
 import { resources_audio } from "../../../resources/module/audio/resources_audio";
 import { resources_guide } from "../../../resources/module/guide/resources_guide";
 import { resources_language } from "../../../resources/module/language/resources_language";

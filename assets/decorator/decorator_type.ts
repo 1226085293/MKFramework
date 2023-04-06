@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import mk from "mk";
 
 /** 类装饰器 */
 class decorator_type extends mk.instance_base {

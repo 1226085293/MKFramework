@@ -1,3 +1,4 @@
+import mk from "mk";
 import main_config from "./main_config";
 import main_event_protocol from "./main_event";
 import * as cc from "cc";

@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import mk from "mk";
 
 /** 网格三角形工具 */
 class tool_mesh_triangle extends mk.instance_base {

@@ -58,22 +58,24 @@ class mk_logger extends mk_instance_base {
 		}
 
 		// 输出定位
-		this.debug = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.debug]].bind(
-			this._log_func_tab["debug"]["target"],
-			this._get_log_head(mk_logger_.level.debug, true)
-		);
-		this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
-			this._log_func_tab["debug"]["target"],
-			this._get_log_head(mk_logger_.level.log, true)
-		);
-		this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
-			this._log_func_tab["debug"]["target"],
-			this._get_log_head(mk_logger_.level.warn, true)
-		);
-		this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
-			this._log_func_tab["debug"]["target"],
-			this._get_log_head(mk_logger_.level.error, true)
-		);
+		if (global_config.log.output_position_b) {
+			this.debug = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.debug]].bind(
+				this._log_func_tab["debug"]["target"],
+				this._get_log_head(mk_logger_.level.debug, true)
+			);
+			this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
+				this._log_func_tab["debug"]["target"],
+				this._get_log_head(mk_logger_.level.log, true)
+			);
+			this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
+				this._log_func_tab["debug"]["target"],
+				this._get_log_head(mk_logger_.level.warn, true)
+			);
+			this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
+				this._log_func_tab["debug"]["target"],
+				this._get_log_head(mk_logger_.level.error, true)
+			);
+		}
 
 		// 错误监听
 		if (!mk_logger._init_b) {

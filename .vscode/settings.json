@@ -1,3 +1,7 @@
 {
-	"cSpell.words": ["docfx", "unregis"]
+	"cSpell.words": [
+		"docfx",
+		"unregis"
+	],
+	"commentTranslate.targetLanguage": "en"
 }

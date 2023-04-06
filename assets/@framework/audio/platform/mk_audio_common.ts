@@ -8,6 +8,11 @@ const { ccclass } = cc._decorator;
 
 /** 通用音频 */
 class mk_audio_common extends mk_audio_base {
+	constructor() {
+		super();
+		this._constructor();
+	}
+
 	/* --------------- protected --------------- */
 	/** 日志 */
 	protected _log = new mk_logger("audio_common");
@@ -21,79 +26,6 @@ class mk_audio_common extends mk_audio_base {
 	/** AudioSource 对象池 */
 	private _audio_source_pool!: mk_obj_pool.sync<cc.AudioSource>;
 	/* ------------------------------- 功能 ------------------------------- */
-	async init(config_: mk_audio_base_.init_config): Promise<void> {
-		super.init(config_);
-		if (EDITOR) {
-			return;
-		}
-		// 节点池
-		this._audio_source_pool?.clear();
-		this._audio_source_pool = new mk_obj_pool.sync({
-			clear_f: (value) => {
-				value.forEach((v) => {
-					v.destroy();
-				});
-			},
-			create_f: () => {
-				const audio_source = new cc.AudioSource();
-
-				audio_source.node = this._audio_node;
-				return audio_source;
-			},
-			reset_f: (value) => {
-				// 自动播放
-				value.playOnAwake = false;
-				// 更新音频 uuid 索引表
-				this._audio_unit_map.delete(value.uuid);
-
-				return value;
-			},
-			init_fill_n: 10,
-			max_hold_n: 32,
-		});
-
-		// 添加常驻节点
-		{
-			let scene = cc.director.getScene();
-
-			if (!scene) {
-				await new Promise<void>((resolve_f) => {
-					cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, resolve_f);
-				});
-				scene = cc.director.getScene()!;
-			}
-			this._audio_node?.destroy();
-			this._audio_node = new cc.Node("audio");
-			scene.addChild(this._audio_node);
-			cc.director.addPersistRootNode(this._audio_node);
-		}
-
-		// 添加回调
-		{
-			this._audio_node.on(
-				cc.AudioSource.EventType.STARTED,
-				(audio_comp: cc.AudioSource) => {
-					const audio = this._audio_unit_map.get(audio_comp.uuid);
-
-					if (audio) {
-						this._node_audio_started(audio);
-					}
-				},
-				this
-			);
-			this._audio_node.on(
-				cc.AudioSource.EventType.ENDED,
-				(audio_comp: cc.AudioSource) => {
-					const audio = this._audio_unit_map.get(audio_comp.uuid);
-
-					if (audio) {
-						this._node_audio_ended(audio);
-					}
-				},
-				this
-			);
-		}
-	}
 
 	add(url_s_: string, config_?: mk_audio_base_.add_config): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
 	add(url_ss_: string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
@@ -175,9 +107,12 @@ class mk_audio_common extends mk_audio_base {
 		// 更新播放计数
 		if (last_state === mk_audio_base_.state.stop) {
 			++this._curr_play_n;
+
 			// 请求 AudioSource
 			audio_.audio_source = this._audio_source_pool.get();
 			audio_.audio_source.clip = audio_.clip;
+			audio_.init_b = true;
+
 			// 添加音频 uuid 索引表
 			this._audio_unit_map.set(audio_.audio_source.uuid, audio_);
 		}
@@ -191,6 +126,7 @@ class mk_audio_common extends mk_audio_base {
 				this.stop(audio_);
 				return;
 			}
+
 			audio_.audio_source!.play();
 		} else {
 			audio_.audio_source!.playOneShot(audio_.clip!);
@@ -211,6 +147,84 @@ class mk_audio_common extends mk_audio_base {
 
 		if (last_state === mk_audio_base_.state.stop) {
 			this._log.debug("当前播放数量", this._curr_play_n, "播放", audio_.clip!.name);
+		}
+	}
+
+	/** 构造 */
+	private async _constructor(): Promise<void> {
+		if (EDITOR) {
+			return;
+		}
+
+		// 添加常驻节点
+		{
+			let scene = cc.director.getScene();
+
+			if (!scene) {
+				await new Promise<void>((resolve_f) => {
+					cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, resolve_f);
+				});
+				scene = cc.director.getScene()!;
+			}
+
+			this._audio_node?.destroy();
+			this._audio_node = new cc.Node("audio");
+			scene.addChild(this._audio_node);
+			cc.director.addPersistRootNode(this._audio_node);
+		}
+
+		// 节点池
+		this._audio_source_pool?.clear();
+		this._audio_source_pool = new mk_obj_pool.sync({
+			clear_f: (value) => {
+				value.forEach((v) => {
+					v.destroy();
+				});
+			},
+			create_f: () => {
+				const audio_source = new cc.AudioSource();
+
+				audio_source.node = this._audio_node;
+
+				return audio_source;
+			},
+			reset_f: (value) => {
+				// 自动播放
+				value.playOnAwake = false;
+				// 更新音频 uuid 索引表
+				this._audio_unit_map.delete(value.uuid);
+
+				return value;
+			},
+			init_fill_n: 10,
+			max_hold_n: 32,
+		});
+
+		// 添加回调
+		{
+			this._audio_node.on(
+				cc.AudioSource.EventType.STARTED,
+				(audio_comp: cc.AudioSource) => {
+					const audio = this._audio_unit_map.get(audio_comp.uuid);
+
+					if (audio) {
+						this._node_audio_started(audio);
+					}
+				},
+				this
+			);
+
+			this._audio_node.on(
+				cc.AudioSource.EventType.ENDED,
+				(audio_comp: cc.AudioSource) => {
+					const audio = this._audio_unit_map.get(audio_comp.uuid);
+
+					if (audio) {
+						this._node_audio_ended(audio);
+					}
+				},
+				this
+			);
 		}
 	}
 
@@ -294,6 +308,14 @@ export namespace mk_audio_common_ {
 			this._set_curr_time_s_n(value_n_);
 		}
 
+		get audio_source(): cc.AudioSource | undefined {
+			return this._audio_source;
+		}
+
+		set audio_source(value_) {
+			this._set_audio_source(value_);
+		}
+
 		/* --------------- private --------------- */
 		/** 音量 */
 		private _volume_n = 1;
@@ -301,6 +323,8 @@ export namespace mk_audio_common_ {
 		private _loop_b = false;
 		/** 当前时间 */
 		private _curr_time_s_n = 0;
+		/** 音频组件 */
+		private _audio_source?: cc.AudioSource;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 更新音量 */
 		update_volume(): void {
@@ -332,9 +356,7 @@ export namespace mk_audio_common_ {
 		/* ------------------------------- get/set ------------------------------- */
 		private _set_init_b(value_b_: boolean): void {
 			this._init_b = value_b_;
-			this.volume_n = this._volume_n;
-			this.loop_b = this._loop_b;
-			this.curr_time_s_n = this._curr_time_s_n;
+
 			// 初始化完成
 			if (value_b_) {
 				this._event?.emit(this._event.key.init);
@@ -389,10 +411,23 @@ export namespace mk_audio_common_ {
 
 		private _set_curr_time_s_n(value_n_: number): void {
 			this._curr_time_s_n = value_n_;
+
 			if (!this.audio_source) {
 				return;
 			}
+
 			this.audio_source.currentTime = this._curr_time_s_n;
+		}
+
+		private _set_audio_source(value_: cc.AudioSource | undefined): void {
+			this._audio_source = value_;
+
+			// 更新组件数据
+			if (value_) {
+				this.volume_n = this._volume_n;
+				this.loop_b = this._loop_b;
+				this.curr_time_s_n = this._curr_time_s_n;
+			}
 		}
 	}
 

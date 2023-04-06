@@ -1,5 +1,6 @@
 import * as cc from "cc";
 import { _decorator } from "cc";
+import mk from "mk";
 
 const { ccclass, property } = _decorator;
 

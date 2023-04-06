@@ -61,9 +61,6 @@ export namespace audio_ {
         get volume_n(): number;
         set volume_n(value_n_: number);
     }
-    export interface init_config {
-        type: Record<string | number, string | number>;
-    }
     export interface play_config {
         loop_b: boolean;
         use_play_b: boolean;
@@ -115,7 +112,8 @@ export namespace audio_ {
         state: state;
         stop_group_n: number | null;
         get total_time_s_n(): number;
-        type: number;
+        // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
+        type: global_config.audio.type;
         abstract update_volume(): void;
         use_play_b?: boolean;
         get volume_n(): number;
@@ -307,7 +305,6 @@ export namespace language_ {
         };
     }
     // Warning: (ae-forgotten-export) The symbol "_mk_language_manage" needs to be exported by the entry point mk_export.d.ts
-    // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
     export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
     export class label_config {
         constructor(init_?: Partial<label_config>);

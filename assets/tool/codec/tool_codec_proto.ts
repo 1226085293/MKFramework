@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import mk from "mk";
 import protobufjs from "protobufjs/light.js";
 import global_config from "../../@config/global_config";
 

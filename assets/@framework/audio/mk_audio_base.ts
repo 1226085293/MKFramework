@@ -22,10 +22,6 @@ abstract class mk_audio_base extends mk_instance_base {
 	protected abstract _log: mk_logger;
 	/** 音频组 */
 	protected _group_map = new Map<number, mk_audio_base_.group>();
-	/** 初始化数据 */
-	protected _init_config: mk_audio_base_.init_config = {
-		type: global_config.audio.type,
-	};
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 暂停 */
 	abstract pause(audio_: mk_audio_base_.unit): void;
@@ -33,18 +29,6 @@ abstract class mk_audio_base extends mk_instance_base {
 	abstract stop(audio_: mk_audio_base_.unit): void;
 	/** 获取音频实例 */
 	protected abstract _get_audio_unit<T extends mk_audio_base_._unit>(init_?: Partial<mk_audio_base_._unit>): T;
-
-	/**
-	 * 初始化
-	 * @param config_ 初始化配置
-	 */
-	init(config_: mk_audio_base_.init_config): void {
-		this._init_config = config_;
-		// 重置编辑器视图
-		if (EDITOR) {
-			cc.CCClass.Attr.setClassAttr(mk_audio_base_._unit, "type", "enumList", cc.Enum.getList(cc.Enum(this._init_config.type)));
-		}
-	}
 
 	/** 获取组音频 */
 	get_group(group_n_: number): mk_audio_base_.group {
@@ -60,7 +44,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	add(url_s_: string, config_?: mk_audio_base_.add_config): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
 	add(url_ss_: string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
 	async add(url_: string | string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
-		if (EDITOR || !this._init_config) {
+		if (EDITOR) {
 			return null;
 		}
 
@@ -125,7 +109,7 @@ abstract class mk_audio_base extends mk_instance_base {
 		const audio = audio_ as mk_audio_base_._unit;
 
 		// 参数安检
-		if (!this._init_config || !audio_?.clip) {
+		if (!audio_?.clip) {
 			return false;
 		}
 
@@ -178,7 +162,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	/** 添加音频单元 */
 	protected _add(audio_: mk_audio_base_._unit, group_ns_?: ReadonlyArray<number>): boolean {
 		// 参数安检
-		if (!this._init_config || !audio_ || audio_.init_b || !audio_.clip) {
+		if (!audio_ || audio_.init_b || !audio_.clip) {
 			return false;
 		}
 
@@ -216,12 +200,6 @@ export namespace mk_audio_base_ {
 		pause = 2,
 		/** 播放 */
 		play = 4,
-	}
-
-	/** 初始化配置 */
-	export interface init_config {
-		/** 类型枚举 */
-		type: Record<string | number, string | number>;
 	}
 
 	/** 安全音频单元 */
@@ -327,8 +305,8 @@ export namespace mk_audio_base_ {
 		clip: cc.AudioClip | null = null;
 
 		/** 音频类型 */
-		@property({ displayName: "音频类型", type: cc.Enum({}) })
-		type = 0;
+		@property({ displayName: "音频类型", type: cc.Enum(global_config.audio.type) })
+		type = global_config.audio.type.effect;
 
 		/* --------------- public --------------- */
 		/** 事件对象 */
@@ -343,8 +321,6 @@ export namespace mk_audio_base_ {
 		wait_play_n = -1;
 		/** 真实音量 */
 		real_volume_n = 0;
-		/** （common 使用）音频组件 */
-		audio_source?: cc.AudioSource;
 		/**
 		 * （common 使用）使用 play 接口，默认使用 playOneShot
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
@@ -405,8 +381,17 @@ export namespace mk_audio_base_ {
 			return this.wait_play_n !== -1;
 		}
 
-		set wait_play_b(value_b) {
-			this.wait_play_n = value_b ? 0 : -1;
+		set wait_play_b(value_b_) {
+			this.wait_play_n = value_b_ ? 0 : -1;
+		}
+
+		/** （common 使用）音频组件 */
+		get audio_source(): cc.AudioSource | undefined {
+			return null!;
+		}
+
+		set audio_source(value_) {
+			throw "未实现";
 		}
 
 		/* --------------- protected --------------- */

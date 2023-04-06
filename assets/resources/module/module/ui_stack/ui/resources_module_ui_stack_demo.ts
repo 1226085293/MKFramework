@@ -1,5 +1,6 @@
 import nodes from "./resources_module_ui_stack_demo_nodes";
 import { _decorator } from "cc";
+import mk from "mk";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_module_ui_stack_demo")

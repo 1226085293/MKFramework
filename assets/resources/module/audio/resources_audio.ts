@@ -1,32 +1,32 @@
-import nodes from "./resources_audio_nodes";
+import resources_audio_nodes from "./resources_audio_nodes";
 import * as cc from "cc";
 import { _decorator } from "cc";
 import global_config from "../../../@config/global_config";
 import resources_config from "../../config/resources_config";
+import mk from "mk";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_audio")
 export class resources_audio extends mk.module.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
+	@property(resources_audio_nodes)
+	nodes = new resources_audio_nodes();
+
 	// 编辑器资源使用 play 接口播放只会有一个音频生效
-	// @property({ displayName: "音乐", type: mk.audio_.unit })
-	// music = new mk.audio_.unit();
+	@property({ displayName: "音乐", type: mk.audio_.unit })
+	music = new mk.audio_.unit();
 
-	// @property({ displayName: "音效", type: mk.audio_.unit })
-	// effect = new mk.audio_.unit();
+	@property({ displayName: "音效", type: mk.audio_.unit })
+	effect = new mk.audio_.unit();
 
-	// @property({ displayName: "音效2", type: mk.audio_.unit })
-	// effect2 = new mk.audio_.unit();
-	music!: mk.audio_.unit;
-	effect!: mk.audio_.unit;
-	effect2!: mk.audio_.unit;
+	@property({ displayName: "音效2", type: mk.audio_.unit })
+	effect2 = new mk.audio_.unit();
 
 	@property({ displayName: "重叠音效", type: mk.audio_.unit })
 	overlap_effect = new mk.audio_.unit();
 
 	/* --------------- public --------------- */
-	nodes!: nodes;
 	data = new (class {
 		music = {
 			/** 进度 */
@@ -72,10 +72,6 @@ export class resources_audio extends mk.module.view_base {
 	/** 重叠音频数组 */
 	private _overlap_effect_as!: mk.audio_.unit[];
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad() {
-		this.nodes = new nodes(this.node);
-	}
-
 	// @ts-ignore
 	// init(init_?: typeof this.init_data): void {}
 
@@ -88,6 +84,8 @@ export class resources_audio extends mk.module.view_base {
 	close(): void {
 		// 停止音乐
 		mk.audio.stop_all();
+		mk.audio.get_group(resources_config.audio.group.test).clear();
+		mk.audio.get_group(resources_config.audio.group.test2).clear();
 	}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
@@ -121,14 +119,17 @@ export class resources_audio extends mk.module.view_base {
 			this.music = (await mk.audio.add("db://assets/resources/module/audio/audio/Strictlyviolin荀博,马克Musician - Are You Lost.mp3"))!;
 			this.effect = (await mk.audio.add("db://assets/resources/module/audio/audio/龙卷风声音_耳聆网_[声音ID：36225].mp3"))!;
 			this.effect2 = (await mk.audio.add("db://assets/resources/module/audio/audio/水滴声音_耳聆网__声音ID：11407_.mp3"))!;
+
 			// 使用 play 接口
 			this.music.use_play_b = true;
 			this.effect.use_play_b = true;
 			this.effect2.use_play_b = true;
+
 			// 循环播放
 			this.music.loop_b = true;
 			this.effect.loop_b = true;
 			this.effect2.loop_b = true;
+
 			// 添加到分组
 			mk.audio.get_group(resources_config.audio.group.test).add_audio([this.effect, this.effect2]);
 			mk.audio.get_group(resources_config.audio.group.test2).add_audio([this.effect2]);

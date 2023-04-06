@@ -1,13 +1,15 @@
 import * as cc from "cc";
+const { ccclass, property } = cc._decorator;
 
-class nodes {
-	constructor(node: cc.Node) {
-		this.bg = node.getChildByPath("+背景@bg")!;
-		this.cube = node.getChildByPath("+音量方块@cube")!;
-	}
-
+@ccclass("resources_audio_nodes")
+class resources_audio_nodes {
+	/** 背景 */
+	@property({ displayName: "背景", type: cc.Node })
 	bg: cc.Node = null!;
+
+	/** 音量方块 */
+	@property({ displayName: "音量方块", type: cc.Node })
 	cube: cc.Node = null!;
 }
 
-export default nodes;
+export default resources_audio_nodes;

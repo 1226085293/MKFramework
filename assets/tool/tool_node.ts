@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import mk from "mk";
 
 class tool_node extends mk.instance_base {
 	/**

@@ -9,5 +9,6 @@
 	"bracketSpacing": true,
 	"endOfLine": "lf",
 	"htmlWhitespaceSensitivity": "ignore",
-	"trailingComma": "es5"
+	"trailingComma": "es5",
+	"parser": "typescript"
 }

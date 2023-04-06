@@ -58,14 +58,14 @@
         "__id__": 368
       },
       {
-        "__id__": 375
+        "__id__": 376
       },
       {
-        "__id__": 377
+        "__id__": 378
       }
     ],
     "_prefab": {
-      "__id__": 379
+      "__id__": 380
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -7739,17 +7739,20 @@
     },
     "show_alone_b": true,
     "_wind_b": true,
-    "music": {
+    "nodes": {
       "__id__": 371
     },
-    "effect": {
+    "music": {
       "__id__": 372
     },
-    "effect2": {
+    "effect": {
       "__id__": 373
     },
-    "overlap_effect": {
+    "effect2": {
       "__id__": 374
+    },
+    "overlap_effect": {
+      "__id__": 375
     },
     "_id": ""
   },
@@ -7759,23 +7762,22 @@
   },
   {
     "__type__": "framework/module/layer/wind_config",
-    "auto_mask_b": false,
-    "mask_type": 0,
-    "open_animation_s": "0",
+    "open_animation_s": "默认",
     "close_animation_s": "默认"
+  },
+  {
+    "__type__": "resources_audio_nodes",
+    "bg": {
+      "__id__": 2
+    },
+    "cube": {
+      "__id__": 343
+    }
   },
   {
     "__type__": "mk_audio_common/unit",
     "clip": {
       "__uuid__": "b64bdc51-5a2b-42ad-b8b9-f409a13e3e44",
-      "__expectedType__": "cc.AudioClip"
-    },
-    "type": -1
-  },
-  {
-    "__type__": "mk_audio_common/unit",
-    "clip": {
-      "__uuid__": "af012a33-a101-4143-93ae-6fe5f96ef19e",
       "__expectedType__": "cc.AudioClip"
     },
     "type": -2
@@ -7784,6 +7786,14 @@
     "__type__": "mk_audio_common/unit",
     "clip": {
       "__uuid__": "a81545d5-94ea-41eb-8bc5-05a7d93e6ed9",
+      "__expectedType__": "cc.AudioClip"
+    },
+    "type": -2
+  },
+  {
+    "__type__": "mk_audio_common/unit",
+    "clip": {
+      "__uuid__": "af012a33-a101-4143-93ae-6fe5f96ef19e",
       "__expectedType__": "cc.AudioClip"
     },
     "type": -2
@@ -7805,7 +7815,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 376
+      "__id__": 377
     },
     "_alignFlags": 45,
     "_target": null,
@@ -7840,7 +7850,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 378
+      "__id__": 379
     },
     "_id": ""
   },
