@@ -6,7 +6,11 @@ import mk_obj_pool from "../../mk_obj_pool";
 
 const { ccclass } = cc._decorator;
 
-/** 通用音频 */
+/**
+ * 通用音频
+ * @remarks
+ * 引擎 bug：3.7.2 以下版本不能同时播放两个以上的音频
+ */
 class mk_audio_common extends mk_audio_base {
 	constructor() {
 		super();
@@ -196,8 +200,8 @@ class mk_audio_common extends mk_audio_base {
 
 				return value;
 			},
-			init_fill_n: 10,
-			max_hold_n: 32,
+			init_fill_n: Math.floor(cc.AudioSource.maxAudioChannel * 0.5),
+			max_hold_n: cc.AudioSource.maxAudioChannel,
 		});
 
 		// 添加回调
