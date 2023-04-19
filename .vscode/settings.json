@@ -3,5 +3,11 @@
 		"docfx",
 		"unregis"
 	],
-	"commentTranslate.targetLanguage": "en"
+	"commentTranslate.targetLanguage": "en",
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/bower_components": true,
+		"**/*.code-search": true,
+		"tool/": true
+	}
 }
