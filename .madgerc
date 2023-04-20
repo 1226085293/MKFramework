@@ -2,6 +2,10 @@
 	"detectiveOptions": {
 		"ts": {
 			"mixedImports": true,
+			"skipTypeImports": true,
+			"skipAsyncImports": true
+		},
+		"es6": {
 			"skipTypeImports": true
 		}
 	}
