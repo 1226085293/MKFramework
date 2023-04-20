@@ -622,7 +622,7 @@ export class mk_ui_manage extends mk_instance_base {
 		});
 
 		// 重置数据
-		mk_tool.object.reset(this);
+		mk_tool.object.reset(this, true);
 	}
 }
 
