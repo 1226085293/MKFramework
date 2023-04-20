@@ -1,28 +1,10 @@
 import * as cc from "cc";
 
 class mk_event_target<CT> extends cc.EventTarget {
-	/**
-	 * @param event_ 被包装的事件对象
-	 * @returns
-	 */
-	constructor(event_?: any) {
-		super();
-
-		if (mk_event_target._override_event_map.has(event_)) {
-			return event_;
-		}
-
-		this["__proto__"]["__proto__"] = event_;
-	}
-
-	/* --------------- static --------------- */
-	private static _override_event_map = new Map<any, boolean>();
-	/* --------------- public --------------- */
 	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
 		get: (target, key) => key,
 	});
 
-	/* ------------------------------- 功能 ------------------------------- */
 	// @ts-ignore
 	on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 		type_: T | T[],
