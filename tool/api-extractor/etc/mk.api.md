@@ -93,7 +93,8 @@ export namespace audio_ {
     }
     export abstract class _unit {
         constructor(init_?: Partial<_unit>);
-        audio_source?: cc_2.AudioSource;
+        get audio_source(): cc_2.AudioSource | undefined;
+        set audio_source(value_: cc_2.AudioSource | undefined);
         clip: cc_2.AudioClip | null;
         clone(): _unit;
         clone(value_n_: number): _unit[];
@@ -119,7 +120,7 @@ export namespace audio_ {
         get volume_n(): number;
         set volume_n(value_n_: number);
         get wait_play_b(): boolean;
-        set wait_play_b(value_b: boolean);
+        set wait_play_b(value_b_: boolean);
         wait_play_n: number;
     }
     const // (undocumented)
