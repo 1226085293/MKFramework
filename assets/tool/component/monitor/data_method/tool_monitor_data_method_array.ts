@@ -1,4 +1,3 @@
-import monitor from "../../../../@framework/mk_monitor";
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
@@ -206,7 +205,7 @@ export namespace 默认 {
 			}
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
 				// 下标监听修改
-				monitor.on(this, k_n, (value) => {
+				mk.monitor.on(this, k_n, (value) => {
 					this._task_pipeline.add(async () => {
 						this._init_data!.root.children[k_n].getComponent(mk.module.view_base)?.init?.(value);
 						this._init_data.item_update_f?.(this._init_data.root.children[k_n], value);
@@ -222,7 +221,7 @@ export namespace 默认 {
 				return;
 			}
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
-				monitor.off(this, k_n);
+				mk.monitor.off(this, k_n);
 			}
 		}
 
@@ -311,7 +310,7 @@ export namespace 默认 {
 		}
 
 		// 监听
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,

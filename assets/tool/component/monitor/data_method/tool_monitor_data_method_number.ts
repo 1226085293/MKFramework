@@ -1,4 +1,3 @@
-import monitor from "../../../../@framework/mk_monitor";
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
@@ -31,7 +30,7 @@ export namespace 进度更新 {
 			});
 		}
 
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
@@ -64,7 +63,7 @@ export namespace 字符变更 {
 	}
 
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,

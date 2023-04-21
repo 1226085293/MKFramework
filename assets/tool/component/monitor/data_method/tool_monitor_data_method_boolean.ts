@@ -1,6 +1,6 @@
-import monitor from "../../../../@framework/mk_monitor";
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
+import mk from "mk";
 
 const { ccclass, property } = cc._decorator;
 
@@ -10,7 +10,7 @@ export function check_type(data_: any): boolean {
 
 export namespace 显示隐藏 {
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node): void {
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
@@ -34,7 +34,7 @@ export namespace 字符变更 {
 	}
 
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
@@ -67,7 +67,7 @@ export namespace 勾选框 {
 			);
 		}
 
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
