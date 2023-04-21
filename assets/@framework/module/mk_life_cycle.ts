@@ -146,7 +146,7 @@ export class mk_life_cycle extends mk_layer {
 	/** 日志 */
 	private _log2!: mk_logger;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad(): void {
+	protected onLoad(): void {
 		this._load_task.finish(true);
 		if (this.static_b) {
 			this.create?.();
