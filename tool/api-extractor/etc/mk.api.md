@@ -455,7 +455,7 @@ class mk_layer extends cc_2.Component {
     protected _init_editor(): void;
     layer_type_n: number;
     // (undocumented)
-    onLoad(): void;
+    protected onLoad(): void;
 }
 
 // @public (undocumented)
@@ -482,7 +482,7 @@ class mk_life_cycle extends mk_layer {
     protected _load_task: mk_status_task<void>;
     protected get _log(): logger;
     // (undocumented)
-    onLoad(): void;
+    protected onLoad(): void;
     open?(): void | Promise<void>;
     // @internal
     _open(config_?: _mk_life_cycle.open_config): Promise<void>;

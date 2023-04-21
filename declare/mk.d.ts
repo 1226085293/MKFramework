@@ -1073,7 +1073,7 @@ declare namespace mk {
 		/** 层级 */
 		private _child_layer_n;
 		private _ui_transform;
-		onLoad(): void;
+		protected onLoad(): void;
 		/** 初始化编辑器 */
 		protected _init_editor(): void;
 		/** 更新渲染优先级 */
@@ -1116,7 +1116,7 @@ declare namespace mk {
 		protected get _log(): logger;
 		/** 日志 */
 		private _log2;
-		onLoad(): void;
+		protected onLoad(): void;
 		/**
 		 * 创建（可在此处初始化视图状态）
 		 * @param config_ 创建配置
