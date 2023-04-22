@@ -209,6 +209,9 @@ const _default: mk_http;
 export const dynamic_module: mk_dynamic_module;
 
 // @public (undocumented)
+export const error: (...args_as_: any[]) => void;
+
+// @public (undocumented)
 export class event_target<CT> extends cc_2.EventTarget {
     // (undocumented)
     clear(): void;
@@ -326,7 +329,7 @@ export namespace language_ {
 export const language_manage: mk_language_manage;
 
 // @public (undocumented)
-export const log: logger;
+export const log: (...args_as_: any[]) => void;
 
 // @public (undocumented)
 export class logger extends instance_base {
@@ -798,6 +801,9 @@ export namespace ui_manage_ {
         source: _mk_ui_manage.source_type<CT>;
     }
 }
+
+// @public (undocumented)
+export const warn: (...args_as_: any[]) => void;
 
 // (No @packageDocumentation comment for this package)
 

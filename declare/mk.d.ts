@@ -363,6 +363,8 @@ declare namespace mk {
 
 	export declare const dynamic_module: mk_dynamic_module;
 
+	export declare const error: (...args_as_: any[]) => void;
+
 	export declare class event_target<CT> extends cc_2.EventTarget {
 		key: {
 			[k in keyof CT]: k;
@@ -534,7 +536,7 @@ declare namespace mk {
 
 	export declare const language_manage: mk_language_manage;
 
-	export declare const log: logger;
+	export declare const log: (...args_as_: any[]) => void;
 
 	export declare class logger extends instance_base {
 		constructor(name_s_: string);
@@ -2300,6 +2302,8 @@ declare namespace mk {
 			source: _mk_ui_manage.source_type<CT>;
 		}
 	}
+
+	export declare const warn: (...args_as_: any[]) => void;
 
 	export {};
 }
