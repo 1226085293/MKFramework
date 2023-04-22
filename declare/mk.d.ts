@@ -2252,9 +2252,9 @@ declare namespace mk {
 		export class open_config<CT extends cc_2.Constructor<mk_view_base>> {
 			constructor(init_?: open_config<CT>);
 			/** 初始化数据 */
-			init?: CT["init_data"];
+			init?: CT["prototype"]["init_data"];
 			/** 类型 */
-			type?: CT["type_s"];
+			type?: CT["prototype"]["type_s"];
 			/** 父节点 */
 			parent?: cc_2.Node;
 		}

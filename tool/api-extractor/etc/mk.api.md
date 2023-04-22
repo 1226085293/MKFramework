@@ -782,9 +782,9 @@ export namespace ui_manage_ {
     }
     export class open_config<CT extends cc_2.Constructor<mk_view_base>> {
         constructor(init_?: open_config<CT>);
-        init?: CT["init_data"];
+        init?: CT["prototype"]["init_data"];
         parent?: cc_2.Node;
-        type?: CT["type_s"];
+        type?: CT["prototype"]["type_s"];
     }
     export class regis_config<CT extends cc_2.Constructor<mk_view_base>> {
         constructor(init_?: Partial<regis_config<CT>>);
