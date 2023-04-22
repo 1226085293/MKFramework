@@ -195,7 +195,7 @@ export class data_sharer<CT = any> extends instance_base {
     key: {
         [k in keyof CT]: k;
     };
-    set<T extends keyof CT, T2 = CT[T]>(key_: CT, data_: T2): void;
+    set<T extends keyof CT, T2 = CT[T]>(key_: T, data_: T2): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "mk_http" needs to be exported by the entry point mk_export.d.ts
