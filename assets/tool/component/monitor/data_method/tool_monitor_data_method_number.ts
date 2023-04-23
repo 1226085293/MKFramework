@@ -1,6 +1,8 @@
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { CCInteger } from "cc";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,7 +22,7 @@ export namespace 进度更新 {
 		const slider = node_.getComponent(cc.Slider);
 
 		if (!(progress ?? slider)) {
-			mk.log.error("不存在组件");
+			mk.error("不存在组件");
 			return;
 		}
 
@@ -69,6 +71,27 @@ export namespace 字符变更 {
 				key_,
 				(value) => {
 					node_.label.string = params_.value_as.find((v) => v.key_n === value)?.value_s ?? "";
+				},
+				target_
+			)
+			?.call(target_, target_[key_]);
+	}
+}
+
+export namespace 显示隐藏 {
+	@ccclass("data_method_number/显示隐藏")
+	export class ccclass_params extends tool_monitor_trigger_event {
+		@property({ displayName: "数值列表", type: [CCInteger] })
+		value_ns: number[] = [];
+	}
+
+	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
+		mk.monitor
+			.on(
+				target_,
+				key_,
+				(value) => {
+					node_.active = Boolean(params_.value_ns.includes(value as any));
 				},
 				target_
 			)

@@ -82,3 +82,72 @@ export namespace 勾选框 {
 			?.call(target_, target_[key_]);
 	}
 }
+
+export namespace 勾选框禁用状态 {
+	@ccclass("data_method_boolean/勾选框禁用状态")
+	export class ccclass_params extends tool_monitor_trigger_event {
+		@property({ displayName: "反向" })
+		reverse_b = false;
+	}
+
+	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
+		mk.monitor
+			.on(
+				target_,
+				key_,
+				(value) => {
+					node_.toggle.interactable = (params_.reverse_b ? value : !value) as boolean;
+				},
+				target_
+			)
+			?.call(target_, target_[key_]);
+	}
+}
+
+export namespace 变更颜色 {
+	@ccclass("data_method_boolean/变更颜色")
+	export class ccclass_params extends tool_monitor_trigger_event {
+		@property({ displayName: "true" })
+		true_color = cc.color();
+
+		@property({ displayName: "false" })
+		false_color = cc.color();
+	}
+
+	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
+		mk.monitor
+			.on(
+				target_,
+				key_,
+				(value) => {
+					node_.getComponent(cc.UIRenderer)!.color = value ? params_.true_color : params_.false_color;
+				},
+				target_
+			)
+			?.call(target_, target_[key_]);
+	}
+}
+
+export namespace 启用组件 {
+	@ccclass("data_method_boolean/启用组件")
+	export class ccclass_params extends tool_monitor_trigger_event {
+		@property({ displayName: "组件名" })
+		component_s = "";
+
+		@property({ displayName: "反向" })
+		reverse_b = false;
+	}
+
+	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
+		mk.monitor
+			.on(
+				target_,
+				key_,
+				(value) => {
+					node_.getComponent(params_.component_s)!.enabled = (params_.reverse_b ? !value : value) as any;
+				},
+				target_
+			)
+			?.call(target_, target_[key_]);
+	}
+}

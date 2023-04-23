@@ -101,7 +101,7 @@ export namespace 远程图片 {
 						?.getComponent(mk.module.view_base);
 
 					if (!view_comp) {
-						mk.log.error("未找到父节点视图，不能自动释放动态资源");
+						mk.error("未找到父节点视图，不能自动释放动态资源");
 						return;
 					}
 					view_comp.auto_release(assets);

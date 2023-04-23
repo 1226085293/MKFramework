@@ -151,7 +151,7 @@ export namespace 默认 {
 				return pre;
 			}, []);
 
-			temp_as.sort((va: typeof temp_as[0], vb: typeof temp_as[0]) => compare_f_(va.data, vb.data));
+			temp_as.sort((va: (typeof temp_as)[0], vb: (typeof temp_as)[0]) => compare_f_(va.data, vb.data));
 			this._task_pipeline.add(() => {
 				const old_children_as = this._init_data.root.children.slice();
 
@@ -176,13 +176,11 @@ export namespace 默认 {
 				backup_as = args_as_.slice();
 			}
 			this._task_pipeline.add(async () => {
-				// 删除
-				{
-					const remove_as = this._init_data.root.children.slice(start_n_, start_n_ + count_n);
+				const remove_as = this._init_data.root.children.slice(start_n_, start_n_ + count_n);
 
-					for (const v of remove_as) {
-						this._delete_item(v);
-					}
+				// 删除
+				for (const v of remove_as) {
+					this._delete_item(v);
 				}
 
 				// 添加
@@ -200,7 +198,7 @@ export namespace 默认 {
 		/** 绑定 */
 		private _bind(start_n_: number, end_n_: number): void {
 			if (this.length < end_n_) {
-				mk.log.error("参数错误");
+				mk.error("参数错误");
 				return;
 			}
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
@@ -217,7 +215,7 @@ export namespace 默认 {
 		/** 解绑 */
 		private _unbind(start_n_: number, end_n_: number): void {
 			if (this.length < end_n_) {
-				mk.log.error("参数错误");
+				mk.error("参数错误");
 				return;
 			}
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
@@ -278,12 +276,12 @@ export namespace 默认 {
 		/** 容器节点 */
 		let layout_node: cc.Node | null = node_;
 
-		if (layout_node.scroll_view) {
+		if (layout_node.getComponent(cc.ScrollView)?.content) {
 			layout_node = layout_node.scroll_view.content;
 		}
 
 		if (!layout_node?.children.length) {
-			mk.log.error("不存在子节点");
+			mk.error("不存在子节点");
 			return;
 		}
 		/** 原数组 */

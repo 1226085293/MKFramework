@@ -139,14 +139,8 @@ export namespace _tool_monitor_trigger {
 }
 
 @ccclass("monitor_trigger")
-export class tool_monitor_trigger extends cc.Component {
+export class tool_monitor_trigger extends mk.module.life_cycle {
 	/* --------------- 属性 --------------- */
-	@property({ visible: false })
-	get init_editor(): void {
-		this._init_editor();
-		return;
-	}
-
 	/** 数据目标 */
 	@property({ displayName: "数据目标", type: cc.Node })
 	get data_target(): any {
@@ -218,11 +212,11 @@ export class tool_monitor_trigger extends cc.Component {
 	} | null = null;
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onEnable() {
+	open(): void | Promise<void> {
 		this.monitor(this._data_target, this._data_key_s);
 	}
 
-	onDisable() {
+	close(): void | Promise<void> {
 		if (this._monitor_data) {
 			mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
 		}
@@ -298,7 +292,8 @@ export class tool_monitor_trigger extends cc.Component {
 	}
 
 	/** 初始化编辑器 */
-	private _init_editor(): void {
+	protected _init_editor(): void {
+		super._init_editor();
 		this._update_user_comp();
 		this._update_data_key_enum();
 		this.event.init_editor();
