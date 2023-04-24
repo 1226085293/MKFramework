@@ -152,7 +152,7 @@ export namespace 默认 {
 				return pre;
 			}, []);
 
-			temp_as.sort((va: (typeof temp_as)[0], vb: (typeof temp_as)[0]) => compare_f_(va.data, vb.data));
+			temp_as.sort((va: typeof temp_as[0], vb: typeof temp_as[0]) => compare_f_(va.data, vb.data));
 			this._task_pipeline.add(() => {
 				const old_children_as = this._init_data.root.children.slice();
 
