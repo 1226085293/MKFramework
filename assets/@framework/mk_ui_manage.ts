@@ -622,7 +622,7 @@ export class mk_ui_manage extends mk_instance_base {
 		});
 
 		// 重置数据
-		mk_tool.object.reset(this);
+		mk_tool.object.reset(this, true);
 	}
 }
 
@@ -659,10 +659,10 @@ export namespace mk_ui_manage_ {
 
 		/** 初始化数据 */
 		// @ts-ignore
-		init?: CT["init_data"];
+		init?: CT["prototype"]["init_data"];
 		/** 类型 */
 		// @ts-ignore
-		type?: CT["type_s"] = "default";
+		type?: CT["prototype"]["type_s"] = "default";
 		/** 父节点 */
 		parent?: cc.Node;
 	}

@@ -93,7 +93,8 @@ export namespace audio_ {
     }
     export abstract class _unit {
         constructor(init_?: Partial<_unit>);
-        audio_source?: cc_2.AudioSource;
+        get audio_source(): cc_2.AudioSource | undefined;
+        set audio_source(value_: cc_2.AudioSource | undefined);
         clip: cc_2.AudioClip | null;
         clone(): _unit;
         clone(value_n_: number): _unit[];
@@ -119,7 +120,7 @@ export namespace audio_ {
         get volume_n(): number;
         set volume_n(value_n_: number);
         get wait_play_b(): boolean;
-        set wait_play_b(value_b: boolean);
+        set wait_play_b(value_b_: boolean);
         wait_play_n: number;
     }
     const // (undocumented)
@@ -194,7 +195,7 @@ export class data_sharer<CT = any> extends instance_base {
     key: {
         [k in keyof CT]: k;
     };
-    set<T extends keyof CT, T2 = CT[T]>(key_: CT, data_: T2): void;
+    set<T extends keyof CT, T2 = CT[T]>(key_: T, data_: T2): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "mk_http" needs to be exported by the entry point mk_export.d.ts
@@ -206,6 +207,9 @@ const _default: mk_http;
 //
 // @public (undocumented)
 export const dynamic_module: mk_dynamic_module;
+
+// @public (undocumented)
+export const error: (...args_as_: any[]) => void;
 
 // @public (undocumented)
 export class event_target<CT> extends cc_2.EventTarget {
@@ -325,7 +329,7 @@ export namespace language_ {
 export const language_manage: mk_language_manage;
 
 // @public (undocumented)
-export const log: logger;
+export const log: (...args_as_: any[]) => void;
 
 // @public (undocumented)
 export class logger extends instance_base {
@@ -454,7 +458,7 @@ class mk_layer extends cc_2.Component {
     protected _init_editor(): void;
     layer_type_n: number;
     // (undocumented)
-    onLoad(): void;
+    protected onLoad(): void;
 }
 
 // @public (undocumented)
@@ -481,7 +485,7 @@ class mk_life_cycle extends mk_layer {
     protected _load_task: mk_status_task<void>;
     protected get _log(): logger;
     // (undocumented)
-    onLoad(): void;
+    protected onLoad(): void;
     open?(): void | Promise<void>;
     // @internal
     _open(config_?: _mk_life_cycle.open_config): Promise<void>;
@@ -778,9 +782,9 @@ export namespace ui_manage_ {
     }
     export class open_config<CT extends cc_2.Constructor<mk_view_base>> {
         constructor(init_?: open_config<CT>);
-        init?: CT["init_data"];
+        init?: CT["prototype"]["init_data"];
         parent?: cc_2.Node;
-        type?: CT["type_s"];
+        type?: CT["prototype"]["type_s"];
     }
     export class regis_config<CT extends cc_2.Constructor<mk_view_base>> {
         constructor(init_?: Partial<regis_config<CT>>);
@@ -797,6 +801,9 @@ export namespace ui_manage_ {
         source: _mk_ui_manage.source_type<CT>;
     }
 }
+
+// @public (undocumented)
+export const warn: (...args_as_: any[]) => void;
 
 // (No @packageDocumentation comment for this package)
 

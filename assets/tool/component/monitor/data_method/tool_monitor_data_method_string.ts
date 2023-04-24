@@ -1,4 +1,3 @@
-import monitor from "../../../../@framework/mk_monitor";
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
@@ -23,7 +22,7 @@ export namespace 默认 {
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
 		const language_comp = node_.getComponent(mk.language.label);
 
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
@@ -51,7 +50,7 @@ export namespace 多余省略 {
 	}
 
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
@@ -68,7 +67,7 @@ export namespace 多余省略 {
 
 export namespace 远程图片 {
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node): void {
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,
@@ -102,7 +101,7 @@ export namespace 远程图片 {
 						?.getComponent(mk.module.view_base);
 
 					if (!view_comp) {
-						mk.log.error("未找到父节点视图，不能自动释放动态资源");
+						mk.error("未找到父节点视图，不能自动释放动态资源");
 						return;
 					}
 					view_comp.auto_release(assets);
@@ -123,7 +122,7 @@ export namespace 编辑框 {
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
 		const type_s = typeof target_[key_];
 
-		monitor
+		mk.monitor
 			.on(
 				target_,
 				key_,

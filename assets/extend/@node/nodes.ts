@@ -12,6 +12,8 @@ declare module "cc" {
 		height: number;
 		/** 透明度 */
 		opacity: number;
+		/** 锚点 */
+		anchor: cc.Vec2;
 	}
 
 	// 节点组件扩展
@@ -118,6 +120,17 @@ if (!EDITOR) {
 		},
 		set: function (this: cc.Node, value_n_: number) {
 			(this.getComponent(cc.UIOpacity) ?? this.addComponent(cc.UIOpacity)).opacity = value_n_;
+		},
+		configurable: true,
+	});
+
+	/** 锚点 */
+	Object.defineProperty(cc.Node.prototype, "anchor", {
+		get: function (this: cc.Node) {
+			return (this.getComponent(cc.UITransform) ?? this.addComponent(cc.UITransform)).anchorPoint;
+		},
+		set: function (this: cc.Node, value_v2_: cc.Vec2) {
+			(this.getComponent(cc.UITransform) ?? this.addComponent(cc.UITransform)).setAnchorPoint(value_v2_);
 		},
 		configurable: true,
 	});

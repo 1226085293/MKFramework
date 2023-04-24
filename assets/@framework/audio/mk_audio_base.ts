@@ -187,7 +187,7 @@ abstract class mk_audio_base extends mk_instance_base {
 		this.stop_all();
 
 		// 重置数据（音频资源释放应该由视图管理）
-		mk_tool.object.reset(this);
+		mk_tool.object.reset(this, true);
 	}
 }
 

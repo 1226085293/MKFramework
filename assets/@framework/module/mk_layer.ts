@@ -63,7 +63,7 @@ class mk_layer extends cc.Component {
 
 	private _ui_transform!: cc.UITransform;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad() {
+	protected onLoad() {
 		// 初始化数据
 		this._ui_transform = this.node.getComponent(cc.UITransform) ?? this.node.addComponent(cc.UITransform);
 

@@ -1,11 +1,12 @@
 import { _decorator } from "cc";
 import { EDITOR } from "cc/env";
 import * as cc from "cc";
-import tool from "../../tool";
 import tool_monitor_data_method from "./data_method/tool_monitor_data_method";
 import mk from "mk";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { tool_monitor_trigger_event } from "./tool_monitor_trigger_event";
+import tool_enum from "../../tool_enum";
+import tool_string from "../../tool_string";
 const { ccclass, property } = _decorator;
 
 export namespace _tool_monitor_trigger {
@@ -64,7 +65,7 @@ export namespace _tool_monitor_trigger {
 			trigger._init_b = true;
 
 			trigger._data_type_ss = Object.keys(tool_monitor_data_method).filter((v_s) => tool_monitor_data_method[v_s]);
-			trigger.data_type_enum = tool.enum.array_to_enum(trigger._data_type_ss);
+			trigger.data_type_enum = tool_enum.array_to_enum(trigger._data_type_ss);
 			trigger.event_name_tab = Object.create(null);
 
 			// 初始化事件名表
@@ -96,7 +97,7 @@ export namespace _tool_monitor_trigger {
 
 				// 更新事件名
 				if (trigger.event_name_tab[this.type_s]?.length) {
-					cc.CCClass.Attr.setClassAttr(trigger, "event_n", "enumList", tool.enum.array_to_cc_enum(trigger.event_name_tab[this.type_s]));
+					cc.CCClass.Attr.setClassAttr(trigger, "event_n", "enumList", tool_enum.array_to_cc_enum(trigger.event_name_tab[this.type_s]));
 					return true;
 				}
 				this.event_param_as[0]?.type_check_b;
@@ -138,14 +139,8 @@ export namespace _tool_monitor_trigger {
 }
 
 @ccclass("monitor_trigger")
-export class tool_monitor_trigger extends cc.Component {
+export class tool_monitor_trigger extends mk.module.life_cycle {
 	/* --------------- 属性 --------------- */
-	@property({ visible: false })
-	get init_editor(): void {
-		this._init_editor();
-		return;
-	}
-
 	/** 数据目标 */
 	@property({ displayName: "数据目标", type: cc.Node })
 	get data_target(): any {
@@ -217,11 +212,11 @@ export class tool_monitor_trigger extends cc.Component {
 	} | null = null;
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onEnable() {
+	open(): void | Promise<void> {
 		this.monitor(this._data_target, this._data_key_s);
 	}
 
-	onDisable() {
+	close(): void | Promise<void> {
 		if (this._monitor_data) {
 			mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
 		}
@@ -297,7 +292,8 @@ export class tool_monitor_trigger extends cc.Component {
 	}
 
 	/** 初始化编辑器 */
-	private _init_editor(): void {
+	protected _init_editor(): void {
+		super._init_editor();
 		this._update_user_comp();
 		this._update_data_key_enum();
 		this.event.init_editor();
@@ -332,7 +328,7 @@ export class tool_monitor_trigger extends cc.Component {
 		const data_target = this._get_data_from_path(this._user_comp, data_path_ss);
 
 		// 更新数据键枚举
-		this._data_key_enum = tool.enum.obj_to_enum(data_target || {});
+		this._data_key_enum = tool_enum.obj_to_enum(data_target || {});
 
 		// 更新编辑器数据键枚举
 		if (EDITOR) {
@@ -411,7 +407,7 @@ export class tool_monitor_trigger extends cc.Component {
 		}
 
 		// 更新文本
-		this._data_key_s = tool.string.fuzzy_match(this._filler_character_ss, this._data_key_s) ?? this._pre_data_key_s;
+		this._data_key_s = tool_string.fuzzy_match(this._filler_character_ss, this._data_key_s) ?? this._pre_data_key_s;
 
 		// 更新文本提示
 		this._update_data_key_enum();

@@ -368,6 +368,8 @@ class mk_monitor extends mk_instance_base {
 
 		/** 值 */
 		let value = value_[key_];
+		/** 可更新 */
+		let can_update_b = false;
 
 		// 监听数据
 		Object.defineProperty(value_, key_, {
@@ -385,7 +387,7 @@ class mk_monitor extends mk_instance_base {
 					}
 
 					// 数据相同
-					if (value === new_value) {
+					if (!can_update_b && value === new_value) {
 						return;
 					}
 
@@ -411,10 +413,18 @@ class mk_monitor extends mk_instance_base {
 
 				// 如果禁用状态或者无监听则退出
 				if (bind_data.disabled_b || !bind_data.monitor_as) {
+					// 更新可更新状态
+					if (bind_data.disabled_b) {
+						can_update_b = true;
+					}
+
 					// 更新修改计数
 					--bind_data.modify_count_n;
 					return;
 				}
+
+				// 更新可更新状态
+				can_update_b = false;
 
 				// 执行监听事件
 				for (let k_n = 0, v: _mk_monitor.type_monitor_data<any>; k_n < bind_data.monitor_as.length; ++k_n) {

@@ -254,7 +254,7 @@ export class mk_view_base extends mk_life_cycle {
 
 		// 重置数据
 		if (this.data && this._reset_data_b) {
-			mk_tool.object.reset(this.data);
+			mk_tool.object.reset(this.data, true);
 		}
 	}
 

@@ -40,15 +40,15 @@ const jsonc = require("jsonc-parser");
 	/** 声明文件 */
 	let dts_file_s = fs.readFileSync(dts_path_s, "utf-8");
 
+	// 添加顶部命名空间
+	{
+		let index_n = dts_file_s.indexOf("export");
+
+		dts_file_s = dts_file_s.slice(0, index_n) + "declare namespace mk {\n" + dts_file_s.slice(index_n) + "\n}\n export default mk;";
+	}
+
 	// // 添加全局配置引用
 	// dts_file_s = '///<reference path="../assets/@config/global_config.ts"/>\n' + dts_file_s;
-
-	// // 添加顶部命名空间
-	// {
-	// 	let index_n = dts_file_s.indexOf("\n", dts_file_s.lastIndexOf("///<reference")) + 1;
-
-	// 	dts_file_s = dts_file_s.slice(0, index_n) + "declare namespace mk {\n" + dts_file_s.slice(index_n) + "\n}";
-	// }
 
 	// 添加全局配置引用
 	dts_file_s = `import global_config from "../assets/@config/global_config"\n` + dts_file_s;

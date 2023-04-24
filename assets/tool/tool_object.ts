@@ -61,7 +61,7 @@ class tool_object {
 	}
 
 	/** 重置数据（class 数据才会生效，注意构造内的 this 对象不是 data_） */
-	reset<T extends { constructor: any }>(data_: T, assign_b_ = true): typeof assign_b_ extends true ? null : T {
+	reset<T extends { constructor: any }, T2 extends true | false>(data_: T, assign_b_: T2): typeof assign_b_ extends true ? null : T {
 		if (!data_?.constructor) {
 			mk.log.error("数据类型错误");
 			return null!;
@@ -90,7 +90,7 @@ class tool_object {
 						record_set.add(target_);
 						for (const k_s in target_) {
 							// 递归数组中的每一项
-							path_s = `${path_s_}/${k_s}`;
+							path_s = path_s ? `${path_s_}/${k_s}` : k_s;
 							callback_f_(target_[k_s], k_s, path_s);
 							this._traverse(target_[k_s], callback_f_, path_s, record_set);
 						}
@@ -102,7 +102,7 @@ class tool_object {
 						}
 						record_set.add(target_);
 						for (const k_s in target_) {
-							path_s = `${path_s_}/${k_s}`;
+							path_s = path_s ? `${path_s_}/${k_s}` : k_s;
 							callback_f_(target_[k_s], k_s, path_s);
 							this._traverse(target_[k_s], callback_f_, path_s, record_set);
 						}
