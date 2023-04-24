@@ -10,6 +10,7 @@ export function check_type(data_: any): boolean {
 	return Array.isArray(data_);
 }
 
+// 注意：在任务列表未完成时重置数据再解绑会报错，需解决
 export namespace 默认 {
 	/** 初始化数据 */
 	class array_init_config {

@@ -68,6 +68,8 @@ export namespace _mk_life_cycle {
 /**
  * 生命周期
  * - 用于模块生命周期控制
+ * - open: 子 -> 父
+ * - close: 父 -> 子
  */
 @ccclass
 export class mk_life_cycle extends mk_layer {
