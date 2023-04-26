@@ -1126,6 +1126,7 @@ declare namespace mk {
 		 * @param config_ 创建配置
 		 * - 静态模块：onLoad 时调用
 		 * - 动态模块：addChild 后调用
+		 * @protected
 		 */
 		create?(): void | Promise<void>;
 		/**
@@ -1136,13 +1137,14 @@ declare namespace mk {
 		 */
 		init(data_?: any): void | Promise<void>;
 		/** 打开（init 后执行，在此处执行无需 init_data 支持的模块初始化操作） */
-		open?(): void | Promise<void>;
+		protected open?(): void | Promise<void>;
 		/** 关闭（可外部调用） */
 		close?(): void | Promise<void>;
-		/** 打开后 */
-		protected _late_open?(): void | Promise<void>;
-		/** 关闭后 */
-		protected _late_close?(): void | Promise<void>;
+		/** 关闭后
+		 * @remarks
+		 * 在子模块 close 和 late_close 后执行
+		 */
+		protected late_close?(): void | Promise<void>;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1380,11 +1382,11 @@ declare namespace mk {
 
 	declare namespace _mk_monitor {
 		/** 键类型 */
-		type type_key = string | number | symbol;
+		type type_key = PropertyKey;
 		/** on 函数类型 */
-		type type_on_callback<T> = (value_: T, old_value_?: T) => void;
+		type type_on_callback<T> = (value_: T, old_value_?: T) => any;
 		/** off 函数类型 */
-		type type_off_callback = () => void;
+		type type_off_callback = () => any;
 		/** 监听数据类型 */
 		type type_monitor_data<T> = {
 			/** 监听回调 */
@@ -1407,7 +1409,7 @@ declare namespace mk {
 			/** 绑定键 */
 			key: type_key;
 		}
-		/** 对象绑定数据 */
+		/** 对象绑定数据（用于 clear） */
 		interface target_bind_data {
 			/** 绑定监听 */
 			monitor_as?: target_bind_monitor_data[];
@@ -2012,7 +2014,7 @@ declare namespace mk {
 		 * @param config_ 关闭配置
 		 */
 		close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
-		protected _late_close?(): Promise<void>;
+		protected late_close?(): Promise<void>;
 		/** 自动释放 */
 		auto_release<T extends cc_2.Node | cc_2.Node[]>(args_: T): T;
 		auto_release<T extends cc_2.Asset | cc_2.Asset[]>(args_: T): T;

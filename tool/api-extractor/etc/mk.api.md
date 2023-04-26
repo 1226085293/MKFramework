@@ -480,13 +480,12 @@ class mk_life_cycle extends mk_layer {
     create?(): void | Promise<void>;
     init(data_?: any): void | Promise<void>;
     init_data?: any;
-    protected _late_close?(): void | Promise<void>;
-    protected _late_open?(): void | Promise<void>;
+    protected late_close?(): void | Promise<void>;
     protected _load_task: mk_status_task<void>;
     protected get _log(): logger;
     // (undocumented)
     protected onLoad(): void;
-    open?(): void | Promise<void>;
+    protected open?(): void | Promise<void>;
     // @internal
     _open(config_?: _mk_life_cycle.open_config): Promise<void>;
     get open_b(): boolean;
@@ -639,7 +638,7 @@ class mk_view_base extends mk_life_cycle {
     data?: any;
     protected _init_editor(): void;
     // (undocumented)
-    protected _late_close?(): Promise<void>;
+    protected late_close?(): Promise<void>;
     // (undocumented)
     open(): void | Promise<void>;
     protected _reset_data_b: boolean;

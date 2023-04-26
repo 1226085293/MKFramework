@@ -91,8 +91,7 @@ export class mk_life_cycle extends mk_layer {
 			"init",
 			"open",
 			"close",
-			"_late_open",
-			"_late_close",
+			"late_close",
 		] as (keyof mk_life_cycle)[]);
 
 		// 设置函数超时警告
@@ -103,8 +102,7 @@ export class mk_life_cycle extends mk_layer {
 			"init",
 			"open",
 			"close",
-			"_late_open",
-			"_late_close",
+			"late_close",
 		] as (keyof mk_life_cycle)[]);
 	}
 
@@ -161,6 +159,7 @@ export class mk_life_cycle extends mk_layer {
 	 * @param config_ 创建配置
 	 * - 静态模块：onLoad 时调用
 	 * - 动态模块：addChild 后调用
+	 * @protected
 	 */
 	create?(): void | Promise<void>;
 
@@ -178,16 +177,16 @@ export class mk_life_cycle extends mk_layer {
 	}
 
 	/** 打开（init 后执行，在此处执行无需 init_data 支持的模块初始化操作） */
-	open?(): void | Promise<void>;
+	protected open?(): void | Promise<void>;
 
 	/** 关闭（可外部调用） */
 	close?(): void | Promise<void>;
 
-	/** 打开后 */
-	protected _late_open?(): void | Promise<void>;
-
-	/** 关闭后 */
-	protected _late_close?(): void | Promise<void> {
+	/** 关闭后
+	 * @remarks
+	 * 在子模块 close 和 late_close 后执行
+	 */
+	protected late_close?(): void | Promise<void> {
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
@@ -224,7 +223,6 @@ export class mk_life_cycle extends mk_layer {
 				await this.init(config_.init);
 			}
 			await this.open?.();
-			await this._late_open?.();
 		}
 
 		// 状态更新
@@ -263,7 +261,6 @@ export class mk_life_cycle extends mk_layer {
 		// 生命周期
 		{
 			await this.close?.();
-			await this._late_close?.();
 			if (config.first_b) {
 				await this._recursive_close({
 					target: this.node,
@@ -271,6 +268,7 @@ export class mk_life_cycle extends mk_layer {
 					destroy_children_b: config.destroy_children_b,
 				});
 			}
+			await this.late_close?.();
 		}
 
 		// 状态更新
