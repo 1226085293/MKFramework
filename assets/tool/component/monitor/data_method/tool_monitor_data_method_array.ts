@@ -9,6 +9,7 @@ export function check_type(data_: any): boolean {
 	return Array.isArray(data_);
 }
 
+// 注意：在任务列表未完成时重置数据再解绑会报错，需解决
 export namespace 默认 {
 	/** 初始化数据 */
 	class array_init_config {
@@ -151,7 +152,7 @@ export namespace 默认 {
 				return pre;
 			}, []);
 
-			temp_as.sort((va: (typeof temp_as)[0], vb: (typeof temp_as)[0]) => compare_f_(va.data, vb.data));
+			temp_as.sort((va: typeof temp_as[0], vb: typeof temp_as[0]) => compare_f_(va.data, vb.data));
 			this._task_pipeline.add(() => {
 				const old_children_as = this._init_data.root.children.slice();
 

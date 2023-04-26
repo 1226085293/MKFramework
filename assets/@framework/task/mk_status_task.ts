@@ -1,4 +1,8 @@
-/** 状态任务 */
+/**
+ * 状态任务
+ * @remarks
+ * 安全的 promise 封装，防止重复调用 resolve 函数以及添加超时功能，可重复使用
+ */
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 class mk_status_task<CT = void> {
 	/**

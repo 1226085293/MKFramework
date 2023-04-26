@@ -1095,6 +1095,8 @@ declare namespace mk {
 	/**
 	 * 生命周期
 	 * - 用于模块生命周期控制
+	 * - open: 子 -> 父
+	 * - close: 父 -> 子
 	 */
 	declare class mk_life_cycle extends mk_layer {
 		constructor(...args: any[]);
@@ -1751,7 +1753,11 @@ declare namespace mk {
 		private _event_before_scene_switch;
 	}
 
-	/** 状态任务 */
+	/**
+	 * 状态任务
+	 * @remarks
+	 * 安全的 promise 封装，防止重复调用 resolve 函数以及添加超时功能，可重复使用
+	 */
 	declare class mk_status_task<CT = void> {
 		/**
 		 * @param finish_b_ 完成状态
