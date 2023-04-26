@@ -23,8 +23,8 @@ export { default as dynamic_module } from "./mk_dynamic_module";
 export { default as guide } from "./guide/mk_guide";
 export { default as game } from "./mk_game";
 
-const log = mk_log.log;
-const warn = mk_log.warn;
-const error = mk_log.error;
+const log = mk_log.log.bind(mk_log);
+const warn = mk_log.warn.bind(mk_log);
+const error = mk_log.error.bind(mk_log);
 
 export { log, warn, error };
