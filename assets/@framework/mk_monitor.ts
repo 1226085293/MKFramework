@@ -3,11 +3,11 @@ import mk_logger from "./mk_logger";
 
 namespace _mk_monitor {
 	/** 键类型 */
-	export type type_key = string | number | symbol;
+	export type type_key = PropertyKey;
 	/** on 函数类型 */
-	export type type_on_callback<T> = (value_: T, old_value_?: T) => void;
+	export type type_on_callback<T> = (value_: T, old_value_?: T) => any;
 	/** off 函数类型 */
-	export type type_off_callback = () => void;
+	export type type_off_callback = () => any;
 	/** 监听数据类型 */
 	export type type_monitor_data<T> = {
 		/** 监听回调 */
@@ -31,13 +31,15 @@ namespace _mk_monitor {
 		/** 绑定键 */
 		key: type_key;
 	}
-	/** 对象绑定数据 */
+
+	/** 对象绑定数据（用于 clear） */
 	export interface target_bind_data {
 		/** 绑定监听 */
 		monitor_as?: target_bind_monitor_data[];
 		/** 禁用状态 （仅用于 on_callback_f） */
 		disabled_b?: boolean;
 	}
+
 	/** 绑定数据 */
 	export interface bind_data {
 		/** 原始描述符 */
@@ -390,26 +392,30 @@ class mk_monitor extends mk_instance_base {
 					if (!can_update_b && value === new_value) {
 						return;
 					}
-
-					// 递归修改大于 2 次
-					if (bind_data.modify_count_n > 1) {
-						this._log.error("递归修改不允许大于两次", key_, new_value, value_);
-						return;
-					}
 				}
 
 				/** 旧数据 */
 				const old_value = value;
 
-				// 更新修改计数
-				bind_data.modify_count_n = (bind_data.modify_count_n ?? 0) + 1;
-
 				// 更新值
 				{
-					this._log.debug("更新值", key_, new_value, value_);
+					// 递归修改
+					if (bind_data.modify_count_n) {
+						this._log.debug("更新值，递归不触发回调", key_, new_value, value_);
+					} else {
+						this._log.debug("更新值", key_, new_value, value_);
+					}
+
 					bind_data.desc.set?.call(value_, new_value);
 					value = new_value;
+
+					if (bind_data.modify_count_n) {
+						return;
+					}
 				}
+
+				// 更新修改计数
+				bind_data.modify_count_n = (bind_data.modify_count_n ?? 0) + 1;
 
 				// 如果禁用状态或者无监听则退出
 				if (bind_data.disabled_b || !bind_data.monitor_as) {
@@ -426,6 +432,9 @@ class mk_monitor extends mk_instance_base {
 				// 更新可更新状态
 				can_update_b = false;
 
+				/** 任务返回 */
+				const on_result_as: any[] = [];
+
 				// 执行监听事件
 				for (let k_n = 0, v: _mk_monitor.type_monitor_data<any>; k_n < bind_data.monitor_as.length; ++k_n) {
 					v = bind_data.monitor_as[k_n];
@@ -436,7 +445,8 @@ class mk_monitor extends mk_instance_base {
 					if (v.disabled_b || target_bind_data?.disabled_b) {
 						continue;
 					}
-					v.on_callback_f.call(v.target, value, old_value);
+
+					on_result_as.push(v.on_callback_f.call(v.target, value, old_value));
 
 					// 单次执行
 					if (v.once_b) {
@@ -452,8 +462,11 @@ class mk_monitor extends mk_instance_base {
 					}
 				}
 
-				// 更新修改计数
-				--bind_data.modify_count_n;
+				// 等待任务完成
+				Promise.all(on_result_as).then(() => {
+					// 更新修改计数
+					--bind_data!.modify_count_n;
+				});
 			},
 		});
 
@@ -538,12 +551,14 @@ class mk_monitor extends mk_instance_base {
 		if (!target_ || !bind_data_) {
 			return;
 		}
+
 		/** 对象绑定数据 */
 		const target_bind_data = this._target_bind_data.get(target_);
 
 		if (!target_bind_data) {
 			return;
 		}
+
 		// 删除绑定监听
 		if (bind_data_.monitor && target_bind_data.monitor_as) {
 			const index_n = target_bind_data!.monitor_as!.findIndex((v) => {
