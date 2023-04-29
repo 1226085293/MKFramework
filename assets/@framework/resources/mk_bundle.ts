@@ -316,7 +316,7 @@ class mk_bundle extends mk_instance_base {
 		/** js 系统 */
 		const system_js = self["System"];
 		/** 脚本缓存表 */
-		const script_cache_tab: Record<string, any> = system_js[Reflect.ownKeys(system_js).find((v) => typeof v === "symbol")];
+		const script_cache_tab: Record<string, any> = system_js[Reflect.ownKeys(system_js).find((v) => typeof v === "symbol")!];
 
 		// 更新 bundle 信息
 		this.set(bundle_info);
