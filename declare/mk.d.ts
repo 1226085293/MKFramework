@@ -1241,7 +1241,10 @@ declare namespace mk {
 		}
 	}
 
-	/** 数据监听器 */
+	/** 数据监听器
+	 * @remarks
+	 * 注意：监听回调仅在下一帧被调用
+	 */
 	declare class mk_monitor extends instance_base {
 		/** 日志管理 */
 		private _log;
@@ -1250,6 +1253,33 @@ declare namespace mk {
 		/** 对象绑定数据图 */
 		private _target_bind_data;
 		/**
+		 * 等待监听回调执行完成
+		 * @param value_ 对象
+		 * @param key_ 键
+		 * @returns
+		 */
+		wait<T, T2 extends keyof T>(value_: T, key_: T2): Promise<void>;
+		/**
+		 * 监听数据更新
+		 * @param value_ 监听对象
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定对象
+		 */
+		on(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): _mk_monitor.type_on_callback<any> | null;
+		/**
+		 * 监听数据更新
+		 * @param value_ 监听对象
+		 * @param on_callback_f_ on 触发回调
+		 * @param off_callback_f_ off 触发回调
+		 * @param target_ 绑定对象
+		 */
+		on(
+			value_: any,
+			on_callback_f_: _mk_monitor.type_on_callback<any>,
+			off_callback_f_: _mk_monitor.type_off_callback,
+			target_?: any
+		): _mk_monitor.type_on_callback<any> | null;
+		/**
 		 * 监听数据更新
 		 * @param value_ 监听对象
 		 * @param key_ 监听键
@@ -1305,6 +1335,19 @@ declare namespace mk {
 			off_callback_f_: _mk_monitor.type_off_callback,
 			target_?: any
 		): _mk_monitor.type_on_callback<T[T2]> | null;
+		/**
+		 * 取消监听数据更新
+		 * @param value_ 监听对象
+		 * @param target_ 绑定目标
+		 */
+		off(value_: any, target_?: any): Promise<any>;
+		/**
+		 * 取消监听数据更新
+		 * @param value_ 监听对象
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定目标
+		 */
+		off(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
 		/**
 		 * 取消监听数据更新
 		 * @param value_ 监听对象
@@ -1325,7 +1368,7 @@ declare namespace mk {
 		 * @param target_ 绑定对象
 		 * @returns
 		 */
-		clear(target_: any): void;
+		clear(target_: any): Promise<void>;
 		/**
 		 * 启用 on 事件
 		 * @param target_ 绑定对象
@@ -1366,8 +1409,15 @@ declare namespace mk {
 		 * @param target_ 绑定对象
 		 */
 		disable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
-		/** 获取绑定数据（没有则创建） */
+		/**
+		 * 获取绑定数据
+		 * @param value_ 数据
+		 * @param key_ 键
+		 * @param create_b_ 不存在则创建
+		 * @returns
+		 */
 		private _get_bind_data;
+		private _off;
 		/** 删除绑定数据 */
 		private _del_bind_data;
 		/** 添加对象绑定数据 */
@@ -1384,7 +1434,14 @@ declare namespace mk {
 		/** 键类型 */
 		type type_key = PropertyKey;
 		/** on 函数类型 */
-		type type_on_callback<T> = (value_: T, old_value_?: T) => any;
+		type type_on_callback<T> = (
+			/** 新值 */
+			value: T,
+			/** 旧值 */
+			old_value?: T,
+			/** 值路径(只会在监听无键的对象类型时传递) */
+			path_s?: string
+		) => any;
 		/** off 函数类型 */
 		type type_off_callback = () => any;
 		/** 监听数据类型 */
@@ -1399,6 +1456,8 @@ declare namespace mk {
 			once_b?: boolean;
 			/** 禁用状态 （仅用于 on_callback_f） */
 			disabled_b?: boolean;
+			/** 监听路径 */
+			path_s?: string;
 		};
 		/** 对象绑定监听数据 */
 		interface target_bind_monitor_data {
@@ -1419,13 +1478,24 @@ declare namespace mk {
 		/** 绑定数据 */
 		interface bind_data {
 			/** 原始描述符 */
-			desc: PropertyDescriptor;
+			descriptor: PropertyDescriptor;
 			/** 绑定监听 */
 			monitor_as?: type_monitor_data<any>[];
-			/** 修改计数 */
-			modify_count_n: number;
 			/** 禁用状态 （仅用于 on_callback_f） */
 			disabled_b?: boolean;
+			/** 任务 */
+			task?: mk_status_task;
+			/** 递归计数 */
+			recursive_count_n: number;
+		}
+		/** off 参数 */
+		interface off_param {
+			/** on 触发回调 */
+			on_callback_f_?: type_on_callback<any>;
+			/** 绑定目标 */
+			target_?: any;
+			/** 数据路径 */
+			path_s_?: string;
 		}
 	}
 
