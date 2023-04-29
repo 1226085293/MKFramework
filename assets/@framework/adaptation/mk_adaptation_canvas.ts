@@ -11,14 +11,18 @@ const { ccclass, disallowMultiple } = cc._decorator;
 @disallowMultiple
 export default class mk_adaptation_canvas extends cc.Component {
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad() {
+	protected onLoad(): void {
 		// 事件监听
 		global_event.on(global_event.key.resize, this.adaptation, this);
 	}
 
-	onEnable() {
+	protected onEnable(): void {
 		// 初始化视图
 		this.adaptation();
+	}
+
+	protected onDestroy(): void {
+		global_event.targetOff(this);
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
