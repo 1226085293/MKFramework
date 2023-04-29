@@ -1,7 +1,6 @@
 import path from "path";
 import child_process from "child_process";
 import fs from "fs-extra";
-import { argv } from "process";
 import prettier from "prettier";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsonc = require("jsonc-parser");
@@ -24,7 +23,15 @@ const jsonc = require("jsonc-parser");
 	// 删除输出文件夹
 	fs.removeSync(ts_config.compilerOptions.outDir);
 	// 编译 ts
-	child_process.execSync("npx -p typescript tsc");
+	await new Promise<void>((resolve_f, reject_f) => {
+		child_process.exec("npx -p typescript tsc", (error: child_process.ExecException | null, stdout: string, stderr: string) => {
+			if (error) {
+				reject_f(stdout);
+			} else {
+				resolve_f();
+			}
+		});
+	});
 
 	// dts 入口后处理
 	{
@@ -42,7 +49,7 @@ const jsonc = require("jsonc-parser");
 
 	// 添加顶部命名空间
 	{
-		let index_n = dts_file_s.indexOf("export");
+		const index_n = dts_file_s.indexOf("export");
 
 		dts_file_s = dts_file_s.slice(0, index_n) + "declare namespace mk {\n" + dts_file_s.slice(index_n) + "\n}\n export default mk;";
 	}
@@ -54,14 +61,27 @@ const jsonc = require("jsonc-parser");
 	dts_file_s = `import global_config from "../assets/@config/global_config"\n` + dts_file_s;
 	// 禁止错误检查
 	dts_file_s = "//@ts-nocheck\n" + dts_file_s;
+
 	// 格式化
-	dts_file_s = prettier.format(
-		dts_file_s,
-		JSON.parse(fs.readFileSync(path.join(project_path_s, ".prettierrc.json"), "utf-8")) ?? {
+	{
+		let config: prettier.Options = {
 			filepath: "*.ts",
 			parser: "typescript",
+			tabWidth: 4,
+		};
+		const config_file_s = fs.readFileSync(path.join(project_path_s, ".prettierrc.json"), "utf-8");
+
+		if (config_file_s) {
+			config = JSON.parse(config_file_s);
+
+			if (!config.parser) {
+				config.parser = "typescript";
+			}
 		}
-	);
+
+		dts_file_s = prettier.format(dts_file_s, config);
+	}
+
 	// 保存文件
 	fs.writeFileSync(dts_path_s, dts_file_s);
 })();
