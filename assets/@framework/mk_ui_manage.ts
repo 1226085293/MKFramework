@@ -201,10 +201,16 @@ export class mk_ui_manage extends mk_instance_base {
 		this._ui_regis_map.delete(key_);
 
 		// 清理节点池
-		this._ui_pool_map.get(key_)?.forEach((v) => {
-			v.clear();
-		});
-		this._ui_pool_map.delete(key_);
+		{
+			const pool = this._ui_pool_map.get(key_);
+
+			if (pool) {
+				for (const [k_n, v] of pool) {
+					await v.clear();
+				}
+				this._ui_pool_map.delete(key_);
+			}
+		}
 	}
 
 	/** 获取所有模块 */
