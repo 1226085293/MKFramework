@@ -1,6 +1,6 @@
 import { EDITOR } from "cc/env";
-import global_config from "../../../@config/global_config";
-import global_event from "../../../@config/global_event";
+import global_config from "../../@config/global_config";
+import global_event from "../../@config/global_event";
 import * as cc from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -9,7 +9,7 @@ const { ccclass, disallowMultiple } = cc._decorator;
 /** canvas 适配 */
 @ccclass
 @disallowMultiple
-export default class tool_adaptation_canvas extends cc.Component {
+export default class mk_adaptation_canvas extends cc.Component {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	onLoad() {
 		// 事件监听
@@ -58,9 +58,9 @@ if (!EDITOR && global_config.view.auto_adaptation_switch_b) {
 	cc.director.on(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
 		const canvas_node = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
 
-		if (!canvas_node || canvas_node.getComponent(tool_adaptation_canvas)) {
+		if (!canvas_node || canvas_node.getComponent(mk_adaptation_canvas)) {
 			return;
 		}
-		canvas_node.addComponent(tool_adaptation_canvas);
+		canvas_node.addComponent(mk_adaptation_canvas);
 	});
 }
