@@ -87,7 +87,7 @@ namespace global_config {
 		export const cache_row_n = 100;
 		/** 报错日志上传地址 */
 		export const error_upload_addr_s = "";
-		/** 输出定位 */
+		/** 输出定位(使用 console 接口) */
 		export const output_position_b = false;
 	}
 
