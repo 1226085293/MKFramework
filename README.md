@@ -1,32 +1,37 @@
 # mk_framework
 
-muzzik 开发的 cocos creator 游戏开发框架，目前处于开发阶段
+muzzik 开发的 cocos creator 游戏开发框架 `(开发阶段)`
 
-路线图：https://trello.com/b/ILu6BXyX/trade-offs
+<!-- 路线图：https://trello.com/b/ILu6BXyX/trade-offs -->
 
 ---
 
-## 构建框架声明文件(d.ts)
+## # 在任意项目中安装框架
 
-### 初始化
+https://github.com/1226085293/mk_framework/releases/tag/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6
+
+## # 构建框架声明文件(d.ts)
+
+### 1. 初始化
 
 1. `cd tool\api-extractor`
 
 2. `npm i`
 
-### 运行
+### 2. 运行
 
 1. `npm run 构建框架声明文件`
 
-## 构建框架文档
+## # 构建框架文档
+> 仅限 mk_framework 项目
 
-### 初始化
+### 1. 初始化
 
 1. `cd tool\doc-website`
 
 2. `npm i`
 
-### 运行
+### 2. 运行
 
 1. `cd tool\api-extractor & npm run 构建框架文档`
 
