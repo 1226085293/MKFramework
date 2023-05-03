@@ -35,7 +35,7 @@ export default class mk_adaptation_canvas extends cc.Component {
 			return;
 		}
 		/** 设计尺寸 */
-		const design_size = global_config.view.original_design_size;
+		const design_size = global_config.view.current_design_size;
 		/** 真实尺寸 */
 		const frame_size = cc.screen.windowSize;
 		/** 真实尺寸比设计尺寸高 */

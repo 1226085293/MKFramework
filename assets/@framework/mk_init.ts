@@ -9,7 +9,8 @@ import global_event from "../@config/global_event";
 if (!EDITOR) {
 	// 保存初始设计分辨率
 	cc.director.once(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, () => {
-		global_config.view.original_design_size.set(cc.view.getDesignResolutionSize());
+		(global_config.view.original_design_size as cc.Size).set(cc.view.getDesignResolutionSize());
+		global_config.view.current_design_size.set(cc.view.getDesignResolutionSize());
 	});
 
 	// 显示调试信息
