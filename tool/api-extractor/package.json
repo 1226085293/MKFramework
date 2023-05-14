@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@microsoft/api-documenter": "^7.21.6",
 		"@microsoft/api-extractor": "^7.34.4",
+		"@types/node": "^20.1.4",
 		"@types/prettier": "^2.7.2",
 		"fs-extra": "^11.1.1",
 		"jsonc-parser": "^3.2.0",
