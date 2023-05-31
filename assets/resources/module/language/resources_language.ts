@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-imports */
 import { _decorator } from "cc";
 import global_config from "../../../@config/global_config";
 import mk from "mk";

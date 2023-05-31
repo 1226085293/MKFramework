@@ -93,7 +93,7 @@ class mk_language_node {
 	node_as: _mk_language_node.node[] = [];
 
 	/* --------------- public --------------- */
-	/** 当前语言接单 */
+	/** 当前语言节点 */
 	get node(): cc.Node {
 		return this.node_as.find((v) => v.language_s === global_config.language.type[language_manage.type])?.node ?? null!;
 	}

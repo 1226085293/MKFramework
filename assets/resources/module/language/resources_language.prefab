@@ -59,7 +59,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 95
+      "__id__": 97
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -1676,7 +1676,7 @@
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 74
@@ -2045,8 +2045,29 @@
   },
   {
     "__type__": "mk_language_node",
+    "language_s": "en_us",
+    "node_as": [
+      {
+        "__id__": 95
+      },
+      {
+        "__id__": 96
+      }
+    ]
+  },
+  {
+    "__type__": "mk_language_node/node",
     "language_s": "zh_cn",
-    "node_as": []
+    "node": {
+      "__id__": 73
+    }
+  },
+  {
+    "__type__": "mk_language_node/node",
+    "language_s": "en_us",
+    "node": {
+      "__id__": 79
+    }
   },
   {
     "__type__": "cc.PrefabInfo",
