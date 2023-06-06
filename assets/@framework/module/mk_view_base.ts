@@ -216,9 +216,6 @@ export class mk_view_base extends mk_life_cycle {
 		if (this.wind_b && this.wind_config?.open_animation_s) {
 			await mk_view_base.config.window_animation_tab?.open?.[this.wind_config.open_animation_s]?.(this.node);
 		}
-
-		//
-		// this._log.log(JSON.stringify(Object.keys(this)));
 	}
 
 	/**

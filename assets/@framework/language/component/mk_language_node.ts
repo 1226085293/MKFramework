@@ -2,11 +2,14 @@ import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import global_config from "../../../@config/global_config";
 import language_manage from "../mk_language_manage";
+import mk_tool from "../../@private/tool/mk_tool";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
 
 namespace _mk_language_node {
+	export const language_type_enum = mk_tool.enum.obj_to_enum(global_config.language.type);
+
 	@ccclass("mk_language_node/node")
 	export class node {
 		constructor(init_?: Partial<node>) {
@@ -17,10 +20,10 @@ namespace _mk_language_node {
 		/** 语言 */
 		@property({
 			displayName: "语言",
-			type: cc.Enum(global_config.language.type),
+			type: cc.Enum(language_type_enum),
 		})
 		get language(): number {
-			return global_config.language.type[this.language_s];
+			return language_type_enum[this.language_s];
 		}
 
 		set language(value_n_) {
@@ -29,7 +32,7 @@ namespace _mk_language_node {
 
 		/** 语言 */
 		@property({ visible: false })
-		language_s = global_config.language.type[global_config.language.default_type];
+		language_s = global_config.language.default_type;
 
 		/** 节点 */
 		@property({ displayName: "节点", type: cc.Node })
@@ -43,19 +46,19 @@ class mk_language_node {
 	/* --------------- 属性 --------------- */
 	/** 语言 */
 	@property({ visible: false })
-	language_s = global_config.language.type[global_config.language.default_type];
+	language_s = global_config.language.default_type;
 
 	/** 语言 */
 	@property({
 		displayName: "语言",
-		type: cc.Enum(global_config.language.type),
+		type: cc.Enum(_mk_language_node.language_type_enum),
 	})
 	get language(): number {
-		return global_config.language.type[this.language_s];
+		return _mk_language_node.language_type_enum[this.language_s];
 	}
 
 	set language(value_n_) {
-		this.language_s = global_config.language.type[value_n_];
+		this.language_s = _mk_language_node.language_type_enum[value_n_];
 		this._update_view();
 	}
 
@@ -117,7 +120,7 @@ class mk_language_node {
 			});
 		} else {
 			this.node_as.forEach((v) => {
-				v.node.active = v.language === language_manage.type;
+				v.node.active = this.language_s === language_manage.type;
 			});
 		}
 	}

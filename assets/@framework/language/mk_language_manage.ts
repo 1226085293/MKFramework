@@ -32,7 +32,7 @@ class mk_language_manage extends mk_instance_base {
 	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
 
 	/** 当前语言类型 */
-	get type(): global_config.language.type {
+	get type(): keyof typeof global_config.language.type {
 		return this._language;
 	}
 
@@ -137,7 +137,7 @@ class mk_language_manage extends mk_instance_base {
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
-	private _set_curr_type(value_: global_config.language.type): void {
+	private _set_curr_type(value_: keyof typeof global_config.language.type): void {
 		if (this._language === value_) {
 			return;
 		}
