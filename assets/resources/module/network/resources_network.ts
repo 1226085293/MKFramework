@@ -5,8 +5,8 @@ import tool from "../../../tool/tool";
 import { test } from "../../config/proto/test.js";
 const { ccclass, property } = _decorator;
 
-@ccclass("resources_network_view")
-export class resources_network_view extends mk.module.view_base {
+@ccclass("resources_network")
+export class resources_network extends mk.module.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */

@@ -4,7 +4,7 @@ import { resources_audio } from "../../../resources/module/audio/resources_audio
 import { resources_guide } from "../../../resources/module/guide/resources_guide";
 import { resources_language } from "../../../resources/module/language/resources_language";
 import { resources_module } from "../../../resources/module/module/resources_module";
-import { resources_network_view } from "../../../resources/module/network/resources_network_view";
+import { resources_network } from "../../../resources/module/network/resources_network";
 import { resources_main_item } from "../../module/main/item/main_main_item";
 const { ccclass, property } = _decorator;
 
@@ -29,7 +29,7 @@ export class main_main extends mk.module.view_base {
 			},
 			{
 				label_s: "网络",
-				view: resources_network_view,
+				view: resources_network,
 			},
 			{
 				label_s: "引导",
@@ -43,7 +43,7 @@ export class main_main extends mk.module.view_base {
 		mk.ui_manage.regis(resources_audio, "db://assets/resources/module/audio/resources_audio.prefab");
 		mk.ui_manage.regis(resources_language, "db://assets/resources/module/language/resources_language.prefab");
 		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab");
-		mk.ui_manage.regis(resources_network_view, "db://assets/resources/module/network/resources_network.prefab");
+		mk.ui_manage.regis(resources_network, "db://assets/resources/module/network/resources_network.prefab");
 		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab");
 	}
 }

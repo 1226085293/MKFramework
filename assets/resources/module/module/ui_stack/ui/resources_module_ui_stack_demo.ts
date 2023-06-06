@@ -18,7 +18,7 @@ export class resources_module_ui_stack_demo extends mk.module.view_base {
 	}
 
 	// create(): void { }
-	init(init_?: typeof this.init_data): void {
+	init(data_?: typeof this.init_data): void {
 		this.nodes.number.label.string = this.init_data + "";
 	}
 	// open(): void {}

@@ -313,7 +313,7 @@ export namespace language_ {
     export class label_config {
         constructor(init_?: Partial<label_config>);
         args_ss?: string[];
-        language: global_config.language.type;
+        language: string;
     }
     export class label_data<CT extends data_struct> extends base_data<CT> {
         constructor(type_: string, init_: CT);
@@ -777,9 +777,11 @@ export namespace ui_manage_ {
         all_b?: boolean;
         destroy_b?: boolean;
         destroy_children_b?: boolean;
-        type?: CT["type_s"];
+        type?: CT extends {
+            type_s: infer T;
+        } ? T : never;
     }
-    export class open_config<CT extends cc_2.Constructor<mk_view_base>> {
+    export class open_config<CT extends cc_2.Constructor<mk_view_base> & Function> {
         constructor(init_?: open_config<CT>);
         init?: CT["prototype"]["init_data"];
         parent?: cc_2.Node;

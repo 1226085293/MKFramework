@@ -510,7 +510,7 @@ declare namespace mk {
 		export class label_config {
 			constructor(init_?: Partial<label_config>);
 			/** 语言类型 */
-			language: global_config.language.type;
+			language: string;
 			/** 参数 */
 			args_ss?: string[];
 		}
@@ -952,8 +952,8 @@ declare namespace mk {
 		/** 纹理数据 */
 		texture_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
 		/** 当前语言类型 */
-		get type(): global_config.language.type;
-		set type(value_: global_config.language.type);
+		get type(): keyof typeof global_config.language.type;
+		set type(value_: keyof typeof global_config.language.type);
 		/** 日志 */
 		private _log;
 		/** 当前语言类型 */
@@ -973,7 +973,7 @@ declare namespace mk {
 		 * @param language_ 语言
 		 * @returns
 		 */
-		get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_?: global_config.language.type): Promise<cc_2.SpriteFrame | null>;
+		get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_?: string): Promise<cc_2.SpriteFrame | null>;
 		/**
 		 * 添加文本数据
 		 * @param type_ 类型
@@ -1015,7 +1015,7 @@ declare namespace mk {
 		private set _node(value);
 		/** 语言节点列表 */
 		node_as: _mk_language_node.node[];
-		/** 当前语言接单 */
+		/** 当前语言节点 */
 		get node(): cc_2.Node;
 		/** 初始化 */
 		init(): void;
@@ -1027,6 +1027,7 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_language_node {
+		const language_type_enum: any;
 		class node {
 			constructor(init_?: Partial<node>);
 			/** 语言 */
@@ -2000,19 +2001,38 @@ declare namespace mk {
 		 * @param key_ 模块键
 		 * @param type_ 模块类型
 		 */
-		get<T extends cc_2.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T, type_?: T["type_s"]): T2 | null;
+		get<
+			T extends cc_2.Constructor<mk_view_base> & Function,
+			T2 = T extends {
+				type_s: infer T2;
+			}
+				? T2
+				: never,
+			T3 = T["prototype"]
+		>(key_: T, type_?: T2): T3 | null;
 		/**
 		 * 获取指定模块列表
 		 * @param key_ 模块键列表 [type]
 		 * @param type_ 模块类型
 		 */
-		get<T extends cc_2.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T[], type_?: T["type_s"]): ReadonlyArray<T2>;
+		get<
+			T extends cc_2.Constructor<mk_view_base> & Function,
+			T2 = T extends {
+				type_s: infer T2;
+			}
+				? T2
+				: never,
+			T3 = T["prototype"]
+		>(key_: T[], type_?: T2): ReadonlyArray<T3>;
 		/**
 		 * 打开模块
 		 * @param key_ 模块类型，必须经过 {@inheritdoc mk_ui_manage.regis} 接口注册过
 		 * @returns
 		 */
-		open<T extends cc_2.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
+		open<T extends cc_2.Constructor<mk_view_base> & Function, T2 = T["prototype"]>(
+			key_: T,
+			config_?: ui_manage_.open_config<T>
+		): Promise<T2 | null>;
 		/**
 		 * 关闭 ui
 		 * @param args_ 节点/模块类型/模块实例
@@ -2315,7 +2335,11 @@ declare namespace mk {
 		export class close_config<CT extends cc_2.Constructor<mk_view_base>> {
 			constructor(init_?: close_config<CT>);
 			/** 类型 */
-			type?: CT["type_s"];
+			type?: CT extends {
+				type_s: infer T;
+			}
+				? T
+				: never;
 			/** 关闭全部指定类型的模块 */
 			all_b?: boolean;
 			/** 销毁节点 */
@@ -2327,7 +2351,7 @@ declare namespace mk {
 			destroy_children_b?: boolean;
 		}
 		/** 打开ui配置 */
-		export class open_config<CT extends cc_2.Constructor<mk_view_base>> {
+		export class open_config<CT extends cc_2.Constructor<mk_view_base> & Function> {
 			constructor(init_?: open_config<CT>);
 			/** 初始化数据 */
 			init?: CT["prototype"]["init_data"];
