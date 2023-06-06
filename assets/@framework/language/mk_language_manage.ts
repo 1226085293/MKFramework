@@ -33,7 +33,7 @@ class mk_language_manage extends mk_instance_base {
 
 	/** 当前语言类型 */
 	get type(): keyof typeof global_config.language.type {
-		return this._language;
+		return this._language_s;
 	}
 
 	set type(value_) {
@@ -44,7 +44,7 @@ class mk_language_manage extends mk_instance_base {
 	/** 日志 */
 	private _log = new mk_logger("language");
 	/** 当前语言类型 */
-	private _language = global_config.language.default_type;
+	private _language_s = global_config.language.default_type_s;
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
@@ -81,7 +81,7 @@ class mk_language_manage extends mk_instance_base {
 	 * @param language_ 语言
 	 * @returns
 	 */
-	async get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_ = this._language): Promise<cc.SpriteFrame | null> {
+	async get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_ = this._language_s): Promise<cc.SpriteFrame | null> {
 		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
 
 		if (!path_s) {
@@ -138,10 +138,10 @@ class mk_language_manage extends mk_instance_base {
 
 	/* ------------------------------- get/set ------------------------------- */
 	private _set_curr_type(value_: keyof typeof global_config.language.type): void {
-		if (this._language === value_) {
+		if (this._language_s === value_) {
 			return;
 		}
-		this._language = value_;
+		this._language_s = value_;
 
 		// 事件通知
 		this.event.emit(this.event.key.switch_language);
@@ -150,7 +150,10 @@ class mk_language_manage extends mk_instance_base {
 
 export namespace mk_language_manage_ {
 	/** 多语言数据结构 */
-	export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
+	export type data_struct<T extends _mk_language_manage.type_type = any> = Record<
+		T,
+		{ [k in keyof typeof global_config.language.type_tab]: string }
+	>;
 
 	/** 获取文本配置 */
 	export class label_config {

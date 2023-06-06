@@ -505,7 +505,12 @@ declare namespace mk {
 
 	export declare namespace language_ {
 		/** 多语言数据结构 */
-		export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
+		export type data_struct<T extends _mk_language_manage.type_type = any> = Record<
+			T,
+			{
+				[k in keyof typeof global_config.language.type_tab]: string;
+			}
+		>;
 		/** 获取文本配置 */
 		export class label_config {
 			constructor(init_?: Partial<label_config>);
@@ -957,7 +962,7 @@ declare namespace mk {
 		/** 日志 */
 		private _log;
 		/** 当前语言类型 */
-		private _language;
+		private _language_s;
 		/**
 		 * 获取文本
 		 * @param type_ 类型
@@ -1004,7 +1009,7 @@ declare namespace mk {
 	}
 
 	/** 多语言节点 */
-	declare class mk_language_node {
+	declare class mk_language_node extends mk_life_cycle {
 		/** 语言 */
 		language_s: string;
 		/** 语言 */
@@ -1016,11 +1021,9 @@ declare namespace mk {
 		/** 语言节点列表 */
 		node_as: _mk_language_node.node[];
 		/** 当前语言节点 */
-		get node(): cc_2.Node;
-		/** 初始化 */
-		init(): void;
-		/** 清理 */
-		clear(): void;
+		get current_node(): cc_2.Node;
+		protected _use_layer_b: boolean;
+		open(): void;
 		/** 更新节点展示 */
 		private _update_view;
 		private _event_switch_language;
@@ -1073,8 +1076,11 @@ declare namespace mk {
 		/** 层级 */
 		get child_layer_n(): number;
 		set child_layer_n(value_n_: number);
+		/** 使用 layer（false：关闭 layer 功能） */
+		protected _use_layer_b: boolean;
 		/** 层级 */
 		private _child_layer_n;
+		/** UITransform 组件 */
 		private _ui_transform;
 		protected onLoad(): void;
 		/** 初始化编辑器 */
@@ -1103,6 +1109,16 @@ declare namespace mk {
 		constructor(...args: any[]);
 		/** 初始化数据 */
 		init_data?: any;
+		/** 事件对象列表（模块关闭后自动清理）
+		 * @readonly
+		 */
+		event_target_as:
+			| {
+					targetOff(target: any): any;
+			  }[]
+			| {
+					target_off(target: any): any;
+			  }[];
 		/** open状态 */
 		get open_b(): boolean;
 		/** 静态模块 */

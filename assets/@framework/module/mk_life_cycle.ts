@@ -109,6 +109,10 @@ export class mk_life_cycle extends mk_layer {
 	/* --------------- public --------------- */
 	/** 初始化数据 */
 	init_data?: any;
+	/** 事件对象列表（模块关闭后自动清理）
+	 * @readonly
+	 */
+	event_target_as: { targetOff(target: any): any }[] | { target_off(target: any): any }[] = [];
 
 	/** open状态 */
 	get open_b(): boolean {
@@ -191,6 +195,15 @@ export class mk_life_cycle extends mk_layer {
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
 		monitor.clear(this);
+
+		// 清理事件
+		this.event_target_as.splice(0, this.event_target_as.length).forEach((v) => {
+			if (v.targetOff) {
+				v.targetOff(this);
+			} else {
+				v.target_off(this);
+			}
+		});
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */

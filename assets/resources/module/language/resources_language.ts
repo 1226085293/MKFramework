@@ -12,21 +12,14 @@ const { ccclass, property } = _decorator;
 export class resources_language extends mk.module.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
-	@property(mk.language.node)
-	language_node = new mk.language.node();
 
 	/* --------------- public --------------- */
 	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// init(init_?: typeof this.init_data): void {}
-	open(): void {
-		this.language_node.init();
-	}
-
-	close(): void {
-		this.language_node.clear();
-	}
+	// open(): void {}
+	// close(): void {}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	button_close(): void {

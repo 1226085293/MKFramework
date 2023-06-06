@@ -96,7 +96,7 @@ namespace global_config {
 		) as any;
 
 		/** 默认语言 */
-		export const default_type: keyof typeof type = type[cc.sys.languageCode.replace(/-/g, "_")] ?? type.zh_cn;
+		export const default_type_s: keyof typeof type_tab = type.zh_cn;
 		/** 参数标识前缀 */
 		export const args_head_s = "{";
 		/** 参数标识后缀 */

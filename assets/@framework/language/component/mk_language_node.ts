@@ -3,12 +3,13 @@ import { EDITOR } from "cc/env";
 import global_config from "../../../@config/global_config";
 import language_manage from "../mk_language_manage";
 import mk_tool from "../../@private/tool/mk_tool";
+import mk_life_cycle from "../../module/mk_life_cycle";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
 
 namespace _mk_language_node {
-	export const language_type_enum = mk_tool.enum.obj_to_enum(global_config.language.type);
+	export const language_type_enum = mk_tool.enum.obj_to_enum(global_config.language.type_tab);
 
 	@ccclass("mk_language_node/node")
 	export class node {
@@ -32,7 +33,7 @@ namespace _mk_language_node {
 
 		/** 语言 */
 		@property({ visible: false })
-		language_s = global_config.language.default_type;
+		language_s = global_config.language.default_type_s;
 
 		/** 节点 */
 		@property({ displayName: "节点", type: cc.Node })
@@ -41,12 +42,12 @@ namespace _mk_language_node {
 }
 
 /** 多语言节点 */
-@ccclass("mk_language_node")
-class mk_language_node {
+@ccclass
+class mk_language_node extends mk_life_cycle {
 	/* --------------- 属性 --------------- */
 	/** 语言 */
 	@property({ visible: false })
-	language_s = global_config.language.default_type;
+	language_s = global_config.language.default_type_s;
 
 	/** 语言 */
 	@property({
@@ -97,21 +98,19 @@ class mk_language_node {
 
 	/* --------------- public --------------- */
 	/** 当前语言节点 */
-	get node(): cc.Node {
+	get current_node(): cc.Node {
 		return this.node_as.find((v) => v.language_s === global_config.language.type[language_manage.type])?.node ?? null!;
 	}
 
-	/* ------------------------------- 功能 ------------------------------- */
-	/** 初始化 */
-	init(): void {
+	/* --------------- protected --------------- */
+	protected _use_layer_b = false;
+	/* ------------------------------- 生命周期 ------------------------------- */
+	open(): void {
 		language_manage.event.on(language_manage.event.key.switch_language, this._event_switch_language, this)?.call(this);
 	}
 
-	/** 清理 */
-	clear(): void {
-		language_manage.event.targetOff(this);
-	}
-
+	// close(): void { }
+	/* ------------------------------- 功能 ------------------------------- */
 	/** 更新节点展示 */
 	private _update_view(): void {
 		if (EDITOR) {
@@ -120,7 +119,7 @@ class mk_language_node {
 			});
 		} else {
 			this.node_as.forEach((v) => {
-				v.node.active = this.language_s === language_manage.type;
+				v.node.active = v.language_s === language_manage.type;
 			});
 		}
 	}
