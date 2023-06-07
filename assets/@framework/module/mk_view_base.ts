@@ -40,7 +40,7 @@ namespace _mk_view_base {
 	}
 
 	/** 动画配置 */
-	@ccclass("framework/module/layer/animation_config")
+	@ccclass("mk_view_base/animation_config")
 	export class animation_config {
 		/* --------------- static --------------- */
 		/** 动画枚举表 */
@@ -88,6 +88,41 @@ namespace _mk_view_base {
 		/** 关闭动画 */
 		@property({ visible: false })
 		close_animation_s = "";
+	}
+
+	/** 快捷操作 */
+	@ccclass("mk_view_base/quick_operation")
+	export class quick_operation {
+		// @property({
+		// 	displayName: "添加遮罩",
+		// 	tooltip: "添加遮罩到根节点下",
+		// })
+		// get auto_mask_b(): boolean {
+		// 	return this._get_auto_mask_b();
+		// }
+		// set auto_mask_b(value_b_) {
+		// 	this._set_auto_mask_b(value_b_);
+		// }
+		// @property({
+		// 	displayName: "0 边距 widget",
+		// 	tooltip: "在节点上添加 0 边距 widget",
+		// })
+		// get auto_widget_b(): boolean {
+		// 	return Boolean(this.getComponent(cc.Widget));
+		// }
+		// set auto_widget_b(value_b_) {
+		// 	this._set_auto_widget_b(value_b_);
+		// }
+		// @property({
+		// 	displayName: "BlockInputEvents",
+		// 	tooltip: "在节点上添加 BlockInputEvents 组件",
+		// })
+		// get auto_block_input_b(): boolean {
+		// 	return Boolean(this.getComponent(cc.BlockInputEvents));
+		// }
+		// set auto_block_input_b(value_b_) {
+		// 	this._set_auto_block_input_b(value_b_);
+		// }
 	}
 }
 

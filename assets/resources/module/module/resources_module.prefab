@@ -1706,7 +1706,7 @@
     "fileId": "67Su/+aexNYJxcPFWRqrgs"
   },
   {
-    "__type__": "framework/module/layer/animation_config",
+    "__type__": "mk_view_base/animation_config",
     "open_animation_s": "默认",
     "close_animation_s": "默认"
   },
