@@ -1728,7 +1728,7 @@
       "__id__": 73
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 75
@@ -1860,7 +1860,7 @@
       "__id__": 73
     },
     "_children": [],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 81
@@ -2024,7 +2024,7 @@
     },
     "layer_type_n": 0,
     "_child_layer_n": 0,
-    "language_s": "zh_cn",
+    "language_s": "en_us",
     "node_as": [
       {
         "__id__": 90
@@ -2155,10 +2155,10 @@
     },
     "layer_type_n": 0,
     "_child_layer_n": 0,
-    "wind_config": {
+    "show_alone_b": false,
+    "animation_config": {
       "__id__": 101
     },
-    "show_alone_b": false,
     "_wind_b": true,
     "_id": ""
   },
@@ -2167,7 +2167,7 @@
     "fileId": "40+bH9Vs9DhbNoz6y8UrhM"
   },
   {
-    "__type__": "framework/module/layer/wind_config",
+    "__type__": "framework/module/layer/animation_config",
     "open_animation_s": "默认",
     "close_animation_s": "默认"
   },

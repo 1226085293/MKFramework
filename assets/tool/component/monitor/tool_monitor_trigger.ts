@@ -184,6 +184,9 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 	@property({ displayName: "触发事件", type: _tool_monitor_trigger.trigger })
 	event = new _tool_monitor_trigger.trigger();
 
+	/* --------------- protected --------------- */
+	protected _use_layer_b = false;
+	/* --------------- private --------------- */
 	/** 数据键 */
 	@property
 	private _data_key_s = "";
@@ -192,7 +195,6 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 	@property(cc.Node)
 	private _data_target: cc.Node = null!;
 
-	/* --------------- private --------------- */
 	/** 调用时间表 */
 	private _call_time_tab: Record<string, number> = Object.create(null);
 	/** 用户组件 */

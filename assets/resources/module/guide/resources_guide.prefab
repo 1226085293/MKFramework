@@ -4388,7 +4388,7 @@
     },
     "layer_type_n": 0,
     "_child_layer_n": 0,
-    "wind_config": {
+    "animation_config": {
       "__id__": 201
     },
     "show_alone_b": true,
@@ -4400,7 +4400,7 @@
     "fileId": "415R1Ha+pNybpr284/XBel"
   },
   {
-    "__type__": "framework/module/layer/wind_config",
+    "__type__": "framework/module/layer/animation_config",
     "open_animation_s": "无",
     "close_animation_s": "默认"
   },
