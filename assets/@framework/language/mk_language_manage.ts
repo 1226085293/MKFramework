@@ -32,12 +32,17 @@ class mk_language_manage extends mk_instance_base {
 	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
 
 	/** 当前语言类型 */
-	get type(): keyof typeof global_config.language.type {
+	get type_s(): keyof typeof global_config.language.type_tab {
 		return this._language_s;
 	}
 
-	set type(value_) {
-		this._set_curr_type(value_);
+	set type_s(value_) {
+		this._set_type_s(value_);
+	}
+
+	/** 获取语言数据 */
+	get data(): global_config.language.type_data {
+		return global_config.language.type_tab[this._language_s];
 	}
 
 	/* --------------- private --------------- */
@@ -137,7 +142,7 @@ class mk_language_manage extends mk_instance_base {
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
-	private _set_curr_type(value_: keyof typeof global_config.language.type): void {
+	private _set_type_s(value_: keyof typeof global_config.language.type): void {
 		if (this._language_s === value_) {
 			return;
 		}
@@ -162,7 +167,7 @@ export namespace mk_language_manage_ {
 		}
 
 		/** 语言类型 */
-		language = mk_language_manage.instance().type;
+		language = mk_language_manage.instance().type_s;
 		/** 参数 */
 		args_ss?: string[];
 	}

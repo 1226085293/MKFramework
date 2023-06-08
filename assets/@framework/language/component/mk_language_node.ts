@@ -96,15 +96,28 @@ class mk_language_node extends mk_life_cycle {
 	})
 	node_as: _mk_language_node.node[] = [];
 
+	/** layout 适配 */
+	@property({
+		displayName: "layout 适配",
+		tooltip: "根据语言配置从左到右或从右到左",
+	})
+	layout_adaptation_b = false;
+
 	/* --------------- public --------------- */
 	/** 当前语言节点 */
 	get current_node(): cc.Node {
-		return this.node_as.find((v) => v.language_s === global_config.language.type[language_manage.type])?.node ?? null!;
+		return this.node_as.find((v) => v.language_s === global_config.language.type[language_manage.type_s])?.node ?? null!;
 	}
 
 	/* --------------- protected --------------- */
 	protected _use_layer_b = false;
+	/* --------------- private --------------- */
+	private _layout: cc.Layout | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
+	create(): void | Promise<void> {
+		this._layout = this.getComponent(cc.Layout);
+	}
+
 	open(): void {
 		language_manage.event.on(language_manage.event.key.switch_language, this._event_switch_language, this)?.call(this);
 	}
@@ -118,9 +131,15 @@ class mk_language_node extends mk_life_cycle {
 				v.node.active = v.language === this.language;
 			});
 		} else {
+			// 节点显示隐藏
 			this.node_as.forEach((v) => {
-				v.node.active = v.language_s === language_manage.type;
+				v.node.active = v.language_s === language_manage.type_s;
 			});
+
+			// layout 适配
+			if (this.layout_adaptation_b && this._layout?.alignHorizontal) {
+				this._layout.horizontalDirection = language_manage.data.dire;
+			}
 		}
 	}
 

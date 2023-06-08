@@ -748,7 +748,7 @@
       "a": 255
     },
     "_string": "示例-{0}",
-    "_horizontalAlign": 1,
+    "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
     "_fontSize": 40,
@@ -783,6 +783,7 @@
     },
     "_type_s": "resources_language",
     "_mark_s": "示例",
+    "direction_adaptation_b": true,
     "_args_ss": [],
     "_id": ""
   },
@@ -2033,6 +2034,7 @@
         "__id__": 91
       }
     ],
+    "layout_adaptation_b": false,
     "_id": ""
   },
   {

@@ -4,6 +4,7 @@ import mk_language_base from "./mk_language_base";
 import { EDITOR } from "cc/env";
 import language_manage from "../mk_language_manage";
 import mk_tool from "../../@private/tool/mk_tool";
+import mk_language_manage from "../mk_language_manage";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
@@ -17,6 +18,13 @@ class mk_language_label extends mk_language_base {
 	/** 注册类型 */
 	private static _type_enum: any = mk_tool.enum.obj_to_enum(language.label_data_tab);
 	/* --------------- 属性 --------------- */
+	/** label 适配 */
+	@property({
+		displayName: "方向适配",
+		tooltip: "根据语言配置从左到右或从右到左",
+	})
+	direction_adaptation_b = true;
+
 	get type(): number {
 		return mk_language_label._type_enum[this._type_s];
 	}
@@ -24,14 +32,6 @@ class mk_language_label extends mk_language_base {
 	set type(value_) {
 		this._set_type(value_);
 	}
-
-	/** 类型 */
-	@property({ override: true })
-	protected _type_s = "";
-
-	/** 参数 */
-	@property([cc.CCString])
-	private _args_ss: string[] = [];
 
 	/** 参数 */
 	@property({
@@ -46,7 +46,14 @@ class mk_language_label extends mk_language_base {
 		this._set_args_ss(value_ss_);
 	}
 
+	/* --------------- protected --------------- */
+	@property({ override: true })
+	protected _type_s = "";
+
 	/* --------------- private --------------- */
+	@property([cc.CCString])
+	private _args_ss: string[] = [];
+
 	/** label组件 */
 	private _label!: cc.Label | cc.RichText | null;
 	/* ------------------------------- 生命周期 ------------------------------- */
@@ -61,9 +68,10 @@ class mk_language_label extends mk_language_base {
 		this.mark_s = this._mark_enum[0];
 		// 清理数据
 		this._args_ss = [];
+		// 方向适配
+		this._direction_adaptation();
 		// 更新文本
 		this._update_content();
-
 		// 更新编辑器
 		this._update_editor();
 	}
@@ -98,10 +106,12 @@ class mk_language_label extends mk_language_base {
 
 	protected _init_data(): void {
 		this._label = this.node.getComponent(cc.Label) ?? this.node.getComponent(cc.RichText);
+
 		if (!this._label) {
 			this._log.error("节点不存在 Label | RichText 组件");
 			return;
 		}
+
 		// 初始化类型
 		if (!this._type_s) {
 			if (!EDITOR) {
@@ -146,13 +156,27 @@ class mk_language_label extends mk_language_base {
 		}
 	}
 
+	/** 方向适配 */
+	private _direction_adaptation(): void {
+		if (!this.direction_adaptation_b || !this._label) {
+			return;
+		}
+
+		this._label.horizontalAlign =
+			mk_language_manage.data.dire === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT
+				? cc.HorizontalTextAlignment.LEFT
+				: cc.HorizontalTextAlignment.RIGHT;
+	}
+
 	/** 初始化组件 */
 	private _init_component(): void {
 		// 注册类型
 		mk_language_label._type_enum = mk_tool.enum.obj_to_enum(language.label_data_tab);
+
 		if (!EDITOR) {
 			return;
 		}
+
 		// 类型数组
 		mk_language_label._type_ss = Object.keys(language.label_data_tab);
 		// 更新编辑器
@@ -164,10 +188,12 @@ class mk_language_label extends mk_language_base {
 		if (!EDITOR) {
 			return;
 		}
+
 		// 更新标记枚举
 		if (!this._mark_enum) {
 			this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
 		}
+
 		// 更新属性
 		{
 			if (mk_language_label._type_enum && Object.keys(mk_language_label._type_enum).length) {
@@ -190,6 +216,11 @@ class mk_language_label extends mk_language_base {
 	}
 
 	/* ------------------------------- 自定义事件 ------------------------------- */
+	protected _event_switch_language(): void {
+		this._direction_adaptation();
+		super._event_switch_language();
+	}
+
 	private _event_label_data_change(): void {
 		this.unschedule(this._init_component);
 		this.scheduleOnce(this._init_component);
