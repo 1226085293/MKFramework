@@ -19,6 +19,9 @@ class mk_event_target<CT> extends cc.EventTarget {
 
 			return null;
 		} else {
+			// 录入事件对象
+			this_?.event_target_as?.push(this);
+
 			return super.on(type_ as any, callback_ as any, this_, once_b_);
 		}
 	}
@@ -32,6 +35,9 @@ class mk_event_target<CT> extends cc.EventTarget {
 
 			return null;
 		} else {
+			// 录入事件对象
+			this_?.event_target_as?.push(this);
+
 			return super.once(type_ as any, callback_ as any, this_);
 		}
 	}

@@ -224,29 +224,23 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @param key_ 模块键
 	 * @param type_ 模块类型
 	 */
-	// @ts-ignore
-	get<T extends cc.Constructor<mk_view_base>, T2 = T["prototype"]>(
+	get<T extends cc.Constructor<mk_view_base> & Function, T2 = T extends { type_s: infer T2 } ? T2 : never, T3 = T["prototype"]>(
 		key_: T,
-		// @ts-ignore
-		type_?: T["type_s"]
-	): T2 | null;
+		type_?: T2
+	): T3 | null;
 	/**
 	 * 获取指定模块列表
 	 * @param key_ 模块键列表 [type]
 	 * @param type_ 模块类型
 	 */
-	// @ts-ignore
-	get<T extends cc.Constructor<mk_view_base>, T2 = T["prototype"]>(
+	get<T extends cc.Constructor<mk_view_base> & Function, T2 = T extends { type_s: infer T2 } ? T2 : never, T3 = T["prototype"]>(
 		key_: T[],
-		// @ts-ignore
-		type_?: T["type_s"]
-	): ReadonlyArray<T2>;
-	// @ts-ignore
-	get<T extends cc.Constructor<mk_view_base>, T2 = T["prototype"]>(
+		type_?: T2
+	): ReadonlyArray<T3>;
+	get<T extends cc.Constructor<mk_view_base> & Function, T2 = T extends { type_s: infer T2 } ? T2 : never, T3 = T["prototype"]>(
 		key_?: T | T[],
-		// @ts-ignore
-		type_?: T["type_s"]
-	): mk_view_base[] | T2 | T2[] | null {
+		type_?: T2
+	): mk_view_base[] | T3 | T3[] | null {
 		// 获取所有模块
 		if (!key_) {
 			return this._ui_show_as;
@@ -276,8 +270,10 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @param key_ 模块类型，必须经过 {@inheritdoc mk_ui_manage.regis} 接口注册过
 	 * @returns
 	 */
-	// @ts-ignore
-	async open<T extends cc.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T, config_?: mk_ui_manage_.open_config<T>): Promise<T2 | null> {
+	async open<T extends cc.Constructor<mk_view_base> & Function, T2 = T["prototype"]>(
+		key_: T,
+		config_?: mk_ui_manage_.open_config<T>
+	): Promise<T2 | null> {
 		if (!key_) {
 			this._log.error("参数错误");
 
@@ -674,8 +670,7 @@ export namespace mk_ui_manage_ {
 		}
 
 		/** 类型 */
-		// @ts-ignore
-		type?: CT["type_s"];
+		type?: CT extends { type_s: infer T } ? T : never;
 		/** 关闭全部指定类型的模块 */
 		all_b?: boolean;
 		/** 销毁节点 */
@@ -688,16 +683,14 @@ export namespace mk_ui_manage_ {
 	}
 
 	/** 打开ui配置 */
-	export class open_config<CT extends cc.Constructor<mk_view_base>> {
+	export class open_config<CT extends cc.Constructor<mk_view_base> & Function> {
 		constructor(init_?: open_config<CT>) {
 			Object.assign(this, init_);
 		}
 
 		/** 初始化数据 */
-		// @ts-ignore
 		init?: CT["prototype"]["init_data"];
 		/** 类型 */
-		// @ts-ignore
 		type?: CT["prototype"]["type_s"] = "default";
 		/** 父节点 */
 		parent?: cc.Node;

@@ -2677,7 +2677,7 @@
     },
     "layer_type_n": 0,
     "_child_layer_n": 0,
-    "wind_config": {
+    "animation_config": {
       "__id__": 125
     },
     "show_alone_b": false,
@@ -2689,7 +2689,7 @@
     "fileId": "b7C04gPTZD4LLXZx8IpFsI"
   },
   {
-    "__type__": "framework/module/layer/wind_config",
+    "__type__": "mk_view_base/animation_config",
     "open_animation_s": "默认",
     "close_animation_s": "默认"
   },

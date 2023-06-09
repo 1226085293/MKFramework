@@ -67,16 +67,36 @@ namespace global_config {
 
 	/** 多语言配置 */
 	export namespace language {
-		/** 语种 */
-		export enum type {
-			/** 中文(中华人民共和国) */
-			zh_cn,
-			/** 英语(美国) */
-			en_us,
+		/** 语种信息 */
+		export interface type_data {
+			/** 方向（cc.Layout.HorizontalDirection） */
+			dire: number;
 		}
 
+		/** 语种表 */
+		export const type_tab: Record<string, type_data> = {
+			/** 中文(中华人民共和国) */
+			zh_cn: {
+				dire: cc.Layout.HorizontalDirection.LEFT_TO_RIGHT,
+			},
+			/** 英语(美国) */
+			en_us: {
+				dire: cc.Layout.HorizontalDirection.LEFT_TO_RIGHT,
+			},
+		};
+
+		/** 语种 */
+		export const type: { [k in keyof typeof type_tab]: k } = new Proxy(
+			{},
+			{
+				get(target, key) {
+					return key;
+				},
+			}
+		) as any;
+
 		/** 默认语言 */
-		export const default_type: type = type[cc.sys.languageCode.replace(/-/g, "_")] ?? type.zh_cn;
+		export const default_type_s: keyof typeof type_tab = type.zh_cn;
 		/** 参数标识前缀 */
 		export const args_head_s = "{";
 		/** 参数标识后缀 */

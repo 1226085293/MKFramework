@@ -32,19 +32,24 @@ class mk_language_manage extends mk_instance_base {
 	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
 
 	/** 当前语言类型 */
-	get type(): global_config.language.type {
-		return this._language;
+	get type_s(): keyof typeof global_config.language.type_tab {
+		return this._language_s;
 	}
 
-	set type(value_) {
-		this._set_curr_type(value_);
+	set type_s(value_) {
+		this._set_type_s(value_);
+	}
+
+	/** 获取语言数据 */
+	get data(): global_config.language.type_data {
+		return global_config.language.type_tab[this._language_s];
 	}
 
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log = new mk_logger("language");
 	/** 当前语言类型 */
-	private _language = global_config.language.default_type;
+	private _language_s = global_config.language.default_type_s;
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
@@ -82,7 +87,7 @@ class mk_language_manage extends mk_instance_base {
 	 * @param language_ 语言
 	 * @returns
 	 */
-	async get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_ = this._language): Promise<cc.SpriteFrame | null> {
+	async get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_ = this._language_s): Promise<cc.SpriteFrame | null> {
 		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
 
 		if (!path_s) {
@@ -139,12 +144,12 @@ class mk_language_manage extends mk_instance_base {
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
-	private _set_curr_type(value_: global_config.language.type): void {
-		if (this._language === value_) {
+	private _set_type_s(value_: keyof typeof global_config.language.type): void {
+		if (this._language_s === value_) {
 			return;
 		}
 
-		this._language = value_;
+		this._language_s = value_;
 
 		// 事件通知
 		this.event.emit(this.event.key.switch_language);
@@ -153,7 +158,10 @@ class mk_language_manage extends mk_instance_base {
 
 export namespace mk_language_manage_ {
 	/** 多语言数据结构 */
-	export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
+	export type data_struct<T extends _mk_language_manage.type_type = any> = Record<
+		T,
+		{ [k in keyof typeof global_config.language.type_tab]: string }
+	>;
 
 	/** 获取文本配置 */
 	export class label_config {
@@ -162,7 +170,7 @@ export namespace mk_language_manage_ {
 		}
 
 		/** 语言类型 */
-		language = mk_language_manage.instance().type;
+		language = mk_language_manage.instance().type_s;
 		/** 参数 */
 		args_ss?: string[];
 	}

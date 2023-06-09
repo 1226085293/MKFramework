@@ -309,11 +309,13 @@ export namespace language_ {
         };
     }
     // Warning: (ae-forgotten-export) The symbol "_mk_language_manage" needs to be exported by the entry point mk_export.d.ts
-    export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, Record<keyof typeof global_config.language.type, string>>;
+    export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, {
+        [k in keyof typeof global_config.language.type_tab]: string;
+    }>;
     export class label_config {
         constructor(init_?: Partial<label_config>);
         args_ss?: string[];
-        language: global_config.language.type;
+        language: string;
     }
     export class label_data<CT extends data_struct> extends base_data<CT> {
         constructor(type_: string, init_: CT);
@@ -415,15 +417,17 @@ class mk_language_label extends mk_language_base {
 }
 
 // @public
-class mk_language_node {
-    clear(): void;
-    init(): void;
+class mk_language_node extends mk_life_cycle {
+    get current_node(): cc_2.Node;
     get language(): number;
     set language(value_n_: number);
     language_s: string;
-    get node(): cc_2.Node;
     // Warning: (ae-forgotten-export) The symbol "_mk_language_node" needs to be exported by the entry point mk_export.d.ts
     node_as: _mk_language_node.node[];
+    // (undocumented)
+    open(): void;
+    // (undocumented)
+    protected _use_layer_b: boolean;
 }
 
 // @public (undocumented)
@@ -459,6 +463,7 @@ class mk_layer extends cc_2.Component {
     layer_type_n: number;
     // (undocumented)
     protected onLoad(): void;
+    protected _use_layer_b: boolean;
 }
 
 // @public (undocumented)
@@ -478,6 +483,11 @@ class mk_life_cycle extends mk_layer {
     // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export.d.ts
     set config(config_: _mk_life_cycle.create_config);
     create?(): void | Promise<void>;
+    event_target_as: {
+        targetOff(target: any): any;
+    }[] | {
+        target_off(target: any): any;
+    }[];
     init(data_?: any): void | Promise<void>;
     init_data?: any;
     protected late_close?(): void | Promise<void>;
@@ -777,9 +787,11 @@ export namespace ui_manage_ {
         all_b?: boolean;
         destroy_b?: boolean;
         destroy_children_b?: boolean;
-        type?: CT["type_s"];
+        type?: CT extends {
+            type_s: infer T;
+        } ? T : never;
     }
-    export class open_config<CT extends cc_2.Constructor<mk_view_base>> {
+    export class open_config<CT extends cc_2.Constructor<mk_view_base> & Function> {
         constructor(init_?: open_config<CT>);
         init?: CT["prototype"]["init_data"];
         parent?: cc_2.Node;

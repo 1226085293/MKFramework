@@ -38,11 +38,11 @@ namespace _mk_view_base {
 		}>;
 	}
 
-	/** 窗口配置 */
-	@ccclass("framework/module/layer/wind_config")
-	export class wind_config {
+	/** 动画配置 */
+	@ccclass("mk_view_base/animation_config")
+	export class animation_config {
 		/* --------------- static --------------- */
-		/** 窗口动画枚举表 */
+		/** 动画枚举表 */
 		static animation_enum_tab: {
 			/** 打开动画 */
 			open: Record<string | number, string | number>;
@@ -56,37 +56,72 @@ namespace _mk_view_base {
 		/* --------------- 属性 --------------- */
 
 		@property({
-			displayName: "窗口打开动画",
+			displayName: "打开动画",
 			type: cc.Enum({ 未初始化: 0 }),
 		})
 		get open_animation_n(): number {
-			return (wind_config.animation_enum_tab.open[this.open_animation_s] as number) ?? 0;
+			return (animation_config.animation_enum_tab.open[this.open_animation_s] as number) ?? 0;
 		}
 
 		set open_animation_n(value_n_: number) {
-			this.open_animation_s = wind_config.animation_enum_tab.open[value_n_] as string;
+			this.open_animation_s = animation_config.animation_enum_tab.open[value_n_] as string;
 		}
 
 		@property({
-			displayName: "窗口关闭动画",
+			displayName: "关闭动画",
 			type: cc.Enum({ 未初始化: 0 }),
 		})
 		get close_animation_n(): number {
-			return (wind_config.animation_enum_tab.close[this.close_animation_s] as number) ?? 0;
+			return (animation_config.animation_enum_tab.close[this.close_animation_s] as number) ?? 0;
 		}
 
 		set close_animation_n(value_n_: number) {
-			this.close_animation_s = wind_config.animation_enum_tab.close[value_n_] as string;
+			this.close_animation_s = animation_config.animation_enum_tab.close[value_n_] as string;
 		}
 
 		/* --------------- public --------------- */
-		/** 窗口打开动画 */
+		/** 打开动画 */
 		@property({ visible: false })
 		open_animation_s = "";
 
-		/** 窗口关闭动画 */
+		/** 关闭动画 */
 		@property({ visible: false })
 		close_animation_s = "";
+	}
+
+	/** 快捷操作 */
+	@ccclass("mk_view_base/quick_operation")
+	export class quick_operation {
+		// @property({
+		// 	displayName: "添加遮罩",
+		// 	tooltip: "添加遮罩到根节点下",
+		// })
+		// get auto_mask_b(): boolean {
+		// 	return this._get_auto_mask_b();
+		// }
+		// set auto_mask_b(value_b_) {
+		// 	this._set_auto_mask_b(value_b_);
+		// }
+		// @property({
+		// 	displayName: "0 边距 widget",
+		// 	tooltip: "在节点上添加 0 边距 widget",
+		// })
+		// get auto_widget_b(): boolean {
+		// 	return Boolean(this.getComponent(cc.Widget));
+		// }
+		// set auto_widget_b(value_b_) {
+		// 	this._set_auto_widget_b(value_b_);
+		// }
+		// @property({
+		// 	displayName: "BlockInputEvents",
+		// 	tooltip: "在节点上添加 BlockInputEvents 组件",
+		// })
+		// get auto_block_input_b(): boolean {
+		// 	return Boolean(this.getComponent(cc.BlockInputEvents));
+		// }
+		// set auto_block_input_b(value_b_) {
+		// 	this._set_auto_block_input_b(value_b_);
+		// }
 	}
 }
 
@@ -109,32 +144,20 @@ export class mk_view_base extends mk_life_cycle {
 	};
 
 	/* --------------- 属性 --------------- */
-	/** 窗口 */
-	@property({
-		displayName: "窗口",
-	})
-	get wind_b(): boolean {
-		return this._wind_b;
-	}
-
-	set wind_b(value_b_) {
-		this._set_wind_b(value_b_);
-	}
-
-	@property({
-		displayName: "窗口配置",
-		type: _mk_view_base.wind_config,
-		visible: function (this: mk_view_base) {
-			return this._wind_b;
-		},
-	})
-	wind_config: _mk_view_base.wind_config = null!;
-
 	@property({
 		displayName: "单独展示",
 		tooltip: "勾选后打开此视图将隐藏所有下级视图，关闭此视图则还原展示",
 	})
 	show_alone_b = false;
+
+	@property({
+		displayName: "动画配置",
+		type: _mk_view_base.animation_config,
+		visible: function (this: mk_view_base) {
+			return this._wind_b;
+		},
+	})
+	animation_config: _mk_view_base.animation_config = null!;
 
 	@property({
 		displayName: "添加遮罩",
@@ -213,8 +236,8 @@ export class mk_view_base extends mk_life_cycle {
 	open(): void | Promise<void>;
 	async open(): Promise<void> {
 		// 打开动画
-		if (this.wind_b && this.wind_config?.open_animation_s) {
-			await mk_view_base.config.window_animation_tab?.open?.[this.wind_config.open_animation_s]?.(this.node);
+		if (this.animation_config?.open_animation_s) {
+			await mk_view_base.config.window_animation_tab?.open?.[this.animation_config.open_animation_s]?.(this.node);
 		}
 	}
 
@@ -233,8 +256,8 @@ export class mk_view_base extends mk_life_cycle {
 
 	protected async late_close?(): Promise<void> {
 		// 关闭动画
-		if (this.wind_b && this.wind_config?.close_animation_s) {
-			await mk_view_base.config.window_animation_tab?.close?.[this.wind_config.close_animation_s]?.(this.node);
+		if (this.animation_config?.close_animation_s) {
+			await mk_view_base.config.window_animation_tab?.close?.[this.animation_config.close_animation_s]?.(this.node);
 		}
 
 		// 重置数据
@@ -340,23 +363,23 @@ export class mk_view_base extends mk_life_cycle {
 			if (mk_view_base.config.window_animation_tab) {
 				// 打开
 				if (mk_view_base.config.window_animation_tab.open) {
-					_mk_view_base.wind_config.animation_enum_tab.open = cc.Enum(
+					_mk_view_base.animation_config.animation_enum_tab.open = cc.Enum(
 						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.open)
 					);
 
-					if (this.wind_config && !this.wind_config.open_animation_s) {
-						this.wind_config.open_animation_s = Object.keys(_mk_view_base.wind_config.animation_enum_tab.open)[0];
+					if (this.animation_config && !this.animation_config.open_animation_s) {
+						this.animation_config.open_animation_s = Object.keys(_mk_view_base.animation_config.animation_enum_tab.open)[0];
 					}
 				}
 
 				// 关闭
 				if (mk_view_base.config.window_animation_tab.close) {
-					_mk_view_base.wind_config.animation_enum_tab.close = cc.Enum(
+					_mk_view_base.animation_config.animation_enum_tab.close = cc.Enum(
 						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.close)
 					);
 
-					if (this.wind_config && !this.wind_config.close_animation_s) {
-						this.wind_config.close_animation_s = Object.keys(_mk_view_base.wind_config.animation_enum_tab.close)[0];
+					if (this.animation_config && !this.animation_config.close_animation_s) {
+						this.animation_config.close_animation_s = Object.keys(_mk_view_base.animation_config.animation_enum_tab.close)[0];
 					}
 				}
 			}
@@ -364,38 +387,30 @@ export class mk_view_base extends mk_life_cycle {
 
 		// 更新编辑器
 		if (EDITOR) {
-			// 遮罩类型
-			if (this.wind_b) {
-				// 窗口动画
-				if (mk_view_base.config.window_animation_tab) {
-					if (mk_view_base.config.window_animation_tab.open) {
-						cc.CCClass.Attr.setClassAttr(
-							_mk_view_base.wind_config,
-							"open_animation_n",
-							"enumList",
-							cc.Enum.getList(_mk_view_base.wind_config.animation_enum_tab.open)
-						);
-					}
+			// 窗口动画
+			if (mk_view_base.config.window_animation_tab) {
+				if (mk_view_base.config.window_animation_tab.open) {
+					cc.CCClass.Attr.setClassAttr(
+						_mk_view_base.animation_config,
+						"open_animation_n",
+						"enumList",
+						cc.Enum.getList(_mk_view_base.animation_config.animation_enum_tab.open)
+					);
+				}
 
-					if (mk_view_base.config.window_animation_tab.close) {
-						cc.CCClass.Attr.setClassAttr(
-							_mk_view_base.wind_config,
-							"close_animation_n",
-							"enumList",
-							cc.Enum.getList(_mk_view_base.wind_config.animation_enum_tab.close)
-						);
-					}
+				if (mk_view_base.config.window_animation_tab.close) {
+					cc.CCClass.Attr.setClassAttr(
+						_mk_view_base.animation_config,
+						"close_animation_n",
+						"enumList",
+						cc.Enum.getList(_mk_view_base.animation_config.animation_enum_tab.close)
+					);
 				}
 			}
 		}
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
-	private _set_wind_b(value_b_: boolean): void {
-		this.wind_config = !value_b_ ? null! : new _mk_view_base.wind_config();
-		this._wind_b = value_b_;
-	}
-
 	private _get_auto_mask_b(): boolean {
 		if (!this.node.children.length) {
 			return false;

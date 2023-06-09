@@ -3041,7 +3041,7 @@
     },
     "layer_type_n": 0,
     "_child_layer_n": 0,
-    "wind_config": {
+    "animation_config": {
       "__id__": 152
     },
     "show_alone_b": true,
@@ -3053,7 +3053,7 @@
     "fileId": "3eW7PzHDNGS7ANfc/q2687"
   },
   {
-    "__type__": "framework/module/layer/wind_config",
+    "__type__": "mk_view_base/animation_config",
     "auto_mask_b": true,
     "mask_type": 0,
     "open_animation_s": "默认",

@@ -3,7 +3,7 @@ import { EDITOR } from "cc/env";
 import global_event from "../../@config/global_event";
 import mk_instance_base from "../mk_instance_base";
 import mk_logger from "../mk_logger";
-import bundle from "./mk_bundle";
+import mk_bundle from "./mk_bundle";
 import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
 
@@ -235,7 +235,7 @@ class mk_asset extends mk_instance_base {
 			// 本地
 			else {
 				/** bundle 资源 */
-				const bundle_asset = await bundle.load(get_config.bundle_s!);
+				const bundle_asset = await mk_bundle.load(get_config.bundle_s!);
 
 				if (!bundle_asset) {
 					this._log.error("未获取到 bundle 信息");
@@ -333,7 +333,7 @@ class mk_asset extends mk_instance_base {
 			// 本地
 			else {
 				/** bundle 资源 */
-				const bundle_asset = await bundle.load(asset_config.bundle!);
+				const bundle_asset = await mk_bundle.load(asset_config.bundle!);
 
 				if (!bundle_asset) {
 					this._log.error("未获取到 bundle 信息");
