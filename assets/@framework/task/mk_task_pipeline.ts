@@ -83,6 +83,7 @@ class mk_task_pipeline {
 			} catch (error) {
 				mk_log.error("任务执行失败，跳过", error, task.task_f);
 			}
+
 			task.task.finish(true, task_result);
 
 			// 已经暂停
@@ -90,6 +91,7 @@ class mk_task_pipeline {
 				break;
 			}
 		}
+
 		this._run_b = false;
 	}
 }

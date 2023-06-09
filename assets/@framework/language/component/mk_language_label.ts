@@ -100,8 +100,10 @@ class mk_language_label extends mk_language_base {
 		this._label = this.node.getComponent(cc.Label) ?? this.node.getComponent(cc.RichText);
 		if (!this._label) {
 			this._log.error("节点不存在 Label | RichText 组件");
+
 			return;
 		}
+
 		// 初始化类型
 		if (!this._type_s) {
 			if (!EDITOR) {
@@ -125,6 +127,7 @@ class mk_language_label extends mk_language_base {
 
 						user_comp = canvas.components.find((v) => !cc.js.getClassName(v).startsWith("cc."));
 					}
+
 					this._type_s = language_manage.label_data_tab[cc.js.getClassName(user_comp)]
 						? cc.js.getClassName(user_comp)
 						: mk_language_label._type_ss[0] ?? "";
@@ -153,6 +156,7 @@ class mk_language_label extends mk_language_base {
 		if (!EDITOR) {
 			return;
 		}
+
 		// 类型数组
 		mk_language_label._type_ss = Object.keys(language.label_data_tab);
 		// 更新编辑器
@@ -164,15 +168,18 @@ class mk_language_label extends mk_language_base {
 		if (!EDITOR) {
 			return;
 		}
+
 		// 更新标记枚举
 		if (!this._mark_enum) {
 			this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
 		}
+
 		// 更新属性
 		{
 			if (mk_language_label._type_enum && Object.keys(mk_language_label._type_enum).length) {
 				cc.CCClass.Attr.setClassAttr(mk_language_label, "type", "enumList", cc.Enum.getList(cc.Enum(mk_language_label._type_enum)));
 			}
+
 			if (this._mark_enum && Object.keys(this._mark_enum).length) {
 				cc.CCClass.Attr.setClassAttr(mk_language_label, "mark_enum", "enumList", cc.Enum.getList(cc.Enum(this._mark_enum)));
 			}
@@ -184,6 +191,7 @@ class mk_language_label extends mk_language_base {
 		if (!this._label || !this._data) {
 			return;
 		}
+
 		this._args_ss = value_ss_;
 		// 更新文本
 		this._update_content();

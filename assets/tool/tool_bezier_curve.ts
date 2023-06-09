@@ -6,8 +6,10 @@ class tool_bezier_curve {
 		this.point_v3s = point_as_;
 		if (this.point_v3s.length < 2) {
 			console.error("控制点不能少于2");
+
 			return;
 		}
+
 		/** 首尾相等 */
 		const equals_b = point_as_[0].strictEquals(point_as_[point_as_.length - 1]);
 		/** 总距离 */
@@ -21,6 +23,7 @@ class tool_bezier_curve {
 			} else {
 				temp_v3 = point_as_[k_n - 1];
 			}
+
 			temp2_v3 = point_as_[k_n];
 			temp3_v3 = point_as_[k_n + 1];
 
@@ -52,6 +55,7 @@ class tool_bezier_curve {
 	point(pos_n_: number): cc.Vec3 | null {
 		if (this.point_v3s.length < 2) {
 			console.error("控制点不能少于2");
+
 			return null;
 		}
 
@@ -80,11 +84,13 @@ class tool_bezier_curve {
 					v.x *
 					Math.pow(1 - pos_n_, index_n - k_s) *
 					Math.pow(pos_n_, k_s);
+
 				result_v3.y +=
 					(this._factorial(index_n) / this._factorial(k_s) / this._factorial(index_n - k_s)) *
 					v.y *
 					Math.pow(1 - pos_n_, index_n - k_s) *
 					Math.pow(pos_n_, k_s);
+
 				result_v3.z +=
 					(this._factorial(index_n) / this._factorial(k_s) / this._factorial(index_n - k_s)) *
 					v.z *
@@ -92,6 +98,7 @@ class tool_bezier_curve {
 					Math.pow(pos_n_, k_s);
 			}
 		});
+
 		return result_v3;
 	}
 
@@ -99,6 +106,7 @@ class tool_bezier_curve {
 	uniform_point(pos_n_: number): cc.Vec3 | null {
 		if (this.point_v3s.length < 2) {
 			console.error("控制点不能少于2");
+
 			return null;
 		}
 
@@ -129,6 +137,7 @@ class tool_bezier_curve {
 				break;
 			}
 		}
+
 		// 牛顿切线法求根
 		let a_n = percent_n,
 			b_n!: number;
@@ -141,9 +150,12 @@ class tool_bezier_curve {
 			if (Math.abs(a_n - b_n) < 0.0001) {
 				break;
 			}
+
 			a_n = b_n;
 		}
+
 		percent_n = b_n;
+
 		return this._func_fss[index_n][0](percent_n);
 	}
 
@@ -158,6 +170,7 @@ class tool_bezier_curve {
 		for (let k_n = 2; k_n <= value_n_; ++k_n) {
 			result_n *= k_n;
 		}
+
 		return result_n;
 	}
 
@@ -174,6 +187,7 @@ class tool_bezier_curve {
 			0.7745966692: 0.555555556,
 			0: 0.8888888889,
 		};
+
 		// 5次系数
 		// let GauFactor = {0.9061798459:0.2369268851,0.5384693101:0.4786286705,0:0.5688888889}
 		// 积分
@@ -193,6 +207,7 @@ class tool_bezier_curve {
 				gau_sum_n = gau_sum_n + der * v;
 			}
 		}
+
 		return (gau_sum_n * (value2_n_ - value_n_)) / 2;
 	}
 
@@ -212,15 +227,16 @@ class tool_bezier_curve {
 			.add(point2_v3_.clone().multiplyScalar(2 - s_n))
 			.add(point3_v3_.clone().multiplyScalar(s_n - 2))
 			.add(point4_v3_.clone().multiplyScalar(s_n));
+
 		const b2_v3 = point_v3_
 			.clone()
 			.multiplyScalar(2 * s_n)
 			.add(point2_v3_.clone().multiplyScalar(s_n - 3))
 			.add(point3_v3_.clone().multiplyScalar(3 - 2 * s_n))
 			.add(point4_v3_.clone().multiplyScalar(-s_n));
+
 		const b3_v3 = point_v3_.clone().multiplyScalar(-s_n).add(point3_v3_.clone().multiplyScalar(s_n));
 		const b4_v3 = point2_v3_;
-
 		// 函数曲线
 		const fx = (x_n: number): cc.Vec3 => {
 			return b_v3

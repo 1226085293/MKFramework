@@ -30,6 +30,7 @@ class mk_layer extends cc.Component {
 	})
 	get init_editor(): void {
 		this._init_editor();
+
 		return;
 	}
 

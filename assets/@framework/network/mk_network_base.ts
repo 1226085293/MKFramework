@@ -61,7 +61,9 @@ namespace _mk_network_base {
 			} else {
 				return super.on(type_, callback_, this_, once_b_);
 			}
+
 			this._log.error("消息 id 解析错误");
+
 			return null;
 		}
 
@@ -85,11 +87,13 @@ namespace _mk_network_base {
 
 				if (message_id !== undefined) {
 					super.off(message_id, callback_, this_);
+
 					return;
 				}
 			} else {
 				super.off(type_, callback_, this_);
 			}
+
 			this._log.error("消息 id 解析错误");
 		}
 
@@ -113,8 +117,10 @@ namespace _mk_network_base {
 
 				if (message_id === undefined) {
 					this._log.error("消息 id 解析错误");
+
 					return;
 				}
+
 				super.emit(message_id, args_);
 			}
 		}
@@ -136,6 +142,7 @@ namespace _mk_network_base {
 		 */
 		request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null {
 			this._network._send(data_);
+
 			return this._network._wait(data_, timeout_ms_n_);
 		}
 
@@ -156,6 +163,7 @@ namespace _mk_network_base {
 			}
 
 			this._log.error("消息 id 解析错误");
+
 			return false;
 		}
 
@@ -283,6 +291,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 
 		if (message_sequence === undefined) {
 			this._log.error("消息序列号解析错误");
+
 			return null;
 		}
 
@@ -325,6 +334,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 		if (data === undefined) {
 			return;
 		}
+
 		this._log.debug("收到消息", data);
 
 		// 事件通知
@@ -364,8 +374,10 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 		if (this._reconnect_timer !== null) {
 			if (++this._reconnect_count_n > this.config.max_reconnect_n) {
 				this._cancel_reconnect(false);
+
 				return;
 			}
+
 			this._log.warn("socket 重连计数", this._reconnect_count_n);
 		}
 
@@ -416,6 +428,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 		if (this._reconnect_timer === null) {
 			return;
 		}
+
 		this._log.warn("socket 重连" + (status_b_ ? "成功" : "失败"));
 
 		// 重连失败
@@ -444,6 +457,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 
 		if (message_id === undefined) {
 			this._log.error("消息 id 解析错误");
+
 			return;
 		}
 
@@ -468,7 +482,6 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 
 		/** 心跳超时定时器 */
 		let timeout_timer: any;
-
 		/** 接收心跳回调 */
 		const recv_f = (): void => {
 			if (timeout_timer) {
@@ -539,6 +552,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 		} else {
 			this._send_timer = setInterval(this._timer_send.bind(this), this.config.send_interval_ms_n);
 		}
+
 		this._write_sleep2_b = value_b_;
 	}
 
@@ -555,6 +569,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 			this._wait_task_map.forEach((v) => {
 				v.finish(true, null);
 			});
+
 			this._wait_task_map.clear();
 		}
 
@@ -653,6 +668,7 @@ export namespace mk_network_base_ {
 		send(data_: Parameters<CT["encode"]>[0]): void {
 			if (this._send_interval_ms_n === 0) {
 				this._network._send(data_);
+
 				return;
 			} else {
 				this._mess_as.push(data_);
@@ -664,6 +680,7 @@ export namespace mk_network_base_ {
 					while (this._mess_as.length) {
 						this._network._send(this._mess_as.shift());
 					}
+
 					this._send_timer = null;
 				});
 			}

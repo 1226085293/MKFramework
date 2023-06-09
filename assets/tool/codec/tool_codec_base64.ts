@@ -40,12 +40,14 @@ class tool_codec_base64 extends mk_codec_base {
 			} else if (isNaN(temp3_n)) {
 				temp7_n = 64;
 			}
+
 			result_s +=
 				_tool_codec_base64.str_lib_ss.charAt(temp4_n) +
 				_tool_codec_base64.str_lib_ss.charAt(temp5_n) +
 				_tool_codec_base64.str_lib_ss.charAt(temp6_n) +
 				_tool_codec_base64.str_lib_ss.charAt(temp7_n);
 		}
+
 		return result_s;
 	}
 
@@ -68,10 +70,12 @@ class tool_codec_base64 extends mk_codec_base {
 			if (temp6_n != 64) {
 				result_s = result_s + String.fromCharCode(temp2_n);
 			}
+
 			if (temp7_n != 64) {
 				result_s = result_s + String.fromCharCode(temp3_n);
 			}
 		}
+
 		return this._utf8_codec.decode(result_s);
 	}
 }

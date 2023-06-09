@@ -11,6 +11,7 @@ class mk_tool_string extends mk_instance_base {
 			if (v_len_n == 0) {
 				return v2_len_n;
 			}
+
 			if (v2_len_n == 0) {
 				return v_len_n;
 			}
@@ -24,6 +25,7 @@ class mk_tool_string extends mk_instance_base {
 				dist_nss[k_n] = [];
 				dist_nss[k_n][0] = k_n;
 			}
+
 			for (let k_n = 0; k_n <= v2_len_n; k_n++) {
 				dist_nss[0][k_n] = k_n;
 			}
@@ -56,6 +58,7 @@ class mk_tool_string extends mk_instance_base {
 		if (!key_s_) {
 			return null;
 		}
+
 		let source_ss: string[];
 
 		if (typeof args_ === "string") {
@@ -63,6 +66,7 @@ class mk_tool_string extends mk_instance_base {
 		} else {
 			source_ss = args_;
 		}
+
 		const match_result_ss: string[] = [];
 		const key_ss = key_s_.split("");
 		let index_n: number;
@@ -82,14 +86,17 @@ class mk_tool_string extends mk_instance_base {
 							index_n = exec_result.index;
 							if (k2_n === key_ss.length - 1) {
 								match_result_ss.push(v_s);
+
 								return;
 							}
+
 							break;
 						}
 					}
 				}
 			}
 		});
+
 		if (!match_result_ss.length) {
 			return null;
 		}
@@ -98,6 +105,7 @@ class mk_tool_string extends mk_instance_base {
 			match_result_ss.sort(
 				(v_a_s: string, v_b_s: string) => this.similarity_edit_dist(v_b_s, key_s_) - this.similarity_edit_dist(v_a_s, key_s_)
 			);
+
 			return this.similarity_edit_dist(match_result_ss[0], key_s_) >= min_simile_n_ ? match_result_ss[0] : key_s_;
 		}
 	}

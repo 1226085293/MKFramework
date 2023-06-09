@@ -23,6 +23,7 @@ class tool_byte {
 			count_n++;
 			value_n_ |= value_n_ + 1;
 		}
+
 		return count_n;
 	}
 
@@ -34,6 +35,7 @@ class tool_byte {
 			count_n++;
 			value_n_ &= value_n_ - 1;
 		}
+
 		return count_n;
 	}
 
@@ -46,6 +48,7 @@ class tool_byte {
 			count_n++;
 			value_n_ >>= 1;
 		}
+
 		return count_n;
 	}
 }

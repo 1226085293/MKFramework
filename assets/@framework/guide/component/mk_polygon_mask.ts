@@ -16,6 +16,7 @@ export class mk_polygon_mask extends cc.Component {
 	@property({ visible: false })
 	get init_editor(): void {
 		this._init_editor();
+
 		return;
 	}
 
@@ -66,6 +67,7 @@ export class mk_polygon_mask extends cc.Component {
 			if (this._track_node) {
 				this.track_node = this._track_node;
 			}
+
 			polygon_comp.destroy();
 		}
 	}
@@ -89,6 +91,7 @@ export class mk_polygon_mask extends cc.Component {
 			for (let k_n = 1, len_n = point_v2s.length; k_n < len_n; ++k_n) {
 				graphics_comp.lineTo(point_v2s[k_n].x, point_v2s[k_n].y);
 			}
+
 			graphics_comp.close();
 			graphics_comp.stroke();
 			graphics_comp.fill();

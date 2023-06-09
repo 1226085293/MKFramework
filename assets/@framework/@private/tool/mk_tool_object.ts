@@ -14,6 +14,7 @@ class mk_tool_object extends mk_instance_base {
 						if (record_set.has(target_)) {
 							return target_;
 						}
+
 						record_set.add(target_);
 						result = [];
 						for (let k_n = 0; k_n < target_.length; ++k_n) {
@@ -34,6 +35,7 @@ class mk_tool_object extends mk_instance_base {
 						if (record_set.has(target_)) {
 							return target_;
 						}
+
 						record_set.add(target_);
 						result = {};
 						for (const k_s in target_) {
@@ -53,6 +55,7 @@ class mk_tool_object extends mk_instance_base {
 				result = target_;
 			}
 		}
+
 		return result;
 	}
 
@@ -60,11 +63,13 @@ class mk_tool_object extends mk_instance_base {
 	reset<T extends { constructor: any }, T2 extends true | false>(data_: T, assign_b_: T2): typeof assign_b_ extends true ? null : T {
 		if (!data_?.constructor) {
 			mk_log.error("数据类型错误");
+
 			return null!;
 		}
 
 		if (assign_b_) {
 			Object.assign(data_, new data_.constructor());
+
 			return null!;
 		} else {
 			return new data_.constructor();
@@ -101,6 +106,7 @@ class mk_tool_object extends mk_instance_base {
 						if (record_set.has(target_)) {
 							return;
 						}
+
 						record_set.add(target_);
 
 						target_.forEach((v, k_n) => {
@@ -114,6 +120,7 @@ class mk_tool_object extends mk_instance_base {
 						if (record_set.has(target_)) {
 							return;
 						}
+
 						record_set.add(target_);
 						for (const k_s in target_) {
 							callback_f_(target_[k_s], k_s, path_s_);

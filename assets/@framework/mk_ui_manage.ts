@@ -71,13 +71,13 @@ export class mk_ui_manage extends mk_instance_base {
 			await this.unregis(key_);
 		}
 
+		/** 注册任务 */
+		const regis_task = new mk_status_task(false);
 		/** 注册数据 */
 		const regis_data = new mk_ui_manage_.regis_data<T>({
 			...config_,
 			source: source_,
 		});
-		/** 注册任务 */
-		const regis_task = new mk_status_task(false);
 
 		// 添加注册任务
 		this._ui_regis_task_map.set(key_, regis_task);
@@ -128,6 +128,7 @@ export class mk_ui_manage extends mk_instance_base {
 			if (typeof v === "string" && regis_data.pool_init_fill_n > 0) {
 				source = await cache.get(v, regis_data.load_config ?? cc.Prefab);
 			}
+
 			// 预制体/节点
 			if (typeof v !== "string" && v?.isValid) {
 				source = v;
@@ -151,8 +152,10 @@ export class mk_ui_manage extends mk_instance_base {
 
 						if (!source?.isValid) {
 							this._log.error(`${k_s} 类型资源失效`, v);
+
 							return null;
 						}
+
 						return cc.instantiate(source as any);
 					},
 					clear_f: async (obj_as) => {
@@ -208,6 +211,7 @@ export class mk_ui_manage extends mk_instance_base {
 				for (const [k_n, v] of pool) {
 					await v.clear();
 				}
+
 				this._ui_pool_map.delete(key_);
 			}
 		}
@@ -276,8 +280,10 @@ export class mk_ui_manage extends mk_instance_base {
 	async open<T extends cc.Constructor<mk_view_base>, T2 = T["prototype"]>(key_: T, config_?: mk_ui_manage_.open_config<T>): Promise<T2 | null> {
 		if (!key_) {
 			this._log.error("参数错误");
+
 			return null;
 		}
+
 		/** 注册数据 */
 		let regis_data = this._ui_regis_map.get(key_);
 
@@ -293,6 +299,7 @@ export class mk_ui_manage extends mk_instance_base {
 		// 安检
 		if (!regis_data) {
 			this._log.error(cc.js.getClassName(key_), "模块未注册");
+
 			return null;
 		}
 
@@ -303,8 +310,10 @@ export class mk_ui_manage extends mk_instance_base {
 
 		if (!parent?.isValid) {
 			this._log.error("无效父节点");
+
 			return null;
 		}
+
 		// 检测重复加载
 		{
 			let task = this._ui_load_map.get(key_);
@@ -330,6 +339,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 			return view_comp as any;
 		};
+
 		/** 注册任务 */
 		const regis_task = this._ui_regis_task_map.get(key_);
 		/** 视图组件 */
@@ -349,21 +359,27 @@ export class mk_ui_manage extends mk_instance_base {
 
 			if (!node_pool) {
 				this._log.error("模块类型错误");
+
 				return exit_callback_f(false);
 			}
+
 			const node = await node_pool.get();
 
 			if (!node) {
 				this._log.warn("对象池资源为空");
+
 				return exit_callback_f(false);
 			}
+
 			const comp = node.getComponent(key_) ?? node.addComponent(key_);
 
 			if (!comp) {
 				this._log.error("节点未挂载视图组件");
 				node.destroy();
+
 				return exit_callback_f(false);
 			}
+
 			view_comp = comp;
 		}
 
@@ -375,6 +391,7 @@ export class mk_ui_manage extends mk_instance_base {
 					v.node.active = false;
 				}
 			});
+
 			this._ui_hidden_length_n = this._ui_show_as.length;
 		}
 
@@ -386,6 +403,7 @@ export class mk_ui_manage extends mk_instance_base {
 			if (!ui_as) {
 				this._ui_map.set(key_, (ui_as = []));
 			}
+
 			ui_as.push(view_comp);
 		}
 
@@ -428,8 +446,10 @@ export class mk_ui_manage extends mk_instance_base {
 	): Promise<boolean> {
 		if (!args_) {
 			this._log.error("参数错误");
+
 			return false;
 		}
+
 		const config = new mk_ui_manage_.close_config(config_);
 		let key_: T | undefined;
 		let node_: cc.Node | undefined;
@@ -462,6 +482,7 @@ export class mk_ui_manage extends mk_instance_base {
 				if (!ui_as?.length) {
 					return false;
 				}
+
 				close_ui_as = ui_as.slice(0);
 			}
 
@@ -479,10 +500,12 @@ export class mk_ui_manage extends mk_instance_base {
 							}
 						}
 					}
+
 					if (!close_ui_as.length) {
 						return false;
 					}
 				}
+
 				// 非关闭所有则关闭最后模块
 				if (close_ui_as.length > 1 && !config.all_b) {
 					close_ui_as = [close_ui_as[close_ui_as.length - 1]];
@@ -497,6 +520,7 @@ export class mk_ui_manage extends mk_instance_base {
 				node_.removeFromParent();
 				node_.destroy();
 			}
+
 			return false;
 		}
 
@@ -525,6 +549,7 @@ export class mk_ui_manage extends mk_instance_base {
 							break;
 						}
 					}
+
 					// 重新展示已经隐藏的模块
 					{
 						// 激活模块
@@ -535,6 +560,7 @@ export class mk_ui_manage extends mk_instance_base {
 								this._ui_hidden_set.delete(v);
 							}
 						});
+
 						// 更新隐藏模块列表长度
 						this._ui_hidden_length_n = new_hidden_index_n;
 					}
@@ -565,6 +591,7 @@ export class mk_ui_manage extends mk_instance_base {
 					if (!ui_as) {
 						return;
 					}
+
 					const index_n = ui_as.indexOf(v);
 
 					if (index_n !== -1) {
@@ -602,6 +629,7 @@ export class mk_ui_manage extends mk_instance_base {
 				if (!ui_pool) {
 					continue;
 				}
+
 				/** 节点池 */
 				const node_pool = ui_pool?.get(v.type_s);
 
@@ -609,9 +637,11 @@ export class mk_ui_manage extends mk_instance_base {
 					this._log.error("回收模块错误，未找到指定节点池类型", v.type_s);
 					continue;
 				}
+
 				node_pool.put(v.node);
 			}
 		}
+
 		return true;
 	}
 
@@ -679,6 +709,7 @@ export namespace mk_ui_manage_ {
 			if (!init_) {
 				return;
 			}
+
 			Object.assign(this, init_);
 
 			if (this.pool_fill_n === undefined) {

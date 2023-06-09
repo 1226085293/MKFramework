@@ -74,6 +74,7 @@ class mk_guide_manage {
 			if (!current_step) {
 				this._log.error(`步骤 ${this._step_n} 未注册`);
 				this.pause_b = true;
+
 				return;
 			}
 
@@ -126,6 +127,7 @@ class mk_guide_manage {
 						await this._init_config.operate_tab[v_s].unload?.();
 					}
 				}
+
 				// 加载操作（当前步骤存在，上次步骤不存在的操作）
 				for (const v_s of current_operate_ss.filter((v) => !pre_operate_ss.includes(v))) {
 					current_step.operate_tab[v_s] = await this._init_config.operate_tab[v_s].load();
@@ -163,6 +165,7 @@ class mk_guide_manage {
 			if (this._step_n === step_n_) {
 				return;
 			}
+
 			// 更新步骤
 			this._step_n = step_n_;
 
@@ -187,6 +190,7 @@ class mk_guide_manage {
 					this._pause_b = true;
 					this.event.emit(this.event.key.break);
 					this._log.warn("引导中断");
+
 					return;
 				}
 
@@ -199,6 +203,7 @@ class mk_guide_manage {
 			// 步骤完成
 			if (this._step_n === this._init_config.end_step_n) {
 				this.finish();
+
 				return;
 			}
 
@@ -226,6 +231,7 @@ class mk_guide_manage {
 		if (this._pause_b === value_b_) {
 			return;
 		}
+
 		this._pause_b = value_b_;
 
 		// 暂停 | 恢复事件

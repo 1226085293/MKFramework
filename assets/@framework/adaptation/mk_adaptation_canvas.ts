@@ -34,6 +34,7 @@ export default class mk_adaptation_canvas extends cc.Component {
 		if (!canvas) {
 			return;
 		}
+
 		/** 设计尺寸 */
 		const design_size = global_config.view.current_design_size;
 		/** 真实尺寸 */
@@ -65,6 +66,7 @@ if (!EDITOR && global_config.view.auto_adaptation_switch_b) {
 		if (!canvas_node || canvas_node.getComponent(mk_adaptation_canvas)) {
 			return;
 		}
+
 		canvas_node.addComponent(mk_adaptation_canvas);
 	});
 }

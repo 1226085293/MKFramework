@@ -60,8 +60,10 @@ export namespace _tool_monitor_trigger {
 			if (trigger._init_b) {
 				this._update_type_inspector();
 				this._update_event_inspector();
+
 				return;
 			}
+
 			trigger._init_b = true;
 
 			trigger._data_type_ss = Object.keys(tool_monitor_data_method).filter((v_s) => tool_monitor_data_method[v_s]);
@@ -84,6 +86,7 @@ export namespace _tool_monitor_trigger {
 				if (!this.type_s) {
 					this.type_s = trigger.data_type_enum[0];
 				}
+
 				cc.CCClass.Attr.setClassAttr(trigger, "type_n", "enumList", cc.Enum.getList(cc.Enum(trigger.data_type_enum)));
 			}
 		}
@@ -98,10 +101,13 @@ export namespace _tool_monitor_trigger {
 				// 更新事件名
 				if (trigger.event_name_tab[this.type_s]?.length) {
 					cc.CCClass.Attr.setClassAttr(trigger, "event_n", "enumList", tool_enum.array_to_cc_enum(trigger.event_name_tab[this.type_s]));
+
 					return true;
 				}
+
 				this.event_param_as[0]?.type_check_b;
 			}
+
 			return false;
 		}
 
@@ -110,6 +116,7 @@ export namespace _tool_monitor_trigger {
 			if (isNaN(value_n_)) {
 				return;
 			}
+
 			this.type_s = trigger.data_type_enum[value_n_];
 			// 重置事件名
 			if (this._update_event_inspector()) {
@@ -121,6 +128,7 @@ export namespace _tool_monitor_trigger {
 			if (!this.type_s) {
 				return;
 			}
+
 			this.event_s = trigger.event_name_tab[this.type_s][value_n_];
 
 			// 更新事件参数
@@ -171,6 +179,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 		if (value_ === -1) {
 			return;
 		}
+
 		this.data_key_s += (this._data_key_s.length ? "." : "") + this._data_key_enum[value_];
 	}
 
@@ -236,6 +245,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 
 		if (!event) {
 			console.error("触发事件错误", this.event.type_s, this.event.event_s);
+
 			return;
 		}
 
@@ -258,8 +268,10 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 
 		if (!data) {
 			console.error("不存在用户组件");
+
 			return;
 		}
+
 		// 获取数据和数据键
 		{
 			/** 末尾点下标 */
@@ -273,6 +285,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 			this._data_parent = this._get_data_from_path(data, data_path_ss)!;
 			if (!this._data_parent) {
 				console.error("数据获取错误", key_head_s);
+
 				return;
 			}
 		}
@@ -302,6 +315,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 	/** 更新用户组件 */
 	private _update_user_comp(): cc.Component | undefined {
 		this._user_comp = !this._data_target ? undefined : this._data_target.components.find((v) => !cc.js.getClassName(v).startsWith("cc."));
+
 		return this._user_comp;
 	}
 
@@ -313,6 +327,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 				break;
 			}
 		}
+
 		return data_;
 	}
 
@@ -338,6 +353,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 			cc_enum.forEach((v) => {
 				v.name += " - " + typeof data_target[v.name];
 			});
+
 			cc.CCClass.Attr.setClassAttr(tool_monitor_trigger, "data_key_enum", "enumList", cc_enum);
 		}
 	}
@@ -347,6 +363,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 		if (!_tool_monitor_trigger.trigger.data_type_enum || !this._user_comp || !this.event) {
 			return false;
 		}
+
 		/** 数据类型 */
 		const data_type_s = _tool_monitor_trigger.trigger.data_type_enum[this.event.type_n];
 		/** 检查类型函数 */
@@ -361,11 +378,13 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 		if (this._call_time_tab["data_key_s"] && Date.now() - this._call_time_tab["data_key_s"] < 500) {
 			return;
 		}
+
 		this._call_time_tab["data_key_s"] = Date.now();
 		this._data_key_s = value_s_;
 		if (!this._user_comp) {
 			return;
 		}
+
 		/** 当前数据键头 */
 		let key_head_s: string;
 
@@ -394,6 +413,7 @@ export class tool_monitor_trigger extends mk.module.life_cycle {
 						this._pre_data_key_s = data_path_ss.slice(0, k_n).join(".");
 						break;
 					}
+
 					data_target = temp;
 				}
 			}

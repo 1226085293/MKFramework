@@ -88,6 +88,7 @@ export namespace 默认 {
 					while (this._init_data.root.children.length) {
 						await mk.ui_manage.close(this._init_data.root.children[0]);
 					}
+
 					await mk.ui_manage.unregis(this._item_view_type);
 				}
 				// 节点
@@ -110,6 +111,7 @@ export namespace 默认 {
 					await this._create_item(v);
 				}
 			});
+
 			return result_n;
 		}
 
@@ -118,6 +120,7 @@ export namespace 默认 {
 			this._task_pipeline.add(async () => {
 				this._delete_item(this._init_data.root.children[this._init_data.root.children.length - 1]);
 			});
+
 			return super.pop();
 		}
 
@@ -126,6 +129,7 @@ export namespace 默认 {
 			this._task_pipeline.add(async () => {
 				this._delete_item(this._init_data.root.children[0]);
 			});
+
 			return super.shift();
 		}
 
@@ -143,12 +147,14 @@ export namespace 默认 {
 					node.setSiblingIndex(0);
 				}
 			});
+
 			return result_n;
 		}
 
 		sort(compare_f_: (va: any, vb: any) => number): any {
 			const temp_as = (this as any[]).reduce((pre, curr, k_n) => {
 				pre.push({ index_n: k_n, data: curr });
+
 				return pre;
 			}, []);
 
@@ -160,6 +166,7 @@ export namespace 默认 {
 					old_children_as[v.index_n].setSiblingIndex(k_n);
 				});
 			});
+
 			return super.sort(compare_f_);
 		}
 
@@ -176,6 +183,7 @@ export namespace 默认 {
 				this._bind(start_n_, args_as_.length);
 				backup_as = args_as_.slice();
 			}
+
 			this._task_pipeline.add(async () => {
 				const remove_as = this._init_data.root.children.slice(start_n_, start_n_ + count_n);
 
@@ -193,6 +201,7 @@ export namespace 默认 {
 					}
 				}
 			});
+
 			return result_as!;
 		}
 
@@ -200,8 +209,10 @@ export namespace 默认 {
 		private _bind(start_n_: number, end_n_: number): void {
 			if (this.length < end_n_) {
 				mk.error("参数错误");
+
 				return;
 			}
+
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
 				// 下标监听修改
 				mk.monitor.on(this, k_n, (value) => {
@@ -217,8 +228,10 @@ export namespace 默认 {
 		private _unbind(start_n_: number, end_n_: number): void {
 			if (this.length < end_n_) {
 				mk.error("参数错误");
+
 				return;
 			}
+
 			for (let k_n = start_n_; k_n < end_n_; ++k_n) {
 				mk.monitor.off(this, k_n);
 			}
@@ -243,6 +256,7 @@ export namespace 默认 {
 
 			// 回调函数
 			this._init_data.item_update_f?.(node, init_data_);
+
 			return node;
 		}
 
@@ -283,8 +297,10 @@ export namespace 默认 {
 
 		if (!layout_node?.children.length) {
 			mk.error("不存在子节点");
+
 			return;
 		}
+
 		/** 原数组 */
 		const old_array_as = target_[key_];
 		/** 当前数组 */
@@ -304,6 +320,7 @@ export namespace 默认 {
 				},
 				recycle_b: params_.recycle_b,
 			});
+
 			// 初始化视图
 			item_node.removeFromParent();
 		}

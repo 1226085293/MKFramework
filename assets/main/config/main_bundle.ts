@@ -20,6 +20,7 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 			// 防止 widget 没有进行适配（3.6.3 - 3.7.0）
 			node.getComponentsInChildren(cc.Widget).forEach((v) => v.updateAlignment());
 			node.setScale(0, 0);
+
 			return new Promise<void>((resolve_f) => {
 				cc.tween(node)
 					.to(0.2, { scale: cc.v3(1.1, 1.1) })
@@ -31,8 +32,10 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 					.start();
 			});
 		};
+
 		mk.module.view_base.config.window_animation_tab.close["默认"] = (node) => {
 			node = node.getChildByName("窗口") ?? node;
+
 			return new Promise<void>((resolve_f) => {
 				cc.tween(node)
 					.to(0.2, { scale: cc.v3(0, 0) })
@@ -40,6 +43,7 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 						setTimeout(() => {
 							node.setScale(1, 1, 1);
 						}, 0);
+
 						resolve_f();
 					})
 					.start();

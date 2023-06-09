@@ -41,6 +41,7 @@ class mk_scene_drive extends mk_life_cycle {
 			first_b: true,
 			destroy_children_b: true,
 		});
+
 		this._close_task.finish(true);
 	}
 
@@ -53,6 +54,7 @@ class mk_scene_drive extends mk_life_cycle {
 		await this._close({
 			first_b: true,
 		});
+
 		this._close_task.finish(true);
 	}
 }

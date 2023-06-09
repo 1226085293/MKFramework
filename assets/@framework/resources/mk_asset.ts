@@ -67,6 +67,7 @@ class mk_asset extends mk_instance_base {
 					Promise.all(global_event.request(global_event.key.wait_close_scene)).then((v) => {
 						mk_asset.instance().release(this);
 					});
+
 					return result;
 				}
 
@@ -79,6 +80,7 @@ class mk_asset extends mk_instance_base {
 						})
 					);
 				}
+
 				return result;
 			};
 		}
@@ -167,9 +169,11 @@ class mk_asset extends mk_instance_base {
 				if (error) {
 					this._log.error(`加载 ${path_s_} 错误`, error);
 				}
+
 				if (error || EDITOR) {
 					get_config.completed_f?.(error, asset);
 					resolve_f(asset);
+
 					return;
 				}
 
@@ -209,8 +213,10 @@ class mk_asset extends mk_instance_base {
 							this._log.error("获取 uuid 失败", path_s_);
 							get_config.completed_f?.(new Error("获取 uuid 失败，" + path_s_), null!);
 							resolve_f(null);
+
 							return;
 						}
+
 						// 如果是 spriteFrame 添加后缀
 						if ((get_config.type as any) === cc.SpriteFrame) {
 							uuid_s += "@f9941";
@@ -235,6 +241,7 @@ class mk_asset extends mk_instance_base {
 					this._log.error("未获取到 bundle 信息");
 					get_config.completed_f?.(new Error("未获取到 bundle 信息，" + get_config.bundle_s), null!);
 					resolve_f(null);
+
 					return;
 				}
 
@@ -296,7 +303,6 @@ class mk_asset extends mk_instance_base {
 		return new Promise<T[] | null>(async (resolve_f) => {
 			/** 文件夹资源列表 */
 			const dir_asset_as: T[] = [];
-
 			/** 完成回调 */
 			const completed_f = (error: Error | null): void => {
 				if (error) {
@@ -333,6 +339,7 @@ class mk_asset extends mk_instance_base {
 					this._log.error("未获取到 bundle 信息");
 					get_config.completed_f?.(new Error("未获取到 bundle 信息，" + asset_config.bundle), null!);
 					resolve_f(null);
+
 					return;
 				}
 
@@ -354,8 +361,10 @@ class mk_asset extends mk_instance_base {
 							bundle_asset.load(path_s_, get_config.type, (error, asset): void => {
 								if (error) {
 									completed_f(error);
+
 									return;
 								}
+
 								dir_asset_as.push(asset);
 								resolve_f(!error);
 							});
@@ -427,6 +436,7 @@ class mk_asset extends mk_instance_base {
 			asset_.addRef();
 
 			this._asset_manage_map.set(asset_.nativeUrl || asset_._uuid, asset_);
+
 			return asset_;
 		}
 	}

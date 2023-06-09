@@ -47,6 +47,7 @@ class mk_http extends mk_instance_base {
 								for (let k_n = 0; k_n < buf.byteLength; k_n++) {
 									data += String.fromCharCode(buf[k_n]);
 								}
+
 								result = "data:image/png;base64," + globalThis.btoa(data);
 							}
 
@@ -60,6 +61,7 @@ class mk_http extends mk_instance_base {
 									read.onload = () => {
 										resolve2_f(result);
 									};
+
 									read.readAsDataURL(xml_http.response);
 								});
 							}
@@ -80,16 +82,19 @@ class mk_http extends mk_instance_base {
 
 							break;
 					}
+
 					clearTimeout(timeout_timer);
 					resolve_f(result);
 				}
 			};
+
 			xml_http.open(type_s_, url_s_, true);
 			// 设置标头
 			{
 				if (cc.sys.isNative) {
 					xml_http.setRequestHeader("Accept-Encoding", "gzip,deflate");
 				}
+
 				if (config.header) {
 					for (const k_s in config.header) {
 						xml_http.setRequestHeader(k_s, config.header[k_s]);
@@ -101,6 +106,7 @@ class mk_http extends mk_instance_base {
 			if (config.open_callback_f) {
 				config.open_callback_f(xml_http);
 			}
+
 			xml_http.send(config.body);
 		});
 	}

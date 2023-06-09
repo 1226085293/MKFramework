@@ -23,6 +23,7 @@ export namespace 进度更新 {
 
 		if (!(progress ?? slider)) {
 			mk.error("不存在组件");
+
 			return;
 		}
 

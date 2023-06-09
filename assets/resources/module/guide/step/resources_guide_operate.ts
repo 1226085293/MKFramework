@@ -6,6 +6,7 @@ const tab = {
 			cc.find("Canvas/resources_guide/按钮")!.children.forEach((v) => {
 				v.active = false;
 			});
+
 			cc.find("Canvas/resources_guide/遮罩")!.children.forEach((v) => {
 				v.active = false;
 			});
@@ -18,6 +19,7 @@ const tab = {
 		load() {
 			cc.find("Canvas/resources_guide/按钮")!.children[0].active = true;
 			cc.find("Canvas/resources_guide/遮罩")!.children[0].active = true;
+
 			return cc.find("Canvas/resources_guide/按钮")!.children[0];
 		},
 	},
@@ -25,6 +27,7 @@ const tab = {
 		load() {
 			cc.find("Canvas/resources_guide/按钮")!.children[1].active = true;
 			cc.find("Canvas/resources_guide/遮罩")!.children[1].active = true;
+
 			return cc.find("Canvas/resources_guide/按钮")!.children[1];
 		},
 	},
@@ -32,6 +35,7 @@ const tab = {
 		load() {
 			cc.find("Canvas/resources_guide/按钮")!.children[2].active = true;
 			cc.find("Canvas/resources_guide/遮罩")!.children[2].active = true;
+
 			return cc.find("Canvas/resources_guide/按钮")!.children[2];
 		},
 	},

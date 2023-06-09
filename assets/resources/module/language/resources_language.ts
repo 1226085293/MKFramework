@@ -1,6 +1,7 @@
 import { _decorator } from "cc";
 import global_config from "../../../@config/global_config";
 import mk from "mk";
+// eslint-disable-next-line unused-imports/no-unused-imports
 import decorator from "../../../decorator/decorator";
 
 const { ccclass, property } = _decorator;

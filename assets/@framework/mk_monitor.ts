@@ -104,6 +104,7 @@ class mk_monitor extends mk_instance_base {
 
 		if (bind_data.recursive_count_n > 1) {
 			this._log.error("递归，不能在当前对象回调内等待当前对象回调执行完成");
+
 			return;
 		}
 
@@ -169,6 +170,7 @@ class mk_monitor extends mk_instance_base {
 		const on_callback_f: _mk_monitor.type_on_callback<any> = key === undefined ? args2_ : args3_;
 		const off_callback_f: _mk_monitor.type_off_callback | undefined =
 			typeof args4_ === "function" ? args4_ : key === undefined ? (typeof args3_ === "function" ? args3_ : undefined) : undefined;
+
 		const target: any = target_ ?? (typeof args4_ === "object" ? args4_ : typeof args3_ === "object" ? args3_ : undefined);
 
 		// 单独键监听
@@ -204,6 +206,7 @@ class mk_monitor extends mk_instance_base {
 					target: target,
 				});
 			});
+
 			return null;
 		}
 	}
@@ -286,6 +289,7 @@ class mk_monitor extends mk_instance_base {
 		const key = ["string", "number", "boolean", "symbol"].includes(typeof args2_) ? args2_ : undefined;
 		const on_callback_f: _mk_monitor.type_on_callback<any> | undefined =
 			typeof args3_ === "function" ? args3_ : typeof args2_ === "function" ? args2_ : undefined;
+
 		const target = target_ ?? (typeof args3_ === "object" ? args3_ : typeof args2_ === "object" ? args2_ : undefined);
 
 		// 递归取消监听
@@ -338,6 +342,7 @@ class mk_monitor extends mk_instance_base {
 		if (!target_ || !target_bind_data) {
 			return;
 		}
+
 		// 清理监听数据
 		if (target_bind_data.monitor_as) {
 			let v: _mk_monitor.target_bind_monitor_data;
@@ -434,6 +439,7 @@ class mk_monitor extends mk_instance_base {
 			if (!descriptor) {
 				return null;
 			}
+
 			bind_data_map.set(
 				key_,
 				(bind_data = Object.create({
@@ -470,6 +476,7 @@ class mk_monitor extends mk_instance_base {
 					// 数据相同
 					if (!can_update_b && value === new_value && typeof value !== "object" && typeof value !== "function") {
 						this._log.debug("更新值，数据相同跳过", key_, new_value, value_);
+
 						return;
 					}
 				}
@@ -491,6 +498,7 @@ class mk_monitor extends mk_instance_base {
 					if (bind_data.disabled_b) {
 						can_update_b = true;
 					}
+
 					return;
 				}
 
@@ -506,6 +514,7 @@ class mk_monitor extends mk_instance_base {
 						// 更新任务状态
 						bind_data.task!.finish(true);
 					}
+
 					return;
 				}
 
@@ -691,12 +700,14 @@ class mk_monitor extends mk_instance_base {
 		if (!target_ || !bind_data_) {
 			return;
 		}
+
 		/** 对象绑定数据 */
 		let target_bind_data = this._target_bind_data.get(target_);
 
 		if (!target_bind_data) {
 			this._target_bind_data.set(target_, (target_bind_data = Object.create(null) as _mk_monitor.target_bind_data));
 		}
+
 		// 添加绑定监听
 		if (bind_data_.monitor) {
 			if (!target_bind_data.monitor_as) {
@@ -740,13 +751,16 @@ class mk_monitor extends mk_instance_base {
 
 		if (!bind_data) {
 			this._log.error("获取绑定数据错误");
+
 			return null;
 		}
+
 		// 添加回调
 		{
 			if (!bind_data.monitor_as) {
 				bind_data.monitor_as = [];
 			}
+
 			bind_data.monitor_as?.push(data_);
 		}
 
@@ -758,6 +772,7 @@ class mk_monitor extends mk_instance_base {
 				key: key_,
 			});
 		}
+
 		return data_.on_callback_f;
 	}
 
@@ -786,10 +801,12 @@ class mk_monitor extends mk_instance_base {
 					target = args3_;
 				}
 			}
+
 			// value
 			if (key_ !== undefined) {
 				value = args_;
 			}
+
 			// callback_f_
 			if (typeof args3_ === "function") {
 				callback_f = args3_;
@@ -802,11 +819,13 @@ class mk_monitor extends mk_instance_base {
 			if (!bind_data) {
 				return;
 			}
+
 			// 更新指定回调
 			if (callback_f) {
 				if (!bind_data.monitor_as) {
 					return;
 				}
+
 				let index_n: number;
 
 				if (target) {
@@ -814,6 +833,7 @@ class mk_monitor extends mk_instance_base {
 				} else {
 					index_n = bind_data.monitor_as.findIndex((v) => v.on_callback_f === callback_f);
 				}
+
 				if (index_n !== -1) {
 					bind_data.monitor_as[index_n].disabled_b = !state_b_;
 				}
@@ -840,6 +860,7 @@ class mk_monitor extends mk_instance_base {
 			if (!target_bind_data) {
 				return;
 			}
+
 			target_bind_data.disabled_b = !state_b_;
 		}
 	}

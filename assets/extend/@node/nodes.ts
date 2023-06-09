@@ -68,6 +68,7 @@ if (!EDITOR) {
 				if (component_tab[this.uuid]?.isValid) {
 					return component_tab[this.uuid];
 				}
+
 				return (component_tab[this.uuid] = this.getComponent(component_ss[k_s]) ?? this.addComponent(component_ss[k_s]));
 			},
 			configurable: true,
@@ -92,6 +93,7 @@ if (!EDITOR) {
 		desc.get = function (this: cc.Node) {
 			return (this.getComponent(cc.UITransform) ?? this.addComponent(cc.UITransform)).contentSize.width;
 		};
+
 		desc.set = function (this: cc.Node, value_n_: number) {
 			const comp = this.getComponent(cc.UITransform) ?? this.addComponent(cc.UITransform);
 
@@ -106,6 +108,7 @@ if (!EDITOR) {
 		desc.get = function (this: cc.Node) {
 			return (this.getComponent(cc.UITransform) ?? this.addComponent(cc.UITransform)).contentSize.height;
 		};
+
 		desc.set = function (this: cc.Node, value_n_: number) {
 			const comp = this.getComponent(cc.UITransform) ?? this.addComponent(cc.UITransform);
 

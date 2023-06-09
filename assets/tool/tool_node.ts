@@ -12,9 +12,11 @@ class tool_node extends mk.instance_base {
 		if (!parent_) {
 			return null;
 		}
+
 		if (callback_f_(parent_)) {
 			return parent_;
 		}
+
 		return this.traverse_parent(parent_.parent, callback_f_);
 	}
 }

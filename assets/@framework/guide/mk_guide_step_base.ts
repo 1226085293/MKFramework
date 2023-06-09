@@ -39,8 +39,10 @@ abstract class mk_guide_step_base {
 	protected _next(init_data_?: any): void {
 		if (this.next_step_n === undefined) {
 			mk_log.error("下个步骤序号为空");
+
 			return;
 		}
+
 		this.guide_manage.set_step(this.next_step_n, init_data_);
 	}
 }

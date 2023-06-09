@@ -37,6 +37,7 @@ abstract class mk_audio_base extends mk_instance_base {
 		if (!result) {
 			this._group_map.set(group_n_, (result = new mk_audio_base_.group(this, group_n_)));
 		}
+
 		return result;
 	}
 
@@ -73,6 +74,7 @@ abstract class mk_audio_base extends mk_instance_base {
 					audio_as.push(audio);
 				});
 			}
+
 			result = audio_as;
 		} else {
 			for (const v_s of url_ss) {
@@ -82,12 +84,14 @@ abstract class mk_audio_base extends mk_instance_base {
 				if (!asset) {
 					continue;
 				}
+
 				const audio = this._get_audio_unit({
 					clip: asset,
 				});
 
 				audio_as.push(audio);
 			}
+
 			result = audio_as.length === 1 ? audio_as[0] : audio_as;
 		}
 
@@ -119,6 +123,7 @@ abstract class mk_audio_base extends mk_instance_base {
 			if (config_) {
 				Object.assign(audio, config_);
 			}
+
 			// 添加音频
 			this._add(audio, audio.group_ns);
 		}
@@ -175,6 +180,7 @@ abstract class mk_audio_base extends mk_instance_base {
 			if (!audio_group) {
 				this._group_map.set(v_n, (audio_group = new mk_audio_base_.group(this, v_n)));
 			}
+
 			audio_group.add_audio(audio_);
 		});
 
@@ -414,12 +420,14 @@ export namespace mk_audio_base_ {
 			if (value_n_ === undefined) {
 				return this._clone();
 			}
+
 			const audio_as: _unit[] = [];
 
 			// 克隆数组
 			for (let k_n = 0, len_n = value_n_; k_n < len_n; ++k_n) {
 				audio_as.push(this._clone());
 			}
+
 			return audio_as;
 		}
 	}
@@ -458,6 +466,7 @@ export namespace mk_audio_base_ {
 				if (value_n_ > 1) {
 					value_n_ = 1;
 				}
+
 				if (value_n_ < 0) {
 					value_n_ = 0;
 				}

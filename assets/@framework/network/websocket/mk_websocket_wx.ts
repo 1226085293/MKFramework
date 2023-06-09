@@ -19,12 +19,15 @@ class mk_websocket_wx<CT extends mk_codec_base = mk_codec_base> extends mk_netwo
 			["onOpen", "onMessage", "onError", "onClose"].forEach((v_s, k_n) => {
 				this._socket[v_s] = null;
 			});
+
 			this._socket.close({});
 		}
+
 		this._socket = wx.connectSocket({
 			url: this._addr_s!,
 			protocols: this.config.protocol_ss,
 		});
+
 		const func_name_ss = ["_open", "_message", "_error", "_close"];
 
 		["onOpen", "onMessage", "onError", "onClose"].forEach((v_s, k_n) => {

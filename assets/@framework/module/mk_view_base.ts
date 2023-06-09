@@ -8,7 +8,6 @@ import mk_asset from "../resources/mk_asset";
 import type { _mk_layer } from "./mk_layer";
 import global_config from "../../@config/global_config";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
-
 const { ccclass, property } = cc._decorator;
 
 namespace _mk_view_base {
@@ -187,6 +186,7 @@ export class mk_view_base extends mk_life_cycle {
 		if (config_.static_b !== undefined) {
 			this._static_b = config_.static_b;
 		}
+
 		if (config_.view_config) {
 			this._view_config.prefab_tab = config_.view_config.prefab_tab ?? this._view_config.prefab_tab;
 			this._view_config.type_s = config_.view_config.type_s ?? this._view_config.type_s;
@@ -248,6 +248,7 @@ export class mk_view_base extends mk_life_cycle {
 				v.decRef();
 			}
 		});
+
 		this._quote_asset_as.splice(0, this._quote_asset_as.length);
 		this._quote_object_as.forEach((v) => v.clear());
 		this._quote_object_as.splice(0, this._quote_object_as.length);
@@ -269,6 +270,7 @@ export class mk_view_base extends mk_life_cycle {
 		if (!args_) {
 			return args_;
 		}
+
 		let node_as: cc.Node[] | undefined;
 		let asset_as: cc.Asset[] | undefined;
 		let object_as: _mk_view_base.release_object_type[] | undefined;
@@ -279,6 +281,7 @@ export class mk_view_base extends mk_life_cycle {
 				if (!args_.length) {
 					return args_;
 				}
+
 				if (args_[0] instanceof cc.Node) {
 					node_as = args_ as any;
 				} else if (args_[0] instanceof cc.Asset) {
@@ -302,6 +305,7 @@ export class mk_view_base extends mk_life_cycle {
 			node_as?.forEach((v) => v.destroy());
 			asset_as?.forEach((v) => v.decRef());
 			object_as?.forEach((v) => v.clear());
+
 			return args_;
 		}
 
@@ -310,9 +314,11 @@ export class mk_view_base extends mk_life_cycle {
 			if (node_as) {
 				this._quote_node_as.push(...node_as);
 			}
+
 			if (asset_as) {
 				this._quote_asset_as.push(...asset_as);
 			}
+
 			if (object_as) {
 				this._quote_object_as.push(...object_as);
 			}
@@ -337,15 +343,18 @@ export class mk_view_base extends mk_life_cycle {
 					_mk_view_base.wind_config.animation_enum_tab.open = cc.Enum(
 						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.open)
 					);
+
 					if (this.wind_config && !this.wind_config.open_animation_s) {
 						this.wind_config.open_animation_s = Object.keys(_mk_view_base.wind_config.animation_enum_tab.open)[0];
 					}
 				}
+
 				// 关闭
 				if (mk_view_base.config.window_animation_tab.close) {
 					_mk_view_base.wind_config.animation_enum_tab.close = cc.Enum(
 						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.close)
 					);
+
 					if (this.wind_config && !this.wind_config.close_animation_s) {
 						this.wind_config.close_animation_s = Object.keys(_mk_view_base.wind_config.animation_enum_tab.close)[0];
 					}
@@ -367,6 +376,7 @@ export class mk_view_base extends mk_life_cycle {
 							cc.Enum.getList(_mk_view_base.wind_config.animation_enum_tab.open)
 						);
 					}
+
 					if (mk_view_base.config.window_animation_tab.close) {
 						cc.CCClass.Attr.setClassAttr(
 							_mk_view_base.wind_config,
@@ -390,6 +400,7 @@ export class mk_view_base extends mk_life_cycle {
 		if (!this.node.children.length) {
 			return false;
 		}
+
 		return Boolean(this.node.children[0].getComponent(cc.Sprite) && this.node.children[0].getComponent(cc.Widget));
 	}
 
@@ -399,17 +410,20 @@ export class mk_view_base extends mk_life_cycle {
 			if (!mk_view_base.config.mask_data_tab.prefab_path_s) {
 				return;
 			}
+
 			const prefab = await mk_asset.get(mk_view_base.config.mask_data_tab.prefab_path_s, cc.Prefab);
 
 			if (!prefab) {
 				return;
 			}
+
 			const node = cc.instantiate(prefab);
 
 			// 设置节点名
 			if (mk_view_base.config.mask_data_tab.node_name_s) {
 				node.name = mk_view_base.config.mask_data_tab.node_name_s;
 			}
+
 			// 添加到父节点
 			this.node.addChild(node);
 			// 更新层级

@@ -100,6 +100,7 @@ class mk_obj_pool<CT> {
 		if (!obj_) {
 			return;
 		}
+
 		this._obj_as.push(this._init_data.reset_f ? await this._init_data.reset_f(obj_, false) : obj_);
 		// 检查保留数量
 		if (this._init_data.max_hold_n !== -1 && this._obj_as.length > this._init_data.max_hold_n!) {
@@ -113,6 +114,7 @@ class mk_obj_pool<CT> {
 		if (!this._obj_as.length) {
 			await this._add();
 		}
+
 		return this._obj_as.pop()!;
 	}
 
@@ -169,6 +171,7 @@ namespace mk_obj_pool {
 			if (!obj_) {
 				return;
 			}
+
 			this._obj_as.push(this._init_data.reset_f ? this._init_data.reset_f(obj_, false) : obj_);
 			// 检查保留数量
 			if (this._init_data.max_hold_n !== -1 && this._obj_as.length > this._init_data.max_hold_n!) {
@@ -182,6 +185,7 @@ namespace mk_obj_pool {
 			if (!this._obj_as.length) {
 				this._add();
 			}
+
 			return this._obj_as.pop()!;
 		}
 

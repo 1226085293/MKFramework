@@ -143,6 +143,7 @@ export class resources_audio extends mk.module.view_base {
 			if (this.music.state !== mk.audio_.state.play) {
 				return;
 			}
+
 			this.data.music.progress_n = this.music.curr_time_s_n / this.music.total_time_s_n;
 		}, 1);
 

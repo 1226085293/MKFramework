@@ -20,8 +20,10 @@ class mk_audio_wx extends mk_audio_base {
 			// 等待播放
 			if (audio_.wait_play_n !== -1) {
 				++audio_.wait_play_n;
+
 				return true;
 			}
+
 			audio_.context.play();
 		}
 		// 恢复播放
@@ -40,6 +42,7 @@ class mk_audio_wx extends mk_audio_base {
 
 		// 更新状态
 		audio_.state = mk_audio_base_.state.play;
+
 		return true;
 	}
 
@@ -71,6 +74,7 @@ class mk_audio_wx extends mk_audio_base {
 
 		// 初始化完成
 		audio_.init_b = true;
+
 		return result_b;
 	}
 
@@ -175,6 +179,7 @@ export namespace mk_audio_wx_ {
 			this.group_ns.forEach((v_n) => {
 				mk_audio_wx.instance().get_group(v_n).add_audio(new_audio);
 			});
+
 			new_audio._volume_n = this._volume_n;
 			new_audio._loop_b = this._loop_b;
 
@@ -198,6 +203,7 @@ export namespace mk_audio_wx_ {
 				if (value_n_ > 1) {
 					value_n_ = 1;
 				}
+
 				if (value_n_ < 0) {
 					value_n_ = 0;
 				}
@@ -215,6 +221,7 @@ export namespace mk_audio_wx_ {
 				// 更新真实音量
 				this.real_volume_n = this.group_ns.reduce((pre_n, curr_n) => {
 					pre_n *= mk_audio_wx.instance().get_group(curr_n).volume_n;
+
 					return pre_n;
 				}, this._volume_n);
 

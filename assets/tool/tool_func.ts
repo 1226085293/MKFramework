@@ -15,6 +15,7 @@ class tool_func {
 			} else {
 				key_as.push(key_);
 			}
+
 			key_as = key_as.filter((v) => target_[v] && typeof target_[v] === "function");
 		}
 
@@ -27,11 +28,13 @@ class tool_func {
 		} else {
 			mark = temp;
 		}
+
 		key_as.forEach((v) => {
 			// 跳过已修改函数
 			if (mark[v]) {
 				return;
 			}
+
 			/** 当前类及父类函数 */
 			const func_fs = this._get_parent_func(target_.constructor, v);
 
@@ -39,6 +42,7 @@ class tool_func {
 			if (func_fs.length <= 1) {
 				return;
 			}
+
 			mark[v] = true;
 			// 重载当前函数
 			target_[v] = async (...args_as: any): Promise<any> => {
@@ -52,6 +56,7 @@ class tool_func {
 							await result;
 						}
 					}
+
 					// 获取子类函数返回值
 					if (func_fs.length) {
 						result = func_fs[func_fs.length - 1].call(target_, ...args_as);
@@ -64,6 +69,7 @@ class tool_func {
 						console.error(error);
 					}
 				}
+
 				return result;
 			};
 		});
@@ -74,10 +80,12 @@ class tool_func {
 		if (!target_ || target_ === Object) {
 			return func_fs_;
 		}
+
 		this._get_parent_func(cc.js.getSuper(target_), key_, target_, func_fs_);
 		if (target_.prototype[key_] && (old_target_ ? target_.prototype[key_] !== old_target_.prototype[key_] : true)) {
 			func_fs_.push(target_.prototype[key_]);
 		}
+
 		return func_fs_;
 	}
 }

@@ -50,6 +50,7 @@ class mk_bundle extends mk_instance_base {
 			this.bundle_s = "main";
 			this._engine_init_task.finish(true);
 			this._init_task.finish(true);
+
 			return;
 		}
 
@@ -64,8 +65,10 @@ class mk_bundle extends mk_instance_base {
 			(scene: cc.Scene) => {
 				if (!scene.name) {
 					this._log.warn("未选择启动场景");
+
 					return;
 				}
+
 				this.bundle_s = "main";
 				this._scene_s = scene.name;
 				this._init_task.finish(true);
@@ -139,6 +142,7 @@ class mk_bundle extends mk_instance_base {
 						bundle_s: args_,
 				  })
 				: args_;
+
 		/** bundle 信息 */
 		const bundle_info =
 			this.bundle_map.get(load_config.bundle_s!) ??
@@ -159,6 +163,7 @@ class mk_bundle extends mk_instance_base {
 			if (!bundle_info) {
 				return;
 			}
+
 			cc.assetManager.loadBundle(
 				bundle_info.origin_s!,
 				{
@@ -170,10 +175,12 @@ class mk_bundle extends mk_instance_base {
 						this._log.error("bundle加载失败", error);
 						resolve_f(null);
 					}
+
 					// 添加bundle信息
 					if (!this.bundle_map.has(bundle_info.bundle_s)) {
 						this.bundle_map.set(bundle_info.bundle_s, bundle_info);
 					}
+
 					resolve_f(bundle);
 				}
 			);
@@ -189,8 +196,10 @@ class mk_bundle extends mk_instance_base {
 	async load_scene(scene_s_: string, config_?: Partial<mk_bundle_.switch_scene_config>): Promise<boolean> {
 		if (!scene_s_) {
 			this._log.error("场景名错误", scene_s_);
+
 			return false;
 		}
+
 		await this._init_task;
 
 		const config = new mk_bundle_.switch_scene_config(config_);
@@ -198,6 +207,7 @@ class mk_bundle extends mk_instance_base {
 
 		if (!bundle_info) {
 			this._log.error("bundle 信息不存在", config.bundle_s);
+
 			return false;
 		}
 
@@ -219,6 +229,7 @@ class mk_bundle extends mk_instance_base {
 					if (error) {
 						this._log.error(error);
 					}
+
 					resolve_f(!error);
 				});
 			});
@@ -228,10 +239,12 @@ class mk_bundle extends mk_instance_base {
 					if (error) {
 						this._log.error(error);
 					}
+
 					resolve_f(!error);
 				});
 			});
 		}
+
 		if (config.preload_b || !preload_b) {
 			return preload_b;
 		}
@@ -260,8 +273,10 @@ class mk_bundle extends mk_instance_base {
 					if (error) {
 						resolve_f(false);
 						this._log.error(error);
+
 						return;
 					}
+
 					// 更新数据
 					this.bundle_s = bundle.name;
 					this.pre_scene_s = this.scene_s;
@@ -270,8 +285,10 @@ class mk_bundle extends mk_instance_base {
 					cc.director.runScene(scene_asset, config?.before_load_callback_f, (error, scene) => {
 						if (!config) {
 							resolve_f(false);
+
 							return;
 						}
+
 						resolve_f(true);
 						config.unloaded_callback_f?.();
 						config.launched_callback_f?.(error, scene);
@@ -283,6 +300,7 @@ class mk_bundle extends mk_instance_base {
 				return result_b;
 			});
 		}
+
 		return false;
 	}
 
@@ -308,6 +326,7 @@ class mk_bundle extends mk_instance_base {
 
 		if (this.bundle_s === bundle_info.bundle_s) {
 			this._log.error("不能在重载 bundle 的场景内进行重载");
+
 			return null;
 		}
 
@@ -345,6 +364,7 @@ class mk_bundle extends mk_instance_base {
 					delete script_cache_tab[v.id];
 					delete system_js["registerRegistry"][v.id];
 				});
+
 				delete script_cache_tab[bundle_root.id];
 				delete system_js["registerRegistry"][bundle_root.id];
 			}
@@ -498,6 +518,7 @@ export namespace mk_bundle_ {
 						if (!target_[key_]) {
 							target_[key_] = new cc.NodePool(key_ as string);
 						}
+
 						return target_[key_];
 					},
 				}
@@ -556,7 +577,9 @@ export namespace mk_bundle_ {
 					this.node_pool_tab[k_s].clear();
 				}
 			}
+
 			this.node_pool_tab = cc.js.createMap();
+
 			return true;
 		}
 	}

@@ -8,7 +8,6 @@ import mk_status_task from "../task/mk_status_task";
 import mk_layer from "./mk_layer";
 import mk_tool from "../@private/tool/mk_tool";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
-
 const { ccclass, property } = cc._decorator;
 
 export namespace _mk_life_cycle {
@@ -78,6 +77,7 @@ export class mk_life_cycle extends mk_layer {
 		if (EDITOR) {
 			return;
 		}
+
 		// 设置父类自启函数
 		mk_tool.func.run_parent_func(this, [
 			"onLoad",
@@ -205,10 +205,12 @@ export class mk_life_cycle extends mk_layer {
 		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) {
 			return;
 		}
+
 		// 参数安检
 		if (!config_) {
 			config_ = Object.create(null);
 		}
+
 		// 状态更新
 		this._state = _mk_life_cycle.run_state.opening;
 		// 生命周期
@@ -219,9 +221,11 @@ export class mk_life_cycle extends mk_layer {
 					active_b: this.node.active,
 				});
 			}
+
 			if (config_.init !== undefined) {
 				await this.init(config_.init);
 			}
+
 			await this.open?.();
 		}
 
@@ -249,6 +253,7 @@ export class mk_life_cycle extends mk_layer {
 		// 节点安检
 		if (!this.node) {
 			this._log.error("节点已销毁, close 执行失败", this.uuid);
+
 			return;
 		}
 
@@ -268,6 +273,7 @@ export class mk_life_cycle extends mk_layer {
 					destroy_children_b: config.destroy_children_b,
 				});
 			}
+
 			await this.late_close?.();
 		}
 
@@ -284,6 +290,7 @@ export class mk_life_cycle extends mk_layer {
 			else {
 				ui_manage.close(this.node);
 			}
+
 			return;
 		}
 
@@ -296,6 +303,7 @@ export class mk_life_cycle extends mk_layer {
 		if (!config_.target) {
 			return;
 		}
+
 		const active_b = config_.target.active;
 
 		for (const v of config_.target.children) {
@@ -304,6 +312,7 @@ export class mk_life_cycle extends mk_layer {
 				active_b: config_.active_b && active_b,
 			});
 		}
+
 		/** 配置数据 */
 		const open_config: _mk_life_cycle.open_config = Object.create(null);
 		/** 静态组件 */
@@ -326,10 +335,12 @@ export class mk_life_cycle extends mk_layer {
 		if (!config_.target?.isValid) {
 			return;
 		}
+
 		/** 配置数据 */
 		const close_config: _mk_life_cycle.close_config = {
 			destroy_children_b: config_.destroy_children_b,
 		};
+
 		/** 上级激活状态 */
 		const active_b = config_.target.active;
 		/** 模块列表 */

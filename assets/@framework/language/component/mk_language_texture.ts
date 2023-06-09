@@ -50,6 +50,7 @@ class mk_language_texture extends mk_language_base {
 			if (Object.keys(mk_language_texture._type_enum).length) {
 				cc.CCClass.Attr.setClassAttr(mk_language_texture, "type", "enumList", cc.Enum.getList(cc.Enum(mk_language_texture._type_enum)));
 			}
+
 			if (Object.keys(this._mark_enum).length) {
 				cc.CCClass.Attr.setClassAttr(mk_language_texture, "mark_enum", "enumList", cc.Enum.getList(cc.Enum(this._mark_enum)));
 			}
@@ -60,17 +61,20 @@ class mk_language_texture extends mk_language_base {
 		if (!this._sprite) {
 			return;
 		}
+
 		const path_s = language.texture_data_tab[this._type_s]?.[this._mark_s]?.[global_config.language.type[language.type]];
 
 		if (!path_s) {
 			return;
 		}
+
 		if (EDITOR) {
 			const asset = await cache.get(path_s + ".png", cc.ImageAsset);
 
 			if (!asset?._uuid) {
 				return;
 			}
+
 			Editor.Message.request("scene", "set-property", {
 				uuid: this.node.uuid,
 				path: `__comps__.${this.node.components.indexOf(this._sprite)}.spriteFrame`,
@@ -87,9 +91,11 @@ class mk_language_texture extends mk_language_base {
 			if (!asset) {
 				return;
 			}
+
 			if (this._sprite.spriteFrame) {
 				this._sprite.spriteFrame.decRef();
 			}
+
 			this._sprite.spriteFrame = asset;
 		}
 	}
@@ -120,8 +126,10 @@ class mk_language_texture extends mk_language_base {
 		this._sprite = this.node.getComponent(cc.Sprite)!;
 		if (!this._sprite) {
 			cc.error("节点不存在 Sprite 组件");
+
 			return;
 		}
+
 		super._init_data();
 	}
 
@@ -143,6 +151,7 @@ class mk_language_texture extends mk_language_base {
 		if (!EDITOR) {
 			return;
 		}
+
 		/** 类型数组 */
 		mk_language_texture._type_ss = Object.keys(language.texture_data_tab);
 		// 更新编辑器

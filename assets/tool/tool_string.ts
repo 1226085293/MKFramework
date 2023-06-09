@@ -518,6 +518,7 @@ class tool_string {
 
 			if (k2_n == -1) {
 				args_as.push(v_s);
+
 				return;
 			}
 
@@ -536,6 +537,7 @@ class tool_string {
 					break;
 			}
 		});
+
 		return args_as;
 	}
 
@@ -546,6 +548,7 @@ class tool_string {
 		for (let k_n = 0; k_n < length_n_; ++k_n) {
 			name_s += this._codec_unicode.encode(tool_math.random(19968, 20901, true));
 		}
+
 		return name_s;
 	}
 
@@ -571,6 +574,7 @@ class tool_string {
 		format_s_ = format_s_.replace("$m", `${m_n}`);
 		format_s_ = format_s_.replace("$S", s_n < 10 ? `0${s_n}` : `${s_n}`);
 		format_s_ = format_s_.replace("$s", `${s_n}`);
+
 		return format_s_;
 	}
 
@@ -584,6 +588,7 @@ class tool_string {
 			if (v_len_n == 0) {
 				return v2_len_n;
 			}
+
 			if (v2_len_n == 0) {
 				return v_len_n;
 			}
@@ -597,6 +602,7 @@ class tool_string {
 				dist_nss[k_n] = [];
 				dist_nss[k_n][0] = k_n;
 			}
+
 			for (let k_n = 0; k_n <= v2_len_n; k_n++) {
 				dist_nss[0][k_n] = k_n;
 			}
@@ -629,6 +635,7 @@ class tool_string {
 		if (!key_s_) {
 			return null;
 		}
+
 		let source_ss: string[];
 
 		if (typeof args_ === "string") {
@@ -636,6 +643,7 @@ class tool_string {
 		} else {
 			source_ss = args_;
 		}
+
 		const match_result_ss: string[] = [];
 		const key_ss = key_s_.split("");
 		let index_n: number;
@@ -655,14 +663,17 @@ class tool_string {
 							index_n = exec_result.index;
 							if (k2_n === key_ss.length - 1) {
 								match_result_ss.push(v_s);
+
 								return;
 							}
+
 							break;
 						}
 					}
 				}
 			}
 		});
+
 		if (!match_result_ss.length) {
 			return null;
 		}
@@ -671,6 +682,7 @@ class tool_string {
 			match_result_ss.sort(
 				(v_a_s: string, v_b_s: string) => this.similarity_edit_dist(v_b_s, key_s_) - this.similarity_edit_dist(v_a_s, key_s_)
 			);
+
 			return this.similarity_edit_dist(match_result_ss[0], key_s_) >= min_simile_n_ ? match_result_ss[0] : key_s_;
 		}
 	}

@@ -18,11 +18,13 @@ class tool_codec_unicode extends mk_codec_base {
 		} else {
 			unicode_s = unicode_;
 		}
+
 		// Unicode显示方式是\u4e00
 		unicode_s = `\\u${unicode_s}`;
 		unicode_s = unicode_s.replace(/\\/g, "%");
 		// 转为中文
 		unicode_s = decodeURI(unicode_s);
+
 		// 将其它受影响的转换回原来
 		return unicode_s.replace(/%/g, "\\");
 	}

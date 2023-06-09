@@ -88,6 +88,7 @@ export namespace 远程图片 {
 					if (!assets) {
 						return;
 					}
+
 					const sprite_frame = new cc.SpriteFrame();
 					const texture = new cc.Texture2D();
 
@@ -102,8 +103,10 @@ export namespace 远程图片 {
 
 					if (!view_comp) {
 						mk.error("未找到父节点视图，不能自动释放动态资源");
+
 						return;
 					}
+
 					view_comp.auto_release(assets);
 				},
 				target_

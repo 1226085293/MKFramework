@@ -14,6 +14,7 @@ class tool_enum {
 				new_enum[k_s] = index_n++;
 			}
 		}
+
 		return cc.Enum(new_enum);
 	}
 
@@ -26,6 +27,7 @@ class tool_enum {
 				result[k_s] = k_s;
 			}
 		}
+
 		return result;
 	}
 
@@ -41,11 +43,13 @@ class tool_enum {
 						console.warn(`[tool.enum_extend]：合并枚举 ${k2_s} 键冲突，跳过`);
 						continue;
 					}
+
 					result[k2_s] = index_n;
 					result[index_n++] = k2_s;
 				}
 			}
 		});
+
 		return result;
 	}
 
@@ -56,12 +60,14 @@ class tool_enum {
 		if (!value_) {
 			return result;
 		}
+
 		if (typeof value_ === "object") {
 			Object.keys(value_).forEach((v_s, k_n) => {
 				result[k_n] = v_s;
 				result[v_s] = k_n;
 			});
 		}
+
 		return result;
 	}
 
@@ -72,10 +78,12 @@ class tool_enum {
 		if (!value_as_) {
 			return result;
 		}
+
 		value_as_.forEach((v_s, k_n) => {
 			result[k_n] = v_s;
 			result[v_s] = k_n;
 		});
+
 		return result;
 	}
 
@@ -130,6 +138,7 @@ class tool_enum {
 						}
 					}
 				});
+
 				return result_as;
 			}
 		} else {
@@ -152,6 +161,7 @@ class tool_enum {
 						start_n_++;
 					}
 				}
+
 				return result;
 			}
 		}

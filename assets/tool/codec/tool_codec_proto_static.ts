@@ -27,6 +27,7 @@ class codec_proto_static extends mk.codec_base {
 
 		if (!mess) {
 			this._log.error("未找到消息号为" + data_[global_config.network.proto_head_key_tab.__id] + "的已注册消息!");
+
 			return null;
 		}
 
@@ -36,6 +37,7 @@ class codec_proto_static extends mk.codec_base {
 		// 校验数据
 		if (this._config.send_verify_b && mess.verify(data_)) {
 			this._log.error("发送数据校验未通过", this._mess_path_map.get(mess), data_);
+
 			return null;
 		}
 
@@ -56,6 +58,7 @@ class codec_proto_static extends mk.codec_base {
 
 		if (!mess) {
 			this._log.error("未找到消息号为" + id_n + "的已注册消息!");
+
 			return null;
 		}
 
@@ -63,6 +66,7 @@ class codec_proto_static extends mk.codec_base {
 
 		if (this._config.recv_verify_b && mess.verify(data)) {
 			this._log.error("接收包数据校验未通过, 请联系服务端协调!");
+
 			return null;
 		}
 
@@ -74,6 +78,7 @@ class codec_proto_static extends mk.codec_base {
 		if (!mess_) {
 			return false;
 		}
+
 		/** 消息号 */
 		const mess_id_n = mess_["prototype"][global_config.network.proto_head_key_tab.__id];
 
@@ -87,8 +92,10 @@ class codec_proto_static extends mk.codec_base {
 
 		if (same_mess) {
 			this._log.error(`${this._mess_path_map.get(mess_)} 与 ${this._mess_path_map.get(same_mess)} 消息号相同!`);
+
 			return false;
 		}
+
 		return true;
 	}
 

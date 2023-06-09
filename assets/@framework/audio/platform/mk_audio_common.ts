@@ -49,8 +49,10 @@ class mk_audio_common extends mk_audio_base {
 			// 等待播放
 			if (audio.wait_play_n !== -1) {
 				++audio.wait_play_n;
+
 				return true;
 			}
+
 			// 正常播放
 			this._play(audio);
 		} else {
@@ -64,6 +66,7 @@ class mk_audio_common extends mk_audio_base {
 		if (!audio_.init_b || audio_.state === mk_audio_base_.state.pause || audio_.state === mk_audio_base_.state.stop) {
 			return;
 		}
+
 		audio_.audio_source!.pause();
 		audio_.state = mk_audio_base_.state.pause;
 		audio_._event?.emit(audio_._event?.key.pause);
@@ -73,6 +76,7 @@ class mk_audio_common extends mk_audio_base {
 		if (!audio_.init_b || audio_.state === mk_audio_base_.state.stop) {
 			return;
 		}
+
 		--this._curr_play_n;
 		this._log.debug("当前播放数量", this._curr_play_n, "结束");
 		audio_.state = mk_audio_base_.state.stop;
@@ -93,6 +97,7 @@ class mk_audio_common extends mk_audio_base {
 
 		// 初始化完成
 		audio_.init_b = true;
+
 		return true;
 	}
 
@@ -128,6 +133,7 @@ class mk_audio_common extends mk_audio_base {
 				this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
 				--this._curr_play_n;
 				this.stop(audio_);
+
 				return;
 			}
 
@@ -168,6 +174,7 @@ class mk_audio_common extends mk_audio_base {
 				await new Promise<void>((resolve_f) => {
 					cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, resolve_f);
 				});
+
 				scene = cc.director.getScene()!;
 			}
 
@@ -238,6 +245,7 @@ class mk_audio_common extends mk_audio_base {
 		if (!audio_) {
 			return;
 		}
+
 		audio_._event?.emit(audio_._event?.key.play);
 	}
 
@@ -350,6 +358,7 @@ export namespace mk_audio_common_ {
 			this.group_ns.forEach((v_n) => {
 				mk_audio_common.instance().get_group(v_n).add_audio(new_audio);
 			});
+
 			new_audio.use_play_b = this.use_play_b;
 			new_audio._volume_n = this._volume_n;
 			new_audio._loop_b = this._loop_b;
@@ -372,6 +381,7 @@ export namespace mk_audio_common_ {
 			if (value_n_ < 0) {
 				value_n_ = 0;
 			}
+
 			this._volume_n = value_n_;
 
 			// 初始化检查
@@ -382,6 +392,7 @@ export namespace mk_audio_common_ {
 			// 更新真实音量
 			this.real_volume_n = this.group_ns.reduce((pre_n, curr_n) => {
 				pre_n *= mk_audio_common.instance().get_group(curr_n).volume_n;
+
 				return pre_n;
 			}, this._volume_n);
 
@@ -396,6 +407,7 @@ export namespace mk_audio_common_ {
 			if (!this.audio_source) {
 				return;
 			}
+
 			this.audio_source.loop = value_b_;
 		}
 
@@ -403,6 +415,7 @@ export namespace mk_audio_common_ {
 			if (!this.audio_source) {
 				return 0;
 			}
+
 			return this.audio_source.duration;
 		}
 
@@ -410,6 +423,7 @@ export namespace mk_audio_common_ {
 			if (this.audio_source) {
 				this._curr_time_s_n = this.audio_source.currentTime;
 			}
+
 			return this._curr_time_s_n;
 		}
 

@@ -13,6 +13,7 @@ class tool_object {
 						if (record_set.has(target_)) {
 							return target_;
 						}
+
 						record_set.add(target_);
 						result = [];
 						for (let k_n = 0; k_n < target_.length; ++k_n) {
@@ -33,6 +34,7 @@ class tool_object {
 						if (record_set.has(target_)) {
 							return target_;
 						}
+
 						record_set.add(target_);
 						result = {};
 						for (const k_s in target_) {
@@ -52,6 +54,7 @@ class tool_object {
 				result = target_;
 			}
 		}
+
 		return result;
 	}
 
@@ -64,11 +67,13 @@ class tool_object {
 	reset<T extends { constructor: any }, T2 extends true | false>(data_: T, assign_b_: T2): typeof assign_b_ extends true ? null : T {
 		if (!data_?.constructor) {
 			mk.log.error("数据类型错误");
+
 			return null!;
 		}
 
 		if (assign_b_) {
 			Object.assign(data_, new data_.constructor());
+
 			return null!;
 		} else {
 			return new data_.constructor();
@@ -87,6 +92,7 @@ class tool_object {
 						if (record_set.has(target_)) {
 							return;
 						}
+
 						record_set.add(target_);
 						for (const k_s in target_) {
 							// 递归数组中的每一项
@@ -100,6 +106,7 @@ class tool_object {
 						if (record_set.has(target_)) {
 							return;
 						}
+
 						record_set.add(target_);
 						for (const k_s in target_) {
 							path_s = path_s ? `${path_s_}/${k_s}` : k_s;

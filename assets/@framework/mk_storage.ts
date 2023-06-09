@@ -75,6 +75,7 @@ class mk_storage<CT extends Object> {
 		} catch (error) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -106,6 +107,7 @@ class mk_storage<CT extends Object> {
 		// 不存在则创建新数据
 		if (!storage_s) {
 			this.set(key_, this._init_config.data[key_]);
+
 			return JSON.parse(this._cache[key_s]);
 		}
 
@@ -113,6 +115,7 @@ class mk_storage<CT extends Object> {
 		if (this._init_config.codec) {
 			storage_s = this._init_config.codec.decode(storage_s);
 		}
+
 		return JSON.parse(storage_s);
 	}
 

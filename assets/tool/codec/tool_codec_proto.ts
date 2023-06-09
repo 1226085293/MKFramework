@@ -49,8 +49,10 @@ class codec_proto extends mk.codec_base {
 					completed_f: (error, asset_as) => {
 						if (error) {
 							mk.log.error("加载proto文件失败, 请检查路径是否正确!");
+
 							return;
 						}
+
 						let count_n = 0;
 
 						for (const v of asset_as) {
@@ -60,9 +62,11 @@ class codec_proto extends mk.codec_base {
 								} else {
 									mk.log.warn(error);
 								}
+
 								++count_n;
 							});
 						}
+
 						resolve_f();
 					},
 				});
@@ -73,6 +77,7 @@ class codec_proto extends mk.codec_base {
 				resolve_f();
 			}
 		});
+
 		return;
 	}
 
@@ -110,6 +115,7 @@ class codec_proto extends mk.codec_base {
 		// 校验数据
 		if (this._config.send_verify_b && mess.verify(data_.data)) {
 			this._log.error("发送数据校验未通过", mess.fullName, data_.data);
+
 			return null;
 		}
 
@@ -130,6 +136,7 @@ class codec_proto extends mk.codec_base {
 
 		if (!mess) {
 			this._log.error("未找到消息号为 " + id_n + " 的已注册消息!");
+
 			return null;
 		}
 
@@ -137,6 +144,7 @@ class codec_proto extends mk.codec_base {
 
 		if (this._config.recv_verify_b && mess.verify(data)) {
 			this._log.error("接收包数据校验未通过, 请联系服务端协调!");
+
 			return null;
 		}
 
@@ -162,8 +170,10 @@ class codec_proto extends mk.codec_base {
 
 		if (same_mess) {
 			mk.log.error(`${same_mess.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
+
 			return false;
 		}
+
 		return true;
 	}
 
@@ -172,9 +182,11 @@ class codec_proto extends mk.codec_base {
 		if (!parent || !root_) {
 			return;
 		}
+
 		if (root_.nested) {
 			root_ = root_.nested;
 		}
+
 		for (const k_s in root_) {
 			if (!parent[k_s]) {
 				parent[k_s] = root_[k_s];
@@ -190,6 +202,7 @@ class codec_proto extends mk.codec_base {
 		if (!args_?.nested) {
 			return;
 		}
+
 		for (const [k_s, v] of Object.entries(args_.nested)) {
 			if (this._regis_message_check(v)) {
 				this._mess_map.set(v.fieldsById[1].getOption("default"), v);
@@ -207,6 +220,7 @@ class codec_proto extends mk.codec_base {
 		if (mess_ss.length < 2) {
 			return null;
 		}
+
 		// 查找
 		let mess: any = this._mess;
 
@@ -214,13 +228,17 @@ class codec_proto extends mk.codec_base {
 		for (let k_n = 0; k_n < mess_ss.length - 1; ++k_n) {
 			if (!mess[mess_ss[k_n]] || !(mess = mess[mess_ss[k_n]].nested)) {
 				mk.log.error("未找到名为" + mess_s_ + "的已注册消息!");
+
 				return null;
 			}
 		}
+
 		if (!(mess = mess[mess_ss[mess_ss.length - 1]])) {
 			mk.log.error("未找到名为" + mess_s_ + "的已注册消息!");
+
 			return null;
 		}
+
 		return mess;
 	}
 }

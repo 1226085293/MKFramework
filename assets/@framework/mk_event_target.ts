@@ -16,6 +16,7 @@ class mk_event_target<CT> extends cc.EventTarget {
 			type_.forEach((v) => {
 				super.on(v as any, callback_ as any, this_, once_b_);
 			});
+
 			return null;
 		} else {
 			return super.on(type_ as any, callback_ as any, this_, once_b_);
@@ -28,6 +29,7 @@ class mk_event_target<CT> extends cc.EventTarget {
 			type_.forEach((v) => {
 				super.once(v as any, callback_ as any, this_);
 			});
+
 			return null;
 		} else {
 			return super.once(type_ as any, callback_ as any, this_);
@@ -74,6 +76,7 @@ class mk_event_target<CT> extends cc.EventTarget {
 			type_.forEach((v) => {
 				result_as.push(...this._request_single(v, ...args_));
 			});
+
 			return result_as;
 		} else {
 			return this._request_single(type_, ...args_);
@@ -91,6 +94,7 @@ class mk_event_target<CT> extends cc.EventTarget {
 		if (!callback_as) {
 			return result_as;
 		}
+
 		callback_as.forEach((v) => {
 			const old_callback_f = v.callback;
 			const target = v.target;
@@ -100,7 +104,9 @@ class mk_event_target<CT> extends cc.EventTarget {
 				v.callback = old_callback_f;
 			};
 		});
+
 		this.emit(type_, ...args_);
+
 		return result_as;
 	}
 }

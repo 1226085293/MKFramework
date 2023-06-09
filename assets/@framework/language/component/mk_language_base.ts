@@ -145,6 +145,7 @@ abstract class mk_language_base extends cc.Component {
 		if (!this._data) {
 			return;
 		}
+
 		if (this._mark_s === value_s_) {
 			return;
 		}

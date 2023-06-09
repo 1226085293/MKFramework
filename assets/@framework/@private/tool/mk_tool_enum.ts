@@ -9,12 +9,14 @@ class mk_tool_enum extends mk_instance_base {
 		if (!value_) {
 			return result;
 		}
+
 		if (typeof value_ === "object") {
 			Object.keys(value_).forEach((v_s, k_n) => {
 				result[k_n] = v_s;
 				result[v_s] = k_n;
 			});
 		}
+
 		return result;
 	}
 }

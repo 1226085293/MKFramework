@@ -19,6 +19,7 @@ class decorator_type extends mk.instance_base {
 				__description: args_,
 			});
 		}
+
 		return args_.prototype.__description;
 	}
 }

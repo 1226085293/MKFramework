@@ -63,14 +63,17 @@ class mk_logger extends mk_instance_base {
 				this._log_func_tab["debug"]["target"],
 				this._get_log_head(mk_logger_.level.debug, true)
 			);
+
 			this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
 				this._log_func_tab["debug"]["target"],
 				this._get_log_head(mk_logger_.level.log, true)
 			);
+
 			this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
 				this._log_func_tab["debug"]["target"],
 				this._get_log_head(mk_logger_.level.warn, true)
 			);
+
 			this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
 				this._log_func_tab["debug"]["target"],
 				this._get_log_head(mk_logger_.level.error, true)
@@ -105,6 +108,7 @@ class mk_logger extends mk_instance_base {
 				if (window.onerror) {
 					old_handler = window.onerror;
 				}
+
 				window.onerror = function (...args_as: any[]) {
 					upload_f(...args_as);
 					if (old_handler) {
@@ -117,6 +121,7 @@ class mk_logger extends mk_instance_base {
 				if (window["__errorHandler"]) {
 					old_handler = window["__errorHandler"];
 				}
+
 				window["__errorHandler"] = function (...args_as: any[]) {
 					upload_f(...args_as);
 					if (old_handler) {
@@ -207,6 +212,7 @@ class mk_logger extends mk_instance_base {
 					} catch (e) {
 						// ...
 					}
+
 					content_s += ", " + json_s;
 				});
 			}
@@ -250,8 +256,10 @@ class mk_logger extends mk_instance_base {
 	time_start(name_s_: string, ...args_as_: any[]): void {
 		if (!name_s_) {
 			this.error("参数错误");
+
 			return;
 		}
+
 		const time_log: _mk_logger.time_log = Object.create(null);
 
 		time_log.start_time_ms_n = time_log.last_time_ms_n = Date.now();
@@ -267,13 +275,16 @@ class mk_logger extends mk_instance_base {
 
 		if (!time_log) {
 			this.error("参数错误");
+
 			return;
 		}
+
 		const curr_time_ms_n = Date.now();
 
 		if (args_as_?.length) {
 			this._log(mk_logger_.level.log, name_s_, ...args_as_, `耗时：${(curr_time_ms_n - time_log.last_time_ms_n) / 1000}s`);
 		}
+
 		time_log.last_time_ms_n = curr_time_ms_n;
 	}
 
@@ -283,8 +294,10 @@ class mk_logger extends mk_instance_base {
 
 		if (!time_log) {
 			this.error("参数错误");
+
 			return;
 		}
+
 		this._log(mk_logger_.level.log, name_s_, ...args_as_, `总耗时：${(Date.now() - time_log.start_time_ms_n) / 1000}s`);
 		this._time_map.delete(name_s_);
 	}
@@ -310,6 +323,7 @@ class mk_logger extends mk_instance_base {
 		if (!(mk_logger.config.level_n & level_)) {
 			return;
 		}
+
 		// 打印模块限制
 		if (mk_logger._log_only_module_ss.length) {
 			if (!mk_logger._log_only_module_ss.includes(this._name_s)) {

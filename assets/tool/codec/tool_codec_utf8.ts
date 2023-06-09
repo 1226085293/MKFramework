@@ -28,6 +28,7 @@ class tool_codec_utf8 extends mk_codec_base {
 				result_s += String.fromCharCode((curr_n & 63) | 128);
 			}
 		}
+
 		return result_s;
 	}
 
@@ -54,6 +55,7 @@ class tool_codec_utf8 extends mk_codec_base {
 				k_n += 3;
 			}
 		}
+
 		return result_s;
 	}
 }

@@ -18,6 +18,7 @@ class mk_tool_func extends mk_instance_base {
 			} else {
 				key_as.push(key_);
 			}
+
 			key_as = key_as.filter((v) => target_[v] && typeof target_[v] === "function");
 		}
 
@@ -33,6 +34,7 @@ class mk_tool_func extends mk_instance_base {
 			if (mark_tab[v]) {
 				return;
 			}
+
 			/** 当前类及父类函数 */
 			const func_fs = this._get_parent_func(target_.constructor, v);
 
@@ -51,6 +53,7 @@ class mk_tool_func extends mk_instance_base {
 							await result;
 						}
 					}
+
 					// 获取子类函数返回值
 					if (func_fs.length) {
 						result = func_fs[func_fs.length - 1].call(target_, ...args_as);
@@ -62,8 +65,10 @@ class mk_tool_func extends mk_instance_base {
 					if (error === "中断") {
 						return;
 					}
+
 					mk_log.error(error);
 				}
+
 				return result;
 			};
 		});
@@ -87,6 +92,7 @@ class mk_tool_func extends mk_instance_base {
 			} else {
 				key_as.push(key_);
 			}
+
 			key_as = key_as.filter((v) => target_[v] && typeof target_[v] === "function");
 		}
 
@@ -102,6 +108,7 @@ class mk_tool_func extends mk_instance_base {
 			if (!target_[key_s_] || mark_tab[key_s_]) {
 				return;
 			}
+
 			mark_tab[key_s_] = true;
 			const old_f = target_[key_s_];
 
@@ -132,10 +139,12 @@ class mk_tool_func extends mk_instance_base {
 		if (!target_ || target_ === Object) {
 			return func_fs_;
 		}
+
 		this._get_parent_func(cc.js.getSuper(target_), key_, target_, func_fs_);
 		if (target_.prototype[key_] && (old_target_ ? target_.prototype[key_] !== old_target_.prototype[key_] : true)) {
 			func_fs_.push(target_.prototype[key_]);
 		}
+
 		return func_fs_;
 	}
 }

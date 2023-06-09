@@ -7,6 +7,7 @@ abstract class mk_instance_base {
 		if (!self._instance) {
 			self._instance = new self(...args_as_);
 		}
+
 		return self._instance;
 	}
 }

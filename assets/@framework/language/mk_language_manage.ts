@@ -63,6 +63,7 @@ class mk_language_manage extends mk_instance_base {
 			if (mark_s_) {
 				this._log.warn(`${type_}.${mark_s_}.${global_config.language.type[config.language]}下的文本未配置！`);
 			}
+
 			return mark_s_;
 		}
 
@@ -86,6 +87,7 @@ class mk_language_manage extends mk_instance_base {
 
 		if (!path_s) {
 			this._log.error(`${type_}.${mark_s_}.${global_config.language.type[language_]}下的纹理未配置！`);
+
 			return null;
 		}
 
@@ -141,6 +143,7 @@ class mk_language_manage extends mk_instance_base {
 		if (this._language === value_) {
 			return;
 		}
+
 		this._language = value_;
 
 		// 事件通知

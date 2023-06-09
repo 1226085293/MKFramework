@@ -18,6 +18,7 @@ class mk_decorator_method extends mk_instance_base {
 			if (this[key]) {
 				return;
 			}
+
 			this[key] = true;
 			await old_value_f.call(this, ...args_as);
 			this[key] = false;
