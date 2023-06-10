@@ -303,6 +303,7 @@ class mk_asset extends mk_instance_base {
 		return new Promise<T[] | null>(async (resolve_f) => {
 			/** 文件夹资源列表 */
 			const dir_asset_as: T[] = [];
+
 			/** 完成回调 */
 			const completed_f = (error: Error | null): void => {
 				if (error) {

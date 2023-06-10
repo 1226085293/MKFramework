@@ -73,6 +73,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 		/** 注册任务 */
 		const regis_task = new mk_status_task(false);
+
 		/** 注册数据 */
 		const regis_data = new mk_ui_manage_.regis_data<T>({
 			...config_,
@@ -86,6 +87,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 		/** 节点池 */
 		const obj_pool_map = new Map<string, mk_obj_pool<cc.Node>>();
+
 		/** 退出回调 */
 		const exit_callback_f = async (status_b: boolean): Promise<void> => {
 			if (!status_b) {

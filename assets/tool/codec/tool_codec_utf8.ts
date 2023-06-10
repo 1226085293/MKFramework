@@ -35,6 +35,7 @@ class tool_codec_utf8 extends mk_codec_base {
 	/** 解码 */
 	decode(data_s_: string): string {
 		let result_s = "";
+
 		let temp1_n = 0,
 			temp2_n = 0,
 			temp3_n = 0;

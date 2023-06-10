@@ -482,6 +482,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 
 		/** 心跳超时定时器 */
 		let timeout_timer: any;
+
 		/** 接收心跳回调 */
 		const recv_f = (): void => {
 			if (timeout_timer) {

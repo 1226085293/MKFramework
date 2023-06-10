@@ -80,11 +80,11 @@
 		// 换行规则
 		"@typescript-eslint/padding-line-between-statements": [
 			"error",
-			// 多行表达式/多行块状语句/多行 const/多行 let/多行 var 语句后换行
-			{ "blankLine": "always", "prev": ["multiline-expression", "multiline-block-like", "multiline-const", "multiline-let", "multiline-var"], "next": "*" },
+			// 多行表达式/多行块状语句/const/let/var 语句后换行
+			{ "blankLine": "always", "prev": ["multiline-expression", "multiline-block-like", "const", "let", "var"], "next": "*" },
 			// return 语句前换行
 			{ "blankLine": "always", "prev": "*", "next": "return" },
-			// 单行 const/let/var 不换行
+			// 忽略单行 const/let/var 换行
 			{
 				"blankLine": "never",
 				"prev": ["singleline-const", "singleline-let", "singleline-var"],

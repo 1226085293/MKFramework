@@ -123,6 +123,7 @@ class tool_bezier_curve {
 
 		// 平均距离
 		const aver_dist_n = pos_n_ * this._distance_ns[this.point_v3s.length - 2];
+
 		let index_n = 0,
 			beyond_n = 0,
 			percent_n = 0;
@@ -220,6 +221,7 @@ class tool_bezier_curve {
 		// 基本样条线插值算法
 		// 弹性
 		const s_n = 0.5;
+
 		// 计算三次样条线函数系数
 		const b_v3 = point_v3_
 			.clone()
@@ -237,6 +239,7 @@ class tool_bezier_curve {
 
 		const b3_v3 = point_v3_.clone().multiplyScalar(-s_n).add(point3_v3_.clone().multiplyScalar(s_n));
 		const b4_v3 = point2_v3_;
+
 		// 函数曲线
 		const fx = (x_n: number): cc.Vec3 => {
 			return b_v3

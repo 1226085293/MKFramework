@@ -59,8 +59,6 @@ namespace global_config {
 		export const auto_adaptation_switch_b = true;
 		/** 初始设计尺寸 */
 		export const original_design_size: Omit<Readonly<cc.Size>, "set"> = cc.size();
-		/** 当前设计尺寸 */
-		export const current_design_size = cc.size();
 		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错） */
 		export const blocking_warning_time_ms_n = DEBUG ? 5000 : 0;
 	}
