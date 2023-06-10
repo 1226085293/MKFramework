@@ -26,11 +26,11 @@ export class resources_language extends mk.module.view_base {
 	}
 
 	button_chinese(): void {
-		mk.language_manage.type = global_config.language.type.zh_cn;
+		mk.language_manage.type_s = global_config.language.type.zh_cn;
 	}
 
 	button_english(): void {
-		mk.language_manage.type = global_config.language.type.en_us;
+		mk.language_manage.type_s = global_config.language.type.en_us;
 	}
 	/* ------------------------------- 功能 ------------------------------- */
 	/* ------------------------------- 网络事件 ------------------------------- */

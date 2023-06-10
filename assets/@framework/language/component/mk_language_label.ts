@@ -23,7 +23,7 @@ class mk_language_label extends mk_language_base {
 		displayName: "方向适配",
 		tooltip: "根据语言配置从左到右或从右到左",
 	})
-	direction_adaptation_b = true;
+	direction_adaptation_b = false;
 
 	get type(): number {
 		return mk_language_label._type_enum[this._type_s];

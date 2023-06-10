@@ -329,7 +329,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 504.70642201834863,
+    "_orthoHeight": 561.4994179278231,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -874,6 +874,7 @@
     "__prefab": null,
     "_type_s": "main_main",
     "_mark_s": "音频",
+    "direction_adaptation_b": false,
     "_args_ss": [],
     "_id": "fezcr79wlGF4z9yufXO3yO"
   },

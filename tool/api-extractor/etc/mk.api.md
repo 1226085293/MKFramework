@@ -397,6 +397,9 @@ namespace mk_http_ {
 class mk_language_label extends mk_language_base {
     get args_ss(): string[];
     set args_ss(value_ss_: string[]);
+    direction_adaptation_b: boolean;
+    // (undocumented)
+    protected _event_switch_language(): void;
     // (undocumented)
     protected _init_data(): void;
     // (undocumented)
@@ -409,6 +412,7 @@ class mk_language_label extends mk_language_base {
     // (undocumented)
     get type(): number;
     set type(value_: number);
+    // (undocumented)
     protected _type_s: string;
     // (undocumented)
     protected _update_content(): void;
@@ -418,10 +422,13 @@ class mk_language_label extends mk_language_base {
 
 // @public
 class mk_language_node extends mk_life_cycle {
+    // (undocumented)
+    create(): void | Promise<void>;
     get current_node(): cc_2.Node;
     get language(): number;
     set language(value_n_: number);
     language_s: string;
+    layout_adaptation_b: boolean;
     // Warning: (ae-forgotten-export) The symbol "_mk_language_node" needs to be exported by the entry point mk_export.d.ts
     node_as: _mk_language_node.node[];
     // (undocumented)
@@ -626,6 +633,8 @@ class mk_touch_mask extends cc_2.Component {
 // @public
 class mk_view_base extends mk_life_cycle {
     // (undocumented)
+    animation_config: _mk_view_base.animation_config;
+    // (undocumented)
     get auto_block_input_b(): boolean;
     set auto_block_input_b(value_b_: boolean);
     // (undocumented)
@@ -656,10 +665,6 @@ class mk_view_base extends mk_life_cycle {
     show_alone_b: boolean;
     get type_s(): string;
     protected _view_config: mk_view_base_.view_config;
-    get wind_b(): boolean;
-    set wind_b(value_b_: boolean);
-    // (undocumented)
-    wind_config: _mk_view_base.wind_config;
 }
 
 // @public (undocumented)

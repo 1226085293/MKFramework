@@ -67,14 +67,8 @@ namespace global_config {
 
 	/** 多语言配置 */
 	export namespace language {
-		/** 语种信息 */
-		export interface type_data {
-			/** 方向（cc.Layout.HorizontalDirection） */
-			dire: number;
-		}
-
 		/** 语种表 */
-		export const type_tab: Record<string, type_data> = {
+		const private_type_tab = {
 			/** 中文(中华人民共和国) */
 			zh_cn: {
 				dire: cc.Layout.HorizontalDirection.LEFT_TO_RIGHT,
@@ -84,6 +78,15 @@ namespace global_config {
 				dire: cc.Layout.HorizontalDirection.LEFT_TO_RIGHT,
 			},
 		};
+
+		/** 语种信息 */
+		export interface type_data {
+			/** 方向（cc.Layout.HorizontalDirection） */
+			dire: number;
+		}
+
+		/** 语种表 */
+		export const type_tab: Record<keyof typeof private_type_tab, type_data> = private_type_tab;
 
 		/** 语种 */
 		export const type: { [k in keyof typeof type_tab]: k } = new Proxy(

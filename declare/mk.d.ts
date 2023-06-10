@@ -921,15 +921,15 @@ declare namespace mk {
 		private static _type_ss;
 		/** 注册类型 */
 		private static _type_enum;
+		/** label 适配 */
+		direction_adaptation_b: boolean;
 		get type(): number;
 		set type(value_: number);
-		/** 类型 */
-		protected _type_s: string;
-		/** 参数 */
-		private _args_ss;
 		/** 参数 */
 		get args_ss(): string[];
 		set args_ss(value_ss_: string[]);
+		protected _type_s: string;
+		private _args_ss;
 		/** label组件 */
 		private _label;
 		/** 重置数据 */
@@ -940,11 +940,14 @@ declare namespace mk {
 		protected _set_type_s(value_s_: string): void;
 		protected _init_data(): void;
 		protected _init_event(state_b_: boolean): void;
+		/** 方向适配 */
+		private _direction_adaptation;
 		/** 初始化组件 */
 		private _init_component;
 		/** 更新编辑器 */
 		private _update_editor;
 		private _set_args_ss;
+		protected _event_switch_language(): void;
 		private _event_label_data_change;
 	}
 
@@ -957,8 +960,10 @@ declare namespace mk {
 		/** 纹理数据 */
 		texture_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
 		/** 当前语言类型 */
-		get type(): keyof typeof global_config.language.type;
-		set type(value_: keyof typeof global_config.language.type);
+		get type_s(): keyof typeof global_config.language.type_tab;
+		set type_s(value_: keyof typeof global_config.language.type_tab);
+		/** 获取语言数据 */
+		get data(): global_config.language.type_data;
 		/** 日志 */
 		private _log;
 		/** 当前语言类型 */
@@ -991,7 +996,7 @@ declare namespace mk {
 		 * @param data_ 数据
 		 */
 		add_texture(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
-		private _set_curr_type;
+		private _set_type_s;
 	}
 
 	declare namespace _mk_language_manage {
@@ -1020,9 +1025,13 @@ declare namespace mk {
 		private set _node(value);
 		/** 语言节点列表 */
 		node_as: _mk_language_node.node[];
+		/** layout 适配 */
+		layout_adaptation_b: boolean;
 		/** 当前语言节点 */
 		get current_node(): cc_2.Node;
 		protected _use_layer_b: boolean;
+		private _layout;
+		create(): void | Promise<void>;
 		open(): void;
 		/** 更新节点展示 */
 		private _update_view;
@@ -2085,11 +2094,8 @@ declare namespace mk {
 	/** 视图基类 */
 	declare class mk_view_base extends mk_life_cycle {
 		static config: _mk_view_base.global_config;
-		/** 窗口 */
-		get wind_b(): boolean;
-		set wind_b(value_b_: boolean);
-		wind_config: _mk_view_base.wind_config;
 		show_alone_b: boolean;
+		animation_config: _mk_view_base.animation_config;
 		get auto_mask_b(): boolean;
 		set auto_mask_b(value_b_: boolean);
 		get auto_widget_b(): boolean;
@@ -2127,7 +2133,6 @@ declare namespace mk {
 		auto_release<T extends _mk_view_base.release_object_type | _mk_view_base.release_object_type[]>(args_: T): T;
 		/** 初始化编辑器 */
 		protected _init_editor(): void;
-		private _set_wind_b;
 		private _get_auto_mask_b;
 		private _set_auto_mask_b;
 		private _set_auto_widget_b;
@@ -2161,9 +2166,9 @@ declare namespace mk {
 				close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
 			}>;
 		}
-		/** 窗口配置 */
-		class wind_config {
-			/** 窗口动画枚举表 */
+		/** 动画配置 */
+		class animation_config {
+			/** 动画枚举表 */
 			static animation_enum_tab: {
 				/** 打开动画 */
 				open: Record<string | number, string | number>;
@@ -2174,11 +2179,13 @@ declare namespace mk {
 			set open_animation_n(value_n_: number);
 			get close_animation_n(): number;
 			set close_animation_n(value_n_: number);
-			/** 窗口打开动画 */
+			/** 打开动画 */
 			open_animation_s: string;
-			/** 窗口关闭动画 */
+			/** 关闭动画 */
 			close_animation_s: string;
 		}
+		/** 快捷操作 */
+		class quick_operation {}
 	}
 
 	declare namespace mk_view_base_ {
