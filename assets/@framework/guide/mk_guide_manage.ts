@@ -40,7 +40,7 @@ class mk_guide_manage {
 	/** 步骤表 */
 	private _step_map = new Map<number, mk_guide_step_base>();
 	/** 步骤预加载任务表 */
-	private _step_preload_map = new Map<number, Promise<any>>();
+	private _step_preload_map = new Map<number, null | Promise<any>>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 注册步骤
@@ -79,7 +79,10 @@ class mk_guide_manage {
 			}
 
 			/** 下次引导步骤 */
-			const next_step = typeof current_step.next_step_n !== "number" ? null : this._step_map.get(current_step.next_step_n);
+			const next_step_as =
+				!current_step.next_step_ns || current_step.next_step_ns.length > 1
+					? null
+					: current_step.next_step_ns.map((v_n) => this._step_map.get(v_n));
 
 			// 恢复暂停
 			this.pause_b = false;
@@ -89,13 +92,13 @@ class mk_guide_manage {
 			await Promise.all(this.event.request(this.event.key.loading_step));
 
 			// 执行下步预加载
-			if (next_step?.pre_load) {
-				const result = next_step?.pre_load?.();
-
-				if (result instanceof Promise) {
-					this._step_preload_map.set(next_step.step_n, result);
+			next_step_as?.forEach((v) => {
+				if (!v?.pre_load) {
+					return;
 				}
-			}
+
+				this._step_preload_map.set(v.step_n, v.pre_load() ?? null);
+			});
 
 			// 加载场景
 			{
@@ -136,12 +139,8 @@ class mk_guide_manage {
 
 			// 确认预加载完成
 			{
-				const preload_task = this._step_preload_map.get(current_step.step_n);
-
-				if (preload_task) {
-					await preload_task;
-					this._step_preload_map.delete(current_step.step_n);
-				}
+				await (this._step_preload_map.get(current_step.step_n) ?? null);
+				this._step_preload_map.delete(current_step.step_n);
 			}
 
 			// 更新上个步骤

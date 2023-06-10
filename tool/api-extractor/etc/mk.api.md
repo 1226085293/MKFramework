@@ -239,9 +239,7 @@ export const game: mk_game;
 
 declare namespace guide {
     export {
-        mk_guide_step_base as step_base,
-        mk_touch_mask as touch_mask,
-        mk_polygon_mask as polygon_mask
+        mk_guide_step_base as step_base
     }
 }
 export { guide }
@@ -315,7 +313,7 @@ export namespace language_ {
     export class label_config {
         constructor(init_?: Partial<label_config>);
         args_ss?: string[];
-        language: string;
+        language: "zh_cn" | "en_us";
     }
     export class label_data<CT extends data_struct> extends base_data<CT> {
         constructor(type_: string, init_: CT);
@@ -368,7 +366,7 @@ abstract class mk_guide_step_base {
     init_data: any;
     abstract load(): void | Promise<void>;
     protected _next(init_data_?: any): void;
-    next_step_n?: number;
+    next_step_ns?: number[];
     operate_ss: any[];
     operate_tab: Record<PropertyKey, any>;
     pre_load?(): void | Promise<void>;
@@ -427,7 +425,7 @@ class mk_language_node extends mk_life_cycle {
     get current_node(): cc_2.Node;
     get language(): number;
     set language(value_n_: number);
-    language_s: string;
+    language_s: "zh_cn" | "en_us";
     layout_adaptation_b: boolean;
     // Warning: (ae-forgotten-export) The symbol "_mk_language_node" needs to be exported by the entry point mk_export.d.ts
     node_as: _mk_language_node.node[];
@@ -582,16 +580,6 @@ namespace mk_network_base_ {
 }
 
 // @public
-class mk_polygon_mask extends cc_2.Component {
-    // (undocumented)
-    get init_editor(): void;
-    // (undocumented)
-    onLoad(): void;
-    get track_node(): cc_2.Node;
-    set track_node(value_: cc_2.Node);
-}
-
-// @public
 class mk_scene_drive extends mk_life_cycle {
     // (undocumented)
     onDestroy(): void;
@@ -616,18 +604,6 @@ class mk_task_pipeline {
     event: event_target<_mk_task_pipeline.event_protocol>;
     get pause_b(): boolean;
     set pause_b(value_b_: boolean);
-}
-
-// @public
-class mk_touch_mask extends cc_2.Component {
-    // (undocumented)
-    onDisable(): void;
-    // (undocumented)
-    onEnable(): void;
-    // (undocumented)
-    onLoad(): void;
-    get track_node(): cc_2.Node;
-    set track_node(value_: cc_2.Node);
 }
 
 // @public
@@ -756,6 +732,21 @@ export namespace obj_pool {
         get(): CT;
         put(obj_: CT): void;
     }
+}
+
+// @public
+export class polygon_mask extends cc_2.Component {
+    mask: cc_2.Mask | null;
+    // (undocumented)
+    protected onDisable(): void;
+    // (undocumented)
+    protected onEnable(): void;
+    shield_touch_b: boolean;
+    // (undocumented)
+    protected start(): void;
+    get track_node(): cc_2.Node;
+    set track_node(value_: cc_2.Node);
+    update_mask(): void;
 }
 
 // @public

@@ -395,7 +395,7 @@ declare namespace mk {
 	/* Excluded from this release type: global_config */
 
 	declare namespace guide {
-		export { mk_guide_step_base as step_base, mk_touch_mask as touch_mask, mk_polygon_mask as polygon_mask };
+		export { mk_guide_step_base as step_base };
 	}
 	export { guide };
 
@@ -515,7 +515,7 @@ declare namespace mk {
 		export class label_config {
 			constructor(init_?: Partial<label_config>);
 			/** 语言类型 */
-			language: string;
+			language: "zh_cn" | "en_us";
 			/** 参数 */
 			args_ss?: string[];
 		}
@@ -819,10 +819,13 @@ declare namespace mk {
 		init_data: any;
 		/** 步骤更新返回数据 */
 		step_update_data: any;
-		/** 步骤描述（用于打印） */
+		/** 步骤描述（用于日志打印） */
 		describe_s?: string;
-		/** 下个步骤（用于预加载以及 this._next 跳转） */
-		next_step_n?: number;
+		/** 下个步骤
+		 * - length == 1：预加载及 this._next 跳转
+		 * - length > 1：预加载
+		 */
+		next_step_ns?: number[];
 		/** 预加载（上个步骤 load 后执行） */
 		pre_load?(): void | Promise<void>;
 		/** 加载（进入当前步骤） */
@@ -983,7 +986,7 @@ declare namespace mk {
 		 * @param language_ 语言
 		 * @returns
 		 */
-		get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_?: string): Promise<cc_2.SpriteFrame | null>;
+		get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_?: "zh_cn" | "en_us"): Promise<cc_2.SpriteFrame | null>;
 		/**
 		 * 添加文本数据
 		 * @param type_ 类型
@@ -1016,7 +1019,7 @@ declare namespace mk {
 	/** 多语言节点 */
 	declare class mk_language_node extends mk_life_cycle {
 		/** 语言 */
-		language_s: string;
+		language_s: "zh_cn" | "en_us";
 		/** 语言 */
 		get language(): number;
 		set language(value_n_: number);
@@ -1046,7 +1049,7 @@ declare namespace mk {
 			get language(): number;
 			set language(value_n_: number);
 			/** 语言 */
-			language_s: string;
+			language_s: "zh_cn" | "en_us";
 			/** 节点 */
 			node: cc_2.Node;
 		}
@@ -1814,33 +1817,6 @@ declare namespace mk {
 		}
 	}
 
-	/**
-	 * 多边形遮罩
-	 * - 跟踪节点父节点不能变更，否则可能会导致坐标错误
-	 */
-	declare class mk_polygon_mask extends cc_2.Component {
-		get init_editor(): void;
-		/** 跟踪节点 */
-		get track_node(): cc_2.Node;
-		set track_node(value_: cc_2.Node);
-		/** 跟踪节点 */
-		private _track_node;
-		/** 跟踪节点初始坐标 */
-		private _track_node_start_pos_v3;
-		/** 遮罩组件 */
-		private _mask;
-		/** 多边形点 */
-		private _point_v2s;
-		/** 碰撞多边形点 */
-		private _point2_v2s;
-		onLoad(): void;
-		/** 更新遮罩 */
-		private _update_mask;
-		/** 初始化编辑器 */
-		private _init_editor;
-		private _set_track_node;
-	}
-
 	/** 场景驱动 */
 	declare class mk_scene_drive extends mk_life_cycle {
 		private _close_task;
@@ -1946,33 +1922,6 @@ declare namespace mk {
 			/** 状态任务 */
 			task: mk_status_task;
 		}
-	}
-
-	/**
-	 * 触摸遮罩
-	 * - 跟踪节点父节点不能变更，否则可能会导致坐标错误
-	 */
-	declare class mk_touch_mask extends cc_2.Component {
-		/** 跟踪节点 */
-		get track_node(): cc_2.Node;
-		set track_node(value_: cc_2.Node);
-		/** 跟踪节点 */
-		private _track_node;
-		/** 跟踪节点初始坐标 */
-		private _track_node_start_pos_v3;
-		/** 输入事件 */
-		private _input_event_as;
-		/** 多边形点 */
-		private _point_v2s;
-		/** 碰撞多边形点 */
-		private _point2_v2s;
-		/** 临时变量 */
-		private _temp_tab;
-		onLoad(): void;
-		onEnable(): void;
-		onDisable(): void;
-		private _set_track_node;
-		private _event_input;
 	}
 
 	declare class mk_ui_manage extends instance_base {
@@ -2306,6 +2255,48 @@ declare namespace mk {
 			/** 删除对象 */
 			private _del;
 		}
+	}
+
+	/**
+	 * 多边形遮罩
+	 * - 多边形图片遮罩
+	 * - 多边形触摸屏蔽
+	 */
+	export declare class polygon_mask extends cc_2.Component {
+		/** 遮罩组件 */
+		mask: cc_2.Mask | null;
+		/** 屏蔽触摸 */
+		shield_touch_b: boolean;
+		/** 跟踪节点 */
+		get track_node(): cc_2.Node;
+		set track_node(value_: cc_2.Node);
+		/** 跟踪节点 */
+		private _track_node;
+		/** 跟踪节点初始坐标 */
+		private _track_node_start_pos_v3;
+		/** 多边形本地点 */
+		private _polygon_local_point_v2s;
+		/** 当前多边形本地点 */
+		private _current_polygon_local_point_v2s;
+		/** 多边形世界点 */
+		private _polygon_world_point_v2s;
+		/** 当前多边形世界点 */
+		private _current_polygon_world_point_v2s;
+		/** 输入事件 */
+		private _input_event_as;
+		/** 临时变量 */
+		private _temp_tab;
+		protected start(): void;
+		protected onEnable(): void;
+		protected onDisable(): void;
+		/** 更新遮罩 */
+		update_mask(): void;
+		/** 更新遮罩 */
+		private _update_mask;
+		private _set_track_node;
+		private _event_node_input;
+		private _event_track_node_transform_changed;
+		private _event_global_resize;
 	}
 
 	/** 存储器 */

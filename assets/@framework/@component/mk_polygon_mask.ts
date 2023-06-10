@@ -76,7 +76,7 @@ export class mk_polygon_mask extends cc.Component {
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected start(): void {
+	protected onLoad(): void {
 		if (this.getComponent(cc.Mask)) {
 			mk_log.error("不能在 mask 组件的节点上添加组件");
 			this.destroy();

@@ -4,7 +4,7 @@ import resources_guide_step_base from "./resources_guide_step_base";
 
 class resources_guide_step3 extends resources_guide_step_base {
 	step_n = 3;
-	next_step_n = 4;
+	next_step_ns = [4];
 	scene_s = "main.main";
 	operate_ss = [resources_guide_operate.key.隐藏所有按钮, resources_guide_operate.key.按钮3];
 	/* ------------------------------- 生命周期 ------------------------------- */
