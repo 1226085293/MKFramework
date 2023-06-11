@@ -1,6 +1,6 @@
 import { EDITOR } from "cc/env";
-import global_config from "../../@config/global_config";
-import global_event from "../../@config/global_event";
+import global_config from "../../../@config/global_config";
+import global_event from "../../../@config/global_event";
 import * as cc from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
