@@ -59,7 +59,14 @@ class mk_tool_object extends mk_instance_base {
 		return result;
 	}
 
-	/** 重置数据（class 数据才会生效，注意构造内的 this 对象不是 data_） */
+	/**
+	 * 重置数据
+	 * @param data_ class 类型数据
+	 * @param assign_b_ 使用新对象覆盖属性
+	 * @returns
+	 * @remarks
+	 * 注意构造内的 this 对象不是 data_
+	 */
 	reset<T extends { constructor: any }, T2 extends true | false>(data_: T, assign_b_: T2): typeof assign_b_ extends true ? null : T {
 		if (!data_?.constructor) {
 			mk_log.error("数据类型错误");

@@ -3,7 +3,7 @@
 		"docfx",
 		"unregis"
 	],
-	"commentTranslate.targetLanguage": "en",
+	"commentTranslate.targetLanguage": "zh-CN",
 	"search.exclude": {
 		"**/node_modules": true,
 		"**/bower_components": true,

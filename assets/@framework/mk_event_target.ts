@@ -73,7 +73,10 @@ class mk_event_target<CT> extends cc.EventTarget {
 		return super["clear"]();
 	}
 
-	/** 请求（等待返回） */
+	/** 请求
+	 * @remarks
+	 * 等待事件返回
+	 */
 	// @ts-ignore
 	request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[] {
 		if (Array.isArray(type_)) {

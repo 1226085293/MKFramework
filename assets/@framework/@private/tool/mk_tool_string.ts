@@ -1,7 +1,14 @@
 import mk_instance_base from "../../mk_instance_base";
 
 class mk_tool_string extends mk_instance_base {
-	/** 字符串相似度（编辑距离算法） */
+	/**
+	 * 字符串相似度
+	 * @param v_s_ 字符集
+	 * @param v2_s_ 对比字符
+	 * @returns 0-1
+	 * @remarks
+	 * 编辑距离算法
+	 */
 	similarity_edit_dist(v_s_: string, v2_s_: string): number {
 		const v_len_n = v_s_.length;
 		const v2_len_n = v2_s_.length;
@@ -53,7 +60,15 @@ class mk_tool_string extends mk_instance_base {
 		return Number((1 - dist_nss[v_len_n][v2_len_n] / Math.max(v_s_.length, v2_s_.length)).toFixed(4));
 	}
 
-	/** 模糊匹配（多个源字符串时返回相识度最高的字符串） */
+	/**
+	 * 模糊匹配
+	 * @param args_ 字符集
+	 * @param key_s_ 对比字符
+	 * @param min_simile_n_ 最小相似度
+	 * @returns
+	 * @remarks
+	 * 多个源字符串时返回相似度最高的字符串
+	 */
 	fuzzy_match(args_: string | string[], key_s_: string, min_simile_n_ = 0): string | null {
 		if (!key_s_) {
 			return null;

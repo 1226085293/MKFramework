@@ -1,37 +1,61 @@
+import * as cc from "cc";
 import { mk_log } from "../mk_logger";
 import type mk_guide_manage from "./mk_guide_manage";
+import { mk_guide_manage_ } from "./mk_guide_manage";
 
 /** 引导步骤基类 */
-abstract class mk_guide_step_base {
+abstract class mk_guide_step_base<CT extends Record<string, mk_guide_manage_.operate_cell> = any> extends cc.Component {
 	/** 步骤序号 */
 	abstract step_n: number;
-	/** 所属场景（bundle.scene） */
+	/**
+	 * 所属场景
+	 * @remarks
+	 * 格式：bundle.scene
+	 */
 	abstract scene_s: string;
 	/** 引导管理器 */
 	guide_manage!: mk_guide_manage;
 	/** 操作键列表 */
-	operate_ss: any[] = [];
+	operate_ss: Exclude<keyof CT, symbol>[] = [];
 	/** 操作表返回值 */
-	operate_tab: Record<PropertyKey, any> = {};
+	operate_tab: { [k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined } = {} as any;
 	/** 初始化数据 */
 	init_data!: any;
 	/** 步骤更新返回数据 */
 	step_update_data!: any;
-	/** 步骤描述（用于日志打印） */
+	/**
+	 * 步骤描述
+	 * @remarks
+	 * 用于日志打印
+	 */
 	describe_s?: string;
-	/** 下个步骤
+	/**
+	 * 下个步骤
+	 * @remarks
 	 * - length == 1：预加载及 this._next 跳转
 	 * - length > 1：预加载
 	 */
 	next_step_ns?: number[];
 	/* ------------------------------- 生命周期 ------------------------------- */
-	/** 预加载（上个步骤 load 后执行） */
+	/**
+	 * 预加载
+	 * @remarks
+	 * 上个步骤 load 后执行
+	 */
 	pre_load?(): void | Promise<void>;
 
-	/** 加载（进入当前步骤） */
+	/**
+	 * 加载
+	 * @remarks
+	 * 进入当前步骤
+	 */
 	abstract load(): void | Promise<void>;
 
-	/** 卸载（退出当前步骤） */
+	/**
+	 * 卸载
+	 * @remarks
+	 * 退出当前步骤
+	 */
 	unload?(): void | Promise<void>;
 	/* ------------------------------- 功能 ------------------------------- */
 	/**

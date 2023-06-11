@@ -23,7 +23,11 @@ namespace _mk_network_base {
 		close(event: any): void;
 		/** 重连失败 */
 		reconnect_fail(): void;
-		/** 心跳超时（只会在接收心跳超时时通知） */
+		/**
+		 * 心跳超时
+		 * @remarks
+		 * 在接收心跳超时时通知
+		 */
 		heartbeat_timeout(): void;
 		/**
 		 * 收到任意消息
@@ -97,8 +101,20 @@ namespace _mk_network_base {
 			this._log.error("消息 id 解析错误");
 		}
 
-		/** 派发事件（接收消息后派发，可用此接口模拟数据） */
+		/**
+		 * 派发事件
+		 * @param data_ 消息数据
+		 * @remarks
+		 * 接收消息后派发，可用此接口模拟数据
+		 */
 		emit<T extends global_config.network.proto_head>(data_: T): void;
+		/**
+		 * 派发事件
+		 * @param type_ 消息号
+		 * @param data_  消息数据
+		 * @remarks
+		 * 接收消息后派发，可用此接口模拟数据
+		 */
 		emit<T extends string | number>(type_: T, data_: any): void;
 		emit<T extends cc.Constructor<global_config.network.proto_head> | string | number>(args_: T, data_?: any): void {
 			let type_: string | number | undefined;
@@ -135,10 +151,12 @@ namespace _mk_network_base {
 		}
 
 		/**
-		 * 请求（等待返回）
+		 * 请求
 		 * @param data_ 发送数据
 		 * @param timeout_ms_n_ 超时时间
 		 * @returns
+		 * @remarks
+		 * 等待事件回调返回
 		 */
 		request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null {
 			this._network._send(data_);
@@ -396,7 +414,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 			return;
 		}
 
-		// 存在发送数据且上次发送已经结束（避免超出缓存）
+		// 存在发送数据且上次发送已经结束，避免超出缓存
 		if (this._write_as.length && !this._socket.bufferedAmount) {
 			const data = this.config.codec ? await this.config.codec.encode(this._write_as.pop()) : this._write_as.pop();
 
@@ -501,7 +519,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 		/** 心跳数据获取函数 */
 		const get_send_data_f = this.config.heartbeat_config.init_f(recv_f);
 
-		// 服务端到客户端，清理心跳超时定时器（防止心跳期间重连导致误超时）
+		// 服务端到客户端，清理心跳超时定时器，防止心跳期间重连导致误超时
 		this.event.on(
 			this.event.key.close,
 			() => {
@@ -602,24 +620,44 @@ export namespace mk_network_base_ {
 
 		/** 编解码器 */
 		codec?: CT;
-		/** 发送间隔（毫秒） */
+		/**
+		 * 发送间隔
+		 * @remarks
+		 * 单位：毫秒
+		 */
 		send_interval_ms_n = 0;
-		/** 重连间隔（毫秒） */
+		/**
+		 * 重连间隔
+		 * @remarks
+		 * 单位：毫秒
+		 */
 		reconnect_interval_ms_n = 1000;
 		/** 最大重连次数 */
 		max_reconnect_n = 5;
-		/** 等待消息超时时间（毫秒） */
+		/**
+		 * 等待消息超时时间
+		 * @remarks
+		 * 单位：毫秒
+		 */
 		wait_timeout_ms_n = 5000;
 		/** 心跳配置 */
 		heartbeat_config?: {
-			/** 发送间隔（毫秒） */
+			/**
+			 * 发送间隔
+			 * @remarks
+			 * 单位：毫秒
+			 */
 			interval_ms_n?: number;
-			/** 超时时间 */
+			/**
+			 * 超时时间
+			 * @remarks
+			 * 单位：毫秒
+			 */
 			timeout_ms_n: number;
 			/**
 			 * 初始化
-			 * @param done_f 接收到心跳后手动调用（server -> client），用于心跳超时检测
-			 * @returns 返回心跳数据的函数（client -> server），不为空则向服务器定时发送
+			 * @param done_f 接收到心跳后手动调用，server -> client，用于心跳超时检测
+			 * @returns 返回心跳数据的函数，client -> server，不为空则向服务器定时发送
 			 */
 			init_f(done_f: () => void): null | (() => any);
 		};
@@ -649,7 +687,9 @@ export namespace mk_network_base_ {
 	export class send_tide<CT extends mk_codec_base = mk_codec_base> {
 		/**
 		 * @param network_ 网络实例
-		 * @param interval_ms_n_ 发送间隔（-1：手动触发，0-n：自动发送间隔毫秒）
+		 * @param interval_ms_n_ 发送间隔
+		 * - -1：手动触发
+		 * - 0-n：自动发送间隔毫秒
 		 */
 		constructor(network_: mk_network_base, interval_ms_n_: number) {
 			this._network = network_;
@@ -658,7 +698,11 @@ export namespace mk_network_base_ {
 
 		/** 网络节点 */
 		private _network!: mk_network_base;
-		/** 发送间隔（-1：手动触发，>0：自动发送间隔毫秒） */
+		/**
+		 * 发送间隔
+		 * - -1：手动触发
+		 * - >0：自动发送间隔毫秒
+		 */
 		private _send_interval_ms_n: number;
 		/** 消息列表 */
 		private _mess_as: any[] = [];

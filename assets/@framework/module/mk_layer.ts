@@ -64,7 +64,13 @@ class mk_layer extends cc.Component {
 	}
 
 	/* --------------- protected --------------- */
-	/** 使用 layer（false：关闭 layer 功能） */
+	/**
+	 * 使用 layer
+	 * @defaultValue
+	 * true
+	 * @remarks
+	 * false：关闭 layer 功能
+	 */
 	protected _use_layer_b = true;
 	/* --------------- private --------------- */
 	/** 层级 */

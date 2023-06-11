@@ -44,7 +44,7 @@ class mk_data_sharer<CT = any> extends mk_instance_base {
 	/**
 	 * 获取数据
 	 * @param key_ 注册键
-	 * @param request_ 请求数据（若不存在则等待 set 后返回）
+	 * @param request_ 请求数据，若不存在则等待 set 后返回
 	 */
 	get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_: T2): T2 extends true ? Promise<T3> : T3 | null;
 	get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_?: T2): T2 extends true ? Promise<T3> : T3 | null {

@@ -46,7 +46,7 @@ class mk_guide_manage {
 	 * 注册步骤
 	 * @param step_ 步骤实例
 	 */
-	regis_step(step_: mk_guide_step_base | mk_guide_step_base[]): void {
+	regis(step_: mk_guide_step_base | mk_guide_step_base[]): void {
 		if (Array.isArray(step_)) {
 			step_.forEach((v) => {
 				v.guide_manage = this;
@@ -58,7 +58,11 @@ class mk_guide_manage {
 		}
 	}
 
-	/** 运行（执行后恢复暂停状态，且更新当前步骤视图） */
+	/**
+	 * 运行引导
+	 * @remarks
+	 * 自动取消暂停状态，且更新当前步骤视图
+	 */
 	run(): Promise<void> {
 		return this._task_pipeline.add(async () => {
 			if (this._pre_step_n === this._step_n) {
@@ -112,7 +116,7 @@ class mk_guide_manage {
 				}
 			}
 
-			// （加载/卸载/重置）操作
+			// (加载/卸载/重置)操作
 			if (this._init_config.operate_tab) {
 				/** 当前步骤操作 */
 				const current_operate_ss = current_step.operate_ss;
@@ -120,18 +124,18 @@ class mk_guide_manage {
 				const pre_operate_ss = pre_step?.operate_ss ?? ([] as any as typeof current_operate_ss);
 
 				for (const v_s of pre_operate_ss) {
-					// 重置操作（当前步骤和上次步骤都存在的操作）
+					// 重置操作，当前步骤和上次步骤都存在的操作
 					if (current_operate_ss.includes(v_s)) {
 						await this._init_config.operate_tab[v_s].reset?.();
 						current_step.operate_tab[v_s] = pre_step?.operate_tab[v_s];
 					}
-					// 卸载操作（上次步骤存在，当前步骤不存在的操作）
+					// 卸载操作，上次步骤存在，当前步骤不存在的操作
 					else {
 						await this._init_config.operate_tab[v_s].unload?.();
 					}
 				}
 
-				// 加载操作（当前步骤存在，上次步骤不存在的操作）
+				// 加载操作，当前步骤存在，上次步骤不存在的操作
 				for (const v_s of current_operate_ss.filter((v) => !pre_operate_ss.includes(v))) {
 					current_step.operate_tab[v_s] = await this._init_config.operate_tab[v_s].load();
 				}
@@ -155,9 +159,12 @@ class mk_guide_manage {
 	}
 
 	/**
-	 * 设置当前步骤（暂停状态只更新步骤数据，不会执行步骤生命周期）
+	 * 设置当前步骤
 	 * @param step_n_ 步骤
 	 * @param init_data_ 初始化数据
+	 * @remarks
+	 * - 暂停状态：更新步骤数据
+	 * - 正常状态：更新步骤数据，执行步骤生命周期
 	 */
 	set_step(step_n_: number, init_data_?: any): Promise<void> {
 		return this._task_pipeline.add(async () => {
@@ -233,7 +240,7 @@ class mk_guide_manage {
 
 		this._pause_b = value_b_;
 
-		// 暂停 | 恢复事件
+		// (暂停/恢复)事件
 		this.event.emit(this._pause_b ? this.event.key.pause : this.event.key.resume);
 	}
 }
@@ -245,11 +252,23 @@ export namespace mk_guide_manage_ {
 		pause(): void;
 		/** 恢复 */
 		resume(): void;
-		/** 切换步骤（set_step 时执行） */
+		/**
+		 * 切换步骤
+		 * @remarks
+		 * set_step 时执行
+		 */
 		switch(): void;
-		/** 加载步骤（可在此处打开常驻节点遮罩） */
+		/**
+		 * 加载步骤
+		 * @remarks
+		 * 可在此处打开常驻节点遮罩
+		 */
 		loading_step(): void;
-		/** 加载步骤结束（可在此处关闭常驻节点遮罩） */
+		/**
+		 * 加载步骤完成
+		 * @remarks
+		 * 可在此处关闭常驻节点遮罩
+		 */
 		loading_step_complete(): void;
 		/** 中断 */
 		break(): void;
@@ -262,7 +281,11 @@ export namespace mk_guide_manage_ {
 		load: () => any;
 		/** 卸载 */
 		unload?: () => any;
-		/** 重置（上下步骤都存在当前操作时调用） */
+		/**
+		 * 重置
+		 * @remarks
+		 * 上下步骤都存在当前操作时调用
+		 */
 		reset?: () => any;
 	}
 
@@ -272,18 +295,19 @@ export namespace mk_guide_manage_ {
 		end_step_n?: number;
 		/** 操作表 */
 		operate_tab?: Record<string, operate_cell>;
-		/** 引导名（用于打印） */
+		/**
+		 * 引导名
+		 * @remarks
+		 * 用于日志输出
+		 */
 		name_s?: string;
 		/**
 		 * 步骤更新回调
-		 * - 可在此内更新服务端数据并请求奖励
-		 * - 返回空（null | undefined）代表更新失败，中断引导
-		 * - 步骤可使用 this._server_data 获取返回数据
-		 */
-		/**
-		 *
 		 * @param step_n
-		 * @returns 为空（null | undefined）代表更新失败中断引导，不为空则
+		 * @returns null/undefined：更新失败中断引导
+		 * @remarks
+		 * - 可在此内更新服务端数据并请求奖励
+		 * - 步骤可使用 this._server_data 获取返回数据
 		 */
 		step_update_callback_f(step_n: number): any;
 	}

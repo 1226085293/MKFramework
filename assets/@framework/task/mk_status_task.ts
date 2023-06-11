@@ -25,7 +25,12 @@ class mk_status_task<CT = void> {
 	/* --------------- public --------------- */
 	/** 异步任务 */
 	task!: Promise<CT>;
-	/** 完成状态（true：任务结束，false：任务进行中） */
+	/**
+	 * 完成状态
+	 * @remarks
+	 * - true：任务结束
+	 * - false：任务进行中
+	 */
 	get finish_b(): boolean {
 		return this._finish_b;
 	}

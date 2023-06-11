@@ -449,11 +449,21 @@ export namespace mk_bundle_ {
 			}
 		}
 
-		/** bundle名（getBundle 时使用） */
+		/**
+		 * bundle名
+		 * @remarks
+		 * getBundle 时使用
+		 */
 		bundle_s!: string;
 		/** 版本 */
 		version_s?: string;
-		/** 资源路径（loadBundle 使用，默认为 bundle_s） */
+		/**
+		 * 资源路径
+		 * @defaultValue
+		 * this.bundle_s
+		 * @remarks
+		 * loadBundle 时使用
+		 */
 		origin_s?: string;
 		/** 管理器 */
 		manage?: bundle_manage_base;
@@ -465,7 +475,11 @@ export namespace mk_bundle_ {
 			Object.assign(this, init_);
 		}
 
-		/** bundle名（getBundle 时使用） */
+		/**
+		 * bundle名
+		 * @remarks
+		 * getBundle 时使用
+		 */
 		bundle_s!: string;
 		/** 加载回调 */
 		progress_callback_f?: (curr_n: number, total_n: number) => void;
@@ -477,12 +491,21 @@ export namespace mk_bundle_ {
 			Object.assign(this, init_);
 		}
 
-		/** bundle名（getBundle 时使用） */
+		/**
+		 * bundle名
+		 * @remarks
+		 * getBundle 时使用
+		 */
 		bundle_s!: string;
 		/** 预加载 */
 		preload_b?: boolean;
-		/** 加载回调 */
-		progress_callback_f?: (finish_n: number, total_n: number, item?: cc.AssetManager.RequestItem) => void;
+		/**
+		 * 加载进度回调
+		 * @param finish_n 完成数量
+		 * @param total_n 总数量
+		 * @param item 当前项目
+		 */
+		progress_callback_f?(finish_n: number, total_n: number, item?: cc.AssetManager.RequestItem): void;
 		/** 加载前调用的函数 */
 		before_load_callback_f?: cc.Director.OnBeforeLoadScene;
 		/** 启动后调用的函数 */

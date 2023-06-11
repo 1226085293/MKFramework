@@ -18,7 +18,11 @@ namespace _mk_task_pipeline {
 	}
 }
 
-/** 任务管线（顺序执行任务） */
+/**
+ * 任务管线
+ * @remarks
+ * 顺序执行任务
+ */
 class mk_task_pipeline {
 	/* --------------- public --------------- */
 	/** 事件 */

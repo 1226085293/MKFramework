@@ -196,7 +196,11 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	/* --------------- public --------------- */
-	/** 视图数据（如果是 class 类似会在 close 后自动重置，根据 this._reset_data_b 控制） */
+	/**
+	 * 视图数据
+	 * @remarks
+	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+	 */
 	data?: any;
 
 	/** 视图类型 */
@@ -217,7 +221,11 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	/* --------------- protected --------------- */
-	/** 重置 data（close 后重置 this.data，data 必须为 class） */
+	/**
+	 * 重置 data
+	 * @remarks
+	 * close 后重置 this.data，data 必须为 class 类型
+	 */
 	protected _reset_data_b = true;
 	/** 视图配置 */
 	protected _view_config = new mk_view_base_.view_config();

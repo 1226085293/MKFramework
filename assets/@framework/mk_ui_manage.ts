@@ -36,9 +36,15 @@ export class mk_ui_manage extends mk_instance_base {
 	private _log = new mk_logger("ui_manage");
 	/** 模块注册表 */
 	private _ui_regis_map = new Map<any, mk_ui_manage_.regis_data<any>>();
-	/** 模块注册任务表（用于 open 时等待注册） */
+	/** 模块注册任务表
+	 * @remarks
+	 * 用于 open 时等待注册
+	 */
 	private _ui_regis_task_map = new Map<any, mk_status_task>();
-	/** 模块加载表（用于检测重复加载） */
+	/** 模块加载表
+	 * @remarks
+	 * 用于检测重复加载
+	 */
 	private _ui_load_map = new Map<any, mk_status_task>();
 	/** 模块对象池 */
 	private _ui_pool_map = new Map<any, Map<string, mk_obj_pool<cc.Node>>>();
@@ -563,7 +569,7 @@ export class mk_ui_manage extends mk_instance_base {
 						this._ui_hidden_length_n = new_hidden_index_n;
 					}
 				}
-				// 更新隐藏模块下标（关闭了隐藏的模块）
+				// 关闭了隐藏的模块，更新隐藏模块下标
 				else if (ui_index_n !== -1 && ui_index_n < this._ui_hidden_length_n) {
 					--this._ui_hidden_length_n;
 				}
@@ -718,7 +724,6 @@ export namespace mk_ui_manage_ {
 		 * false
 		 */
 		repeat_b = false;
-		/** 默认父节点（默认 canvas 节点） */
 		/**
 		 * 默认父节点
 		 * @defaultValue

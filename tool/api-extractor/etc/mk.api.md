@@ -164,7 +164,7 @@ export namespace bundle_ {
         bundle_s: string;
         launched_callback_f?: cc_2.Director.OnSceneLaunched;
         preload_b?: boolean;
-        progress_callback_f?: (finish_n: number, total_n: number, item?: cc_2.AssetManager.RequestItem) => void;
+        progress_callback_f?(finish_n: number, total_n: number, item?: cc_2.AssetManager.RequestItem): void;
         unloaded_callback_f?: cc_2.Director.OnUnload;
     }
 }
@@ -252,7 +252,7 @@ export class guide_manage {
     get_step(): number;
     get pause_b(): boolean;
     set pause_b(value_b_: boolean);
-    regis_step(step_: mk_guide_step_base | mk_guide_step_base[]): void;
+    regis(step_: mk_guide_step_base | mk_guide_step_base[]): void;
     run(): Promise<void>;
     set_step(step_n_: number, init_data_?: any): Promise<void>;
 }
@@ -272,7 +272,6 @@ export namespace guide_manage_ {
         end_step_n?: number;
         name_s?: string;
         operate_tab?: Record<string, operate_cell>;
-        // (undocumented)
         step_update_callback_f(step_n: number): any;
     }
     // (undocumented)
@@ -360,15 +359,17 @@ export namespace logger_ {
 }
 
 // @public
-abstract class mk_guide_step_base {
+abstract class mk_guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
     describe_s?: string;
     guide_manage: guide_manage;
     init_data: any;
     abstract load(): void | Promise<void>;
     protected _next(init_data_?: any): void;
     next_step_ns?: number[];
-    operate_ss: any[];
-    operate_tab: Record<PropertyKey, any>;
+    operate_ss: Exclude<keyof CT, symbol>[];
+    operate_tab: {
+        [k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
+    };
     pre_load?(): void | Promise<void>;
     abstract scene_s: string;
     abstract step_n: number;
@@ -741,9 +742,9 @@ export class polygon_mask extends cc_2.Component {
     protected onDisable(): void;
     // (undocumented)
     protected onEnable(): void;
-    shield_touch_b: boolean;
     // (undocumented)
-    protected start(): void;
+    protected onLoad(): void;
+    shield_touch_b: boolean;
     get track_node(): cc_2.Node;
     set track_node(value_: cc_2.Node);
     update_mask(): void;

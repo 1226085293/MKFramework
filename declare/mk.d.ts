@@ -12,7 +12,11 @@ declare namespace mk {
 		export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
 			/** 资源类型 */
 			type: cc_2.Constructor<T>;
-			/** bundle 名（默认 resources） */
+			/**
+			 * bundle 名
+			 * @defaultValue
+			 * resources
+			 */
 			bundle_s?: string;
 			/** 进度回调 */
 			progress_f?: (
@@ -23,7 +27,7 @@ declare namespace mk {
 			) => void;
 			/** 完成回调 */
 			completed_f?: (error: Error | null, asset: T2) => void;
-			/** 远程配置（存在配置则为远程资源） */
+			/** 远程配置，存在配置则为远程资源 */
 			remote_option?: _mk_asset.load_remote_option_type;
 		}
 	}
@@ -46,13 +50,25 @@ declare namespace mk {
 			readonly init_b: boolean;
 			/** 分组 */
 			readonly group_ns: ReadonlyArray<number>;
-			/** 当前停止分组（停止时优先级最大的分组） */
+			/**
+			 * 当前停止分组
+			 * @remarks
+			 * 停止时优先级最大的分组
+			 */
 			readonly stop_group_n: number | null;
 			/** 播放状态 */
 			readonly state: state;
-			/** 等待播放次数（0-n：等待播放次数） */
+			/**
+			 * 等待播放次数
+			 * @remarks
+			 * 0-n：等待播放次数
+			 */
 			readonly wait_play_n: number;
-			/** 总时长(秒) */
+			/**
+			 * 总时长
+			 * @remarks
+			 * 单位秒
+			 */
 			readonly total_time_s_n: number;
 			/** 事件对象 */
 			readonly event: event_target<event_protocol>;
@@ -60,20 +76,32 @@ declare namespace mk {
 			readonly type: number;
 			/** 真实音量 */
 			readonly real_volume_n: number;
-			/** （common 使用）音频组件 */
+			/**
+			 * 音频组件
+			 * @remarks
+			 * common 使用
+			 */
 			readonly audio_source?: cc_2.AudioSource;
 			/** 音频资源 */
 			clip: cc_2.AudioClip | null;
-			/** 音量
+			/**
+			 * 音量
+			 * @remarks
 			 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
 			 */
 			volume_n: number;
 			/** 循环 */
 			loop_b: boolean;
-			/** 当前时间(秒) */
+			/**
+			 * 当前时间
+			 * @remarks
+			 * 单位秒
+			 */
 			curr_time_s_n: number;
 			/**
-			 * （audio_common 使用）使用 play 接口，默认使用 playOneShot
+			 * 使用 play 接口，默认使用 playOneShot
+			 * @remarks
+			 * common 使用
 			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
 			 * - playOneShot 接口不能暂停
 			 */
@@ -105,6 +133,8 @@ declare namespace mk {
 			loop_b: boolean;
 			/**
 			 * 使用 play 接口，默认使用 playOneShot
+			 * @remarks
+			 * common 使用
 			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
 			 * - playOneShot 接口不能暂停
 			 */
@@ -136,16 +166,26 @@ declare namespace mk {
 			_event?: event_target<event_protocol>;
 			/** 分组 */
 			group_ns: number[];
-			/** 当前停止分组（停止时优先级最大的分组） */
+			/**
+			 * 当前停止分组
+			 * @remarks
+			 * 停止时优先级最大的分组
+			 */
 			stop_group_n: number | null;
 			/** 播放状态 */
 			state: state;
-			/** 等待播放次数（-1：关闭，0-n：等待播放次数） */
+			/**
+			 * 等待播放次数
+			 * @remarks
+			 * -1：关闭，0-n：等待播放次数
+			 */
 			wait_play_n: number;
 			/** 真实音量 */
 			real_volume_n: number;
 			/**
-			 * （common 使用）使用 play 接口，默认使用 playOneShot
+			 * 使用 play 接口，默认使用 playOneShot
+			 * @remarks
+			 * common 使用
 			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
 			 * - playOneShot 接口不能暂停
 			 */
@@ -171,7 +211,11 @@ declare namespace mk {
 			/** 等待播放开关 */
 			get wait_play_b(): boolean;
 			set wait_play_b(value_b_: boolean);
-			/** （common 使用）音频组件 */
+			/**
+			 * 音频组件
+			 * @remarks
+			 * common 使用
+			 */
 			get audio_source(): cc_2.AudioSource | undefined;
 			set audio_source(value_: cc_2.AudioSource | undefined);
 			/** 初始化状态 */
@@ -191,7 +235,11 @@ declare namespace mk {
 		/** 音频组 */
 		export class group {
 			constructor(init_: mk_audio_base, priority_n_: number);
-			/** 优先级（值越小优先级越大） */
+			/**
+			 * 优先级
+			 * @remarks
+			 * 值越小优先级越大
+			 */
 			readonly priority_n: number;
 			/** 音频列表 */
 			audio_unit_as: ReadonlyArray<_unit>;
@@ -212,7 +260,7 @@ declare namespace mk {
 			private _stop_b;
 			/**
 			 * 播放
-			 * @param contains_state_n_ 包含状态（处于这些状态中的音频将被播放，例：mk.audio_.state.pause | mk.audio_.state.stop）
+			 * @param contains_state_n_ 包含状态，处于这些状态中的音频将被播放，例：mk.audio_.state.pause | mk.audio_.state.stop
 			 */
 			play(contains_state_n_?: number): void;
 			/** 暂停 */
@@ -246,11 +294,21 @@ declare namespace mk {
 		/** bundle 信息 */
 		export class bundle_info {
 			constructor(init_: bundle_info);
-			/** bundle名（getBundle 时使用） */
+			/**
+			 * bundle名
+			 * @remarks
+			 * getBundle 时使用
+			 */
 			bundle_s: string;
 			/** 版本 */
 			version_s?: string;
-			/** 资源路径（loadBundle 使用，默认为 bundle_s） */
+			/**
+			 * 资源路径
+			 * @defaultValue
+			 * this.bundle_s
+			 * @remarks
+			 * loadBundle 时使用
+			 */
 			origin_s?: string;
 			/** 管理器 */
 			manage?: bundle_manage_base;
@@ -258,7 +316,11 @@ declare namespace mk {
 		/** load 配置 */
 		export class load_config {
 			constructor(init_: load_config);
-			/** bundle名（getBundle 时使用） */
+			/**
+			 * bundle名
+			 * @remarks
+			 * getBundle 时使用
+			 */
 			bundle_s: string;
 			/** 加载回调 */
 			progress_callback_f?: (curr_n: number, total_n: number) => void;
@@ -266,12 +328,21 @@ declare namespace mk {
 		/** switch_scene 配置 */
 		export class switch_scene_config {
 			constructor(init_?: Partial<switch_scene_config>);
-			/** bundle名（getBundle 时使用） */
+			/**
+			 * bundle名
+			 * @remarks
+			 * getBundle 时使用
+			 */
 			bundle_s: string;
 			/** 预加载 */
 			preload_b?: boolean;
-			/** 加载回调 */
-			progress_callback_f?: (finish_n: number, total_n: number, item?: cc_2.AssetManager.RequestItem) => void;
+			/**
+			 * 加载进度回调
+			 * @param finish_n 完成数量
+			 * @param total_n 总数量
+			 * @param item 当前项目
+			 */
+			progress_callback_f?(finish_n: number, total_n: number, item?: cc_2.AssetManager.RequestItem): void;
 			/** 加载前调用的函数 */
 			before_load_callback_f?: cc_2.Director.OnBeforeLoadScene;
 			/** 启动后调用的函数 */
@@ -352,7 +423,7 @@ declare namespace mk {
 		/**
 		 * 获取数据
 		 * @param key_ 注册键
-		 * @param request_ 请求数据（若不存在则等待 set 后返回）
+		 * @param request_ 请求数据，若不存在则等待 set 后返回
 		 */
 		get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_: T2): T2 extends true ? Promise<T3> : T3 | null;
 		/** 清空 */
@@ -384,7 +455,10 @@ declare namespace mk {
 		emit<T extends keyof CT, T2 extends Parameters<CT[T]>>(type_: T | T[], ...args_: T2): void;
 		hasEventListener<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
 		clear(): void;
-		/** 请求（等待返回） */
+		/** 请求
+		 * @remarks
+		 * 等待事件返回
+		 */
 		request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
 		/** 请求单个事件 */
 		private _request_single;
@@ -427,13 +501,20 @@ declare namespace mk {
 		 * 注册步骤
 		 * @param step_ 步骤实例
 		 */
-		regis_step(step_: mk_guide_step_base | mk_guide_step_base[]): void;
-		/** 运行（执行后恢复暂停状态，且更新当前步骤视图） */
+		regis(step_: mk_guide_step_base | mk_guide_step_base[]): void;
+		/**
+		 * 运行引导
+		 * @remarks
+		 * 自动取消暂停状态，且更新当前步骤视图
+		 */
 		run(): Promise<void>;
 		/**
-		 * 设置当前步骤（暂停状态只更新步骤数据，不会执行步骤生命周期）
+		 * 设置当前步骤
 		 * @param step_n_ 步骤
 		 * @param init_data_ 初始化数据
+		 * @remarks
+		 * - 暂停状态：更新步骤数据
+		 * - 正常状态：更新步骤数据，执行步骤生命周期
 		 */
 		set_step(step_n_: number, init_data_?: any): Promise<void>;
 		/** 获取步骤 */
@@ -450,11 +531,23 @@ declare namespace mk {
 			pause(): void;
 			/** 恢复 */
 			resume(): void;
-			/** 切换步骤（set_step 时执行） */
+			/**
+			 * 切换步骤
+			 * @remarks
+			 * set_step 时执行
+			 */
 			switch(): void;
-			/** 加载步骤（可在此处打开常驻节点遮罩） */
+			/**
+			 * 加载步骤
+			 * @remarks
+			 * 可在此处打开常驻节点遮罩
+			 */
 			loading_step(): void;
-			/** 加载步骤结束（可在此处关闭常驻节点遮罩） */
+			/**
+			 * 加载步骤完成
+			 * @remarks
+			 * 可在此处关闭常驻节点遮罩
+			 */
 			loading_step_complete(): void;
 			/** 中断 */
 			break(): void;
@@ -466,7 +559,11 @@ declare namespace mk {
 			load: () => any;
 			/** 卸载 */
 			unload?: () => any;
-			/** 重置（上下步骤都存在当前操作时调用） */
+			/**
+			 * 重置
+			 * @remarks
+			 * 上下步骤都存在当前操作时调用
+			 */
 			reset?: () => any;
 		}
 		/** 初始化配置 */
@@ -475,18 +572,19 @@ declare namespace mk {
 			end_step_n?: number;
 			/** 操作表 */
 			operate_tab?: Record<string, operate_cell>;
-			/** 引导名（用于打印） */
+			/**
+			 * 引导名
+			 * @remarks
+			 * 用于日志输出
+			 */
 			name_s?: string;
 			/**
 			 * 步骤更新回调
-			 * - 可在此内更新服务端数据并请求奖励
-			 * - 返回空（null | undefined）代表更新失败，中断引导
-			 * - 步骤可使用 this._server_data 获取返回数据
-			 */
-			/**
-			 *
 			 * @param step_n
-			 * @returns 为空（null | undefined）代表更新失败中断引导，不为空则
+			 * @returns null/undefined：更新失败中断引导
+			 * @remarks
+			 * - 可在此内更新服务端数据并请求奖励
+			 * - 步骤可使用 this._server_data 获取返回数据
 			 */
 			step_update_callback_f(step_n: number): any;
 		}
@@ -670,10 +768,25 @@ declare namespace mk {
 		abstract stop(audio_: audio_.unit): void;
 		/** 获取音频实例 */
 		protected abstract _get_audio_unit<T extends audio_._unit>(init_?: Partial<audio_._unit>): T;
-		/** 获取组音频 */
+		/**
+		 * 获取音频组
+		 * @param group_n_ 组类型
+		 * @returns
+		 */
 		get_group(group_n_: number): audio_.group;
-		/** 添加音频单元（添加后应该随视图自动释放） */
+		/**
+		 * 添加音频单元
+		 * @param url_s_ 音频资源路径
+		 * @param config_ 添加配置
+		 * @remarks
+		 * 添加后应该随模块自动释放
+		 */
 		add(url_s_: string, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
+		/**
+		 * 添加音频单元
+		 * @param url_ss_ 音频资源路径列表
+		 * @param config_ 添加配置
+		 */
 		add(url_ss_: string[], config_?: audio_.add_config): Promise<audio_.unit[] | null>;
 		/**
 		 * 播放音效
@@ -779,7 +892,10 @@ declare namespace mk {
 		}
 	}
 
-	/** 动态模块（用以解除循环引用） */
+	/** 动态模块
+	 * @remarks
+	 * 用以解除循环引用
+	 */
 	declare class mk_dynamic_module extends instance_base {
 		/**
 		 * 获取模块默认导出
@@ -804,33 +920,57 @@ declare namespace mk {
 	}
 
 	/** 引导步骤基类 */
-	declare abstract class mk_guide_step_base {
+	declare abstract class mk_guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
 		/** 步骤序号 */
 		abstract step_n: number;
-		/** 所属场景（bundle.scene） */
+		/**
+		 * 所属场景
+		 * @remarks
+		 * 格式：bundle.scene
+		 */
 		abstract scene_s: string;
 		/** 引导管理器 */
 		guide_manage: guide_manage;
 		/** 操作键列表 */
-		operate_ss: any[];
+		operate_ss: Exclude<keyof CT, symbol>[];
 		/** 操作表返回值 */
-		operate_tab: Record<PropertyKey, any>;
+		operate_tab: {
+			[k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
+		};
 		/** 初始化数据 */
 		init_data: any;
 		/** 步骤更新返回数据 */
 		step_update_data: any;
-		/** 步骤描述（用于日志打印） */
+		/**
+		 * 步骤描述
+		 * @remarks
+		 * 用于日志打印
+		 */
 		describe_s?: string;
-		/** 下个步骤
+		/**
+		 * 下个步骤
+		 * @remarks
 		 * - length == 1：预加载及 this._next 跳转
 		 * - length > 1：预加载
 		 */
 		next_step_ns?: number[];
-		/** 预加载（上个步骤 load 后执行） */
+		/**
+		 * 预加载
+		 * @remarks
+		 * 上个步骤 load 后执行
+		 */
 		pre_load?(): void | Promise<void>;
-		/** 加载（进入当前步骤） */
+		/**
+		 * 加载
+		 * @remarks
+		 * 进入当前步骤
+		 */
 		abstract load(): void | Promise<void>;
-		/** 卸载（退出当前步骤） */
+		/**
+		 * 卸载
+		 * @remarks
+		 * 退出当前步骤
+		 */
 		unload?(): void | Promise<void>;
 		/**
 		 * 跳转到下个步骤
@@ -864,7 +1004,11 @@ declare namespace mk {
 			body?: Document | Blob | BufferSource | FormData | URLSearchParams | string;
 			/** 标头 */
 			header?: Record<string, string>;
-			/** open后回调（可在内注册回调，设置请求数据） */
+			/**
+			 * open 后回调
+			 * @remarks
+			 * 可在函数内注册回调，设置请求数据
+			 */
 			open_callback_f?: (http: XMLHttpRequest) => void;
 		}
 	}
@@ -902,7 +1046,7 @@ declare namespace mk {
 		protected abstract _update_mark(): void;
 		/** 设置类型 */
 		protected abstract _set_type(value_n_: number): void;
-		/** 设置类型字符串（模糊匹配） */
+		/** 设置类型字符串 */
 		protected abstract _set_type_s(value_s_: string): void;
 		/** 重置数据 */
 		protected abstract _reset_data(): void;
@@ -1088,7 +1232,13 @@ declare namespace mk {
 		/** 层级 */
 		get child_layer_n(): number;
 		set child_layer_n(value_n_: number);
-		/** 使用 layer（false：关闭 layer 功能） */
+		/**
+		 * 使用 layer
+		 * @defaultValue
+		 * true
+		 * @remarks
+		 * false：关闭 layer 功能
+		 */
 		protected _use_layer_b: boolean;
 		/** 层级 */
 		private _child_layer_n;
@@ -1121,8 +1271,11 @@ declare namespace mk {
 		constructor(...args: any[]);
 		/** 初始化数据 */
 		init_data?: any;
-		/** 事件对象列表（模块关闭后自动清理）
+		/**
+		 * 事件对象列表
 		 * @readonly
+		 * @remarks
+		 * 模块关闭后自动清理事件
 		 */
 		event_target_as:
 			| {
@@ -1151,23 +1304,36 @@ declare namespace mk {
 		private _log2;
 		protected onLoad(): void;
 		/**
-		 * 创建（可在此处初始化视图状态）
+		 * 创建
 		 * @param config_ 创建配置
+		 * @protected
+		 * @remarks
+		 * 可在此处初始化视图状态
 		 * - 静态模块：onLoad 时调用
 		 * - 动态模块：addChild 后调用
-		 * @protected
 		 */
 		create?(): void | Promise<void>;
 		/**
-		 * 初始化（所有依赖 init_data 初始化的逻辑都应在此进行）
+		 * 初始化
 		 * @param data_ 初始化数据
+		 * @remarks
+		 * 所有依赖 init_data 初始化的逻辑都应在此进行
 		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
 		 * - 动态模块：onLoad 后，open 前调用
 		 */
 		init(data_?: any): void | Promise<void>;
-		/** 打开（init 后执行，在此处执行无需 init_data 支持的模块初始化操作） */
+		/**
+		 * 打开
+		 * @remarks
+		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+		 */
 		protected open?(): void | Promise<void>;
-		/** 关闭（可外部调用） */
+		/**
+		 * 关闭
+		 * @remarks
+		 * 内部调用：生命周期
+		 * 外部调用：自动回收模块
+		 */
 		close?(): void | Promise<void>;
 		/** 关闭后
 		 * @remarks
@@ -1207,7 +1373,7 @@ declare namespace mk {
 			target: cc_2.Node;
 			/** 激活状态 */
 			active_b: boolean;
-			/** 销毁动态子节点（默认回收） */
+			/** 销毁动态子节点 */
 			destroy_children_b?: boolean;
 		}
 		/** create 配置 */
@@ -1226,7 +1392,7 @@ declare namespace mk {
 		interface close_config {
 			/** 首次调用 */
 			first_b?: boolean;
-			/** 销毁动态子节点（默认回收） */
+			/** 销毁动态子节点 */
 			destroy_children_b?: boolean;
 		}
 	}
@@ -1483,7 +1649,11 @@ declare namespace mk {
 			target?: any;
 			/** 单次监听状态 */
 			once_b?: boolean;
-			/** 禁用状态 （仅用于 on_callback_f） */
+			/**
+			 * 禁用状态
+			 * @remarks
+			 * 仅用于 on_callback_f
+			 */
 			disabled_b?: boolean;
 			/** 监听路径 */
 			path_s?: string;
@@ -1497,11 +1667,18 @@ declare namespace mk {
 			/** 绑定键 */
 			key: type_key;
 		}
-		/** 对象绑定数据（用于 clear） */
+		/** 对象绑定数据
+		 * @remarks
+		 * 用于 clear
+		 */
 		interface target_bind_data {
 			/** 绑定监听 */
 			monitor_as?: target_bind_monitor_data[];
-			/** 禁用状态 （仅用于 on_callback_f） */
+			/**
+			 * 禁用状态
+			 * @remarks
+			 * 仅用于 on_callback_f
+			 */
 			disabled_b?: boolean;
 		}
 		/** 绑定数据 */
@@ -1510,7 +1687,11 @@ declare namespace mk {
 			descriptor: PropertyDescriptor;
 			/** 绑定监听 */
 			monitor_as?: type_monitor_data<any>[];
-			/** 禁用状态 （仅用于 on_callback_f） */
+			/**
+			 * 禁用状态
+			 * @remarks
+			 * 仅用于 on_callback_f
+			 */
 			disabled_b?: boolean;
 			/** 任务 */
 			task?: mk_status_task;
@@ -1615,7 +1796,11 @@ declare namespace mk {
 			close(event: any): void;
 			/** 重连失败 */
 			reconnect_fail(): void;
-			/** 心跳超时（只会在接收心跳超时时通知） */
+			/**
+			 * 心跳超时
+			 * @remarks
+			 * 在接收心跳超时时通知
+			 */
 			heartbeat_timeout(): void;
 			/**
 			 * 收到任意消息
@@ -1646,8 +1831,20 @@ declare namespace mk {
 				callback_?: T2,
 				this_?: any
 			): void;
-			/** 派发事件（接收消息后派发，可用此接口模拟数据） */
+			/**
+			 * 派发事件
+			 * @param data_ 消息数据
+			 * @remarks
+			 * 接收消息后派发，可用此接口模拟数据
+			 */
 			emit<T extends global_config.network.proto_head>(data_: T): void;
+			/**
+			 * 派发事件
+			 * @param type_ 消息号
+			 * @param data_  消息数据
+			 * @remarks
+			 * 接收消息后派发，可用此接口模拟数据
+			 */
 			emit<T extends string | number>(type_: T, data_: any): void;
 			/**
 			 * 发送
@@ -1656,10 +1853,12 @@ declare namespace mk {
 			 */
 			send<T = Parameters<CT["encode"]>[0]>(data_: T): void;
 			/**
-			 * 请求（等待返回）
+			 * 请求
 			 * @param data_ 发送数据
 			 * @param timeout_ms_n_ 超时时间
 			 * @returns
+			 * @remarks
+			 * 等待事件回调返回
 			 */
 			request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null;
 			hasEventListener<
@@ -1689,24 +1888,44 @@ declare namespace mk {
 			constructor(init_?: Partial<init_config<CT>>);
 			/** 编解码器 */
 			codec?: CT;
-			/** 发送间隔（毫秒） */
+			/**
+			 * 发送间隔
+			 * @remarks
+			 * 单位：毫秒
+			 */
 			send_interval_ms_n: number;
-			/** 重连间隔（毫秒） */
+			/**
+			 * 重连间隔
+			 * @remarks
+			 * 单位：毫秒
+			 */
 			reconnect_interval_ms_n: number;
 			/** 最大重连次数 */
 			max_reconnect_n: number;
-			/** 等待消息超时时间（毫秒） */
+			/**
+			 * 等待消息超时时间
+			 * @remarks
+			 * 单位：毫秒
+			 */
 			wait_timeout_ms_n: number;
 			/** 心跳配置 */
 			heartbeat_config?: {
-				/** 发送间隔（毫秒） */
+				/**
+				 * 发送间隔
+				 * @remarks
+				 * 单位：毫秒
+				 */
 				interval_ms_n?: number;
-				/** 超时时间 */
+				/**
+				 * 超时时间
+				 * @remarks
+				 * 单位：毫秒
+				 */
 				timeout_ms_n: number;
 				/**
 				 * 初始化
-				 * @param done_f 接收到心跳后手动调用（server -> client），用于心跳超时检测
-				 * @returns 返回心跳数据的函数（client -> server），不为空则向服务器定时发送
+				 * @param done_f 接收到心跳后手动调用，server -> client，用于心跳超时检测
+				 * @returns 返回心跳数据的函数，client -> server，不为空则向服务器定时发送
 				 */
 				init_f(done_f: () => void): null | (() => any);
 			};
@@ -1727,12 +1946,18 @@ declare namespace mk {
 		class send_tide<CT extends codec_base = codec_base> {
 			/**
 			 * @param network_ 网络实例
-			 * @param interval_ms_n_ 发送间隔（-1：手动触发，0-n：自动发送间隔毫秒）
+			 * @param interval_ms_n_ 发送间隔
+			 * - -1：手动触发
+			 * - 0-n：自动发送间隔毫秒
 			 */
 			constructor(network_: mk_network_base, interval_ms_n_: number);
 			/** 网络节点 */
 			private _network;
-			/** 发送间隔（-1：手动触发，>0：自动发送间隔毫秒） */
+			/**
+			 * 发送间隔
+			 * - -1：手动触发
+			 * - >0：自动发送间隔毫秒
+			 */
 			private _send_interval_ms_n;
 			/** 消息列表 */
 			private _mess_as;
@@ -1840,7 +2065,12 @@ declare namespace mk {
 		constructor(finish_b_: boolean, init_config_?: mk_status_task_.init_config<CT>);
 		/** 异步任务 */
 		task: Promise<CT>;
-		/** 完成状态（true：任务结束，false：任务进行中） */
+		/**
+		 * 完成状态
+		 * @remarks
+		 * - true：任务结束
+		 * - false：任务进行中
+		 */
 		get finish_b(): boolean;
 		/** 完成状态 */
 		private _finish_b;
@@ -1886,7 +2116,11 @@ declare namespace mk {
 		}
 	}
 
-	/** 任务管线（顺序执行任务） */
+	/**
+	 * 任务管线
+	 * @remarks
+	 * 顺序执行任务
+	 */
 	declare class mk_task_pipeline {
 		/** 事件 */
 		event: event_target<_mk_task_pipeline.event_protocol>;
@@ -1936,9 +2170,15 @@ declare namespace mk {
 		private _log;
 		/** 模块注册表 */
 		private _ui_regis_map;
-		/** 模块注册任务表（用于 open 时等待注册） */
+		/** 模块注册任务表
+		 * @remarks
+		 * 用于 open 时等待注册
+		 */
 		private _ui_regis_task_map;
-		/** 模块加载表（用于检测重复加载） */
+		/** 模块加载表
+		 * @remarks
+		 * 用于检测重复加载
+		 */
 		private _ui_load_map;
 		/** 模块对象池 */
 		private _ui_pool_map;
@@ -2051,13 +2291,21 @@ declare namespace mk {
 		set auto_widget_b(value_b_: boolean);
 		get auto_block_input_b(): boolean;
 		set auto_block_input_b(value_b_: boolean);
-		/** 视图数据（如果是 class 类似会在 close 后自动重置，根据 this._reset_data_b 控制） */
+		/**
+		 * 视图数据
+		 * @remarks
+		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+		 */
 		data?: any;
 		/** 视图类型 */
 		get type_s(): string;
 		/** 模块配置 */
 		set config(config_: _mk_view_base.create_config);
-		/** 重置 data（close 后重置 this.data，data 必须为 class） */
+		/**
+		 * 重置 data
+		 * @remarks
+		 * close 后重置 this.data，data 必须为 class 类型
+		 */
 		protected _reset_data_b: boolean;
 		/** 视图配置 */
 		protected _view_config: mk_view_base_.view_config;
@@ -2213,7 +2461,7 @@ declare namespace mk {
 	}
 	export { network };
 
-	/** 对象池（异步） */
+	/** 异步对象池 */
 	export declare class obj_pool<CT> {
 		constructor(init_: _mk_obj_pool.config<CT>);
 		/** 对象存储列表 */
@@ -2237,7 +2485,7 @@ declare namespace mk {
 	}
 
 	export declare namespace obj_pool {
-		/** 对象池（同步） */
+		/** 同步对象池 */
 		export class sync<CT> {
 			constructor(init_?: _mk_obj_pool.sync.config<CT>);
 			/** 对象存储列表 */
@@ -2286,7 +2534,7 @@ declare namespace mk {
 		private _input_event_as;
 		/** 临时变量 */
 		private _temp_tab;
-		protected start(): void;
+		protected onLoad(): void;
 		protected onEnable(): void;
 		protected onDisable(): void;
 		/** 更新遮罩 */
@@ -2383,7 +2631,6 @@ declare namespace mk {
 			 * false
 			 */
 			repeat_b: boolean;
-			/** 默认父节点（默认 canvas 节点） */
 			/**
 			 * 默认父节点
 			 * @defaultValue

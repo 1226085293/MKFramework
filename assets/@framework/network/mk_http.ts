@@ -139,7 +139,11 @@ export namespace mk_http_ {
 		body?: Document | Blob | BufferSource | FormData | URLSearchParams | string;
 		/** 标头 */
 		header?: Record<string, string>;
-		/** open后回调（可在内注册回调，设置请求数据） */
+		/**
+		 * open 后回调
+		 * @remarks
+		 * 可在函数内注册回调，设置请求数据
+		 */
 		open_callback_f?: (http: XMLHttpRequest) => void;
 	}
 }

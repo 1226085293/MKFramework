@@ -30,7 +30,11 @@ abstract class mk_audio_base extends mk_instance_base {
 	/** 获取音频实例 */
 	protected abstract _get_audio_unit<T extends mk_audio_base_._unit>(init_?: Partial<mk_audio_base_._unit>): T;
 
-	/** 获取组音频 */
+	/**
+	 * 获取音频组
+	 * @param group_n_ 组类型
+	 * @returns
+	 */
 	get_group(group_n_: number): mk_audio_base_.group {
 		let result = this._group_map.get(group_n_);
 
@@ -41,8 +45,19 @@ abstract class mk_audio_base extends mk_instance_base {
 		return result;
 	}
 
-	/** 添加音频单元（添加后应该随视图自动释放） */
+	/**
+	 * 添加音频单元
+	 * @param url_s_ 音频资源路径
+	 * @param config_ 添加配置
+	 * @remarks
+	 * 添加后应该随模块自动释放
+	 */
 	add(url_s_: string, config_?: mk_audio_base_.add_config): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
+	/**
+	 * 添加音频单元
+	 * @param url_ss_ 音频资源路径列表
+	 * @param config_ 添加配置
+	 */
 	add(url_ss_: string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
 	async add(url_: string | string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
 		if (EDITOR) {
@@ -192,7 +207,7 @@ abstract class mk_audio_base extends mk_instance_base {
 		// 停止所有音频
 		this.stop_all();
 
-		// 重置数据（音频资源释放应该由视图管理）
+		// 重置数据，音频资源释放应该由模块管理
 		mk_tool.object.reset(this, true);
 	}
 }
@@ -214,13 +229,25 @@ export namespace mk_audio_base_ {
 		readonly init_b: boolean;
 		/** 分组 */
 		readonly group_ns: ReadonlyArray<number>;
-		/** 当前停止分组（停止时优先级最大的分组） */
+		/**
+		 * 当前停止分组
+		 * @remarks
+		 * 停止时优先级最大的分组
+		 */
 		readonly stop_group_n: number | null;
 		/** 播放状态 */
 		readonly state: state;
-		/** 等待播放次数（0-n：等待播放次数） */
+		/**
+		 * 等待播放次数
+		 * @remarks
+		 * 0-n：等待播放次数
+		 */
 		readonly wait_play_n: number;
-		/** 总时长(秒) */
+		/**
+		 * 总时长
+		 * @remarks
+		 * 单位秒
+		 */
 		readonly total_time_s_n: number;
 		/** 事件对象 */
 		readonly event: mk_event_target<event_protocol>;
@@ -228,20 +255,32 @@ export namespace mk_audio_base_ {
 		readonly type: number;
 		/** 真实音量 */
 		readonly real_volume_n: number;
-		/** （common 使用）音频组件 */
+		/**
+		 * 音频组件
+		 * @remarks
+		 * common 使用
+		 */
 		readonly audio_source?: cc.AudioSource;
 		/** 音频资源 */
 		clip: cc.AudioClip | null;
-		/** 音量
+		/**
+		 * 音量
+		 * @remarks
 		 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
 		 */
 		volume_n: number;
 		/** 循环 */
 		loop_b: boolean;
-		/** 当前时间(秒) */
+		/**
+		 * 当前时间
+		 * @remarks
+		 * 单位秒
+		 */
 		curr_time_s_n: number;
 		/**
-		 * （audio_common 使用）使用 play 接口，默认使用 playOneShot
+		 * 使用 play 接口，默认使用 playOneShot
+		 * @remarks
+		 * common 使用
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
 		 * - playOneShot 接口不能暂停
 		 */
@@ -276,6 +315,8 @@ export namespace mk_audio_base_ {
 		loop_b: boolean;
 		/**
 		 * 使用 play 接口，默认使用 playOneShot
+		 * @remarks
+		 * common 使用
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
 		 * - playOneShot 接口不能暂停
 		 */
@@ -319,16 +360,26 @@ export namespace mk_audio_base_ {
 		_event?: mk_event_target<event_protocol>;
 		/** 分组 */
 		group_ns: number[] = [];
-		/** 当前停止分组（停止时优先级最大的分组） */
+		/**
+		 * 当前停止分组
+		 * @remarks
+		 * 停止时优先级最大的分组
+		 */
 		stop_group_n: number | null = null;
 		/** 播放状态 */
 		state = state.stop;
-		/** 等待播放次数（-1：关闭，0-n：等待播放次数） */
+		/**
+		 * 等待播放次数
+		 * @remarks
+		 * -1：关闭，0-n：等待播放次数
+		 */
 		wait_play_n = -1;
 		/** 真实音量 */
 		real_volume_n = 0;
 		/**
-		 * （common 使用）使用 play 接口，默认使用 playOneShot
+		 * 使用 play 接口，默认使用 playOneShot
+		 * @remarks
+		 * common 使用
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
 		 * - playOneShot 接口不能暂停
 		 */
@@ -391,7 +442,11 @@ export namespace mk_audio_base_ {
 			this.wait_play_n = value_b_ ? 0 : -1;
 		}
 
-		/** （common 使用）音频组件 */
+		/**
+		 * 音频组件
+		 * @remarks
+		 * common 使用
+		 */
 		get audio_source(): cc.AudioSource | undefined {
 			return null!;
 		}
@@ -440,7 +495,11 @@ export namespace mk_audio_base_ {
 		}
 
 		/* --------------- public --------------- */
-		/** 优先级（值越小优先级越大） */
+		/**
+		 * 优先级
+		 * @remarks
+		 * 值越小优先级越大
+		 */
 		readonly priority_n: number;
 		/** 音频列表 */
 		audio_unit_as: ReadonlyArray<_unit> = [];
@@ -494,7 +553,7 @@ export namespace mk_audio_base_ {
 		/* ------------------------------- 功能 ------------------------------- */
 		/**
 		 * 播放
-		 * @param contains_state_n_ 包含状态（处于这些状态中的音频将被播放，例：mk.audio_.state.pause | mk.audio_.state.stop）
+		 * @param contains_state_n_ 包含状态，处于这些状态中的音频将被播放，例：mk.audio_.state.pause | mk.audio_.state.stop
 		 */
 		play(contains_state_n_ = state.play | state.pause | state.stop): void {
 			this._play_b = true;

@@ -411,7 +411,7 @@ class mk_asset extends mk_instance_base {
 				v.decRef(false);
 			}
 
-			// 释放资源（禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的）
+			// 释放资源，禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的
 			cc.assetManager.releaseAsset(v);
 			// 更新资源管理表
 			this._asset_manage_map.delete(v.nativeUrl || v._uuid);
@@ -492,7 +492,11 @@ export namespace mk_asset_ {
 	export interface get_config<T extends cc.Asset = cc.Asset, T2 = T> {
 		/** 资源类型 */
 		type: cc.Constructor<T>;
-		/** bundle 名（默认 resources） */
+		/**
+		 * bundle 名
+		 * @defaultValue
+		 * resources
+		 */
 		bundle_s?: string;
 		/** 进度回调 */
 		progress_f?: (
@@ -504,7 +508,7 @@ export namespace mk_asset_ {
 
 		/** 完成回调 */
 		completed_f?: (error: Error | null, asset: T2) => void;
-		/** 远程配置（存在配置则为远程资源） */
+		/** 远程配置，存在配置则为远程资源 */
 		remote_option?: _mk_asset.load_remote_option_type;
 	}
 }

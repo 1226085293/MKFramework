@@ -37,7 +37,7 @@ export namespace _mk_life_cycle {
 		target: cc.Node;
 		/** 激活状态 */
 		active_b: boolean;
-		/** 销毁动态子节点（默认回收） */
+		/** 销毁动态子节点 */
 		destroy_children_b?: boolean;
 	}
 
@@ -59,7 +59,7 @@ export namespace _mk_life_cycle {
 	export interface close_config {
 		/** 首次调用 */
 		first_b?: boolean;
-		/** 销毁动态子节点（默认回收） */
+		/** 销毁动态子节点 */
 		destroy_children_b?: boolean;
 	}
 }
@@ -109,8 +109,11 @@ export class mk_life_cycle extends mk_layer {
 	/* --------------- public --------------- */
 	/** 初始化数据 */
 	init_data?: any;
-	/** 事件对象列表（模块关闭后自动清理）
+	/**
+	 * 事件对象列表
 	 * @readonly
+	 * @remarks
+	 * 模块关闭后自动清理事件
 	 */
 	event_target_as: { targetOff(target: any): any }[] | { target_off(target: any): any }[] = [];
 
@@ -159,17 +162,21 @@ export class mk_life_cycle extends mk_layer {
 
 	/* ------------------------------- 自定义生命周期 ------------------------------- */
 	/**
-	 * 创建（可在此处初始化视图状态）
+	 * 创建
 	 * @param config_ 创建配置
+	 * @protected
+	 * @remarks
+	 * 可在此处初始化视图状态
 	 * - 静态模块：onLoad 时调用
 	 * - 动态模块：addChild 后调用
-	 * @protected
 	 */
 	create?(): void | Promise<void>;
 
 	/**
-	 * 初始化（所有依赖 init_data 初始化的逻辑都应在此进行）
+	 * 初始化
 	 * @param data_ 初始化数据
+	 * @remarks
+	 * 所有依赖 init_data 初始化的逻辑都应在此进行
 	 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
 	 * - 动态模块：onLoad 后，open 前调用
 	 */
@@ -180,10 +187,19 @@ export class mk_life_cycle extends mk_layer {
 		this.init_data = data_;
 	}
 
-	/** 打开（init 后执行，在此处执行无需 init_data 支持的模块初始化操作） */
+	/**
+	 * 打开
+	 * @remarks
+	 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+	 */
 	protected open?(): void | Promise<void>;
 
-	/** 关闭（可外部调用） */
+	/**
+	 * 关闭
+	 * @remarks
+	 * 内部调用：生命周期
+	 * 外部调用：自动回收模块
+	 */
 	close?(): void | Promise<void>;
 
 	/** 关闭后

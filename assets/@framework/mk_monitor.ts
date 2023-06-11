@@ -27,7 +27,11 @@ namespace _mk_monitor {
 		target?: any;
 		/** 单次监听状态 */
 		once_b?: boolean;
-		/** 禁用状态 （仅用于 on_callback_f） */
+		/**
+		 * 禁用状态
+		 * @remarks
+		 * 仅用于 on_callback_f
+		 */
 		disabled_b?: boolean;
 		/** 监听路径 */
 		path_s?: string;
@@ -43,11 +47,18 @@ namespace _mk_monitor {
 		key: type_key;
 	}
 
-	/** 对象绑定数据（用于 clear） */
+	/** 对象绑定数据
+	 * @remarks
+	 * 用于 clear
+	 */
 	export interface target_bind_data {
 		/** 绑定监听 */
 		monitor_as?: target_bind_monitor_data[];
-		/** 禁用状态 （仅用于 on_callback_f） */
+		/**
+		 * 禁用状态
+		 * @remarks
+		 * 仅用于 on_callback_f
+		 */
 		disabled_b?: boolean;
 	}
 
@@ -57,7 +68,11 @@ namespace _mk_monitor {
 		descriptor: PropertyDescriptor;
 		/** 绑定监听 */
 		monitor_as?: type_monitor_data<any>[];
-		/** 禁用状态 （仅用于 on_callback_f） */
+		/**
+		 * 禁用状态
+		 * @remarks
+		 * 仅用于 on_callback_f
+		 */
 		disabled_b?: boolean;
 		/** 任务 */
 		task?: mk_status_task;
@@ -553,7 +568,7 @@ class mk_monitor extends mk_instance_base {
 
 						const target_bind_data = !v.target ? undefined : this._target_bind_data.get(v.target);
 
-						// 安检（禁用状态）
+						// 安检，禁用状态
 						if (v.disabled_b || target_bind_data?.disabled_b) {
 							continue;
 						}

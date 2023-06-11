@@ -76,7 +76,7 @@ namespace _mk_obj_pool {
 	}
 }
 
-/** 对象池（异步） */
+/** 异步对象池 */
 class mk_obj_pool<CT> {
 	constructor(init_: _mk_obj_pool.config<CT>) {
 		this._init_data = new _mk_obj_pool.config(init_);
@@ -151,7 +151,7 @@ class mk_obj_pool<CT> {
 }
 
 namespace mk_obj_pool {
-	/** 对象池（同步） */
+	/** 同步对象池 */
 	export class sync<CT> {
 		constructor(init_?: _mk_obj_pool.sync.config<CT>) {
 			this._init_data = new _mk_obj_pool.sync.config(init_);

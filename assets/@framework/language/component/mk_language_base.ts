@@ -107,7 +107,7 @@ abstract class mk_language_base extends cc.Component {
 	protected abstract _update_mark(): void;
 	/** 设置类型 */
 	protected abstract _set_type(value_n_: number): void;
-	/** 设置类型字符串（模糊匹配） */
+	/** 设置类型字符串 */
 	protected abstract _set_type_s(value_s_: string): void;
 	/** 重置数据 */
 	protected abstract _reset_data(): void;

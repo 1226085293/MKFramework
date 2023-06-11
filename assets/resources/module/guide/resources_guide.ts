@@ -21,7 +21,7 @@ export class resources_guide extends mk.module.view_base {
 			step_update_callback_f: () => true,
 		});
 
-		guide_manage.regis_step([new resources_guide_step1(), new resources_guide_step2(), new resources_guide_step3()]);
+		guide_manage.regis([new resources_guide_step1(), new resources_guide_step2(), new resources_guide_step3()]);
 
 		guide_manage.event.once(guide_manage.event.key.finish, () => {
 			this.close();
