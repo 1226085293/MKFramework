@@ -189,10 +189,11 @@ export class mk_life_cycle extends mk_layer {
 
 	/**
 	 * 打开
+	 * @protected
 	 * @remarks
 	 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
 	 */
-	protected open?(): void | Promise<void>;
+	open?(): void | Promise<void>;
 
 	/**
 	 * 关闭
@@ -203,10 +204,11 @@ export class mk_life_cycle extends mk_layer {
 	close?(): void | Promise<void>;
 
 	/** 关闭后
+	 * @protected
 	 * @remarks
 	 * 在子模块 close 和 late_close 后执行
 	 */
-	protected late_close?(): void | Promise<void> {
+	late_close?(): void | Promise<void> {
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件

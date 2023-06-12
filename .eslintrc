@@ -112,11 +112,11 @@
 				"selector": "memberLike",
 				"modifiers": ["protected"],
 				"format": ["snake_case"],
-				"leadingUnderscore": "require",
 				"filter": {
 					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)]"
-				}
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)]"
+				},
+				"leadingUnderscore": "require"
 			},
 			// public 命名规则
 			{
@@ -125,8 +125,9 @@
 				"format": ["snake_case"],
 				"filter": {
 					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)]"
-				}
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)]"
+				},
+				"leadingUnderscore": "allow"
 			}
 		],
 
