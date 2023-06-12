@@ -48,7 +48,7 @@ class codec_proto extends mk.codec_base {
 					type: cc.JsonAsset,
 					completed_f: (error, asset_as) => {
 						if (error) {
-							mk.log.error("加载proto文件失败, 请检查路径是否正确!");
+							mk.error("加载proto文件失败, 请检查路径是否正确!");
 
 							return;
 						}
@@ -60,7 +60,7 @@ class codec_proto extends mk.codec_base {
 								if (!error) {
 									this._read_type(this._mess, root);
 								} else {
-									mk.log.warn(error);
+									mk.warn(error);
 								}
 
 								++count_n;
@@ -169,7 +169,7 @@ class codec_proto extends mk.codec_base {
 		const same_mess = this._mess_map.get(mess_.fieldsById[1].getOption("default"));
 
 		if (same_mess) {
-			mk.log.error(`${same_mess.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
+			mk.error(`${same_mess.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
 
 			return false;
 		}
@@ -227,14 +227,14 @@ class codec_proto extends mk.codec_base {
 		await this._init_task;
 		for (let k_n = 0; k_n < mess_ss.length - 1; ++k_n) {
 			if (!mess[mess_ss[k_n]] || !(mess = mess[mess_ss[k_n]].nested)) {
-				mk.log.error("未找到名为" + mess_s_ + "的已注册消息!");
+				mk.error("未找到名为" + mess_s_ + "的已注册消息!");
 
 				return null;
 			}
 		}
 
 		if (!(mess = mess[mess_ss[mess_ss.length - 1]])) {
-			mk.log.error("未找到名为" + mess_s_ + "的已注册消息!");
+			mk.error("未找到名为" + mess_s_ + "的已注册消息!");
 
 			return null;
 		}

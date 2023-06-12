@@ -1,13 +1,13 @@
-import mk_codec_base, { mk_codec_base_ } from "../../@framework/mk_codec_base";
+import mk from "mk";
 
 /** 编解码器-unicode_codec */
-class tool_codec_unicode extends mk_codec_base {
+class tool_codec_unicode extends mk.codec_base {
 	constructor(option_?: tool_codec_unicode_.config) {
 		super(option_);
 	}
 
 	/* --------------- protected --------------- */
-	protected config!: tool_codec_unicode_.config;
+	protected _config!: tool_codec_unicode_.config;
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
 	encode(unicode_: number | string): string {
@@ -34,7 +34,7 @@ class tool_codec_unicode extends mk_codec_base {
 }
 
 export namespace tool_codec_unicode_ {
-	export class config extends mk_codec_base_.config {}
+	export class config extends mk.codec_base_.config {}
 }
 
 export default tool_codec_unicode;

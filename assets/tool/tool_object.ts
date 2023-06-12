@@ -66,7 +66,7 @@ class tool_object {
 	/** 重置数据（class 数据才会生效，注意构造内的 this 对象不是 data_） */
 	reset<T extends { constructor: any }, T2 extends true | false>(data_: T, assign_b_: T2): typeof assign_b_ extends true ? null : T {
 		if (!data_?.constructor) {
-			mk.log.error("数据类型错误");
+			mk.error("数据类型错误");
 
 			return null!;
 		}

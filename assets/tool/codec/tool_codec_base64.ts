@@ -1,4 +1,4 @@
-import mk_codec_base, { mk_codec_base_ } from "../../@framework/mk_codec_base";
+import mk from "mk";
 import tool_codec_utf8 from "./tool_codec_utf8";
 
 namespace _tool_codec_base64 {
@@ -11,13 +11,13 @@ namespace _tool_codec_base64 {
 }
 
 /** 编解码器-unicode_codec */
-class tool_codec_base64 extends mk_codec_base {
+class tool_codec_base64 extends mk.codec_base {
 	constructor(option_?: tool_codec_base64_.config) {
 		super(option_);
 	}
 
 	/* --------------- protected --------------- */
-	protected config!: tool_codec_base64_.config;
+	protected _config!: tool_codec_base64_.config;
 	/* --------------- private --------------- */
 	private _utf8_codec = _tool_codec_base64.codec.utf8;
 	/* ------------------------------- 功能 ------------------------------- */
@@ -81,7 +81,7 @@ class tool_codec_base64 extends mk_codec_base {
 }
 
 export namespace tool_codec_base64_ {
-	export class config extends mk_codec_base_.config {}
+	export class config extends mk.codec_base_.config {}
 }
 
 export default tool_codec_base64;

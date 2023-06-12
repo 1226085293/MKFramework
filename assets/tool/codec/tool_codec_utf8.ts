@@ -1,13 +1,13 @@
-import mk_codec_base, { mk_codec_base_ } from "../../@framework/mk_codec_base";
+import mk from "mk";
 
 /** 编解码器-utf8_codec */
-class tool_codec_utf8 extends mk_codec_base {
+class tool_codec_utf8 extends mk.codec_base {
 	constructor(option_?: tool_codec_utf8_.config) {
 		super(option_);
 	}
 
 	/* --------------- protected --------------- */
-	protected config!: tool_codec_utf8_.config;
+	protected _config!: tool_codec_utf8_.config;
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
 	encode(data_s_: string): string {
@@ -62,7 +62,7 @@ class tool_codec_utf8 extends mk_codec_base {
 }
 
 export namespace tool_codec_utf8_ {
-	export class config extends mk_codec_base_.config {}
+	export class config extends mk.codec_base_.config {}
 }
 
 export default tool_codec_utf8;
