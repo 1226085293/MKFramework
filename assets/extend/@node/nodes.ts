@@ -5,6 +5,7 @@ declare module "cc" {
 	// 节点扩展
 	interface Node {
 		/** 节点渲染次序 */
+		// eslint-disable-next-line @typescript-eslint/naming-convention
 		zIndex: number;
 		/** 宽 */
 		width: number;

@@ -168,6 +168,7 @@ class mk_bundle extends mk_instance_base {
 				bundle_info.origin_s!,
 				{
 					version: bundle_info.version_s,
+					// eslint-disable-next-line @typescript-eslint/naming-convention
 					onFileProgress: load_config.progress_callback_f,
 				},
 				(error, bundle) => {

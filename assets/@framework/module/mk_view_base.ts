@@ -262,7 +262,7 @@ export class mk_view_base extends mk_life_cycle {
 		}
 	}
 
-	protected async late_close?(): Promise<void> {
+	async late_close?(): Promise<void> {
 		// 关闭动画
 		if (this.animation_config?.close_animation_s) {
 			await mk_view_base.config.window_animation_tab?.close?.[this.animation_config.close_animation_s]?.(this.node);

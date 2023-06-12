@@ -185,7 +185,9 @@ class tool_bezier_curve {
 	private _gauss_legendre(value_f_: (v: number) => number, value_n_: number, value2_n_: number): number {
 		// 3次系数
 		const gau_factor = {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			0.7745966692: 0.555555556,
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			0: 0.8888888889,
 		};
 

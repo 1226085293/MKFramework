@@ -68,7 +68,7 @@ class event<CT> extends cc.EventTarget {
 	}
 
 	// @ts-ignore
-	hasEventListener<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean {
+	has<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean {
 		return super.hasEventListener(type_ as any, callback_ as any, target_);
 	}
 

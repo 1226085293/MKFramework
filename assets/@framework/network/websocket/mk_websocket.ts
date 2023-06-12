@@ -24,7 +24,7 @@ class mk_websocket<CT extends mk_codec_base = mk_codec_base> extends mk_network_
 		}
 
 		this._socket = new WebSocket(this._addr_s!, this.config.protocol_ss);
-		this._socket.binaryType = this.config.binaryType;
+		this._socket.binaryType = this.config.binary_type;
 		const func_name_ss = ["_open", "_message", "_error", "_close"];
 
 		["onopen", "onmessage", "onerror", "onclose"].forEach((v_s, k_n) => {
@@ -41,7 +41,7 @@ export namespace mk_websocket_ {
 		}
 
 		/** 通信类型 */
-		binaryType: "blob" | "arraybuffer" = "arraybuffer";
+		binary_type: "blob" | "arraybuffer" = "arraybuffer";
 		/** 协议 */
 		protocol_ss: string[] = [];
 	}

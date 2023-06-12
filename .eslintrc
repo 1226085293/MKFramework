@@ -127,7 +127,8 @@
 					"match": true,
 					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)]"
 				},
-				"leadingUnderscore": "allow"
+				"leadingUnderscore": "allowSingleOrDouble",
+				"trailingUnderscore": "allowSingleOrDouble"
 			}
 		],
 
