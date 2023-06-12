@@ -112,7 +112,11 @@
 				"selector": "memberLike",
 				"modifiers": ["protected"],
 				"format": ["snake_case"],
-				"leadingUnderscore": "require"
+				"leadingUnderscore": "require",
+				"filter": {
+					"match": true,
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)]"
+				}
 			},
 			// public 命名规则
 			{
