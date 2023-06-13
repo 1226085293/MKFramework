@@ -14,12 +14,6 @@ namespace _mk_adaptation_node {
 		填充宽高,
 		填充宽,
 		填充高,
-		// 贴上下,
-		// 贴左右,
-		贴上,
-		贴下,
-		贴左,
-		贴右,
 	}
 
 	/** 适配模式 */
@@ -322,58 +316,6 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
-	/** 贴上 */
-	private _stick_up(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
-		// ...
-	}
-
-	/** 贴下 */
-	private _stick_down(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
-		// ...
-	}
-
-	/** 贴左 */
-	private _stick_left(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
-		// ...
-	}
-
-	/** 贴右 */
-	private _stick_right(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
-		// ...
-	}
-
-	/** 贴上下 */
-	private _stick_up_and_down(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
-		const ui_transform = this.node.getComponent(cc.UITransform)!;
-
-		if (adapt_node_) {
-			const ui_transform2 = adapt_node_.getComponent(cc.UITransform)!;
-
-			ui_transform.setContentSize(
-				frame_size_.width,
-				design_size_.height * (1 - ui_transform2.anchorY) - Math.abs(ui_transform2.convertToNodeSpaceAR(this.node.worldPosition).y)
-			);
-		} else {
-			ui_transform.setContentSize(frame_size_.width, design_size_.height * 0.5);
-		}
-	}
-
-	/** 贴左右 */
-	private _stick_left_and_right(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
-		const ui_transform = this.node.getComponent(cc.UITransform)!;
-
-		if (adapt_node_) {
-			const ui_transform2 = adapt_node_.getComponent(cc.UITransform)!;
-
-			ui_transform.setContentSize(
-				design_size_.width * (1 - ui_transform2.anchorX) - Math.abs(ui_transform2.convertToNodeSpaceAR(this.node.worldPosition).x),
-				frame_size_.height
-			);
-		} else {
-			ui_transform.setContentSize(design_size_.width * 0.5, frame_size_.height);
-		}
-	}
-
 	/** 更新适配 */
 	update_adaptation(): void {
 		if (EDITOR && !this.editor_preview_b) {
@@ -385,8 +327,8 @@ export default class mk_adaptation_node extends cc.Component {
 			let design_size: cc.Size;
 			/** 真实尺寸 */
 			let frame_size: cc.Size;
-			/** 适配父节点 */
-			let adapt_node: cc.Node | null = null;
+			/** 容器节点 */
+			let layout_node: cc.Node | null = null;
 
 			switch (this.adaptation_mode) {
 				case _mk_adaptation_node.mode.scale: {
@@ -402,12 +344,12 @@ export default class mk_adaptation_node extends cc.Component {
 
 			switch (this.adaptation_source) {
 				case _mk_adaptation_node.source.canvas:
-					adapt_node = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!.node;
-					design_size = adapt_node.getComponent(cc.UITransform)!.contentSize.clone();
+					layout_node = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!.node;
+					design_size = layout_node.getComponent(cc.UITransform)!.contentSize.clone();
 					break;
 				case _mk_adaptation_node.source.parent:
-					adapt_node = this.node.parent!;
-					design_size = adapt_node.getComponent(cc.UITransform)!.contentSize.clone();
+					layout_node = this.node.parent!;
+					design_size = layout_node.getComponent(cc.UITransform)!.contentSize.clone();
 					break;
 				case _mk_adaptation_node.source.customize:
 					design_size = this.custom_adapt_size;
@@ -429,18 +371,6 @@ export default class mk_adaptation_node extends cc.Component {
 					break;
 				case _mk_adaptation_node.type.默认:
 					this._default(design_size, frame_size);
-					break;
-				case _mk_adaptation_node.type.贴上:
-					this._stick_up(adapt_node, design_size, frame_size);
-					break;
-				case _mk_adaptation_node.type.贴下:
-					this._stick_down(adapt_node, design_size, frame_size);
-					break;
-				case _mk_adaptation_node.type.贴左:
-					this._stick_left(adapt_node, design_size, frame_size);
-					break;
-				case _mk_adaptation_node.type.贴右:
-					this._stick_right(adapt_node, design_size, frame_size);
 					break;
 			}
 		} catch (error) {
