@@ -105,7 +105,7 @@ class mk_language_node extends mk_life_cycle {
 
 	/* --------------- public --------------- */
 	/** 当前语言节点 */
-	get current_node(): cc.Node {
+	get current_node(): cc.Node | null {
 		return this.node_as.find((v) => v.language_s === global_config.language.type[language_manage.type_s])?.node ?? null!;
 	}
 
