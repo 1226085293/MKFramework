@@ -164,13 +164,13 @@ export class mk_life_cycle extends mk_layer {
 	/**
 	 * 创建
 	 * @param config_ 创建配置
-	 * @protected
 	 * @remarks
 	 * 可在此处初始化视图状态
 	 * - 静态模块：onLoad 时调用
 	 * - 动态模块：addChild 后调用
 	 */
-	create?(): void | Promise<void>;
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected create?(): void | Promise<void>;
 
 	/**
 	 * 初始化
@@ -193,7 +193,8 @@ export class mk_life_cycle extends mk_layer {
 	 * @remarks
 	 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
 	 */
-	open?(): void | Promise<void>;
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected open?(): void | Promise<void>;
 
 	/**
 	 * 关闭
@@ -209,7 +210,8 @@ export class mk_life_cycle extends mk_layer {
 	 * @remarks
 	 * 在子模块 close 和 late_close 后执行
 	 */
-	late_close?(): void | Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected late_close?(): void | Promise<void> {
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
