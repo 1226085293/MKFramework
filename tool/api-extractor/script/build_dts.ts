@@ -34,12 +34,6 @@ const jsonc = require("jsonc-parser");
 		});
 	});
 
-	// dts 入口后处理
-	{
-		// export declare const asset: mk_asset; 转为 static
-		// (namespace _xxx/namespace xxx_) 命名空间导出
-	}
-
 	// 删除生成的声明文件，否则会影响生成
 	fs.removeSync(dts_path_s);
 	// 生成 d.ts
