@@ -203,7 +203,8 @@ export class mk_life_cycle extends mk_layer {
 	 */
 	close?(): void | Promise<void>;
 
-	/** 关闭后
+	/**
+	 * 关闭后
 	 * @protected
 	 * @remarks
 	 * 在子模块 close 和 late_close 后执行

@@ -394,7 +394,8 @@ export namespace mk_audio_base_ {
 			this._init_b = value_b_;
 		}
 
-		/** 音量
+		/**
+		 * 音量
 		 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
 		 */
 		get volume_n(): number {

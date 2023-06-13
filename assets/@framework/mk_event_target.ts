@@ -73,7 +73,9 @@ class mk_event_target<CT> extends cc.EventTarget {
 		return super["clear"]();
 	}
 
-	/** 请求
+	/**
+	 * 请求
+	 * @beta
 	 * @remarks
 	 * 等待事件返回
 	 */

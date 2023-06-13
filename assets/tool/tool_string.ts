@@ -504,7 +504,8 @@ class tool_string {
 		return `${value_s_.slice(0, pos_n_)}${insert_s_}${value_s_.slice(pos_n_, value_s_.length)}`;
 	}
 
-	/** 转换字符串为任意数据类型
+	/**
+	 * 转换字符串为任意数据类型
 	 * - n_*: number数据
 	 * - s_*: string数据
 	 * - b_*: boolean数据
@@ -552,7 +553,8 @@ class tool_string {
 		return name_s;
 	}
 
-	/** 单位毫秒格式化
+	/**
+	 * 单位毫秒格式化
 	 * - $H: 替换为小时，补全空位(02:00:00)
 	 * - $h: 替换为小时，不补全(2:00:00)
 	 * - $M: 替换为分钟，补全空位(00:02:00)

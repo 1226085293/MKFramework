@@ -36,12 +36,14 @@ export class mk_ui_manage extends mk_instance_base {
 	private _log = new mk_logger("ui_manage");
 	/** 模块注册表 */
 	private _ui_regis_map = new Map<any, mk_ui_manage_.regis_data<any>>();
-	/** 模块注册任务表
+	/**
+	 * 模块注册任务表
 	 * @remarks
 	 * 用于 open 时等待注册
 	 */
 	private _ui_regis_task_map = new Map<any, mk_status_task>();
-	/** 模块加载表
+	/**
+	 * 模块加载表
 	 * @remarks
 	 * 用于检测重复加载
 	 */
@@ -683,7 +685,8 @@ export namespace mk_ui_manage_ {
 		all_b?: boolean;
 		/** 销毁节点 */
 		destroy_b?: boolean;
-		/** 销毁动态子节点
+		/**
+		 * 销毁动态子节点
 		 * @defaultValue
 		 * destroy_b
 		 */

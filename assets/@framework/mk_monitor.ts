@@ -47,7 +47,8 @@ namespace _mk_monitor {
 		key: type_key;
 	}
 
-	/** 对象绑定数据
+	/**
+	 * 对象绑定数据
 	 * @remarks
 	 * 用于 clear
 	 */
@@ -91,7 +92,8 @@ namespace _mk_monitor {
 	}
 }
 
-/** 数据监听器
+/**
+ * 数据监听器
  * @remarks
  * 注意：监听回调仅在下一帧被调用
  */
