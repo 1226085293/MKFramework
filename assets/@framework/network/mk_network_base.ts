@@ -165,7 +165,7 @@ namespace _mk_network_base {
 		}
 
 		// @ts-ignore
-		hasEventListener<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		has<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			target_?: any
