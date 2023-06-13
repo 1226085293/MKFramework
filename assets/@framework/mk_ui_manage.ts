@@ -428,13 +428,10 @@ export class mk_ui_manage extends mk_instance_base {
 			parent.addChild(view_comp.node);
 
 			// 生命周期
-			{
-				await view_comp.create?.();
-				await view_comp._open({
-					init: config_.init,
-					first_b: true,
-				});
-			}
+			await view_comp._open({
+				init: config_.init,
+				first_b: true,
+			});
 		}
 
 		return exit_callback_f(true);

@@ -155,6 +155,8 @@ export class mk_life_cycle extends mk_layer {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
 		this._load_task.finish(true);
+
+		// 静态模块 create
 		if (this.static_b) {
 			this.create?.();
 		}
@@ -235,6 +237,11 @@ export class mk_life_cycle extends mk_layer {
 	 * @internal
 	 */
 	async _open(config_?: _mk_life_cycle.open_config): Promise<void> {
+		// 动态模块 create
+		if (!this.static_b) {
+			await this.create?.();
+		}
+
 		// 状态安检
 		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) {
 			return;
