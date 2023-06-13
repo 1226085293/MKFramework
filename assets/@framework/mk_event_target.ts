@@ -1,10 +1,21 @@
 import * as cc from "cc";
 
+/** 安全事件对象 */
 class mk_event_target<CT> extends cc.EventTarget {
+	/** 事件键 */
 	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
 		get: (target, key) => key,
 	});
 
+	/* ------------------------------- 功能 ------------------------------- */
+	/**
+	 * 监听事件
+	 * @param type_ 事件类型
+	 * @param callback_ 触发回调
+	 * @param this_ 事件目标对象
+	 * @param once_b_ 是否触发单次
+	 * @returns 触发回调
+	 */
 	// @ts-ignore
 	on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 		type_: T | T[],
@@ -26,6 +37,13 @@ class mk_event_target<CT> extends cc.EventTarget {
 		}
 	}
 
+	/**
+	 * 监听单次事件
+	 * @param type_ 事件类型
+	 * @param callback_ 触发回调
+	 * @param this_ 事件目标对象
+	 * @returns 触发回调
+	 */
 	// @ts-ignore
 	once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any): typeof callback_ | null {
 		if (Array.isArray(type_)) {
@@ -42,6 +60,13 @@ class mk_event_target<CT> extends cc.EventTarget {
 		}
 	}
 
+	/**
+	 * 取消监听事件
+	 * @param type_ 事件类型
+	 * @param callback_ 触发回调
+	 * @param this_ 事件目标对象
+	 * @returns 触发回调
+	 */
 	// @ts-ignore
 	off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void {
 		if (Array.isArray(type_)) {
@@ -53,6 +78,11 @@ class mk_event_target<CT> extends cc.EventTarget {
 		}
 	}
 
+	/**
+	 * 派发事件
+	 * @param type_ 事件类型
+	 * @param args_ 事件参数
+	 */
 	// @ts-ignore
 	emit<T extends keyof CT, T2 extends Parameters<CT[T]>>(type_: T | T[], ...args_: T2): void {
 		if (Array.isArray(type_)) {
@@ -64,20 +94,30 @@ class mk_event_target<CT> extends cc.EventTarget {
 		}
 	}
 
+	/**
+	 * 是否存在事件
+	 * @param type_ 事件类型
+	 * @param callback_ 触发回调
+	 * @param target_ 事件目标对象
+	 * @returns
+	 */
 	// @ts-ignore
 	has<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean {
 		return super.hasEventListener(type_ as any, callback_ as any, target_);
 	}
 
+	/** 清空所有事件 */
 	clear(): void {
 		return super["clear"]();
 	}
 
 	/**
-	 * 请求
+	 * 请求事件
+	 * @param type_ 事件类型
+	 * @param args_ 事件参数
 	 * @beta
 	 * @remarks
-	 * 等待事件返回
+	 * 等待请求事件返回
 	 */
 	// @ts-ignore
 	request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[] {
@@ -94,7 +134,12 @@ class mk_event_target<CT> extends cc.EventTarget {
 		}
 	}
 
-	/** 请求单个事件 */
+	/**
+	 * 请求单个事件
+	 * @param type_ 事件类型
+	 * @param args_ 事件参数
+	 * @returns
+	 */
 	// @ts-ignore
 	private _request_single<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T, ...args_: T2): Promise<T3>[] {
 		/** 返回值 */

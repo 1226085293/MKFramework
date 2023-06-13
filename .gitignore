@@ -23,4 +23,5 @@ node_modules/
 #//////////////////////////
 .idea/
 extensions/
-tool/api-extractor/dist/
+/tool/api-extractor/dist
+/tool/doc-website/docs/api
