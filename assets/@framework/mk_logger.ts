@@ -45,6 +45,11 @@ namespace _mk_logger {
 	}
 }
 
+/**
+ * 日志
+ * @remarks
+ * 单例对象为 default 打印
+ */
 class mk_logger extends mk_instance_base {
 	constructor(name_s_: string) {
 		super();
@@ -174,13 +179,23 @@ class mk_logger extends mk_instance_base {
 	/** 计时信息 */
 	private _time_map = new Map<string, _mk_logger.time_log>();
 	/* ------------------------------- static ------------------------------- */
-	/** 只限模块 */
+	/**
+	 * 只限模块打印
+	 * @param module_ss_ 模块名列表
+	 * @remarks
+	 * 调用时会覆盖 {@link mk_logger.limit} 的规则
+	 */
 	static only(module_ss_: string[]): void {
 		mk_logger._log_only_module_ss = module_ss_;
 		mk_logger._limit_log_module_ss = [];
 	}
 
-	/** 限制模块 */
+	/**
+	 * 限制模块打印
+	 * @param module_ss_ 模块名列表
+	 * @remarks
+	 * 调用时会覆盖 {@link mk_logger.only} 的规则
+	 */
 	static limit(module_ss_: string[]): void {
 		mk_logger._log_only_module_ss = [];
 		mk_logger._limit_log_module_ss = module_ss_;

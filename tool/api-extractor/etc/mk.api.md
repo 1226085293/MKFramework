@@ -211,24 +211,18 @@ export const dynamic_module: mk_dynamic_module;
 // @public (undocumented)
 export const error: (...args_as_: any[]) => void;
 
-// @public (undocumented)
+// @public
 export class event_target<CT> extends cc_2.EventTarget {
-    // (undocumented)
     clear(): void;
-    // (undocumented)
     emit<T extends keyof CT, T2 extends Parameters<CT[T]>>(type_: T | T[], ...args_: T2): void;
-    // (undocumented)
-    hasEventListener<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
-    // (undocumented)
+    has<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
     key: {
         [k in keyof CT]: k;
     };
-    // (undocumented)
     off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void;
-    // (undocumented)
     on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any, once_b_?: boolean): typeof callback_ | null;
-    // (undocumented)
     once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any): typeof callback_ | null;
+    // @beta
     request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
 }
 
@@ -330,7 +324,7 @@ export const language_manage: mk_language_manage;
 // @public (undocumented)
 export const log: (...args_as_: any[]) => void;
 
-// @public (undocumented)
+// @public
 export class logger extends instance_base {
     constructor(name_s_: string);
     // Warning: (ae-forgotten-export) The symbol "_mk_logger" needs to be exported by the entry point mk_export.d.ts
@@ -496,12 +490,12 @@ class mk_life_cycle extends mk_layer {
     }[];
     init(data_?: any): void | Promise<void>;
     init_data?: any;
-    protected late_close?(): void | Promise<void>;
+    late_close?(): void | Promise<void>;
     protected _load_task: mk_status_task<void>;
     protected get _log(): logger;
     // (undocumented)
     protected onLoad(): void;
-    protected open?(): void | Promise<void>;
+    open?(): void | Promise<void>;
     // @internal
     _open(config_?: _mk_life_cycle.open_config): Promise<void>;
     get open_b(): boolean;
@@ -634,7 +628,7 @@ class mk_view_base extends mk_life_cycle {
     data?: any;
     protected _init_editor(): void;
     // (undocumented)
-    protected late_close?(): Promise<void>;
+    late_close?(): Promise<void>;
     // (undocumented)
     open(): void | Promise<void>;
     protected _reset_data_b: boolean;
@@ -670,7 +664,7 @@ namespace mk_websocket_ {
     // (undocumented)
     class init_config<CT extends codec_base = codec_base> extends mk_network_base_.init_config<CT> {
         constructor(init_?: Partial<init_config<CT>>);
-        binaryType: "blob" | "arraybuffer";
+        binary_type: "blob" | "arraybuffer";
         protocol_ss: string[];
     }
 }

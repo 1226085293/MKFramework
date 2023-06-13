@@ -5,9 +5,10 @@ import { argv } from "process";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsonc = require("jsonc-parser");
 
-// 参数：[ 输出生成信息(0: 不输出, 1: 输出) ]
+// 参数：[ (0: 不输出, 1: 输出) ]
 (async () => {
-	if (!fs.existsSync("./temp")) {
+	console.log(argv);
+	if (argv[2] === "1" || !fs.existsSync("./temp")) {
 		child_process.execSync(`npx ts-node ./script/build_dts.ts`);
 	}
 

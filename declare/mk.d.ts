@@ -193,7 +193,8 @@ declare namespace mk {
 			/** 初始化状态 */
 			get init_b(): boolean;
 			set init_b(value_b_: boolean);
-			/** 音量
+			/**
+			 * 音量
 			 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
 			 */
 			get volume_n(): number;
@@ -436,31 +437,69 @@ declare namespace mk {
 
 	export declare const error: (...args_as_: any[]) => void;
 
+	/** 安全事件对象 */
 	export declare class event_target<CT> extends cc_2.EventTarget {
+		/** 事件键 */
 		key: {
 			[k in keyof CT]: k;
 		};
+		/**
+		 * 监听事件
+		 * @param type_ 事件类型
+		 * @param callback_ 触发回调
+		 * @param this_ 事件目标对象
+		 * @param once_b_ 是否触发单次
+		 * @returns 触发回调
+		 */
 		on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 			type_: T | T[],
 			callback_: T2,
 			this_?: any,
 			once_b_?: boolean
 		): typeof callback_ | null;
+		/**
+		 * 监听单次事件
+		 * @param type_ 事件类型
+		 * @param callback_ 触发回调
+		 * @param this_ 事件目标对象
+		 * @returns 触发回调
+		 */
 		once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 			type_: T | T[],
 			callback_: T2,
 			this_?: any
 		): typeof callback_ | null;
-		off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void;
-		emit<T extends keyof CT, T2 extends Parameters<CT[T]>>(type_: T | T[], ...args_: T2): void;
-		hasEventListener<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
-		clear(): void;
-		/** 请求
-		 * @remarks
-		 * 等待事件返回
+		/**
+		 * 取消监听事件
+		 * @param type_ 事件类型
+		 * @param callback_ 触发回调
+		 * @param this_ 事件目标对象
+		 * @returns 触发回调
 		 */
-		request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
-		/** 请求单个事件 */
+		off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void;
+		/**
+		 * 派发事件
+		 * @param type_ 事件类型
+		 * @param args_ 事件参数
+		 */
+		emit<T extends keyof CT, T2 extends Parameters<CT[T]>>(type_: T | T[], ...args_: T2): void;
+		/**
+		 * 是否存在事件
+		 * @param type_ 事件类型
+		 * @param callback_ 触发回调
+		 * @param target_ 事件目标对象
+		 * @returns
+		 */
+		has<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
+		/** 清空所有事件 */
+		clear(): void;
+		/* Excluded from this release type: request */
+		/**
+		 * 请求单个事件
+		 * @param type_ 事件类型
+		 * @param args_ 事件参数
+		 * @returns
+		 */
 		private _request_single;
 	}
 
@@ -641,6 +680,11 @@ declare namespace mk {
 
 	export declare const log: (...args_as_: any[]) => void;
 
+	/**
+	 * 日志
+	 * @remarks
+	 * 单例对象为 default 打印
+	 */
 	export declare class logger extends instance_base {
 		constructor(name_s_: string);
 		/** 全局配置 */
@@ -661,9 +705,19 @@ declare namespace mk {
 		private _log_func_tab;
 		/** 计时信息 */
 		private _time_map;
-		/** 只限模块 */
+		/**
+		 * 只限模块打印
+		 * @param module_ss_ 模块名列表
+		 * @remarks
+		 * 调用时会覆盖 {@link logger.limit} 的规则
+		 */
 		static only(module_ss_: string[]): void;
-		/** 限制模块 */
+		/**
+		 * 限制模块打印
+		 * @param module_ss_ 模块名列表
+		 * @remarks
+		 * 调用时会覆盖 {@link logger.only} 的规则
+		 */
 		static limit(module_ss_: string[]): void;
 		/**
 		 * 添加日志缓存
@@ -892,7 +946,8 @@ declare namespace mk {
 		}
 	}
 
-	/** 动态模块
+	/**
+	 * 动态模块
 	 * @remarks
 	 * 用以解除循环引用
 	 */
@@ -1324,10 +1379,11 @@ declare namespace mk {
 		init(data_?: any): void | Promise<void>;
 		/**
 		 * 打开
+		 * @protected
 		 * @remarks
 		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
 		 */
-		protected open?(): void | Promise<void>;
+		open?(): void | Promise<void>;
 		/**
 		 * 关闭
 		 * @remarks
@@ -1335,11 +1391,13 @@ declare namespace mk {
 		 * 外部调用：自动回收模块
 		 */
 		close?(): void | Promise<void>;
-		/** 关闭后
+		/**
+		 * 关闭后
+		 * @protected
 		 * @remarks
 		 * 在子模块 close 和 late_close 后执行
 		 */
-		protected late_close?(): void | Promise<void>;
+		late_close?(): void | Promise<void>;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1436,7 +1494,8 @@ declare namespace mk {
 		}
 	}
 
-	/** 数据监听器
+	/**
+	 * 数据监听器
 	 * @remarks
 	 * 注意：监听回调仅在下一帧被调用
 	 */
@@ -1667,7 +1726,8 @@ declare namespace mk {
 			/** 绑定键 */
 			key: type_key;
 		}
-		/** 对象绑定数据
+		/**
+		 * 对象绑定数据
 		 * @remarks
 		 * 用于 clear
 		 */
@@ -1861,10 +1921,11 @@ declare namespace mk {
 			 * 等待事件回调返回
 			 */
 			request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null;
-			hasEventListener<
-				T extends cc_2.Constructor<global_config.network.proto_head> | string | number,
-				T2 extends (event_: T["prototype"]) => void
-			>(type_: T, callback_?: T2, target_?: any): boolean;
+			has<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+				type_: T,
+				callback_?: T2,
+				target_?: any
+			): boolean;
 			clear(): void;
 		}
 		{
@@ -2170,12 +2231,14 @@ declare namespace mk {
 		private _log;
 		/** 模块注册表 */
 		private _ui_regis_map;
-		/** 模块注册任务表
+		/**
+		 * 模块注册任务表
 		 * @remarks
 		 * 用于 open 时等待注册
 		 */
 		private _ui_regis_task_map;
-		/** 模块加载表
+		/**
+		 * 模块加载表
 		 * @remarks
 		 * 用于检测重复加载
 		 */
@@ -2323,7 +2386,7 @@ declare namespace mk {
 		 * @param config_ 关闭配置
 		 */
 		close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
-		protected late_close?(): Promise<void>;
+		late_close?(): Promise<void>;
 		/** 自动释放 */
 		auto_release<T extends cc_2.Node | cc_2.Node[]>(args_: T): T;
 		auto_release<T extends cc_2.Asset | cc_2.Asset[]>(args_: T): T;
@@ -2411,7 +2474,7 @@ declare namespace mk {
 		class init_config<CT extends codec_base = codec_base> extends mk_network_base_.init_config<CT> {
 			constructor(init_?: Partial<init_config<CT>>);
 			/** 通信类型 */
-			binaryType: "blob" | "arraybuffer";
+			binary_type: "blob" | "arraybuffer";
 			/** 协议 */
 			protocol_ss: string[];
 		}
@@ -2507,6 +2570,7 @@ declare namespace mk {
 
 	/**
 	 * 多边形遮罩
+	 * @remarks
 	 * - 多边形图片遮罩
 	 * - 多边形触摸屏蔽
 	 */
@@ -2606,7 +2670,8 @@ declare namespace mk {
 			all_b?: boolean;
 			/** 销毁节点 */
 			destroy_b?: boolean;
-			/** 销毁动态子节点
+			/**
+			 * 销毁动态子节点
 			 * @defaultValue
 			 * destroy_b
 			 */

@@ -17,6 +17,7 @@
 		"browser": true,
 		"node": true
 	},
+	"ignorePatterns": ["tool/**"],
 	"globals": {},
 	"rules": {
 		// 禁止返回类型 void 混合其他

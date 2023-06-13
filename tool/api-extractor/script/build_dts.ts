@@ -2,6 +2,7 @@ import path from "path";
 import child_process from "child_process";
 import fs from "fs-extra";
 import prettier from "prettier";
+import { argv } from "process";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsonc = require("jsonc-parser");
 
@@ -61,6 +62,8 @@ const jsonc = require("jsonc-parser");
 	dts_file_s = `import global_config from "../assets/@config/global_config"\n` + dts_file_s;
 	// 禁止错误检查
 	dts_file_s = "//@ts-nocheck\n" + dts_file_s;
+	// @link 链接处理
+	dts_file_s = dts_file_s.replace(/@link mk_/g, "@link ");
 
 	// 格式化
 	{

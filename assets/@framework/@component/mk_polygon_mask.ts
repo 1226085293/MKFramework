@@ -10,6 +10,7 @@ const { ccclass, property, requireComponent, executeInEditMode } = cc._decorator
 
 /**
  * 多边形遮罩
+ * @remarks
  * - 多边形图片遮罩
  * - 多边形触摸屏蔽
  */
