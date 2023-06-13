@@ -1,7 +1,7 @@
 import * as cc from "cc";
-import * as env from "cc/env";
 import global_event from "../../../@config/global_event";
 import { mk_log } from "../../mk_logger";
+import { EDITOR } from "cc/env";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
@@ -11,11 +11,15 @@ namespace _mk_adaptation_node {
 	export enum type {
 		默认,
 		自适应,
+		填充宽高,
 		填充宽,
 		填充高,
-		自动填充,
-		贴上下,
-		贴左右,
+		// 贴上下,
+		// 贴左右,
+		贴上,
+		贴下,
+		贴左,
+		贴右,
 	}
 
 	/** 适配模式 */
@@ -37,6 +41,7 @@ namespace _mk_adaptation_node {
 @executeInEditMode
 export default class mk_adaptation_node extends cc.Component {
 	/* --------------- 属性 --------------- */
+	/** 编辑器预览 */
 	@property({ displayName: "编辑器预览" })
 	get editor_preview_b(): boolean {
 		return this._editor_preview_b;
@@ -49,20 +54,33 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
+	/** 适配模式 */
 	@property({ displayName: "适配模式", type: cc.Enum(_mk_adaptation_node.mode) })
 	adaptation_mode = _mk_adaptation_node.mode.scale;
 
+	/** 适配来源 */
 	@property({ displayName: "适配来源", type: cc.Enum(_mk_adaptation_node.source) })
 	adaptation_source = _mk_adaptation_node.source.canvas;
 
+	/** 原始大小 */
+	@property({
+		displayName: "原始大小",
+		visible(this: mk_adaptation_node) {
+			return this.adaptation_mode === _mk_adaptation_node.mode.size;
+		},
+	})
+	original_size = cc.size();
+
+	/** 自定义适配大小 */
 	@property({
 		displayName: "自定义适配大小",
-		visible: function (this: any) {
-			return this.adaptSource === _mk_adaptation_node.source.customize;
+		visible(this: mk_adaptation_node) {
+			return this.adaptation_source === _mk_adaptation_node.source.customize;
 		},
 	})
 	custom_adapt_size = cc.size();
 
+	/** 适配类型 */
 	@property({ displayName: "适配类型", type: cc.Enum(_mk_adaptation_node.type) })
 	get type(): _mk_adaptation_node.type {
 		return this._type;
@@ -75,13 +93,13 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
-	@property
-	private _type = _mk_adaptation_node.type.自适应;
-
-	@property
-	private _limit_max_scale_b = false;
-
-	@property({ displayName: "限制最大缩放" })
+	/** 限制最大缩放 */
+	@property({
+		displayName: "限制最大缩放",
+		visible(this: mk_adaptation_node) {
+			return this.adaptation_mode === _mk_adaptation_node.mode.scale;
+		},
+	})
 	get limit_max_scale_b(): boolean {
 		return this._limit_max_scale_b;
 	}
@@ -93,10 +111,13 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
-	@property
-	private _limit_min_scale_b = false;
-
-	@property({ displayName: "限制最小缩放" })
+	/** 限制最小缩放 */
+	@property({
+		displayName: "限制最小缩放",
+		visible(this: mk_adaptation_node) {
+			return this.adaptation_mode === _mk_adaptation_node.mode.scale;
+		},
+	})
 	get limit_min_scale_b(): boolean {
 		return this._limit_min_scale_b;
 	}
@@ -108,9 +129,7 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
-	@property
-	private _max_scale_v3 = cc.v3(1, 1, 1);
-
+	/** 最大缩放 */
 	@property({
 		displayName: "最大缩放",
 		type: cc.Vec3,
@@ -129,9 +148,7 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
-	@property
-	private _min_scale_v3 = cc.v3(1, 1, 1);
-
+	/** 最小缩放 */
 	@property({
 		displayName: "最小缩放",
 		type: cc.Vec3,
@@ -151,19 +168,36 @@ export default class mk_adaptation_node extends cc.Component {
 	}
 
 	/* --------------- private --------------- */
-	/** 初始大小 */
-	private _init_size!: cc.Size;
+	/** 适配类型 */
+	@property
+	private _type = _mk_adaptation_node.type.填充宽高;
+
+	/** 限制最大缩放 */
+	@property
+	private _limit_max_scale_b = false;
+
+	/** 限制最小缩放 */
+	@property
+	private _limit_min_scale_b = false;
+
+	/** 最大缩放 */
+	@property
+	private _max_scale_v3 = cc.v3(1, 1, 1);
+
+	/** 最小缩放 */
+	@property
+	private _min_scale_v3 = cc.v3(1, 1, 1);
+
 	/** 编辑器预览 */
 	private _editor_preview_b = false;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	onLoad() {
-		if (env.EDITOR) {
-			this.update_adaptation();
-		}
+		if (EDITOR) {
+			if (this.original_size.equals(cc.size())) {
+				this.original_size = this.node.getComponent(cc.UITransform)!.contentSize.clone();
+			}
 
-		// 更新初始节点大小
-		if (this.adaptation_mode === _mk_adaptation_node.mode.size) {
-			this._init_size = this.getComponent(cc.UITransform)!.contentSize;
+			this.update_adaptation();
 		}
 	}
 
@@ -172,21 +206,26 @@ export default class mk_adaptation_node extends cc.Component {
 
 		if (this.adaptation_source === _mk_adaptation_node.source.canvas) {
 			global_event.on(global_event.key.resize, this._event_global_resize, this);
-		} else {
-			this.node.parent?.on(cc.Node.EventType.SIZE_CHANGED, this._node_size_changed, this);
+		} else if (this.adaptation_source === _mk_adaptation_node.source.parent) {
+			this.node.parent?.on(cc.Node.EventType.SIZE_CHANGED, this._event_node_size_changed, this);
 		}
 
-		this.node.on(cc.Node.EventType.SIZE_CHANGED, this._node_size_changed, this);
+		if (this.node.getComponent(cc.Sprite)) {
+			this.node.on(cc.Sprite.EventType.SPRITE_FRAME_CHANGED, this._event_node_sprite_frame_changed, this);
+		}
+
+		this.node.on(cc.Node.EventType.SIZE_CHANGED, this._event_node_size_changed, this);
 	}
 
 	onDisable(): void {
 		if (this.adaptation_source === _mk_adaptation_node.source.canvas) {
 			global_event.off(global_event.key.resize, this._event_global_resize, this);
-		} else {
-			this.node.parent?.off(cc.Node.EventType.SIZE_CHANGED, this._node_size_changed, this);
+		} else if (this.adaptation_source === _mk_adaptation_node.source.parent) {
+			this.node.parent?.off(cc.Node.EventType.SIZE_CHANGED, this._event_node_size_changed, this);
 		}
 
-		this.node.off(cc.Node.EventType.SIZE_CHANGED, this._node_size_changed, this);
+		this.node.off(cc.Sprite.EventType.SPRITE_FRAME_CHANGED, this._event_node_sprite_frame_changed, this);
+		this.node.off(cc.Node.EventType.SIZE_CHANGED, this._event_node_size_changed, this);
 	}
 
 	/* ------------------------------- 功能函数 ------------------------------- */
@@ -197,14 +236,14 @@ export default class mk_adaptation_node extends cc.Component {
 		}, time_ms_n_ * 0.001);
 	}
 
-	/** 自适应 */
-	private _self_adaption(design_size_: cc.Size, frame_size_: cc.Size): void {
+	/** 填充宽高 */
+	private _fill_width_and_height(design_size_: cc.Size, frame_size_: cc.Size): void {
 		const scale_v2 = cc.v2(design_size_.width / frame_size_.width, design_size_.height / frame_size_.height);
 
 		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
 			this.node.setScale(scale_v2.x, scale_v2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this._init_size.width * scale_v2.x, this._init_size.height * scale_v2.y);
+			this.node.getComponent(cc.UITransform)!.setContentSize(this.original_size.width * scale_v2.x, this.original_size.height * scale_v2.y);
 		}
 	}
 
@@ -226,7 +265,7 @@ export default class mk_adaptation_node extends cc.Component {
 		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
 			this.node.setScale(scale_v2.x, scale_v2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this._init_size.width * scale_v2.x, this._init_size.height * scale_v2.y);
+			this.node.getComponent(cc.UITransform)!.setContentSize(this.original_size.width * scale_v2.x, this.original_size.height * scale_v2.y);
 		}
 	}
 
@@ -248,7 +287,7 @@ export default class mk_adaptation_node extends cc.Component {
 		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
 			this.node.setScale(scale_v2.x, scale_v2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this._init_size.width * scale_v2.x, this._init_size.height * scale_v2.y);
+			this.node.getComponent(cc.UITransform)!.setContentSize(this.original_size.width * scale_v2.x, this.original_size.height * scale_v2.y);
 		}
 	}
 
@@ -257,12 +296,12 @@ export default class mk_adaptation_node extends cc.Component {
 		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
 			this.node.setScale(1, 1);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this._init_size.width, this._init_size.height);
+			this.node.getComponent(cc.UITransform)!.setContentSize(this.original_size.width, this.original_size.height);
 		}
 	}
 
-	/** 自动填充 */
-	private _auto_fill(design_size_: cc.Size, frame_size_: cc.Size): void {
+	/** 自适应 */
+	private _auto_adaption(design_size_: cc.Size, frame_size_: cc.Size): void {
 		const scale_v2 = cc.v2(design_size_.width / frame_size_.width, design_size_.height / frame_size_.height);
 
 		if (scale_v2.x < scale_v2.y) {
@@ -279,8 +318,28 @@ export default class mk_adaptation_node extends cc.Component {
 		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
 			this.node.setScale(scale_v2.x, scale_v2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this._init_size.width * scale_v2.x, this._init_size.height * scale_v2.x);
+			this.node.getComponent(cc.UITransform)!.setContentSize(this.original_size.width * scale_v2.x, this.original_size.height * scale_v2.x);
 		}
+	}
+
+	/** 贴上 */
+	private _stick_up(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
+		// ...
+	}
+
+	/** 贴下 */
+	private _stick_down(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
+		// ...
+	}
+
+	/** 贴左 */
+	private _stick_left(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
+		// ...
+	}
+
+	/** 贴右 */
+	private _stick_right(adapt_node_: cc.Node | null, design_size_: cc.Size, frame_size_: cc.Size): void {
+		// ...
 	}
 
 	/** 贴上下 */
@@ -317,7 +376,7 @@ export default class mk_adaptation_node extends cc.Component {
 
 	/** 更新适配 */
 	update_adaptation(): void {
-		if (env.EDITOR && !this.editor_preview_b) {
+		if (EDITOR && !this.editor_preview_b) {
 			return;
 		}
 
@@ -325,20 +384,30 @@ export default class mk_adaptation_node extends cc.Component {
 			/** 设计尺寸 */
 			let design_size: cc.Size;
 			/** 真实尺寸 */
-			const frame_size = this.node.getComponent(cc.UITransform)!.contentSize;
-			/** 缩放比例 */
-			let scale_n: number;
+			let frame_size: cc.Size;
 			/** 适配父节点 */
 			let adapt_node: cc.Node | null = null;
+
+			switch (this.adaptation_mode) {
+				case _mk_adaptation_node.mode.scale: {
+					frame_size = this.node.getComponent(cc.UITransform)!.contentSize.clone();
+					break;
+				}
+
+				case _mk_adaptation_node.mode.size: {
+					frame_size = this.original_size;
+					break;
+				}
+			}
 
 			switch (this.adaptation_source) {
 				case _mk_adaptation_node.source.canvas:
 					adapt_node = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!.node;
-					design_size = adapt_node.getComponent(cc.UITransform)!.contentSize;
+					design_size = adapt_node.getComponent(cc.UITransform)!.contentSize.clone();
 					break;
 				case _mk_adaptation_node.source.parent:
 					adapt_node = this.node.parent!;
-					design_size = adapt_node.getComponent(cc.UITransform)!.contentSize;
+					design_size = adapt_node.getComponent(cc.UITransform)!.contentSize.clone();
 					break;
 				case _mk_adaptation_node.source.customize:
 					design_size = this.custom_adapt_size;
@@ -347,7 +416,10 @@ export default class mk_adaptation_node extends cc.Component {
 
 			switch (this.type) {
 				case _mk_adaptation_node.type.自适应:
-					this._self_adaption(design_size, frame_size);
+					this._auto_adaption(design_size, frame_size);
+					break;
+				case _mk_adaptation_node.type.填充宽高:
+					this._fill_width_and_height(design_size, frame_size);
 					break;
 				case _mk_adaptation_node.type.填充宽:
 					this._fill_width(design_size, frame_size);
@@ -358,14 +430,17 @@ export default class mk_adaptation_node extends cc.Component {
 				case _mk_adaptation_node.type.默认:
 					this._default(design_size, frame_size);
 					break;
-				case _mk_adaptation_node.type.自动填充:
-					this._auto_fill(design_size, frame_size);
+				case _mk_adaptation_node.type.贴上:
+					this._stick_up(adapt_node, design_size, frame_size);
 					break;
-				case _mk_adaptation_node.type.贴上下:
-					this._stick_up_and_down(adapt_node, design_size, frame_size);
+				case _mk_adaptation_node.type.贴下:
+					this._stick_down(adapt_node, design_size, frame_size);
 					break;
-				case _mk_adaptation_node.type.贴左右:
-					this._stick_left_and_right(adapt_node, design_size, frame_size);
+				case _mk_adaptation_node.type.贴左:
+					this._stick_left(adapt_node, design_size, frame_size);
+					break;
+				case _mk_adaptation_node.type.贴右:
+					this._stick_right(adapt_node, design_size, frame_size);
 					break;
 			}
 		} catch (error) {
@@ -382,12 +457,14 @@ export default class mk_adaptation_node extends cc.Component {
 	}
 
 	/* ------------------------------- 节点事件 ------------------------------- */
-	private _node_size_changed(): void {
-		// 更新初始节点大小
-		if (this.adaptation_mode === _mk_adaptation_node.mode.size) {
-			this._init_size = this.getComponent(cc.UITransform)!.contentSize;
-		}
-
+	private _event_node_size_changed(): void {
 		this._delayed_update_adaptation();
+	}
+
+	private _event_node_sprite_frame_changed(): void {
+		// 更新原始节点大小
+		if (this.adaptation_mode === _mk_adaptation_node.mode.size) {
+			this.original_size = this.getComponent(cc.UITransform)!.contentSize.clone();
+		}
 	}
 }
