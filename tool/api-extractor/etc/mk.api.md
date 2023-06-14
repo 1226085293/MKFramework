@@ -417,7 +417,7 @@ class mk_language_label extends mk_language_base {
 class mk_language_node extends mk_life_cycle {
     // (undocumented)
     create(): void | Promise<void>;
-    get current_node(): cc_2.Node;
+    get current_node(): cc_2.Node | null;
     get language(): number;
     set language(value_n_: number);
     language_s: "zh_cn" | "en_us";
@@ -482,7 +482,7 @@ class mk_life_cycle extends mk_layer {
     _close(config_?: _mk_life_cycle.close_config): Promise<void>;
     // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export.d.ts
     set config(config_: _mk_life_cycle.create_config);
-    create?(): void | Promise<void>;
+    protected create?(): void | Promise<void>;
     event_target_as: {
         targetOff(target: any): any;
     }[] | {
@@ -490,12 +490,12 @@ class mk_life_cycle extends mk_layer {
     }[];
     init(data_?: any): void | Promise<void>;
     init_data?: any;
-    late_close?(): void | Promise<void>;
+    protected late_close?(): void | Promise<void>;
     protected _load_task: mk_status_task<void>;
     protected get _log(): logger;
     // (undocumented)
     protected onLoad(): void;
-    open?(): void | Promise<void>;
+    protected open?(): void | Promise<void>;
     // @internal
     _open(config_?: _mk_life_cycle.open_config): Promise<void>;
     get open_b(): boolean;

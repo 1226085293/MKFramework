@@ -1230,7 +1230,7 @@ declare namespace mk {
 		/** layout 适配 */
 		layout_adaptation_b: boolean;
 		/** 当前语言节点 */
-		get current_node(): cc_2.Node;
+		get current_node(): cc_2.Node | null;
 		protected _use_layer_b: boolean;
 		private _layout;
 		create(): void | Promise<void>;
@@ -1361,13 +1361,12 @@ declare namespace mk {
 		/**
 		 * 创建
 		 * @param config_ 创建配置
-		 * @protected
 		 * @remarks
 		 * 可在此处初始化视图状态
 		 * - 静态模块：onLoad 时调用
 		 * - 动态模块：addChild 后调用
 		 */
-		create?(): void | Promise<void>;
+		protected create?(): void | Promise<void>;
 		/**
 		 * 初始化
 		 * @param data_ 初始化数据
@@ -1383,7 +1382,7 @@ declare namespace mk {
 		 * @remarks
 		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
 		 */
-		open?(): void | Promise<void>;
+		protected open?(): void | Promise<void>;
 		/**
 		 * 关闭
 		 * @remarks
@@ -1397,7 +1396,7 @@ declare namespace mk {
 		 * @remarks
 		 * 在子模块 close 和 late_close 后执行
 		 */
-		late_close?(): void | Promise<void>;
+		protected late_close?(): void | Promise<void>;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
