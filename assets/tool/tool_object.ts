@@ -96,7 +96,7 @@ class tool_object {
 						record_set.add(target_);
 						for (const k_s in target_) {
 							// 递归数组中的每一项
-							path_s = path_s ? `${path_s_}/${k_s}` : k_s;
+							path_s = path_s_ ? `${path_s_}/${k_s}` : k_s;
 							callback_f_(target_[k_s], k_s, path_s);
 							this._traverse(target_[k_s], callback_f_, path_s, record_set);
 						}
@@ -109,7 +109,7 @@ class tool_object {
 
 						record_set.add(target_);
 						for (const k_s in target_) {
-							path_s = path_s ? `${path_s_}/${k_s}` : k_s;
+							path_s = path_s_ ? `${path_s_}/${k_s}` : k_s;
 							callback_f_(target_[k_s], k_s, path_s);
 							this._traverse(target_[k_s], callback_f_, path_s, record_set);
 						}
