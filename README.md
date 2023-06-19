@@ -1,6 +1,6 @@
 # mk_framework
 
-muzzik 开发的 cocos creator 游戏开发框架 `(开发阶段)`
+muzzik 开发的 cocos creator 游戏开发框架 `(beta 阶段)`
 
 <!-- 路线图：https://trello.com/b/ILu6BXyX/trade-offs -->
 
@@ -8,7 +8,7 @@ muzzik 开发的 cocos creator 游戏开发框架 `(开发阶段)`
 
 ## # 在任意项目中安装框架
 
-https://github.com/1226085293/mk_framework/releases/tag/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6
+[https://github.com/1226085293/mk_framework/releases/tag/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6](https://github.com/1226085293/mk_framework/wiki/%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F)
 
 ## # 构建框架声明文件(d.ts)
 
