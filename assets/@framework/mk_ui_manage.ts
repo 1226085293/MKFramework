@@ -71,8 +71,13 @@ export class mk_ui_manage extends mk_instance_base {
 		source_: _mk_ui_manage.source_type<T>,
 		config_?: Partial<mk_ui_manage_.regis_config<T>>
 	): Promise<void> {
+		/** 模块注册任务 */
+		const ui_regis_task = this._ui_regis_task_map.get(key_);
+
 		// 等待模块注册
-		await this._ui_regis_task_map.get(key_)?.task;
+		if (ui_regis_task) {
+			await ui_regis_task.task;
+		}
 
 		// 如果已经注册
 		if (this._ui_regis_map.has(key_)) {
@@ -202,8 +207,13 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @returns
 	 */
 	async unregis<T extends cc.Constructor<mk_view_base>>(key_: T): Promise<void> {
-		// 等待注册完成
-		await this._ui_regis_task_map.get(key_)?.task;
+		/** 模块注册任务 */
+		const ui_regis_task = this._ui_regis_task_map.get(key_);
+
+		// 等待模块注册
+		if (ui_regis_task) {
+			await ui_regis_task.task;
+		}
 
 		// 未注册
 		if (!this._ui_regis_map.has(key_)) {

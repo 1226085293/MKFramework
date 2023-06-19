@@ -243,9 +243,12 @@ export class mk_view_base extends mk_life_cycle {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	open(): void | Promise<void>;
 	async open(): Promise<void> {
+		/** 打开动画函数 */
+		const open_animation_f = mk_view_base.config.window_animation_tab?.open?.[this.animation_config?.open_animation_s];
+
 		// 打开动画
-		if (this.animation_config?.open_animation_s) {
-			await mk_view_base.config.window_animation_tab?.open?.[this.animation_config.open_animation_s]?.(this.node);
+		if (open_animation_f) {
+			await open_animation_f(this.node);
 		}
 	}
 
@@ -263,9 +266,12 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	async late_close?(): Promise<void> {
+		/** 关闭动画函数 */
+		const close_animation_f = mk_view_base.config.window_animation_tab?.close?.[this.animation_config?.close_animation_s];
+
 		// 关闭动画
-		if (this.animation_config?.close_animation_s) {
-			await mk_view_base.config.window_animation_tab?.close?.[this.animation_config.close_animation_s]?.(this.node);
+		if (close_animation_f) {
+			await close_animation_f(this.node);
 		}
 
 		// 重置数据

@@ -238,8 +238,8 @@ export class mk_life_cycle extends mk_layer {
 	 */
 	async _open(config_?: _mk_life_cycle.open_config): Promise<void> {
 		// 动态模块 create
-		if (!this.static_b) {
-			await this.create?.();
+		if (!this.static_b && this.create) {
+			await this.create();
 		}
 
 		// 状态安检
@@ -267,7 +267,9 @@ export class mk_life_cycle extends mk_layer {
 				await this.init(config_.init);
 			}
 
-			await this.open?.();
+			if (this.open) {
+				await this.open();
+			}
 		}
 
 		// 状态更新
@@ -306,7 +308,10 @@ export class mk_life_cycle extends mk_layer {
 
 		// 生命周期
 		{
-			await this.close?.();
+			if (this.close) {
+				await this.close();
+			}
+
 			if (config.first_b) {
 				await this._recursive_close({
 					target: this.node,
@@ -315,7 +320,9 @@ export class mk_life_cycle extends mk_layer {
 				});
 			}
 
-			await this.late_close?.();
+			if (this.late_close) {
+				await this.late_close();
+			}
 		}
 
 		// 状态更新
