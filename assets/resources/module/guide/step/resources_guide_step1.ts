@@ -1,7 +1,9 @@
 import * as cc from "cc";
 import resources_guide_operate from "./resources_guide_operate";
 import resources_guide_step_base from "./resources_guide_step_base";
+const { ccclass, property } = cc._decorator;
 
+@ccclass
 class resources_guide_step1 extends resources_guide_step_base {
 	step_n = 1;
 	next_step_ns = [2];
