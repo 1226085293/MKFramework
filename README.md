@@ -1,8 +1,8 @@
-# mk_framework
+# MKFramework
 
-muzzik 开发的 cocos creator 游戏开发框架 `(beta 阶段)`
+muzzik 开发的 cocos creator 3.x 游戏开发框架 `(beta 阶段)`，欢迎在 issue 中提出需求/bug
 
-<!-- 路线图：https://trello.com/b/ILu6BXyX/trade-offs -->
+> 开发路线图：https://trello.com/b/ymt0NYYy
 
 ---
 
