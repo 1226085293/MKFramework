@@ -48,6 +48,16 @@ namespace global_config {
 			加载,
 		}
 
+		/** 适配模式 */
+		export enum adaptation_mode {
+			/** 无 */
+			none,
+			/** 自适应（更宽定高，更高定宽） */
+			adaptive,
+			/** 固定尺寸（屏幕尺寸不同大小相同） */
+			fixed_size,
+		}
+
 		/** 层间隔 */
 		export const layer_spacing_n = 100;
 		/** 默认遮罩 */
@@ -55,8 +65,8 @@ namespace global_config {
 			node_name_s: "遮罩",
 			prefab_path_s: "db://assets/resources/module/@common/mask/resources_common_mask.prefab",
 		};
-		/** 自动适配开关 */
-		export const auto_adaptation_switch_b = true;
+		/** 适配类型 */
+		export const adaptation_type: adaptation_mode = adaptation_mode.fixed_size;
 		/** 初始设计尺寸 */
 		export const original_design_size: Omit<Readonly<cc.Size>, "set"> = cc.size();
 		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错） */

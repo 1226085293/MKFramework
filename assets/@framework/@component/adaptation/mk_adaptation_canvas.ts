@@ -35,31 +35,45 @@ export default class mk_adaptation_canvas extends cc.Component {
 			return;
 		}
 
-		/** 设计尺寸 */
-		const design_size = global_config.view.original_design_size;
 		/** 真实尺寸 */
 		const frame_size = cc.screen.windowSize;
-		/** 真实尺寸比设计尺寸高 */
-		const higher_b = frame_size.height / frame_size.width > design_size.height / design_size.width;
 
-		if (higher_b) {
-			cc.view.setDesignResolutionSize(
-				design_size.width,
-				frame_size.height * (design_size.width / frame_size.width),
-				cc.ResolutionPolicy.FIXED_WIDTH
-			);
-		} else {
-			cc.view.setDesignResolutionSize(
-				frame_size.width * (design_size.height / frame_size.height),
-				design_size.height,
-				cc.ResolutionPolicy.FIXED_HEIGHT
-			);
+		switch (global_config.view.adaptation_type) {
+			// 自适应
+			case global_config.view.adaptation_mode.adaptive: {
+				/** 设计尺寸 */
+				const design_size = global_config.view.original_design_size;
+				/** 真实尺寸比设计尺寸高 */
+				const higher_b = frame_size.height / frame_size.width > design_size.height / design_size.width;
+
+				if (higher_b) {
+					cc.view.setDesignResolutionSize(
+						design_size.width,
+						frame_size.height * (design_size.width / frame_size.width),
+						cc.ResolutionPolicy.FIXED_WIDTH
+					);
+				} else {
+					cc.view.setDesignResolutionSize(
+						frame_size.width * (design_size.height / frame_size.height),
+						design_size.height,
+						cc.ResolutionPolicy.FIXED_HEIGHT
+					);
+				}
+
+				break;
+			}
+
+			// 固定尺寸
+			case global_config.view.adaptation_mode.fixed_size: {
+				cc.view.setDesignResolutionSize(frame_size.width, frame_size.height, cc.ResolutionPolicy.UNKNOWN);
+				break;
+			}
 		}
 	}
 }
 
 // 自动添加至场景节点
-if (!EDITOR && global_config.view.auto_adaptation_switch_b) {
+if (!EDITOR && global_config.view.adaptation_type !== global_config.view.adaptation_mode.none) {
 	cc.director.on(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
 		const canvas_node = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
 
