@@ -115,7 +115,7 @@
 				"format": ["snake_case"],
 				"filter": {
 					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)]"
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)]"
 				},
 				"leadingUnderscore": "require"
 			},
@@ -126,7 +126,7 @@
 				"format": ["snake_case"],
 				"filter": {
 					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)]"
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)]"
 				},
 				"leadingUnderscore": "allowSingleOrDouble",
 				"trailingUnderscore": "allowSingleOrDouble"
@@ -153,7 +153,6 @@
 					"protected-abstract-field",
 					"protected-instance-field",
 
-					"private-abstract-field",
 					"private-instance-field",
 
 					"public-field",
