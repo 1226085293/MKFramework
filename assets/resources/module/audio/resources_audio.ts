@@ -36,7 +36,7 @@ export class resources_audio extends mk.module.view_base {
 			/** 暂停状态 */
 			pause_b: false,
 			/** 停止状态 */
-			stop_b: true,
+			stop_b: false,
 		};
 
 		effect = {
@@ -45,7 +45,7 @@ export class resources_audio extends mk.module.view_base {
 			/** 暂停状态 */
 			pause_b: false,
 			/** 停止状态 */
-			stop_b: true,
+			stop_b: false,
 		};
 
 		/** 分组 */
