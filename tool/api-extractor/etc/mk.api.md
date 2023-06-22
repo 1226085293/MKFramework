@@ -464,6 +464,7 @@ class mk_layer extends cc_2.Component {
     layer_type_n: number;
     // (undocumented)
     protected onLoad(): void;
+    static set_layer_refresh_interval(node_: cc_2.Node, interval_ms_n_: number, recursion_b_?: boolean): void;
     protected _use_layer_b: boolean;
 }
 
@@ -472,6 +473,11 @@ namespace _mk_layer {
     interface global_config {
         layer_spacing_n: number;
         layer_type: any;
+    }
+    interface node_extend {
+        __layer_n?: number;
+        __layer_refresh_interval_ms_n?: number;
+        __layer_timer?: any;
     }
 }
 

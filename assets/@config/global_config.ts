@@ -58,17 +58,19 @@ namespace global_config {
 			fixed_size,
 		}
 
+		/** 适配类型 */
+		export const adaptation_type: adaptation_mode = adaptation_mode.adaptive;
+		/** 初始设计尺寸 */
+		export const original_design_size: Omit<Readonly<cc.Size>, "set"> = cc.size();
 		/** 层间隔 */
 		export const layer_spacing_n = 100;
+		/** 渲染层级刷新间隔 */
+		export const layer_refresh_interval_ms_n = cc.game.frameTime;
 		/** 默认遮罩 */
 		export const mask_data_tab = {
 			node_name_s: "遮罩",
 			prefab_path_s: "db://assets/resources/module/@common/mask/resources_common_mask.prefab",
 		};
-		/** 适配类型 */
-		export const adaptation_type: adaptation_mode = adaptation_mode.adaptive;
-		/** 初始设计尺寸 */
-		export const original_design_size: Omit<Readonly<cc.Size>, "set"> = cc.size();
 		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错） */
 		export const blocking_warning_time_ms_n = DEBUG ? 5000 : 0;
 	}

@@ -2,7 +2,7 @@ import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
 import tool from "../../../tool/tool";
-import { test } from "../../config/proto/test.js";
+import { test } from "../../bundle/proto/test.js";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_network")

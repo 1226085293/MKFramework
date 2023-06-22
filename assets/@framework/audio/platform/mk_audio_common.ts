@@ -9,7 +9,8 @@ const { ccclass } = cc._decorator;
 /**
  * 通用音频
  * @remarks
- * 引擎 bug：3.7.2 以下版本不能同时播放两个以上的音频
+ * - 引擎 bug：3.7.2 以下版本不能同时播放两个以上的音频
+ * - 引擎 bug：3.7.2 以下版本使用编辑器 @property 资源调用 play 只会有一个音频生效
  */
 class mk_audio_common extends mk_audio_base {
 	constructor() {
