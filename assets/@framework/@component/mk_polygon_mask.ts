@@ -41,6 +41,16 @@ export class mk_polygon_mask extends cc.Component {
 		this._set_track_node(value_);
 	}
 
+	/* --------------- public --------------- */
+	/** 偏移坐标 */
+	get offset_v3(): cc.Vec3 {
+		return this._offset_v3;
+	}
+
+	set offset_v3(value_v3_) {
+		this._set_offset_v3(value_v3_);
+	}
+
 	/* --------------- private --------------- */
 	/** 跟踪节点 */
 	@property(cc.Node)
@@ -50,6 +60,8 @@ export class mk_polygon_mask extends cc.Component {
 	@property
 	private _track_node_start_pos_v3 = cc.v3();
 
+	/** 偏移坐标 */
+	private _offset_v3 = cc.v3();
 	/** 多边形本地点 */
 	private _polygon_local_point_v2s!: cc.Vec2[];
 	/** 当前多边形本地点 */
@@ -182,11 +194,19 @@ export class mk_polygon_mask extends cc.Component {
 			);
 
 			this._current_polygon_local_point_v2s = this._polygon_local_point_v2s.map((v_v2) =>
-				v_v2.clone().add2f(node_offset_v3.x, node_offset_v3.y).add2f(screen_offset_v3.x, screen_offset_v3.y)
+				v_v2
+					.clone()
+					.add2f(node_offset_v3.x, node_offset_v3.y)
+					.add2f(screen_offset_v3.x, screen_offset_v3.y)
+					.add2f(this._offset_v3.x, this._offset_v3.y)
 			);
 
 			this._current_polygon_world_point_v2s = this._polygon_world_point_v2s.map((v_v2) =>
-				v_v2.clone().add2f(node_offset_v3.x, node_offset_v3.y)
+				v_v2
+					.clone()
+					.add2f(node_offset_v3.x, node_offset_v3.y)
+					.add2f(screen_offset_v3.x, screen_offset_v3.y)
+					.add2f(this._offset_v3.x, this._offset_v3.y)
 			);
 		}
 
@@ -223,6 +243,11 @@ export class mk_polygon_mask extends cc.Component {
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
+	private _set_offset_v3(value_v3_: cc.Vec3): void {
+		this._offset_v3.set(value_v3_);
+		this.update_mask();
+	}
+
 	private _set_track_node(value_: cc.Node): void {
 		this._track_node?.off(cc.Node.EventType.TRANSFORM_CHANGED, this._event_track_node_transform_changed, this);
 		this._track_node = value_;
