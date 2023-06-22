@@ -36,7 +36,9 @@ export namespace audio_ {
     export interface add_config {
         dir_b?: boolean;
         group_ns?: number[];
-        load_config: asset_.get_dir_config<cc_2.AudioClip>;
+        load_config?: asset_.get_dir_config<cc_2.AudioClip>;
+        // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
+        type?: global_config.audio.type;
     }
     export interface event_protocol {
         end(): void;
@@ -72,7 +74,7 @@ export namespace audio_ {
         stop = 1
     }
     export interface unit {
-        readonly audio_source?: cc_2.AudioSource;
+        readonly audio_source: cc_2.AudioSource | null;
         clip: cc_2.AudioClip | null;
         clone<T extends this>(): T;
         clone<T extends this>(value_n_: number): T[];
@@ -93,8 +95,8 @@ export namespace audio_ {
     }
     export abstract class _unit {
         constructor(init_?: Partial<_unit>);
-        get audio_source(): cc_2.AudioSource | undefined;
-        set audio_source(value_: cc_2.AudioSource | undefined);
+        get audio_source(): cc_2.AudioSource | null;
+        set audio_source(value_: cc_2.AudioSource | null);
         clip: cc_2.AudioClip | null;
         clone(): _unit;
         clone(value_n_: number): _unit[];
@@ -113,7 +115,6 @@ export namespace audio_ {
         state: state;
         stop_group_n: number | null;
         get total_time_s_n(): number;
-        // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
         type: global_config.audio.type;
         abstract update_volume(): void;
         use_play_b?: boolean;
@@ -732,6 +733,8 @@ export namespace obj_pool {
 // @public
 export class polygon_mask extends cc_2.Component {
     mask: cc_2.Mask | null;
+    get offset_v3(): cc_2.Vec3;
+    set offset_v3(value_v3_: cc_2.Vec3);
     // (undocumented)
     protected onDisable(): void;
     // (undocumented)

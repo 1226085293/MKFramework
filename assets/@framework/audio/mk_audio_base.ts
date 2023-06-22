@@ -1,5 +1,5 @@
 import mk_instance_base from "../mk_instance_base";
-import cache, { mk_asset_ } from "../resources/mk_asset";
+import mk_asset, { mk_asset_ } from "../resources/mk_asset";
 import { EDITOR } from "cc/env";
 import mk_event_target from "../mk_event_target";
 import mk_logger from "../mk_logger";
@@ -79,13 +79,14 @@ abstract class mk_audio_base extends mk_instance_base {
 
 		if (config_?.dir_b) {
 			for (const v_s of url_ss) {
-				const asset_as = await cache.get_dir(v_s, config_.load_config);
+				const asset_as = await mk_asset.get_dir(v_s, config_.load_config ?? { type: cc.AudioClip });
 
 				asset_as?.forEach((v2) => {
 					const audio = this._get_audio_unit({
 						clip: v2,
 					});
 
+					audio.type = config_.type ?? audio.type;
 					audio_as.push(audio);
 				});
 			}
@@ -94,7 +95,7 @@ abstract class mk_audio_base extends mk_instance_base {
 		} else {
 			for (const v_s of url_ss) {
 				const config = (config_?.load_config as any) ?? cc.AudioClip;
-				const asset = await cache.get<cc.AudioClip>(v_s, config);
+				const asset = await mk_asset.get<cc.AudioClip>(v_s, config);
 
 				if (!asset) {
 					continue;
@@ -104,6 +105,7 @@ abstract class mk_audio_base extends mk_instance_base {
 					clip: asset,
 				});
 
+				audio.type = config_?.type ?? audio.type;
 				audio_as.push(audio);
 			}
 
@@ -186,6 +188,19 @@ abstract class mk_audio_base extends mk_instance_base {
 			return false;
 		}
 
+		/** 包含类型数量 */
+		const num_types_included_n =
+			group_ns_?.reduce((pre, curr) => {
+				return pre + (curr < 0 ? 1 : 0);
+			}, 0) ?? 0;
+
+		// 检查分组数据
+		if (num_types_included_n > 0) {
+			this._log.error(`添加音频单元 ${audio_.clip.name} 失败，不能包含音频类型`);
+
+			return false;
+		}
+
 		// 添加分组音频
 		[audio_.type].concat(group_ns_ ?? []).forEach((v_n) => {
 			/** 组音频列表 */
@@ -260,7 +275,7 @@ export namespace mk_audio_base_ {
 		 * @remarks
 		 * common 使用
 		 */
-		readonly audio_source?: cc.AudioSource;
+		readonly audio_source: cc.AudioSource | null;
 		/** 音频资源 */
 		clip: cc.AudioClip | null;
 		/**
@@ -299,12 +314,14 @@ export namespace mk_audio_base_ {
 
 	/** add 配置 */
 	export interface add_config {
+		/** 类型 */
+		type?: global_config.audio.type;
 		/** 分组 */
 		group_ns?: number[];
 		/** 文件夹 */
 		dir_b?: boolean;
 		/** 加载配置 */
-		load_config: mk_asset_.get_dir_config<cc.AudioClip>;
+		load_config?: mk_asset_.get_dir_config<cc.AudioClip>;
 	}
 
 	/** play 配置 */
@@ -448,8 +465,8 @@ export namespace mk_audio_base_ {
 		 * @remarks
 		 * common 使用
 		 */
-		get audio_source(): cc.AudioSource | undefined {
-			return null!;
+		get audio_source(): cc.AudioSource | null {
+			return null;
 		}
 
 		set audio_source(value_) {

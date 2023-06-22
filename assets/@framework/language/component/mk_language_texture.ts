@@ -1,7 +1,7 @@
 import { EDITOR } from "cc/env";
 import global_config from "../../../@config/global_config";
 import language from "../mk_language_manage";
-import cache from "../../resources/mk_asset";
+import mk_asset from "../../resources/mk_asset";
 import * as cc from "cc";
 import mk_language_base from "./mk_language_base";
 import mk_tool from "../../@private/tool/mk_tool";
@@ -69,7 +69,7 @@ class mk_language_texture extends mk_language_base {
 		}
 
 		if (EDITOR) {
-			const asset = await cache.get(path_s + ".png", cc.ImageAsset);
+			const asset = await mk_asset.get(path_s + ".png", cc.ImageAsset);
 
 			if (!asset?._uuid) {
 				return;
@@ -86,7 +86,7 @@ class mk_language_texture extends mk_language_base {
 				},
 			});
 		} else {
-			const asset = await cache.get(path_s, cc.SpriteFrame);
+			const asset = await mk_asset.get(path_s, cc.SpriteFrame);
 
 			if (!asset) {
 				return;

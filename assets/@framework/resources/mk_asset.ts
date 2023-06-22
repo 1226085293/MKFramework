@@ -8,10 +8,18 @@ import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
 
 namespace _mk_asset {
-	/** loadRemote 配置类型 */
-	export type load_remote_option_type = cc.__private._cocos_core_asset_manager_shared__IRemoteOptions;
-	/** loadAny 请求类型 */
-	export type load_any_request_type = cc.__private._cocos_core_asset_manager_shared__IRequest;
+	/**
+	 * loadRemote 配置类型
+	 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRemoteOptions
+	 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
+	 */
+	export type load_remote_option_type = cc.__private._cocos_asset_asset_manager_shared__IRequest;
+	/**
+	 * loadAny 请求类型
+	 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRequest
+	 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
+	 */
+	export type load_any_request_type = cc.__private._cocos_asset_asset_manager_shared__IRequest;
 
 	/** 全局配置 */
 	export interface global_config {
@@ -474,13 +482,17 @@ class mk_asset extends mk_instance_base {
 	private async _event_restart(): Promise<void> {
 		// 等待场景关闭
 		await Promise.all(global_event.request(global_event.key.wait_close_scene));
-		// 释放资源
+		// 立即释放资源
 		this._auto_release_asset(true);
 		// 清理定时器
 		clearInterval(this._release_timer);
-		// 释放没有用到的资源
+		// 释放 bundle 资源
 		cc.assetManager.bundles.forEach((v) => {
-			v.releaseUnusedAssets();
+			if (v["releaseUnusedAssets"]) {
+				v["releaseUnusedAssets"]();
+			} else {
+				v.releaseAll();
+			}
 		});
 	}
 }

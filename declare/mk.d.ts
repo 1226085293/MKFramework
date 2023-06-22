@@ -81,7 +81,7 @@ declare namespace mk {
 			 * @remarks
 			 * common 使用
 			 */
-			readonly audio_source?: cc_2.AudioSource;
+			readonly audio_source: cc_2.AudioSource | null;
 			/** 音频资源 */
 			clip: cc_2.AudioClip | null;
 			/**
@@ -118,12 +118,14 @@ declare namespace mk {
 		}
 		/** add 配置 */
 		export interface add_config {
+			/** 类型 */
+			type?: global_config.audio.type;
 			/** 分组 */
 			group_ns?: number[];
 			/** 文件夹 */
 			dir_b?: boolean;
 			/** 加载配置 */
-			load_config: asset_.get_dir_config<cc_2.AudioClip>;
+			load_config?: asset_.get_dir_config<cc_2.AudioClip>;
 		}
 		/** play 配置 */
 		export interface play_config {
@@ -217,8 +219,8 @@ declare namespace mk {
 			 * @remarks
 			 * common 使用
 			 */
-			get audio_source(): cc_2.AudioSource | undefined;
-			set audio_source(value_: cc_2.AudioSource | undefined);
+			get audio_source(): cc_2.AudioSource | null;
+			set audio_source(value_: cc_2.AudioSource | null);
 			/** 初始化状态 */
 			protected _init_b: boolean;
 			/** 更新音量 */
@@ -790,10 +792,18 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_asset {
-		/** loadRemote 配置类型 */
-		type load_remote_option_type = cc_2.__private._cocos_core_asset_manager_shared__IRemoteOptions;
-		/** loadAny 请求类型 */
-		type load_any_request_type = cc_2.__private._cocos_core_asset_manager_shared__IRequest;
+		/**
+		 * loadRemote 配置类型
+		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRemoteOptions
+		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
+		 */
+		type load_remote_option_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
+		/**
+		 * loadAny 请求类型
+		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRequest
+		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
+		 */
+		type load_any_request_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
 		/** 全局配置 */
 		interface global_config {
 			/** 缓存生命时长 */
@@ -2581,10 +2591,15 @@ declare namespace mk {
 		/** 跟踪节点 */
 		get track_node(): cc_2.Node;
 		set track_node(value_: cc_2.Node);
+		/** 偏移坐标 */
+		get offset_v3(): cc_2.Vec3;
+		set offset_v3(value_v3_: cc_2.Vec3);
 		/** 跟踪节点 */
 		private _track_node;
 		/** 跟踪节点初始坐标 */
 		private _track_node_start_pos_v3;
+		/** 偏移坐标 */
+		private _offset_v3;
 		/** 多边形本地点 */
 		private _polygon_local_point_v2s;
 		/** 当前多边形本地点 */
@@ -2604,6 +2619,7 @@ declare namespace mk {
 		update_mask(): void;
 		/** 更新遮罩 */
 		private _update_mask;
+		private _set_offset_v3;
 		private _set_track_node;
 		private _event_node_input;
 		private _event_track_node_transform_changed;

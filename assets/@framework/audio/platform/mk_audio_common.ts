@@ -84,6 +84,9 @@ class mk_audio_common extends mk_audio_base {
 		audio_._event?.emit(audio_._event?.key.stop);
 		// 回收 AudioSource
 		this._audio_source_pool.put(audio_.audio_source!);
+		audio_.audio_source = null;
+		// 重置进度
+		audio_.curr_time_s_n = 0;
 	}
 
 	protected _get_audio_unit<T extends mk_audio_base_._unit>(init_?: Partial<mk_audio_common_._unit>): T {
@@ -264,6 +267,9 @@ class mk_audio_common extends mk_audio_base {
 			audio_._event?.emit(audio_._event?.key.end);
 			// 回收 AudioSource
 			this._audio_source_pool.put(audio_.audio_source!);
+			audio_.audio_source = null;
+			// 重置进度
+			audio_.curr_time_s_n = 0;
 		}
 
 		// 继续播放
@@ -320,7 +326,7 @@ export namespace mk_audio_common_ {
 			this._set_curr_time_s_n(value_n_);
 		}
 
-		get audio_source(): cc.AudioSource | undefined {
+		get audio_source(): cc.AudioSource | null {
 			return this._audio_source;
 		}
 
@@ -336,7 +342,7 @@ export namespace mk_audio_common_ {
 		/** 当前时间 */
 		private _curr_time_s_n = 0;
 		/** 音频组件 */
-		private _audio_source?: cc.AudioSource;
+		private _audio_source: cc.AudioSource | null = null;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 更新音量 */
 		update_volume(): void {
@@ -437,7 +443,7 @@ export namespace mk_audio_common_ {
 			this.audio_source.currentTime = this._curr_time_s_n;
 		}
 
-		private _set_audio_source(value_: cc.AudioSource | undefined): void {
+		private _set_audio_source(value_: cc.AudioSource | null): void {
 			this._audio_source = value_;
 
 			// 更新组件数据

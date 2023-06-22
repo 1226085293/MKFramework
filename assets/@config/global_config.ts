@@ -14,10 +14,10 @@ namespace global_config {
 
 	/** 音频 */
 	export namespace audio {
-		/** 音频类型 */
+		/** 音频类型（必须 < 0） */
 		export enum type {
 			/** 音效 */
-			effect = -2,
+			effect = -99,
 			/** 音乐 */
 			music,
 		}

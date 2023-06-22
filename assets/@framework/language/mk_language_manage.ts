@@ -4,7 +4,7 @@ import * as cc from "cc";
 import mk_event_target from "../mk_event_target";
 import mk_instance_base from "../mk_instance_base";
 import mk_logger from "../mk_logger";
-import cache from "../resources/mk_asset";
+import mk_asset from "../resources/mk_asset";
 
 namespace _mk_language_manage {
 	/** 多语言类型类型 */
@@ -97,7 +97,7 @@ class mk_language_manage extends mk_instance_base {
 		}
 
 		if (EDITOR) {
-			const asset = await cache.get(path_s + ".png", cc.ImageAsset);
+			const asset = await mk_asset.get(path_s + ".png", cc.ImageAsset);
 
 			if (asset) {
 				const sprite_frame = new cc.SpriteFrame();
@@ -109,7 +109,7 @@ class mk_language_manage extends mk_instance_base {
 				return sprite_frame;
 			}
 		} else {
-			const asset = await cache.get(path_s, cc.SpriteFrame);
+			const asset = await mk_asset.get(path_s, cc.SpriteFrame);
 
 			if (asset) {
 				return asset;

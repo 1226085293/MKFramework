@@ -4,7 +4,7 @@ import mk_instance_base from "./mk_instance_base";
 import mk_logger from "./mk_logger";
 import mk_view_base from "./module/mk_view_base";
 import mk_obj_pool from "./mk_obj_pool";
-import cache, { mk_asset_ } from "./resources/mk_asset";
+import mk_asset, { mk_asset_ } from "./resources/mk_asset";
 import mk_status_task from "./task/mk_status_task";
 import mk_tool from "./@private/tool/mk_tool";
 
@@ -141,7 +141,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 			// 资源路径
 			if (typeof v === "string" && regis_data.pool_init_fill_n > 0) {
-				source = await cache.get(v, regis_data.load_config ?? cc.Prefab);
+				source = await mk_asset.get(v, regis_data.load_config ?? cc.Prefab);
 			}
 
 			// 预制体/节点
@@ -162,7 +162,7 @@ export class mk_ui_manage extends mk_instance_base {
 					create_f: async () => {
 						// 不存在预制体开始加载
 						if (!source && typeof v === "string") {
-							source = (await cache.get(v, regis_data.load_config ?? cc.Prefab))!;
+							source = (await mk_asset.get(v, regis_data.load_config ?? cc.Prefab))!;
 						}
 
 						if (!source?.isValid) {
