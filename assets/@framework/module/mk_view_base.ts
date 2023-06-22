@@ -7,12 +7,15 @@ import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
 import type { _mk_layer } from "./mk_layer";
 import global_config from "../../@config/global_config";
+import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
 namespace _mk_view_base {
 	/** 释放对象类型 */
-	export type release_object_type = { clear(): void };
+	export type release_object_type = { release(): void };
+	/** 释放参数类型 */
+	export type release_param_type = cc.Node | cc.Asset | release_object_type;
 
 	/** create 配置 */
 	export interface create_config extends _mk_life_cycle.create_config {
@@ -241,8 +244,31 @@ export class mk_view_base extends mk_life_cycle {
 	/** 引用对象 */
 	private _quote_object_as: _mk_view_base.release_object_type[] = [];
 	/* ------------------------------- 生命周期 ------------------------------- */
-	open(): void | Promise<void>;
-	async open(): Promise<void> {
+	protected onLoad(): void {
+		super.onLoad();
+		/** 参数表 */
+		const attr_tab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
+		/** 参数键列表 */
+		const attr_key_ss = Object.keys(attr_tab);
+
+		// 初始化音频单元
+		attr_key_ss.forEach((v_s) => {
+			if (!v_s.endsWith("$_$ctor")) {
+				return;
+			}
+
+			/** 属性名 */
+			const name_s = v_s.slice(0, -7);
+
+			// 初始化音频单元
+			if (this[name_s] instanceof mk_audio_._unit) {
+				mk_audio._add(this[name_s]);
+			}
+		});
+	}
+
+	protected open(): void | Promise<void>;
+	protected async open(): Promise<void> {
 		/** 打开动画函数 */
 		const open_animation_f = mk_view_base.config.window_animation_tab?.open?.[this.animation_config?.open_animation_s];
 
@@ -265,7 +291,10 @@ export class mk_view_base extends mk_life_cycle {
 		}
 	}
 
-	async late_close?(): Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected late_close?(): void | Promise<void>;
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected async late_close?(): Promise<void> {
 		/** 关闭动画函数 */
 		const close_animation_f = mk_view_base.config.window_animation_tab?.close?.[this.animation_config?.close_animation_s];
 
@@ -287,7 +316,7 @@ export class mk_view_base extends mk_life_cycle {
 		});
 
 		this._quote_asset_as.splice(0, this._quote_asset_as.length);
-		this._quote_object_as.forEach((v) => v.clear());
+		this._quote_object_as.forEach((v) => v.release());
 		this._quote_object_as.splice(0, this._quote_object_as.length);
 
 		// 重置数据
@@ -297,13 +326,11 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
-	/** 自动释放 */
-	auto_release<T extends cc.Node | cc.Node[]>(args_: T): T;
-	auto_release<T extends cc.Asset | cc.Asset[]>(args_: T): T;
-	auto_release<T extends _mk_view_base.release_object_type | _mk_view_base.release_object_type[]>(args_: T): T;
-	auto_release<
-		T extends (cc.Asset | cc.Asset[]) | (cc.Node | cc.Node[]) | (_mk_view_base.release_object_type | _mk_view_base.release_object_type[])
-	>(args_: T): T {
+	/**
+	 * 跟随释放
+	 * @param args_ 要跟随模块释放的对象或列表
+	 */
+	follow_release<T extends _mk_view_base.release_param_type | _mk_view_base.release_param_type[]>(args_: T): T {
 		if (!args_) {
 			return args_;
 		}
@@ -341,7 +368,7 @@ export class mk_view_base extends mk_life_cycle {
 		if (!this.open_b) {
 			node_as?.forEach((v) => v.destroy());
 			asset_as?.forEach((v) => v.decRef());
-			object_as?.forEach((v) => v.clear());
+			object_as?.forEach((v) => v.release());
 
 			return args_;
 		}

@@ -865,8 +865,7 @@ declare namespace mk {
 		resume_all(): void;
 		/** 停止所有音频 */
 		stop_all(): void;
-		/** 添加音频单元 */
-		protected _add(audio_: audio_._unit, group_ns_?: ReadonlyArray<number>): boolean;
+		/* Excluded from this release type: _add */
 		private _event_restart;
 	}
 
@@ -2389,17 +2388,19 @@ declare namespace mk {
 		private _quote_asset_as;
 		/** 引用对象 */
 		private _quote_object_as;
-		open(): void | Promise<void>;
+		protected onLoad(): void;
+		protected open(): void | Promise<void>;
 		/**
 		 * 关闭
 		 * @param config_ 关闭配置
 		 */
 		close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
-		late_close?(): Promise<void>;
-		/** 自动释放 */
-		auto_release<T extends cc_2.Node | cc_2.Node[]>(args_: T): T;
-		auto_release<T extends cc_2.Asset | cc_2.Asset[]>(args_: T): T;
-		auto_release<T extends _mk_view_base.release_object_type | _mk_view_base.release_object_type[]>(args_: T): T;
+		protected late_close?(): void | Promise<void>;
+		/**
+		 * 跟随释放
+		 * @param args_ 要跟随模块释放的对象或列表
+		 */
+		follow_release<T extends _mk_view_base.release_param_type | _mk_view_base.release_param_type[]>(args_: T): T;
 		/** 初始化编辑器 */
 		protected _init_editor(): void;
 		private _get_auto_mask_b;
@@ -2411,8 +2412,10 @@ declare namespace mk {
 	declare namespace _mk_view_base {
 		/** 释放对象类型 */
 		type release_object_type = {
-			clear(): void;
+			release(): void;
 		};
+		/** 释放参数类型 */
+		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type;
 		/** create 配置 */
 		interface create_config extends _mk_life_cycle.create_config {
 			/** 视图配置 */

@@ -9,7 +9,8 @@
       "__id__": 1
     },
     "optimizationPolicy": 0,
-    "persistent": false
+    "persistent": false,
+    "asyncLoadAssets": false
   },
   {
     "__type__": "cc.Node",

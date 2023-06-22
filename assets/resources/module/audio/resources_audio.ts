@@ -36,7 +36,7 @@ export class resources_audio extends mk.module.view_base {
 			/** 暂停状态 */
 			pause_b: false,
 			/** 停止状态 */
-			stop_b: false,
+			stop_b: true,
 		};
 
 		effect = {
@@ -45,7 +45,7 @@ export class resources_audio extends mk.module.view_base {
 			/** 暂停状态 */
 			pause_b: false,
 			/** 停止状态 */
-			stop_b: false,
+			stop_b: true,
 		};
 
 		/** 分组 */
@@ -67,8 +67,6 @@ export class resources_audio extends mk.module.view_base {
 
 	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
-	/** 基本控制音频播放定时器 */
-	private _base_control_timer: any;
 	/** 重叠音频数组 */
 	private _overlap_effect_as!: mk.audio_.unit[];
 	/* ------------------------------- 生命周期 ------------------------------- */
@@ -151,11 +149,6 @@ export class resources_audio extends mk.module.view_base {
 
 			this.data.music.progress_n = this.music.curr_time_s_n / this.music.total_time_s_n;
 		}, 1);
-
-		// 播放音乐
-		mk.audio.play(this.music);
-		mk.audio.play(this.effect);
-		mk.audio.play(this.effect2);
 	}
 
 	/** 初始化事件 */
@@ -200,8 +193,6 @@ export class resources_audio extends mk.module.view_base {
 			mk.audio.get_group(global_config.audio.type.music).pause();
 		} else {
 			mk.audio.get_group(global_config.audio.type.music).play(mk.audio_.state.pause);
-			// 更新状态
-			this.data.music.stop_b = false;
 		}
 	}
 

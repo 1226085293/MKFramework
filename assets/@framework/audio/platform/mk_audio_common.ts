@@ -89,11 +89,7 @@ class mk_audio_common extends mk_audio_base {
 		audio_.curr_time_s_n = 0;
 	}
 
-	protected _get_audio_unit<T extends mk_audio_base_._unit>(init_?: Partial<mk_audio_common_._unit>): T {
-		return new mk_audio_common_._unit(init_) as any;
-	}
-
-	protected _add(audio_: mk_audio_common_._unit, group_ns_?: number[]): boolean {
+	_add(audio_: mk_audio_common_._unit, group_ns_?: number[]): boolean {
 		if (!super._add(audio_, group_ns_)) {
 			return false;
 		}
@@ -102,6 +98,10 @@ class mk_audio_common extends mk_audio_base {
 		audio_.init_b = true;
 
 		return true;
+	}
+
+	protected _get_audio_unit<T extends mk_audio_base_._unit>(init_?: Partial<mk_audio_common_._unit>): T {
+		return new mk_audio_common_._unit(init_) as any;
 	}
 
 	private _play(audio_: mk_audio_common_._unit): void {
@@ -123,7 +123,6 @@ class mk_audio_common extends mk_audio_base {
 			// 请求 AudioSource
 			audio_.audio_source = this._audio_source_pool.get();
 			audio_.audio_source.clip = audio_.clip;
-			audio_.init_b = true;
 
 			// 添加音频 uuid 索引表
 			this._audio_unit_map.set(audio_.audio_source.uuid, audio_);
@@ -346,11 +345,6 @@ export namespace mk_audio_common_ {
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 更新音量 */
 		update_volume(): void {
-			// 初始化检查
-			if (!this.init_b) {
-				return;
-			}
-
 			// 更新音量
 			this.volume_n = this._volume_n;
 		}
@@ -361,13 +355,13 @@ export namespace mk_audio_common_ {
 
 			new_audio.clip = this.clip;
 			new_audio.type = this.type;
-			this.group_ns.forEach((v_n) => {
-				mk_audio_common.instance().get_group(v_n).add_audio(new_audio);
-			});
-
 			new_audio.use_play_b = this.use_play_b;
 			new_audio._volume_n = this._volume_n;
 			new_audio._loop_b = this._loop_b;
+			new_audio._init_b = this._init_b;
+			this.group_ns.forEach((v_n) => {
+				mk_audio_common.instance().get_group(v_n).add_audio(new_audio);
+			});
 
 			return new_audio;
 		}
@@ -396,11 +390,10 @@ export namespace mk_audio_common_ {
 			}
 
 			// 更新真实音量
-			this.real_volume_n = this.group_ns.reduce((pre_n, curr_n) => {
-				pre_n *= mk_audio_common.instance().get_group(curr_n).volume_n;
-
-				return pre_n;
-			}, this._volume_n);
+			this.real_volume_n = this.group_ns.reduce(
+				(pre_n, curr_n) => pre_n * mk_audio_common.instance().get_group(curr_n).volume_n,
+				this._volume_n
+			);
 
 			// 设置音量
 			if (this.audio_source) {

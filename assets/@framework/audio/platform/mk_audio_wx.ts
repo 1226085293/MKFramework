@@ -69,7 +69,7 @@ class mk_audio_wx extends mk_audio_base {
 		audio_._event?.emit(audio_._event?.key.stop);
 	}
 
-	protected _add(audio_: mk_audio_wx_._unit, group_ns_?: number[]): boolean {
+	_add(audio_: mk_audio_wx_._unit, group_ns_?: number[]): boolean {
 		const result_b = super._add(audio_, group_ns_);
 
 		// 初始化完成
@@ -161,11 +161,6 @@ export namespace mk_audio_wx_ {
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 更新音量 */
 		update_volume(): void {
-			// 初始化检查
-			if (!this.init_b) {
-				return;
-			}
-
 			// 更新音量
 			this.volume_n = this._volume_n;
 		}
@@ -176,12 +171,12 @@ export namespace mk_audio_wx_ {
 
 			new_audio.clip = this.clip;
 			new_audio.type = this.type;
+			new_audio._volume_n = this._volume_n;
+			new_audio._loop_b = this._loop_b;
+			new_audio._init_b = this._init_b;
 			this.group_ns.forEach((v_n) => {
 				mk_audio_wx.instance().get_group(v_n).add_audio(new_audio);
 			});
-
-			new_audio._volume_n = this._volume_n;
-			new_audio._loop_b = this._loop_b;
 
 			return new_audio;
 		}
@@ -219,11 +214,10 @@ export namespace mk_audio_wx_ {
 				}
 
 				// 更新真实音量
-				this.real_volume_n = this.group_ns.reduce((pre_n, curr_n) => {
-					pre_n *= mk_audio_wx.instance().get_group(curr_n).volume_n;
-
-					return pre_n;
-				}, this._volume_n);
+				this.real_volume_n = this.group_ns.reduce(
+					(pre_n, curr_n) => pre_n * mk_audio_wx.instance().get_group(curr_n).volume_n,
+					this._volume_n
+				);
 
 				// 更新音量
 				this.context.volume = this.real_volume_n;

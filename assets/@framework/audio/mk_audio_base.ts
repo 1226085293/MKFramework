@@ -181,8 +181,14 @@ abstract class mk_audio_base extends mk_instance_base {
 		});
 	}
 
-	/** 添加音频单元 */
-	protected _add(audio_: mk_audio_base_._unit, group_ns_?: ReadonlyArray<number>): boolean {
+	/**
+	 * 添加音频单元
+	 * @param audio_ 音频单元
+	 * @param group_ns_ 音频组
+	 * @returns 成功状态
+	 * @internal
+	 */
+	_add(audio_: mk_audio_base_._unit, group_ns_?: ReadonlyArray<number>): boolean {
 		// 参数安检
 		if (!audio_ || audio_.init_b || !audio_.clip) {
 			return false;

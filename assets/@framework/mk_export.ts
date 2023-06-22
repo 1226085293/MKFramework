@@ -1,7 +1,7 @@
 import { mk_log } from "./mk_logger";
 
 export { default as task } from "./task/mk_task";
-export { audio, audio_ } from "./audio/mk_audio_export";
+export { mk_audio as audio, mk_audio_ as audio_ } from "./audio/mk_audio_export";
 export { default as language, mk_language_manage as language_manage, language_manage_ as language_ } from "./language/mk_language";
 export { default as module } from "./module/mk_module";
 export { default as network } from "./network/mk_network";

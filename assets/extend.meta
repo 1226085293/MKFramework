@@ -8,6 +8,8 @@
   "userData": {
     "isBundle": true,
     "bundleName": "extend",
-    "bundleConfigID": "auto_b7l34bcd1K1a7GfAW+8RdA"
+    "bundleConfigID": "auto_b7l34bcd1K1a7GfAW+8RdA",
+    "compressionType": {},
+    "isRemoteBundle": {}
   }
 }

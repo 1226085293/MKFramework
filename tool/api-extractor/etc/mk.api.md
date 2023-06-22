@@ -612,11 +612,6 @@ class mk_view_base extends mk_life_cycle {
     // (undocumented)
     get auto_mask_b(): boolean;
     set auto_mask_b(value_b_: boolean);
-    auto_release<T extends cc_2.Node | cc_2.Node[]>(args_: T): T;
-    // (undocumented)
-    auto_release<T extends cc_2.Asset | cc_2.Asset[]>(args_: T): T;
-    // (undocumented)
-    auto_release<T extends _mk_view_base.release_object_type | _mk_view_base.release_object_type[]>(args_: T): T;
     // (undocumented)
     get auto_widget_b(): boolean;
     set auto_widget_b(value_b_: boolean);
@@ -627,11 +622,14 @@ class mk_view_base extends mk_life_cycle {
     static config: _mk_view_base.global_config;
     set config(config_: _mk_view_base.create_config);
     data?: any;
+    follow_release<T extends _mk_view_base.release_param_type | _mk_view_base.release_param_type[]>(args_: T): T;
     protected _init_editor(): void;
     // (undocumented)
-    late_close?(): Promise<void>;
+    protected late_close?(): void | Promise<void>;
     // (undocumented)
-    open(): void | Promise<void>;
+    protected onLoad(): void;
+    // (undocumented)
+    protected open(): void | Promise<void>;
     protected _reset_data_b: boolean;
     // (undocumented)
     show_alone_b: boolean;

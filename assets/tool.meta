@@ -8,6 +8,8 @@
   "userData": {
     "bundleName": "tool",
     "isBundle": true,
-    "bundleConfigID": "auto_cagccLCvVAlLJ3yBwnWXog"
+    "bundleConfigID": "auto_cagccLCvVAlLJ3yBwnWXog",
+    "compressionType": {},
+    "isRemoteBundle": {}
   }
 }
