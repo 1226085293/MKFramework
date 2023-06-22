@@ -2,7 +2,7 @@ import * as mk from "./mk_export";
 // import type * as mk from "./../../declare/mk";
 import global_config from "../@config/global_config";
 import * as cc from "cc";
-import { EDITOR } from "cc/env";
+import { DEBUG, EDITOR } from "cc/env";
 import global_event from "../@config/global_event";
 
 // 初始化逻辑
@@ -28,4 +28,11 @@ if (!EDITOR) {
 }
 
 // 注册到全局
-export default self["mk"] = mk;
+if (DEBUG) {
+	self["mk"] = mk;
+}
+
+let temp: any = null;
+
+// 防止编辑器增加 mk 提示
+export default temp = mk;

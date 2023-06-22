@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import { DEBUG } from "cc/env";
 
 interface global_event_protocol {
 	/** 屏幕尺寸改变 */
@@ -120,6 +121,10 @@ class event<CT> extends cc.EventTarget {
 	}
 }
 
-const global_event = (self["global_event"] = new event<global_event_protocol>());
+const global_event = new event<global_event_protocol>();
+
+if (DEBUG) {
+	self["global_event"] = global_event;
+}
 
 export default global_event;
