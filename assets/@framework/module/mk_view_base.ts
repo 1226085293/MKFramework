@@ -272,6 +272,9 @@ export class mk_view_base extends mk_life_cycle {
 		/** 打开动画函数 */
 		const open_animation_f = mk_view_base.config.window_animation_tab?.open?.[this.animation_config?.open_animation_s];
 
+		// 更新 widget，防止在节点池内 widget 未更新
+		cc.view.emit("canvas-resize");
+
 		// 打开动画
 		if (open_animation_f) {
 			await open_animation_f(this.node);

@@ -797,13 +797,13 @@ declare namespace mk {
 		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRemoteOptions
 		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
 		 */
-		type load_remote_option_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
+		type load_remote_option_type = cc_2.__private._cocos_core_asset_manager_shared__IRemoteOptions;
 		/**
 		 * loadAny 请求类型
 		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRequest
 		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
 		 */
-		type load_any_request_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
+		type load_any_request_type = cc_2.__private._cocos_core_asset_manager_shared__IRequest;
 		/** 全局配置 */
 		interface global_config {
 			/** 缓存生命时长 */
@@ -1646,7 +1646,7 @@ declare namespace mk {
 		 * @param target_ 绑定对象
 		 * @returns
 		 */
-		clear(target_: any): Promise<void>;
+		clear(target_: any): null | Promise<any[]>;
 		/**
 		 * 启用 on 事件
 		 * @param target_ 绑定对象

@@ -280,21 +280,21 @@ class mk_monitor extends mk_instance_base {
 	 * @param value_ 监听对象
 	 * @param target_ 绑定目标
 	 */
-	async off(value_: any, target_?: any): Promise<any>;
+	off(value_: any, target_?: any): Promise<any>;
 	/**
 	 * 取消监听数据更新
 	 * @param value_ 监听对象
 	 * @param on_callback_f_ on 触发回调
 	 * @param target_ 绑定目标
 	 */
-	async off(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
+	off(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
 	/**
 	 * 取消监听数据更新
 	 * @param value_ 监听对象
 	 * @param key_ 监听键
 	 * @param target_ 绑定目标
 	 */
-	async off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): Promise<void>;
+	off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): Promise<void>;
 	/**
 	 * 取消监听数据更新
 	 * @param value_ 监听对象
@@ -302,8 +302,8 @@ class mk_monitor extends mk_instance_base {
 	 * @param on_callback_f_ on 触发回调
 	 * @param target_ 绑定目标
 	 */
-	async off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
-	async off(value_: any, args2_: any, args3_?: any, target_?: any): Promise<any> {
+	off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
+	off(value_: any, args2_: any, args3_?: any, target_?: any): Promise<any> {
 		const key = ["string", "number", "boolean", "symbol"].includes(typeof args2_) ? args2_ : undefined;
 
 		const on_callback_f: _mk_monitor.type_on_callback<any> | undefined =
@@ -313,7 +313,7 @@ class mk_monitor extends mk_instance_base {
 
 		// 递归取消监听
 		if (value_ && !key) {
-			const task_as: Promise<void>[] = [];
+			const task_as: Promise<any>[] = [];
 
 			mk_tool.object.traverse(value_, (value: any, key_s: string, path_s: string) => {
 				const type_s = typeof value;
@@ -332,7 +332,7 @@ class mk_monitor extends mk_instance_base {
 				}
 
 				task_as.push(
-					this._off(parent, key_s, {
+					...this._off(parent, key_s, {
 						path_s_: `${path_s ? "/" : ""}${key_s}`,
 						on_callback_f_: on_callback_f,
 						target_: target,
@@ -343,10 +343,12 @@ class mk_monitor extends mk_instance_base {
 			return Promise.all(task_as);
 		}
 
-		return this._off(value_, key, {
-			on_callback_f_: on_callback_f,
-			target_: target,
-		});
+		return Promise.all(
+			this._off(value_, key, {
+				on_callback_f_: on_callback_f,
+				target_: target,
+			})
+		);
 	}
 
 	/**
@@ -354,27 +356,34 @@ class mk_monitor extends mk_instance_base {
 	 * @param target_ 绑定对象
 	 * @returns
 	 */
-	async clear(target_: any): Promise<void> {
+	clear(target_: any): null | Promise<any[]> {
+		/** 对象绑定数据 */
 		const target_bind_data = this._target_bind_data.get(target_);
 
 		// 安检
 		if (!target_ || !target_bind_data) {
-			return;
+			return null;
 		}
+
+		const task_as: Promise<any>[] = [];
 
 		// 清理监听数据
 		if (target_bind_data.monitor_as) {
-			let v: _mk_monitor.target_bind_monitor_data;
+			/** 清理当前监听的所有事件 */
+			const monitor_as = target_bind_data.monitor_as.slice(0);
 
-			while (target_bind_data.monitor_as.length) {
-				v = target_bind_data.monitor_as[0];
-				await this._off(v.target, v.key, {
-					on_callback_f_: v.monitor!.on_callback_f,
-					target_: v.monitor!.target,
-					path_s_: v.monitor!.path_s,
-				});
+			for (const v of monitor_as) {
+				task_as.push(
+					...this._off(v.target, v.key, {
+						on_callback_f_: v.monitor!.on_callback_f,
+						target_: v.monitor!.target,
+						path_s_: v.monitor!.path_s,
+					})
+				);
 			}
 		}
+
+		return Promise.all(task_as);
 	}
 
 	/**
@@ -605,16 +614,15 @@ class mk_monitor extends mk_instance_base {
 		return bind_data;
 	}
 
-	private async _off(value_: any, key_: any, { on_callback_f_, target_, path_s_ }: _mk_monitor.off_param): Promise<void> {
+	private _off(value_: any, key_: any, { on_callback_f_, target_, path_s_ }: _mk_monitor.off_param): Promise<any>[] {
 		/** 绑定数据 */
 		const bind_data = this._get_bind_data(value_, key_, false);
-
-		if (!bind_data?.monitor_as) {
-			return;
-		}
-
 		/** 任务列表 */
 		const task_as: Promise<any>[] = [];
+
+		if (!bind_data?.monitor_as) {
+			return task_as;
+		}
 
 		// 取消监听
 		{
@@ -633,49 +641,56 @@ class mk_monitor extends mk_instance_base {
 			}
 
 			if (find_f) {
+				/** 当前的监听数据 */
+				const monitor_as = bind_data.monitor_as.splice(0, bind_data.monitor_as.length);
+
 				// eslint-disable-next-line no-constant-condition
 				while (true) {
-					index_n = bind_data.monitor_as.findIndex(find_f);
+					index_n = monitor_as.findIndex(find_f);
 
 					if (index_n === -1) {
 						break;
 					}
 
-					del_as = bind_data.monitor_as.splice(index_n, 1);
+					del_as = monitor_as.splice(index_n, 1);
 
 					// 删除对象绑定数据
-					task_as.push(
-						this._del_target_bind_data(target_, {
-							monitor: del_as[0],
-							target: value_,
-							key: key_,
-						})
-					);
+					const call_back_f = this._del_target_bind_data(target_, {
+						monitor: del_as[0],
+						target: value_,
+						key: key_,
+					});
+
+					if (call_back_f) {
+						task_as.push(call_back_f);
+					}
 				}
+
+				bind_data.monitor_as.unshift(...monitor_as);
 			}
 		}
 
 		// 数据还原
 		if (!bind_data.monitor_as.length) {
-			await this._del_bind_data(value_, key_);
+			task_as.push(...this._del_bind_data(value_, key_));
 		}
 
-		await Promise.all(task_as);
+		return task_as;
 	}
 
 	/** 删除绑定数据 */
-	private async _del_bind_data<T, T2 extends keyof T>(value_: T, key_: T2): Promise<void> {
+	private _del_bind_data<T, T2 extends keyof T>(value_: T, key_: T2): Promise<any>[] {
 		/** 绑定数据表 */
 		const bind_data_map = this._bind_data_map.get(value_);
+		/** 任务列表 */
+		const task_as: Promise<any>[] = [];
 
 		if (!bind_data_map) {
-			return;
+			return task_as;
 		}
 
 		/** 绑定数据 */
 		const bind_data = bind_data_map.get(key_);
-		/** 任务列表 */
-		const task_as: Promise<any>[] = [];
 
 		if (bind_data) {
 			// 删除对象绑定数据列表
@@ -684,13 +699,15 @@ class mk_monitor extends mk_instance_base {
 					const monitor = bind_data.monitor_as.pop()!;
 
 					// 删除对象绑定数据
-					task_as.push(
-						this._del_target_bind_data(monitor.target, {
-							monitor: monitor,
-							target: value_,
-							key: key_,
-						})
-					);
+					const call_back_f = this._del_target_bind_data(monitor.target, {
+						monitor: monitor,
+						target: value_,
+						key: key_,
+					});
+
+					if (call_back_f) {
+						task_as.push(call_back_f);
+					}
 				}
 			}
 
@@ -710,7 +727,7 @@ class mk_monitor extends mk_instance_base {
 			this._bind_data_map.delete(value_);
 		}
 
-		await Promise.all(task_as);
+		return task_as;
 	}
 
 	/** 添加对象绑定数据 */
@@ -738,17 +755,17 @@ class mk_monitor extends mk_instance_base {
 	}
 
 	/** 删除对象绑定数据 */
-	private async _del_target_bind_data(target_: any, bind_data_: _mk_monitor.target_bind_monitor_data): Promise<void> {
+	private _del_target_bind_data(target_: any, bind_data_: _mk_monitor.target_bind_monitor_data): null | Promise<any> {
 		// 安检
 		if (!target_ || !bind_data_) {
-			return;
+			return null;
 		}
 
 		/** 对象绑定数据 */
 		const target_bind_data = this._target_bind_data.get(target_);
 
 		if (!target_bind_data) {
-			return;
+			return null;
 		}
 
 		// 删除绑定监听
@@ -758,9 +775,11 @@ class mk_monitor extends mk_instance_base {
 			});
 
 			if (index_n !== -1) {
-				await target_bind_data!.monitor_as!.splice(index_n, 1)[0].monitor?.off_callback_f?.();
+				return target_bind_data!.monitor_as!.splice(index_n, 1)[0].monitor?.off_callback_f?.();
 			}
 		}
+
+		return null;
 	}
 
 	/** 监听数据更新 */

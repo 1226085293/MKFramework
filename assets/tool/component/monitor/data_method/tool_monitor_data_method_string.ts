@@ -107,7 +107,7 @@ export namespace 远程图片 {
 						return;
 					}
 
-					view_comp.auto_release(assets);
+					view_comp.follow_release(assets);
 				},
 				target_
 			)
