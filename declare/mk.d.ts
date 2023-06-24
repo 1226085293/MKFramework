@@ -360,24 +360,31 @@ declare namespace mk {
 			unloaded_callback_f?: cc_2.Director.OnUnload;
 		}
 		/** bundle 管理器基类 */
-		export abstract class bundle_manage_base {
+		export abstract class bundle_manage_base implements asset_.follow_release_object {
 			constructor();
 			/** bundle 名 */
 			abstract name_s: string;
 			/** 事件对象 */
 			abstract event: event_target<any>;
-			/** bundle 是否有效 */
-			valid_b: boolean;
+			/** 管理器有效状态 */
+			open_b: boolean;
 			/** 节点池表 */
 			node_pool_tab: Record<string, cc_2.NodePool>;
 			/** 网络对象 */
 			network?: mk_network_base;
 			/** 数据获取器 */
 			data?: data_sharer;
+			/** 释放管理器 */
+			protected _release_manage: mk_release;
 			/** 加载回调 */
 			open(): void | Promise<void>;
 			/** 卸载回调 */
 			close(): boolean | null | Promise<boolean | null>;
+			/**
+			 * 跟随释放
+			 * @param args_ 要跟随模块释放的对象或列表
+			 */
+			follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
 		}
 	}
 
@@ -1377,7 +1384,7 @@ declare namespace mk {
 	 * - open: 子 -> 父
 	 * - close: 父 -> 子
 	 */
-	declare class mk_life_cycle extends mk_layer {
+	declare class mk_life_cycle extends mk_layer implements asset_.follow_release_object {
 		constructor(...args: any[]);
 		/** 初始化数据 */
 		init_data?: any;
@@ -1412,12 +1419,8 @@ declare namespace mk {
 		protected get _log(): logger;
 		/** 日志 */
 		private _log2;
-		/** 引用节点集合 */
-		private _quote_node_set;
-		/** 引用资源集合 */
-		private _quote_asset_set;
-		/** 引用对象集合 */
-		private _quote_object_set;
+		/** 释放管理器 */
+		private _release_manage;
 		protected onLoad(): void;
 		/**
 		 * 创建
@@ -1462,7 +1465,7 @@ declare namespace mk {
 		 * 跟随释放
 		 * @param args_ 要跟随模块释放的对象或列表
 		 */
-		follow_release<T extends _mk_life_cycle.release_param_type | _mk_life_cycle.release_param_type[]>(args_: T): T;
+		follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1472,12 +1475,6 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_life_cycle {
-		/** 释放对象类型 */
-		type release_object_type = {
-			release(): void;
-		};
-		/** 释放参数类型 */
-		type release_param_type = cc_2.Node | cc_2.Asset | audio_._unit | release_object_type;
 		/** 运行状态 */
 		enum run_state {
 			/** 打开中 */
@@ -2172,6 +2169,34 @@ declare namespace mk {
 				init_fill_n?: number | undefined;
 			}
 		}
+	}
+
+	/**
+	 * 资源释放器
+	 */
+	declare class mk_release {
+		/** 引用节点集合 */
+		private _quote_node_set;
+		/** 引用资源集合 */
+		private _quote_asset_set;
+		/** 引用对象集合 */
+		private _quote_object_set;
+		/**
+		 * 添加释放对象
+		 * @param args_ 要跟随模块释放的对象或列表
+		 */
+		add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
+		/** 释放所有已添加对象 */
+		release(): void;
+	}
+
+	declare namespace mk_release_ {
+		/** 释放对象类型 */
+		type release_object_type = {
+			release(): void;
+		};
+		/** 释放参数类型 */
+		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type;
 	}
 
 	/** 场景驱动 */

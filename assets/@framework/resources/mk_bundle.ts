@@ -7,6 +7,8 @@ import * as cc from "cc";
 import mk_status_task from "../task/mk_status_task";
 import mk_data_sharer from "../mk_data_sharer";
 import mk_tool_func from "../@private/tool/mk_tool_func";
+import mk_release, { mk_release_ } from "../@private/mk_release";
+import { mk_asset_ } from "./mk_asset";
 
 namespace _mk_bundle {
 	export interface event_protocol {
@@ -516,7 +518,7 @@ export namespace mk_bundle_ {
 	}
 
 	/** bundle 管理器基类 */
-	export abstract class bundle_manage_base {
+	export abstract class bundle_manage_base implements mk_asset_.follow_release_object {
 		constructor() {
 			// 添加至 bundle 数据
 			setTimeout(() => {
@@ -535,18 +537,15 @@ export namespace mk_bundle_ {
 			}
 
 			// 对象池
-			this.node_pool_tab = new Proxy(
-				{},
-				{
-					get: (target_, key_) => {
-						if (!target_[key_]) {
-							target_[key_] = new cc.NodePool(key_ as string);
-						}
+			this.node_pool_tab = new Proxy(cc.js.createMap(true), {
+				get: (target_, key_) => {
+					if (!target_[key_]) {
+						target_[key_] = new cc.NodePool(key_ as string);
+					}
 
-						return target_[key_];
-					},
-				}
-			) as any;
+					return target_[key_];
+				},
+			}) as any;
 
 			// 自动执行生命周期
 			mk_tool_func.run_parent_func(this, ["open", "close"]);
@@ -557,14 +556,17 @@ export namespace mk_bundle_ {
 		abstract name_s: string;
 		/** 事件对象 */
 		abstract event: mk_event_target<any>;
-		/** bundle 是否有效 */
-		valid_b = false;
+		/** 管理器有效状态 */
+		open_b = false;
 		/** 节点池表 */
 		node_pool_tab!: Record<string, cc.NodePool>;
 		/** 网络对象 */
 		network?: mk_network_base;
 		/** 数据获取器 */
 		data?: mk_data_sharer;
+		/* --------------- paragraph --------------- */
+		/** 释放管理器 */
+		protected _release_manage = new mk_release();
 		/* ------------------------------- 生命周期 ------------------------------- */
 		/** 加载回调 */
 		open(): void | Promise<void> {
@@ -572,22 +574,22 @@ export namespace mk_bundle_ {
 				throw "中断";
 			}
 
-			if (this.valid_b) {
+			if (this.open_b) {
 				mk_log.error("bundle 已经加载");
 				throw "中断";
 			}
 
-			this.valid_b = true;
+			this.open_b = true;
 		}
 
 		/** 卸载回调 */
 		close(): boolean | null | Promise<boolean | null> {
-			if (!this.valid_b) {
+			if (!this.open_b) {
 				mk_log.error("bundle 已经卸载");
 				throw "中断";
 			}
 
-			this.valid_b = false;
+			this.open_b = false;
 
 			// 清理事件
 			this.event.clear();
@@ -595,16 +597,31 @@ export namespace mk_bundle_ {
 			// 清理数据
 			this.data?.clear();
 
-			// 销毁对象池
+			// 清理对象池
 			for (const k_s in this.node_pool_tab) {
 				if (Object.prototype.hasOwnProperty.call(this.node_pool_tab, k_s)) {
 					this.node_pool_tab[k_s].clear();
+					delete this.node_pool_tab[k_s];
 				}
 			}
 
-			this.node_pool_tab = cc.js.createMap();
-
 			return true;
+		}
+
+		/**
+		 * 跟随释放
+		 * @param args_ 要跟随模块释放的对象或列表
+		 */
+		follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2 {
+			// 添加释放对象
+			this._release_manage.add(args_);
+
+			// 如果模块已经关闭则直接释放
+			if (!this.open_b) {
+				this._release_manage.release();
+			}
+
+			return args_;
 		}
 	}
 }

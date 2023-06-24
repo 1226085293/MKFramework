@@ -6,6 +6,7 @@ import { resources_language } from "../../../resources/module/language/resources
 import { resources_module } from "../../../resources/module/module/resources_module";
 import { resources_network } from "../../../resources/module/network/resources_network";
 import { resources_main_item } from "../../module/main/item/main_main_item";
+import main_bundle from "../../bundle/main_bundle";
 const { ccclass, property } = _decorator;
 
 @ccclass("main_main")
@@ -39,11 +40,11 @@ export class main_main extends mk.module.view_base {
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad(): void {
-		mk.ui_manage.regis(resources_audio, "db://assets/resources/module/audio/resources_audio.prefab");
-		mk.ui_manage.regis(resources_language, "db://assets/resources/module/language/resources_language.prefab");
-		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab");
-		mk.ui_manage.regis(resources_network, "db://assets/resources/module/network/resources_network.prefab");
-		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab");
+	create(): void {
+		mk.ui_manage.regis(resources_audio, "db://assets/resources/module/audio/resources_audio.prefab", main_bundle);
+		mk.ui_manage.regis(resources_language, "db://assets/resources/module/language/resources_language.prefab", main_bundle);
+		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab", main_bundle);
+		mk.ui_manage.regis(resources_network, "db://assets/resources/module/network/resources_network.prefab", main_bundle);
+		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab", main_bundle);
 	}
 }

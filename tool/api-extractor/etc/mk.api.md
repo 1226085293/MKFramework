@@ -145,16 +145,20 @@ export namespace bundle_ {
         origin_s?: string;
         version_s?: string;
     }
-    export abstract class bundle_manage_base {
+    export abstract class bundle_manage_base implements asset_.follow_release_object {
         constructor();
         close(): boolean | null | Promise<boolean | null>;
         data?: data_sharer;
         abstract event: event_target<any>;
+        // Warning: (ae-forgotten-export) The symbol "mk_release_" needs to be exported by the entry point mk_export.d.ts
+        follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
         abstract name_s: string;
         network?: mk_network_base;
         node_pool_tab: Record<string, cc_2.NodePool>;
         open(): void | Promise<void>;
-        valid_b: boolean;
+        open_b: boolean;
+        // Warning: (ae-forgotten-export) The symbol "mk_release" needs to be exported by the entry point mk_export.d.ts
+        protected _release_manage: mk_release;
     }
     export class load_config {
         constructor(init_: load_config);
@@ -484,7 +488,7 @@ namespace _mk_layer {
 }
 
 // @public
-class mk_life_cycle extends mk_layer {
+class mk_life_cycle extends mk_layer implements asset_.follow_release_object {
     constructor(...args: any[]);
     close?(): void | Promise<void>;
     // @internal
@@ -497,7 +501,7 @@ class mk_life_cycle extends mk_layer {
     }[] | {
         target_off(target: any): any;
     }[];
-    follow_release<T extends _mk_life_cycle.release_param_type | _mk_life_cycle.release_param_type[]>(args_: T): T;
+    follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
     init(data_?: any): void | Promise<void>;
     init_data?: any;
     protected late_close?(): void | Promise<void>;
