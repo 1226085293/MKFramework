@@ -121,24 +121,24 @@ class mk_asset extends mk_instance_base {
 	/**
 	 * 获取资源
 	 * @param path_s_ 资源路径
-	 * @param args2_ 资源类型 | 获取配置
+	 * @param type_ 资源类型
+	 * @param target_ 跟随释放对象
+	 * @param config_ 获取配置
 	 * @returns
 	 */
-	async get<T extends cc.Asset>(path_s_: string, args2_: cc.Constructor<T> | mk_asset_.get_config<T>): Promise<T | null> {
+	get<T extends cc.Asset>(
+		path_s_: string,
+		type_: cc.Constructor<T>,
+		target_: mk_asset_.follow_release_object | null,
+		config_?: mk_asset_.get_config<T>
+	): Promise<T | null> {
 		/** 获取配置 */
-		let get_config = args2_ as mk_asset_.get_config<T>;
+		const get_config = config_ ?? {};
 		/** 远程资源 */
 		const remote_b = Boolean(get_config.remote_option);
 
 		// 参数转换
 		{
-			// 转换配置为对象
-			if (typeof args2_ === "function") {
-				get_config = {
-					type: args2_,
-				};
-			}
-
 			// 去除无用信息
 			if (path_s_.startsWith("db://assets/")) {
 				path_s_ = path_s_.slice(12);
@@ -152,7 +152,7 @@ class mk_asset extends mk_instance_base {
 
 			// 图片类型后缀
 			if (!remote_b) {
-				const asset_type = get_config.type as any as typeof cc.Asset;
+				const asset_type = type_ as any;
 
 				if (asset_type === cc.SpriteFrame && !path_s_.endsWith("/spriteFrame")) {
 					path_s_ += "/spriteFrame";
@@ -187,9 +187,10 @@ class mk_asset extends mk_instance_base {
 
 				// 资源初始化
 				asset = this._asset_init(asset);
-
 				// 执行回调
 				get_config.completed_f?.(error, asset);
+				// 跟随释放
+				target_?.follow_release(asset);
 				resolve_f(asset);
 			};
 
@@ -211,7 +212,7 @@ class mk_asset extends mk_instance_base {
 
 					asset_config = get_config.remote_option as any;
 					asset_config.bundle = get_config.bundle_s ?? "resources";
-					asset_config.type = get_config.type as any;
+					asset_config.type = type_;
 					// uuid
 					{
 						path_s_ = "db://assets/" + path_s_;
@@ -227,7 +228,7 @@ class mk_asset extends mk_instance_base {
 						}
 
 						// 如果是 spriteFrame 添加后缀
-						if ((get_config.type as any) === cc.SpriteFrame) {
+						if ((type_ as any) === cc.SpriteFrame) {
 							uuid_s += "@f9941";
 						}
 
@@ -255,7 +256,7 @@ class mk_asset extends mk_instance_base {
 				}
 
 				// 获取资源
-				const asset = bundle_asset.get(path_s_, get_config.type);
+				const asset = bundle_asset.get(path_s_, type_);
 
 				// 已加载资源
 				if (asset) {
@@ -266,19 +267,31 @@ class mk_asset extends mk_instance_base {
 				// 加载资源
 				else {
 					if (get_config.progress_f) {
-						bundle_asset.load(path_s_, get_config.type, get_config.progress_f, completed_f);
+						bundle_asset.load(path_s_, type_, get_config.progress_f, completed_f);
 					} else {
-						bundle_asset.load(path_s_, get_config.type, completed_f);
+						bundle_asset.load(path_s_, type_, completed_f);
 					}
 				}
 			}
 		});
 	}
 
-	/** 获取文件夹资源 */
-	async get_dir<T extends cc.Asset>(path_s_: string, args2_: cc.Constructor<T> | mk_asset_.get_dir_config<T>): Promise<T[] | null> {
+	/**
+	 * 获取文件夹资源
+	 * @param path_s_ 资源路径
+	 * @param type_ 资源类型
+	 * @param target_ 跟随释放对象
+	 * @param config_ 获取配置
+	 * @returns
+	 */
+	get_dir<T extends cc.Asset>(
+		path_s_: string,
+		type_: cc.Constructor<T>,
+		target_: mk_asset_.follow_release_object | null,
+		config_?: mk_asset_.get_dir_config<T>
+	): Promise<T[] | null> {
 		/** 获取配置 */
-		let get_config = args2_ as mk_asset_.get_dir_config<T>;
+		const get_config = config_ ?? {};
 		/** 资源配置 */
 		let asset_config: _mk_asset.load_any_request_type;
 
@@ -289,13 +302,6 @@ class mk_asset extends mk_instance_base {
 				path_s_ = path_s_.slice(12);
 			}
 
-			// 转换配置为对象
-			if (typeof args2_ === "function") {
-				get_config = {
-					type: args2_,
-				};
-			}
-
 			// 补全加载配置
 			{
 				if (!get_config.remote_option) {
@@ -304,7 +310,7 @@ class mk_asset extends mk_instance_base {
 
 				asset_config = get_config.remote_option as any;
 				asset_config.bundle = get_config.bundle_s ?? "resources";
-				asset_config.type = get_config.type as any;
+				asset_config.type = type_;
 				asset_config.dir = path_s_;
 			}
 		}
@@ -329,8 +335,9 @@ class mk_asset extends mk_instance_base {
 				});
 
 				// 执行回调
-				// let dir_asset_as = [];
 				get_config.completed_f?.(error, dir_asset_as);
+				// 跟随释放
+				target_?.follow_release(dir_asset_as);
 				resolve_f(dir_asset_as);
 			};
 
@@ -354,11 +361,11 @@ class mk_asset extends mk_instance_base {
 				}
 
 				/** 资源信息列表 */
-				const asset_info_as = bundle_asset.getDirWithPath(path_s_, get_config.type);
+				const asset_info_as = bundle_asset.getDirWithPath(path_s_, type_);
 
 				// 加载资源
 				for (const [k_n, v] of asset_info_as.entries()) {
-					const asset = bundle_asset.get(v.path, get_config.type);
+					const asset = bundle_asset.get(v.path, type_);
 
 					// 已加载资源
 					if (asset) {
@@ -368,7 +375,7 @@ class mk_asset extends mk_instance_base {
 					else {
 						/** 成功状态 */
 						const success_b = await new Promise<boolean>((resolve_f) => {
-							bundle_asset.load(path_s_, get_config.type, (error, asset): void => {
+							bundle_asset.load(path_s_, type_, (error, asset): void => {
 								if (error) {
 									completed_f(error);
 
@@ -503,8 +510,6 @@ export namespace mk_asset_ {
 
 	/** 加载配置 */
 	export interface get_config<T extends cc.Asset = cc.Asset, T2 = T> {
-		/** 资源类型 */
-		type: cc.Constructor<T>;
 		/**
 		 * bundle 名
 		 * @defaultValue
@@ -523,6 +528,15 @@ export namespace mk_asset_ {
 		completed_f?: (error: Error | null, asset: T2) => void;
 		/** 远程配置，存在配置则为远程资源 */
 		remote_option?: _mk_asset.load_remote_option_type;
+	}
+
+	/** 跟随释放对象 */
+	export interface follow_release_object {
+		/**
+		 * 跟随释放
+		 * @param asset_ 释放资源
+		 */
+		follow_release(asset_: cc.Asset | cc.Asset[]): any;
 	}
 }
 

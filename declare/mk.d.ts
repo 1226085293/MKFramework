@@ -10,8 +10,6 @@ declare namespace mk {
 		export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
 		/** 加载配置 */
 		export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
-			/** 资源类型 */
-			type: cc_2.Constructor<T>;
 			/**
 			 * bundle 名
 			 * @defaultValue
@@ -29,6 +27,14 @@ declare namespace mk {
 			completed_f?: (error: Error | null, asset: T2) => void;
 			/** 远程配置，存在配置则为远程资源 */
 			remote_option?: _mk_asset.load_remote_option_type;
+		}
+		/** 跟随释放对象 */
+		export interface follow_release_object {
+			/**
+			 * 跟随释放
+			 * @param asset_ 释放资源
+			 */
+			follow_release(asset_: cc_2.Asset | cc_2.Asset[]): any;
 		}
 	}
 
@@ -125,7 +131,7 @@ declare namespace mk {
 			/** 文件夹 */
 			dir_b?: boolean;
 			/** 加载配置 */
-			load_config?: asset_.get_dir_config<cc_2.AudioClip>;
+			load_config?: asset_.get_config<cc_2.AudioClip>;
 		}
 		/** play 配置 */
 		export interface play_config {
@@ -769,12 +775,31 @@ declare namespace mk {
 		/**
 		 * 获取资源
 		 * @param path_s_ 资源路径
-		 * @param args2_ 资源类型 | 获取配置
+		 * @param type_ 资源类型
+		 * @param target_ 跟随释放对象
+		 * @param config_ 获取配置
 		 * @returns
 		 */
-		get<T extends cc_2.Asset>(path_s_: string, args2_: cc_2.Constructor<T> | asset_.get_config<T>): Promise<T | null>;
-		/** 获取文件夹资源 */
-		get_dir<T extends cc_2.Asset>(path_s_: string, args2_: cc_2.Constructor<T> | asset_.get_dir_config<T>): Promise<T[] | null>;
+		get<T extends cc_2.Asset>(
+			path_s_: string,
+			type_: cc_2.Constructor<T>,
+			target_: asset_.follow_release_object | null,
+			config_?: asset_.get_config<T>
+		): Promise<T | null>;
+		/**
+		 * 获取文件夹资源
+		 * @param path_s_ 资源路径
+		 * @param type_ 资源类型
+		 * @param target_ 跟随释放对象
+		 * @param config_ 获取配置
+		 * @returns
+		 */
+		get_dir<T extends cc_2.Asset>(
+			path_s_: string,
+			type_: cc_2.Constructor<T>,
+			target_: asset_.follow_release_object | null,
+			config_?: asset_.get_dir_config<T>
+		): Promise<T[] | null>;
 		/**
 		 * 释放资源
 		 * @param asset_ 释放的资源
@@ -797,13 +822,13 @@ declare namespace mk {
 		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRemoteOptions
 		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
 		 */
-		type load_remote_option_type = cc_2.__private._cocos_core_asset_manager_shared__IRemoteOptions;
+		type load_remote_option_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
 		/**
 		 * loadAny 请求类型
 		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRequest
 		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
 		 */
-		type load_any_request_type = cc_2.__private._cocos_core_asset_manager_shared__IRequest;
+		type load_any_request_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
 		/** 全局配置 */
 		interface global_config {
 			/** 缓存生命时长 */
@@ -841,17 +866,17 @@ declare namespace mk {
 		/**
 		 * 添加音频单元
 		 * @param url_s_ 音频资源路径
+		 * @param target_ 跟随释放对象
 		 * @param config_ 添加配置
-		 * @remarks
-		 * 添加后应该随模块自动释放
 		 */
-		add(url_s_: string, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
+		add(url_s_: string, target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
 		/**
 		 * 添加音频单元
 		 * @param url_ss_ 音频资源路径列表
+		 * @param target_ 跟随释放对象
 		 * @param config_ 添加配置
 		 */
-		add(url_ss_: string[], config_?: audio_.add_config): Promise<audio_.unit[] | null>;
+		add(url_ss_: string[], target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<audio_.unit[] | null>;
 		/**
 		 * 播放音效
 		 * @param audio_ 音频单元
@@ -1077,7 +1102,7 @@ declare namespace mk {
 		}
 	}
 
-	declare abstract class mk_language_base extends cc_2.Component {
+	declare abstract class mk_language_base extends mk_life_cycle {
 		/** 模糊匹配类型 */
 		fuzzy_match_type_b: boolean;
 		/** 类型 */
@@ -1098,12 +1123,11 @@ declare namespace mk {
 		protected _type_s: string;
 		/** 语言标识 */
 		protected _mark_s: string;
+		protected _use_layer_b: boolean;
 		/** 当前类型数据 */
 		protected _data?: language_.data_struct;
 		/** 标记枚举数据 */
 		protected _mark_enum?: any;
-		/** 日志 */
-		protected _log: logger;
 		/** 更新内容 */
 		protected abstract _update_content(): void;
 		/** 更新标记 */
@@ -1191,10 +1215,16 @@ declare namespace mk {
 		 * 获取纹理
 		 * @param type_ 类型
 		 * @param mark_s_ 标记
+		 * @param target_ 跟随释放对象
 		 * @param language_ 语言
 		 * @returns
 		 */
-		get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_?: "zh_cn" | "en_us"): Promise<cc_2.SpriteFrame | null>;
+		get_texture(
+			type_: _mk_language_manage.type_type,
+			mark_s_: string,
+			target_: asset_.follow_release_object,
+			language_?: "zh_cn" | "en_us"
+		): Promise<cc_2.SpriteFrame | null>;
 		/**
 		 * 添加文本数据
 		 * @param type_ 类型
@@ -1382,6 +1412,12 @@ declare namespace mk {
 		protected get _log(): logger;
 		/** 日志 */
 		private _log2;
+		/** 引用节点集合 */
+		private _quote_node_set;
+		/** 引用资源集合 */
+		private _quote_asset_set;
+		/** 引用对象集合 */
+		private _quote_object_set;
 		protected onLoad(): void;
 		/**
 		 * 创建
@@ -1422,6 +1458,11 @@ declare namespace mk {
 		 * 在子模块 close 和 late_close 后执行
 		 */
 		protected late_close?(): void | Promise<void>;
+		/**
+		 * 跟随释放
+		 * @param args_ 要跟随模块释放的对象或列表
+		 */
+		follow_release<T extends _mk_life_cycle.release_param_type | _mk_life_cycle.release_param_type[]>(args_: T): T;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1431,6 +1472,12 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_life_cycle {
+		/** 释放对象类型 */
+		type release_object_type = {
+			release(): void;
+		};
+		/** 释放参数类型 */
+		type release_param_type = cc_2.Node | cc_2.Asset | audio_._unit | release_object_type;
 		/** 运行状态 */
 		enum run_state {
 			/** 打开中 */
@@ -2281,12 +2328,14 @@ declare namespace mk {
 		 * 注册模块
 		 * @param key_ 模块名
 		 * @param source_ 模块来源
+		 * @param target_ 跟随释放对象
 		 * @param config_ 模块配置
 		 * @returns
 		 */
 		regis<T extends cc_2.Constructor<mk_view_base>>(
 			key_: T,
 			source_: _mk_ui_manage.source_type<T>,
+			target_: asset_.follow_release_object,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
 		/**
@@ -2398,12 +2447,6 @@ declare namespace mk {
 		protected _view_config: mk_view_base_.view_config;
 		/** 窗口 */
 		private _wind_b;
-		/** 引用节点 */
-		private _quote_node_as;
-		/** 引用资源 */
-		private _quote_asset_as;
-		/** 引用对象 */
-		private _quote_object_as;
 		protected onLoad(): void;
 		protected open(): void | Promise<void>;
 		/**
@@ -2412,11 +2455,6 @@ declare namespace mk {
 		 */
 		close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
 		protected late_close?(): void | Promise<void>;
-		/**
-		 * 跟随释放
-		 * @param args_ 要跟随模块释放的对象或列表
-		 */
-		follow_release<T extends _mk_view_base.release_param_type | _mk_view_base.release_param_type[]>(args_: T): T;
 		/** 初始化编辑器 */
 		protected _init_editor(): void;
 		private _get_auto_mask_b;
@@ -2426,12 +2464,6 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_view_base {
-		/** 释放对象类型 */
-		type release_object_type = {
-			release(): void;
-		};
-		/** 释放参数类型 */
-		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type;
 		/** create 配置 */
 		interface create_config extends _mk_life_cycle.create_config {
 			/** 视图配置 */
@@ -2617,6 +2649,8 @@ declare namespace mk {
 		private _track_node;
 		/** 跟踪节点初始坐标 */
 		private _track_node_start_pos_v3;
+		/** 初始设计尺寸 */
+		private _initial_design_size;
 		/** 偏移坐标 */
 		private _offset_v3;
 		/** 多边形本地点 */
@@ -2632,8 +2666,10 @@ declare namespace mk {
 		/** 临时变量 */
 		private _temp_tab;
 		protected onLoad(): void;
+		protected start(): void;
 		protected onEnable(): void;
 		protected onDisable(): void;
+		protected onDestroy(): void;
 		/** 更新遮罩 */
 		update_mask(): void;
 		/** 更新遮罩 */
@@ -2641,7 +2677,7 @@ declare namespace mk {
 		private _set_offset_v3;
 		private _set_track_node;
 		private _event_node_input;
-		private _event_track_node_transform_changed;
+		private _event_world_position_change;
 		private _event_global_resize;
 	}
 
@@ -2762,6 +2798,8 @@ declare namespace mk {
 			constructor(init_?: Partial<regis_data<CT>>);
 			/** 来源 */
 			source: _mk_ui_manage.source_type<CT>;
+			/** 跟随释放对象 */
+			target: asset_.follow_release_object;
 		}
 	}
 

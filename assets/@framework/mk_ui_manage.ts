@@ -63,12 +63,14 @@ export class mk_ui_manage extends mk_instance_base {
 	 * 注册模块
 	 * @param key_ 模块名
 	 * @param source_ 模块来源
+	 * @param target_ 跟随释放对象
 	 * @param config_ 模块配置
 	 * @returns
 	 */
 	async regis<T extends cc.Constructor<mk_view_base>>(
 		key_: T,
 		source_: _mk_ui_manage.source_type<T>,
+		target_: mk_asset_.follow_release_object,
 		config_?: Partial<mk_ui_manage_.regis_config<T>>
 	): Promise<void> {
 		/** 模块注册任务 */
@@ -141,7 +143,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 			// 资源路径
 			if (typeof v === "string" && regis_data.pool_init_fill_n > 0) {
-				source = await mk_asset.get(v, regis_data.load_config ?? cc.Prefab);
+				source = await mk_asset.get(v, cc.Prefab, target_, regis_data.load_config);
 			}
 
 			// 预制体/节点
@@ -162,7 +164,7 @@ export class mk_ui_manage extends mk_instance_base {
 					create_f: async () => {
 						// 不存在预制体开始加载
 						if (!source && typeof v === "string") {
-							source = (await mk_asset.get(v, regis_data.load_config ?? cc.Prefab))!;
+							source = (await mk_asset.get(v, cc.Prefab, target_, regis_data.load_config))!;
 						}
 
 						if (!source?.isValid) {
@@ -308,7 +310,7 @@ export class mk_ui_manage extends mk_instance_base {
 			regis_data = await this.get_regis_data_f(key_);
 
 			if (regis_data) {
-				await this.regis(key_, regis_data.source, regis_data);
+				await this.regis(key_, regis_data.source, regis_data.target, regis_data);
 			}
 		}
 
@@ -771,6 +773,8 @@ export namespace mk_ui_manage_ {
 
 		/** 来源 */
 		source!: _mk_ui_manage.source_type<CT>;
+		/** 跟随释放对象 */
+		target!: mk_asset_.follow_release_object;
 	}
 }
 

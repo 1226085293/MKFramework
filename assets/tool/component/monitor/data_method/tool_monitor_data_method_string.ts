@@ -78,8 +78,7 @@ export namespace 远程图片 {
 						return;
 					}
 
-					const assets = await mk.asset.get(value_s, {
-						type: cc.ImageAsset,
+					const assets = await mk.asset.get(value_s, cc.ImageAsset, null, {
 						remote_option: {
 							ext: ".png",
 						},
@@ -89,20 +88,15 @@ export namespace 远程图片 {
 						return;
 					}
 
-					const sprite_frame = new cc.SpriteFrame();
-					const texture = new cc.Texture2D();
-
-					texture.image = assets;
-					sprite_frame.texture = texture;
-					node_.sprite.spriteFrame = sprite_frame;
+					node_.sprite.spriteFrame = cc.SpriteFrame.createWithImage(assets);
 
 					// 找到视图基类添加自动释放
 					const view_comp = tool_node
-						.traverse_parent(node_.parent, (node) => Boolean(node.getComponent(mk.module.view_base)))
+						.traverse_parent(node_, (node) => Boolean(node.getComponent(mk.module.view_base)))
 						?.getComponent(mk.module.view_base);
 
 					if (!view_comp) {
-						mk.error("未找到父节点视图，不能自动释放动态资源");
+						mk.error("未找到父模块，不能自动释放动态资源");
 
 						return;
 					}

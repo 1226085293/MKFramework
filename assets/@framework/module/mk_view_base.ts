@@ -12,11 +12,6 @@ const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
 namespace _mk_view_base {
-	/** 释放对象类型 */
-	export type release_object_type = { release(): void };
-	/** 释放参数类型 */
-	export type release_param_type = cc.Node | cc.Asset | release_object_type;
-
 	/** create 配置 */
 	export interface create_config extends _mk_life_cycle.create_config {
 		/** 视图配置 */
@@ -237,15 +232,8 @@ export class mk_view_base extends mk_life_cycle {
 	@property
 	private _wind_b = false;
 
-	/** 引用节点 */
-	private _quote_node_as: cc.Node[] = [];
-	/** 引用资源 */
-	private _quote_asset_as: cc.Asset[] = [];
-	/** 引用对象 */
-	private _quote_object_as: _mk_view_base.release_object_type[] = [];
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
-		super.onLoad();
 		/** 参数表 */
 		const attr_tab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
 		/** 参数键列表 */
@@ -309,19 +297,6 @@ export class mk_view_base extends mk_life_cycle {
 		// 重置数据
 		this._view_config.type_s = "default";
 
-		// 释放资源
-		this._quote_node_as.forEach((v) => v.destroy());
-		this._quote_node_as.splice(0, this._quote_node_as.length);
-		this._quote_asset_as.forEach((v) => {
-			if (v.isValid) {
-				v.decRef();
-			}
-		});
-
-		this._quote_asset_as.splice(0, this._quote_asset_as.length);
-		this._quote_object_as.forEach((v) => v.release());
-		this._quote_object_as.splice(0, this._quote_object_as.length);
-
 		// 重置数据
 		if (this.data && this._reset_data_b) {
 			mk_tool.object.reset(this.data, true);
@@ -329,71 +304,6 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
-	/**
-	 * 跟随释放
-	 * @param args_ 要跟随模块释放的对象或列表
-	 */
-	follow_release<T extends _mk_view_base.release_param_type | _mk_view_base.release_param_type[]>(args_: T): T {
-		if (!args_) {
-			return args_;
-		}
-
-		let node_as: cc.Node[] | undefined;
-		let asset_as: cc.Asset[] | undefined;
-		let object_as: _mk_view_base.release_object_type[] | undefined;
-
-		// 参数转换
-		{
-			if (Array.isArray(args_)) {
-				if (!args_.length) {
-					return args_;
-				}
-
-				if (args_[0] instanceof cc.Node) {
-					node_as = args_ as any;
-				} else if (args_[0] instanceof cc.Asset) {
-					asset_as = args_ as any;
-				} else {
-					object_as = args_ as any;
-				}
-			} else {
-				if (args_ instanceof cc.Node) {
-					node_as = [args_];
-				} else if (args_ instanceof cc.Asset) {
-					asset_as = [args_];
-				} else {
-					object_as = [args_];
-				}
-			}
-		}
-
-		// 如果模块已经关闭则直接释放
-		if (!this.open_b) {
-			node_as?.forEach((v) => v.destroy());
-			asset_as?.forEach((v) => v.decRef());
-			object_as?.forEach((v) => v.release());
-
-			return args_;
-		}
-
-		// 添加引用数据
-		{
-			if (node_as) {
-				this._quote_node_as.push(...node_as);
-			}
-
-			if (asset_as) {
-				this._quote_asset_as.push(...asset_as);
-			}
-
-			if (object_as) {
-				this._quote_object_as.push(...object_as);
-			}
-		}
-
-		return args_;
-	}
-
 	/** 初始化编辑器 */
 	protected _init_editor(): void {
 		super._init_editor();
@@ -470,7 +380,7 @@ export class mk_view_base extends mk_life_cycle {
 				return;
 			}
 
-			const prefab = await mk_asset.get(mk_view_base.config.mask_data_tab.prefab_path_s, cc.Prefab);
+			const prefab = await mk_asset.get(mk_view_base.config.mask_data_tab.prefab_path_s, cc.Prefab, this);
 
 			if (!prefab) {
 				return;

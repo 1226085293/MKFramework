@@ -7,10 +7,16 @@ import monitor from "../mk_monitor";
 import mk_status_task from "../task/mk_status_task";
 import mk_layer from "./mk_layer";
 import mk_tool from "../@private/tool/mk_tool";
+import { mk_audio_ } from "../audio/mk_audio_export";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
 export namespace _mk_life_cycle {
+	/** 释放对象类型 */
+	export type release_object_type = { release(): void };
+	/** 释放参数类型 */
+	export type release_param_type = cc.Node | cc.Asset | mk_audio_._unit | release_object_type;
+
 	/** 运行状态 */
 	export enum run_state {
 		/** 打开中 */
@@ -152,6 +158,12 @@ export class mk_life_cycle extends mk_layer {
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log2!: mk_logger;
+	/** 引用节点集合 */
+	private _quote_node_set = new Set<cc.Node>();
+	/** 引用资源集合 */
+	private _quote_asset_set = new Set<cc.Asset>();
+	/** 引用对象集合 */
+	private _quote_object_set = new Set<_mk_life_cycle.release_object_type>();
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
 		this._load_task.finish(true);
@@ -227,9 +239,115 @@ export class mk_life_cycle extends mk_layer {
 				v.target_off(this);
 			}
 		});
+
+		// 释放资源
+		{
+			this._quote_asset_set.forEach((v) => {
+				if (v.isValid) {
+					v.decRef();
+				}
+			});
+
+			this._quote_node_set.forEach((v) => {
+				if (v.isValid) {
+					v.removeFromParent();
+					v.destroy();
+				}
+			});
+
+			this._quote_object_set.forEach((v) => v.release());
+
+			this._quote_asset_set.clear();
+			this._quote_node_set.clear();
+			this._quote_object_set.clear();
+		}
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
+	/**
+	 * 跟随释放
+	 * @param args_ 要跟随模块释放的对象或列表
+	 */
+	follow_release<T extends _mk_life_cycle.release_param_type | _mk_life_cycle.release_param_type[]>(args_: T): T {
+		if (!args_) {
+			return args_;
+		}
+
+		let node_as: cc.Node[] | undefined;
+		let asset_as: cc.Asset[] | undefined;
+		let object_as: _mk_life_cycle.release_object_type[] | undefined;
+
+		// 参数转换
+		{
+			if (Array.isArray(args_)) {
+				if (!args_.length) {
+					return args_;
+				}
+
+				if (args_[0] instanceof cc.Node) {
+					node_as = args_ as any;
+				} else if (args_[0] instanceof cc.Asset) {
+					asset_as = args_ as any;
+				} else if (args_[0] instanceof mk_audio_._unit) {
+					asset_as = (args_ as mk_audio_._unit[]).map((v) => v.clip).filter((v) => v) as any;
+				} else {
+					object_as = args_ as any;
+				}
+			} else {
+				if (args_ instanceof cc.Node) {
+					node_as = [args_];
+				} else if (args_ instanceof cc.Asset) {
+					asset_as = [args_];
+				} else if (args_ instanceof mk_audio_._unit) {
+					asset_as = args_.clip ? [args_.clip] : [];
+				} else {
+					object_as = [args_];
+				}
+			}
+		}
+
+		// 如果模块已经关闭则直接释放
+		if (!this.open_b) {
+			node_as?.forEach((v) => {
+				if (v.isValid) {
+					v.removeFromParent();
+					v.destroy();
+				}
+			});
+
+			asset_as?.forEach((v) => {
+				if (v.isValid) {
+					v.decRef();
+				}
+			});
+
+			object_as?.forEach((v) => v.release());
+
+			return args_;
+		}
+
+		// 添加引用数据
+		{
+			node_as?.forEach((v) => {
+				if (v.isValid) {
+					this._quote_node_set.add(v);
+				}
+			});
+
+			asset_as?.forEach((v) => {
+				if (v.isValid) {
+					this._quote_asset_set.add(v);
+				}
+			});
+
+			object_as?.forEach((v) => {
+				this._quote_object_set.add(v);
+			});
+		}
+
+		return args_;
+	}
+
 	/**
 	 * 打开模块
 	 * @param config_ 关闭配置

@@ -69,7 +69,7 @@ class mk_language_texture extends mk_language_base {
 		}
 
 		if (EDITOR) {
-			const asset = await mk_asset.get(path_s + ".png", cc.ImageAsset);
+			const asset = await mk_asset.get(path_s + ".png", cc.ImageAsset, this);
 
 			if (!asset?._uuid) {
 				return;
@@ -86,7 +86,7 @@ class mk_language_texture extends mk_language_base {
 				},
 			});
 		} else {
-			const asset = await mk_asset.get(path_s, cc.SpriteFrame);
+			const asset = await mk_asset.get(path_s, cc.SpriteFrame, this);
 
 			if (!asset) {
 				return;

@@ -4,7 +4,7 @@ import * as cc from "cc";
 import mk_event_target from "../mk_event_target";
 import mk_instance_base from "../mk_instance_base";
 import mk_logger from "../mk_logger";
-import mk_asset from "../resources/mk_asset";
+import mk_asset, { mk_asset_ } from "../resources/mk_asset";
 
 namespace _mk_language_manage {
 	/** 多语言类型类型 */
@@ -84,10 +84,16 @@ class mk_language_manage extends mk_instance_base {
 	 * 获取纹理
 	 * @param type_ 类型
 	 * @param mark_s_ 标记
+	 * @param target_ 跟随释放对象
 	 * @param language_ 语言
 	 * @returns
 	 */
-	async get_texture(type_: _mk_language_manage.type_type, mark_s_: string, language_ = this._language_s): Promise<cc.SpriteFrame | null> {
+	async get_texture(
+		type_: _mk_language_manage.type_type,
+		mark_s_: string,
+		target_: mk_asset_.follow_release_object,
+		language_ = this._language_s
+	): Promise<cc.SpriteFrame | null> {
 		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
 
 		if (!path_s) {
@@ -97,19 +103,13 @@ class mk_language_manage extends mk_instance_base {
 		}
 
 		if (EDITOR) {
-			const asset = await mk_asset.get(path_s + ".png", cc.ImageAsset);
+			const asset = await mk_asset.get(path_s + ".png", cc.ImageAsset, target_);
 
 			if (asset) {
-				const sprite_frame = new cc.SpriteFrame();
-				const texture2d = new cc.Texture2D();
-
-				texture2d.image = asset;
-				sprite_frame.texture = texture2d;
-
-				return sprite_frame;
+				return cc.SpriteFrame.createWithImage(asset);
 			}
 		} else {
-			const asset = await mk_asset.get(path_s, cc.SpriteFrame);
+			const asset = await mk_asset.get(path_s, cc.SpriteFrame, target_);
 
 			if (asset) {
 				return asset;

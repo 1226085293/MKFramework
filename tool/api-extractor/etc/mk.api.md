@@ -13,6 +13,9 @@ export const asset: mk_asset;
 
 // @public (undocumented)
 export namespace asset_ {
+    export interface follow_release_object {
+        follow_release(asset_: cc_2.Asset | cc_2.Asset[]): any;
+    }
     export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
         bundle_s?: string;
         completed_f?: (error: Error | null, asset: T2) => void;
@@ -21,7 +24,6 @@ export namespace asset_ {
         total_n: number) => void;
         // Warning: (ae-forgotten-export) The symbol "_mk_asset" needs to be exported by the entry point mk_export.d.ts
         remote_option?: _mk_asset.load_remote_option_type;
-        type: cc_2.Constructor<T>;
     }
     export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
 }
@@ -36,7 +38,7 @@ export namespace audio_ {
     export interface add_config {
         dir_b?: boolean;
         group_ns?: number[];
-        load_config?: asset_.get_dir_config<cc_2.AudioClip>;
+        load_config?: asset_.get_config<cc_2.AudioClip>;
         // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
         type?: global_config.audio.type;
     }
@@ -495,6 +497,7 @@ class mk_life_cycle extends mk_layer {
     }[] | {
         target_off(target: any): any;
     }[];
+    follow_release<T extends _mk_life_cycle.release_param_type | _mk_life_cycle.release_param_type[]>(args_: T): T;
     init(data_?: any): void | Promise<void>;
     init_data?: any;
     protected late_close?(): void | Promise<void>;
@@ -628,7 +631,6 @@ class mk_view_base extends mk_life_cycle {
     static config: _mk_view_base.global_config;
     set config(config_: _mk_view_base.create_config);
     data?: any;
-    follow_release<T extends _mk_view_base.release_param_type | _mk_view_base.release_param_type[]>(args_: T): T;
     protected _init_editor(): void;
     // (undocumented)
     protected late_close?(): void | Promise<void>;
@@ -740,12 +742,16 @@ export class polygon_mask extends cc_2.Component {
     get offset_v3(): cc_2.Vec3;
     set offset_v3(value_v3_: cc_2.Vec3);
     // (undocumented)
+    protected onDestroy(): void;
+    // (undocumented)
     protected onDisable(): void;
     // (undocumented)
     protected onEnable(): void;
     // (undocumented)
     protected onLoad(): void;
     shield_touch_b: boolean;
+    // (undocumented)
+    protected start(): void;
     get track_node(): cc_2.Node;
     set track_node(value_: cc_2.Node);
     update_mask(): void;
@@ -808,6 +814,7 @@ export namespace ui_manage_ {
         constructor(init_?: Partial<regis_data<CT>>);
         // Warning: (ae-forgotten-export) The symbol "_mk_ui_manage" needs to be exported by the entry point mk_export.d.ts
         source: _mk_ui_manage.source_type<CT>;
+        target: asset_.follow_release_object;
     }
 }
 

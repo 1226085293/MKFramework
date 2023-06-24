@@ -1,15 +1,15 @@
 import * as cc from "cc";
 import language, { mk_language_manage_ } from "../mk_language_manage";
 import { EDITOR } from "cc/env";
-import mk_logger from "../../mk_logger";
 import mk_tool from "../../@private/tool/mk_tool";
+import mk_life_cycle from "../../module/mk_life_cycle";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
 
 @ccclass
 @executeInEditMode
-abstract class mk_language_base extends cc.Component {
+abstract class mk_language_base extends mk_life_cycle {
 	/* --------------- 属性 --------------- */
 	/** 模糊匹配类型 */
 	@property({ displayName: "模糊匹配", serializable: false, group: { name: "类型", id: "0" } })
@@ -94,12 +94,11 @@ abstract class mk_language_base extends cc.Component {
 	@property
 	protected _mark_s = "";
 
+	protected _use_layer_b = false;
 	/** 当前类型数据 */
 	protected _data?: mk_language_manage_.data_struct;
 	/** 标记枚举数据 */
 	protected _mark_enum?: any;
-	/** 日志 */
-	protected _log = new mk_logger(cc.js.getClassName(this));
 	/* ------------------------------- 抽象函数 ------------------------------- */
 	/** 更新内容 */
 	protected abstract _update_content(): void;
@@ -149,9 +148,6 @@ abstract class mk_language_base extends cc.Component {
 		if (this._mark_s === value_s_) {
 			return;
 		}
-		// if (!this._data[value_s_]?.[global_config.language.type[language.type]]) {
-		// 	return;
-		// }
 
 		// 更新标记
 		this._mark_s = value_s_;

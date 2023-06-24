@@ -48,18 +48,26 @@ abstract class mk_audio_base extends mk_instance_base {
 	/**
 	 * 添加音频单元
 	 * @param url_s_ 音频资源路径
+	 * @param target_ 跟随释放对象
 	 * @param config_ 添加配置
-	 * @remarks
-	 * 添加后应该随模块自动释放
 	 */
-	add(url_s_: string, config_?: mk_audio_base_.add_config): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
+	add(
+		url_s_: string,
+		target_: mk_asset_.follow_release_object,
+		config_?: mk_audio_base_.add_config
+	): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
 	/**
 	 * 添加音频单元
 	 * @param url_ss_ 音频资源路径列表
+	 * @param target_ 跟随释放对象
 	 * @param config_ 添加配置
 	 */
-	add(url_ss_: string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
-	async add(url_: string | string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
+	add(url_ss_: string[], target_: mk_asset_.follow_release_object, config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
+	async add(
+		url_: string | string[],
+		target_: mk_asset_.follow_release_object,
+		config_?: mk_audio_base_.add_config
+	): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
 		if (EDITOR) {
 			return null;
 		}
@@ -79,7 +87,7 @@ abstract class mk_audio_base extends mk_instance_base {
 
 		if (config_?.dir_b) {
 			for (const v_s of url_ss) {
-				const asset_as = await mk_asset.get_dir(v_s, config_.load_config ?? { type: cc.AudioClip });
+				const asset_as = await mk_asset.get_dir(v_s, cc.AudioClip, target_, config_.load_config as any);
 
 				asset_as?.forEach((v2) => {
 					const audio = this._get_audio_unit({
@@ -94,8 +102,7 @@ abstract class mk_audio_base extends mk_instance_base {
 			result = audio_as;
 		} else {
 			for (const v_s of url_ss) {
-				const config = (config_?.load_config as any) ?? cc.AudioClip;
-				const asset = await mk_asset.get<cc.AudioClip>(v_s, config);
+				const asset = await mk_asset.get(v_s, cc.AudioClip, target_, config_?.load_config);
 
 				if (!asset) {
 					continue;
@@ -327,7 +334,7 @@ export namespace mk_audio_base_ {
 		/** 文件夹 */
 		dir_b?: boolean;
 		/** 加载配置 */
-		load_config?: mk_asset_.get_dir_config<cc.AudioClip>;
+		load_config?: mk_asset_.get_config<cc.AudioClip>;
 	}
 
 	/** play 配置 */

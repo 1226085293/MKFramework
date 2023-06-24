@@ -31,13 +31,6 @@ class mk_audio_common extends mk_audio_base {
 	/** AudioSource 对象池 */
 	private _audio_source_pool!: mk_obj_pool.sync<cc.AudioSource>;
 	/* ------------------------------- 功能 ------------------------------- */
-
-	add(url_s_: string, config_?: mk_audio_base_.add_config): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
-	add(url_ss_: string[], config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
-	async add(url_: string | string[], config_: mk_audio_base_.add_config): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
-		return super.add(url_ as any, config_);
-	}
-
 	play(audio_: mk_audio_base_.unit, config_?: Partial<mk_audio_base_.play_config>): boolean {
 		const audio = audio_ as mk_audio_common_._unit;
 
