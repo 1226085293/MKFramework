@@ -517,7 +517,11 @@ export namespace mk_bundle_ {
 		unloaded_callback_f?: cc.Director.OnUnload;
 	}
 
-	/** bundle 管理器基类 */
+	/**
+	 * bundle 管理器基类
+	 * @remarks
+	 * 注意生命周期函数 open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
+	 */
 	export abstract class bundle_manage_base implements mk_asset_.follow_release_object {
 		constructor() {
 			// 添加至 bundle 数据
