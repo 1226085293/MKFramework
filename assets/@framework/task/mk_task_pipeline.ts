@@ -97,6 +97,7 @@ class mk_task_pipeline {
 		}
 
 		this._run_b = false;
+		this.event.emit(this.event.key.completed);
 	}
 }
 
