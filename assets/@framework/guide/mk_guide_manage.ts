@@ -307,7 +307,7 @@ export namespace mk_guide_manage_ {
 		 * @returns null/undefined：更新失败中断引导
 		 * @remarks
 		 * - 可在此内更新服务端数据并请求奖励
-		 * - 步骤可使用 this._server_data 获取返回数据
+		 * - 步骤可使用 this.step_update_data 获取返回数据
 		 */
 		step_update_callback_f(step_n: number): any;
 	}

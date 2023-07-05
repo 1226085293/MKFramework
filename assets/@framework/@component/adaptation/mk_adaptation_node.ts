@@ -343,17 +343,22 @@ export default class mk_adaptation_node extends cc.Component {
 			}
 
 			switch (this.adaptation_source) {
-				case _mk_adaptation_node.source.canvas:
+				case _mk_adaptation_node.source.canvas: {
 					layout_node = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!.node;
 					design_size = layout_node.getComponent(cc.UITransform)!.contentSize.clone();
 					break;
-				case _mk_adaptation_node.source.parent:
+				}
+
+				case _mk_adaptation_node.source.parent: {
 					layout_node = this.node.parent!;
 					design_size = layout_node.getComponent(cc.UITransform)!.contentSize.clone();
 					break;
-				case _mk_adaptation_node.source.customize:
+				}
+
+				case _mk_adaptation_node.source.customize: {
 					design_size = this.custom_adapt_size;
 					break;
+				}
 			}
 
 			switch (this.type) {

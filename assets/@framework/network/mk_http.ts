@@ -32,55 +32,50 @@ class mk_http extends mk_instance_base {
 					switch (xml_http.responseType) {
 						// response 是一个以 DOMString 对象表示的文本
 						case "":
-						case "text":
-							{
-								result = xml_http.response;
-							}
-
+						case "text": {
+							result = xml_http.response;
 							break;
+						}
+
 						// response 是一个包含二进制数据的 JavaScript ArrayBuffer
-						case "arraybuffer":
-							{
-								const buf = new Uint8Array(xml_http.response);
-								let data = "";
+						case "arraybuffer": {
+							const buf = new Uint8Array(xml_http.response);
+							let data = "";
 
-								for (let k_n = 0; k_n < buf.byteLength; k_n++) {
-									data += String.fromCharCode(buf[k_n]);
-								}
-
-								result = "data:image/png;base64," + globalThis.btoa(data);
+							for (let k_n = 0; k_n < buf.byteLength; k_n++) {
+								data += String.fromCharCode(buf[k_n]);
 							}
 
+							result = "data:image/png;base64," + globalThis.btoa(data);
 							break;
+						}
+
 						// response 是一个包含二进制数据的 Blob 对象
-						case "blob":
-							{
-								result = await new Promise<any>((resolve2_f) => {
-									const read = new FileReader();
+						case "blob": {
+							result = await new Promise<any>((resolve2_f) => {
+								const read = new FileReader();
 
-									read.onload = () => {
-										resolve2_f(result);
-									};
+								read.onload = () => {
+									resolve2_f(result);
+								};
 
-									read.readAsDataURL(xml_http.response);
-								});
-							}
+								read.readAsDataURL(xml_http.response);
+							});
 
 							break;
+						}
+
 						// response 是一个 HTML Document 或 XML XMLDocument，这取决于接收到的数据的 MIME 类型
-						case "document":
-							{
-								result = xml_http.response;
-							}
-
+						case "document": {
+							result = xml_http.response;
 							break;
+						}
+
 						// response 是一个 JavaScript 对象。这个对象是通过将接收到的数据类型视为 JSON 解析得到的
-						case "json":
-							{
-								result = xml_http.response;
-							}
-
+						case "json": {
+							result = xml_http.response;
 							break;
+						}
 					}
 
 					clearTimeout(timeout_timer);

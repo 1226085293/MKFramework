@@ -7,50 +7,49 @@ class mk_tool_object extends mk_instance_base {
 		let result: any;
 
 		switch (typeof target_) {
-			case "object":
-				{
-					// 数组：遍历拷贝
-					if (Array.isArray(target_)) {
-						if (record_set.has(target_)) {
-							return target_;
-						}
+			case "object": {
+				// 数组：遍历拷贝
+				if (Array.isArray(target_)) {
+					if (record_set.has(target_)) {
+						return target_;
+					}
 
-						record_set.add(target_);
-						result = [];
-						for (let k_n = 0; k_n < target_.length; ++k_n) {
-							// 递归克隆数组中的每一项
-							result.push(this.clone(target_[k_n], record_set));
-						}
+					record_set.add(target_);
+					result = [];
+					for (let k_n = 0; k_n < target_.length; ++k_n) {
+						// 递归克隆数组中的每一项
+						result.push(this.clone(target_[k_n], record_set));
 					}
-					// null：直接赋值
-					else if (target_ === null) {
-						result = null;
+				}
+				// null：直接赋值
+				else if (target_ === null) {
+					result = null;
+				}
+				// RegExp：直接赋值
+				else if ((target_ as any).constructor === RegExp) {
+					result = target_;
+				}
+				// 普通对象：循环递归赋值对象的所有值
+				else {
+					if (record_set.has(target_)) {
+						return target_;
 					}
-					// RegExp：直接赋值
-					else if ((target_ as any).constructor === RegExp) {
-						result = target_;
-					}
-					// 普通对象：循环递归赋值对象的所有值
-					else {
-						if (record_set.has(target_)) {
-							return target_;
-						}
 
-						record_set.add(target_);
-						result = {};
-						for (const k_s in target_) {
-							result[k_s] = this.clone(target_[k_s], record_set);
-						}
+					record_set.add(target_);
+					result = {};
+					for (const k_s in target_) {
+						result[k_s] = this.clone(target_[k_s], record_set);
 					}
 				}
 
 				break;
-			case "function":
-				{
-					result = target_.bind({});
-				}
+			}
 
+			case "function": {
+				result = target_.bind({});
 				break;
+			}
+
 			default: {
 				result = target_;
 			}
@@ -106,37 +105,36 @@ class mk_tool_object extends mk_instance_base {
 	/** 遍历对象 */
 	private _traverse(target_: any, callback_f_: (value: any, key_s: string, path_s: string) => void, path_s_ = "", record_set = new Set()): void {
 		switch (typeof target_) {
-			case "object":
-				{
-					// 数组：遍历
-					if (Array.isArray(target_)) {
-						if (record_set.has(target_)) {
-							return;
-						}
-
-						record_set.add(target_);
-
-						target_.forEach((v, k_n) => {
-							// 递归数组中的每一项
-							callback_f_(target_[k_n], k_n + "", path_s_);
-							this._traverse(target_[k_n], callback_f_, path_s_ ? `${path_s_}/${k_n}` : k_n + "", record_set);
-						});
+			case "object": {
+				// 数组：遍历
+				if (Array.isArray(target_)) {
+					if (record_set.has(target_)) {
+						return;
 					}
-					// 普通对象：循环递归赋值对象的所有值
-					else {
-						if (record_set.has(target_)) {
-							return;
-						}
 
-						record_set.add(target_);
-						for (const k_s in target_) {
-							callback_f_(target_[k_s], k_s, path_s_);
-							this._traverse(target_[k_s], callback_f_, path_s_ ? `${path_s_}/${k_s}` : k_s, record_set);
-						}
+					record_set.add(target_);
+
+					target_.forEach((v, k_n) => {
+						// 递归数组中的每一项
+						callback_f_(target_[k_n], k_n + "", path_s_);
+						this._traverse(target_[k_n], callback_f_, path_s_ ? `${path_s_}/${k_n}` : k_n + "", record_set);
+					});
+				}
+				// 普通对象：循环递归赋值对象的所有值
+				else {
+					if (record_set.has(target_)) {
+						return;
+					}
+
+					record_set.add(target_);
+					for (const k_s in target_) {
+						callback_f_(target_[k_s], k_s, path_s_);
+						this._traverse(target_[k_s], callback_f_, path_s_ ? `${path_s_}/${k_s}` : k_s, record_set);
 					}
 				}
 
 				break;
+			}
 		}
 	}
 }

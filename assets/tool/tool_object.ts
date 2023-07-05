@@ -6,50 +6,49 @@ class tool_object {
 		let result: any;
 
 		switch (typeof target_) {
-			case "object":
-				{
-					// 数组：遍历拷贝
-					if (Array.isArray(target_)) {
-						if (record_set.has(target_)) {
-							return target_;
-						}
+			case "object": {
+				// 数组：遍历拷贝
+				if (Array.isArray(target_)) {
+					if (record_set.has(target_)) {
+						return target_;
+					}
 
-						record_set.add(target_);
-						result = [];
-						for (let k_n = 0; k_n < target_.length; ++k_n) {
-							// 递归克隆数组中的每一项
-							result.push(this.clone(target_[k_n], record_set));
-						}
+					record_set.add(target_);
+					result = [];
+					for (let k_n = 0; k_n < target_.length; ++k_n) {
+						// 递归克隆数组中的每一项
+						result.push(this.clone(target_[k_n], record_set));
 					}
-					// null：直接赋值
-					else if (target_ === null) {
-						result = null;
+				}
+				// null：直接赋值
+				else if (target_ === null) {
+					result = null;
+				}
+				// RegExp：直接赋值
+				else if ((target_ as any).constructor === RegExp) {
+					result = target_;
+				}
+				// 普通对象：循环递归赋值对象的所有值
+				else {
+					if (record_set.has(target_)) {
+						return target_;
 					}
-					// RegExp：直接赋值
-					else if ((target_ as any).constructor === RegExp) {
-						result = target_;
-					}
-					// 普通对象：循环递归赋值对象的所有值
-					else {
-						if (record_set.has(target_)) {
-							return target_;
-						}
 
-						record_set.add(target_);
-						result = {};
-						for (const k_s in target_) {
-							result[k_s] = this.clone(target_[k_s], record_set);
-						}
+					record_set.add(target_);
+					result = {};
+					for (const k_s in target_) {
+						result[k_s] = this.clone(target_[k_s], record_set);
 					}
 				}
 
 				break;
-			case "function":
-				{
-					result = target_.bind({});
-				}
+			}
 
+			case "function": {
+				result = target_.bind({});
 				break;
+			}
+
 			default: {
 				result = target_;
 			}
