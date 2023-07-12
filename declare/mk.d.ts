@@ -359,7 +359,11 @@ declare namespace mk {
 			/** 场景卸载后回调 */
 			unloaded_callback_f?: cc_2.Director.OnUnload;
 		}
-		/** bundle 管理器基类 */
+		/**
+		 * bundle 管理器基类
+		 * @remarks
+		 * 注意生命周期函数 open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
+		 */
 		export abstract class bundle_manage_base implements asset_.follow_release_object {
 			constructor();
 			/** bundle 名 */
@@ -594,13 +598,13 @@ declare namespace mk {
 			/**
 			 * 加载步骤
 			 * @remarks
-			 * 可在此处打开常驻节点遮罩
+			 * 可在此处打开遮罩
 			 */
 			loading_step(): void;
 			/**
 			 * 加载步骤完成
 			 * @remarks
-			 * 可在此处关闭常驻节点遮罩
+			 * 可在此处关闭遮罩
 			 */
 			loading_step_complete(): void;
 			/** 中断 */
@@ -608,6 +612,7 @@ declare namespace mk {
 			/** 完成 */
 			finish(): void;
 		}
+		/** 操作单元 */
 		export interface operate_cell {
 			/** 加载 */
 			load: () => any;
@@ -638,7 +643,7 @@ declare namespace mk {
 			 * @returns null/undefined：更新失败中断引导
 			 * @remarks
 			 * - 可在此内更新服务端数据并请求奖励
-			 * - 步骤可使用 this._server_data 获取返回数据
+			 * - 步骤可使用 this.step_update_data 获取返回数据
 			 */
 			step_update_callback_f(step_n: number): any;
 		}
@@ -1380,7 +1385,8 @@ declare namespace mk {
 
 	/**
 	 * 生命周期
-	 * - 用于模块生命周期控制
+	 * @remarks
+	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 	 * - open: 子 -> 父
 	 * - close: 父 -> 子
 	 */

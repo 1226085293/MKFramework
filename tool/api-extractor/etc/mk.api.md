@@ -275,7 +275,6 @@ export namespace guide_manage_ {
         operate_tab?: Record<string, operate_cell>;
         step_update_callback_f(step_n: number): any;
     }
-    // (undocumented)
     export interface operate_cell {
         load: () => any;
         reset?: () => any;

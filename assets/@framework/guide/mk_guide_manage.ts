@@ -261,13 +261,13 @@ export namespace mk_guide_manage_ {
 		/**
 		 * 加载步骤
 		 * @remarks
-		 * 可在此处打开常驻节点遮罩
+		 * 可在此处打开遮罩
 		 */
 		loading_step(): void;
 		/**
 		 * 加载步骤完成
 		 * @remarks
-		 * 可在此处关闭常驻节点遮罩
+		 * 可在此处关闭遮罩
 		 */
 		loading_step_complete(): void;
 		/** 中断 */
@@ -276,6 +276,7 @@ export namespace mk_guide_manage_ {
 		finish(): void;
 	}
 
+	/** 操作单元 */
 	export interface operate_cell {
 		/** 加载 */
 		load: () => any;
