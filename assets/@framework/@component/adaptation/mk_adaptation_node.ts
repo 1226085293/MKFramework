@@ -401,5 +401,8 @@ export default class mk_adaptation_node extends cc.Component {
 		if (this.adaptation_mode === _mk_adaptation_node.mode.size) {
 			this.original_size = this.getComponent(cc.UITransform)!.contentSize.clone();
 		}
+
+		// 适配节点
+		this._delayed_update_adaptation(0);
 	}
 }
