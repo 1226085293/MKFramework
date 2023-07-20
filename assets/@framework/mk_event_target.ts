@@ -12,7 +12,7 @@ class mk_event_target<CT> extends cc.EventTarget {
 	 * 监听事件
 	 * @param type_ 事件类型
 	 * @param callback_ 触发回调
-	 * @param this_ 事件目标对象
+	 * @param target_ 事件目标对象
 	 * @param once_b_ 是否触发单次
 	 * @returns 触发回调
 	 */
@@ -20,20 +20,20 @@ class mk_event_target<CT> extends cc.EventTarget {
 	on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 		type_: T | T[],
 		callback_: T2,
-		this_?: any,
+		target_?: any,
 		once_b_?: boolean
 	): typeof callback_ | null {
 		if (Array.isArray(type_)) {
 			type_.forEach((v) => {
-				super.on(v as any, callback_ as any, this_, once_b_);
+				super.on(v as any, callback_ as any, target_, once_b_);
 			});
 
 			return null;
 		} else {
 			// 录入事件对象
-			this_?.event_target_as?.push(this);
+			target_?.event_target_as?.push(this);
 
-			return super.on(type_ as any, callback_ as any, this_, once_b_);
+			return super.on(type_ as any, callback_ as any, target_, once_b_);
 		}
 	}
 
@@ -41,22 +41,26 @@ class mk_event_target<CT> extends cc.EventTarget {
 	 * 监听单次事件
 	 * @param type_ 事件类型
 	 * @param callback_ 触发回调
-	 * @param this_ 事件目标对象
+	 * @param target_ 事件目标对象
 	 * @returns 触发回调
 	 */
 	// @ts-ignore
-	once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any): typeof callback_ | null {
+	once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
+		type_: T | T[],
+		callback_: T2,
+		target_?: any
+	): typeof callback_ | null {
 		if (Array.isArray(type_)) {
 			type_.forEach((v) => {
-				super.once(v as any, callback_ as any, this_);
+				super.once(v as any, callback_ as any, target_);
 			});
 
 			return null;
 		} else {
 			// 录入事件对象
-			this_?.event_target_as?.push(this);
+			target_?.event_target_as?.push(this);
 
-			return super.once(type_ as any, callback_ as any, this_);
+			return super.once(type_ as any, callback_ as any, target_);
 		}
 	}
 
@@ -64,17 +68,17 @@ class mk_event_target<CT> extends cc.EventTarget {
 	 * 取消监听事件
 	 * @param type_ 事件类型
 	 * @param callback_ 触发回调
-	 * @param this_ 事件目标对象
+	 * @param target_ 事件目标对象
 	 * @returns 触发回调
 	 */
 	// @ts-ignore
-	off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void {
+	off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, target_?: any): void {
 		if (Array.isArray(type_)) {
 			type_.forEach((v) => {
-				super.off(v as any, callback_ as any, this_);
+				super.off(v as any, callback_ as any, target_);
 			});
 		} else {
-			super.off(type_ as any, callback_ as any, this_);
+			super.off(type_ as any, callback_ as any, target_);
 		}
 	}
 
