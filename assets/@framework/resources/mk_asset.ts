@@ -8,18 +8,23 @@ import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
 
 namespace _mk_asset {
-	/**
-	 * loadRemote 配置类型
-	 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRemoteOptions
-	 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
-	 */
-	export type load_remote_option_type = cc.__private._cocos_asset_asset_manager_shared__IRequest;
-	/**
-	 * loadAny 请求类型
-	 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRequest
-	 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
-	 */
-	export type load_any_request_type = cc.__private._cocos_asset_asset_manager_shared__IRequest;
+	/** loadRemote 配置类型 */
+	export interface load_remote_option_type {
+		uuid?: string;
+		url?: string;
+		path?: string;
+		dir?: string;
+		scene?: string;
+	}
+
+	/** loadAny 配置类型 */
+	export interface load_any_request_type extends Record<string, any> {
+		uuid?: string;
+		url?: string;
+		path?: string;
+		dir?: string;
+		scene?: string;
+	}
 
 	/** 全局配置 */
 	export interface global_config {
@@ -210,7 +215,7 @@ class mk_asset extends mk_instance_base {
 						get_config.remote_option = {};
 					}
 
-					asset_config = get_config.remote_option as any;
+					asset_config = get_config.remote_option;
 					asset_config.bundle = get_config.bundle_s ?? "resources";
 					asset_config.type = type_;
 					// uuid
