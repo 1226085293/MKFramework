@@ -35,37 +35,46 @@ class codec_proto extends mk.codec_base {
 
 			// 重载 fetch（从路径获取文件内容，json文件不能加载为 cc.TextAsset，所以必须为 txt）
 			protobufjs.Root.prototype.fetch = async (path: string, callback_f: protobufjs.FetchCallback) => {
-				const asset_info = await mk.asset.get(path, cc.TextAsset);
+				const asset = await mk.asset.get(path, cc.TextAsset, null);
 
-				callback_f(asset_info ? null! : new Error(), asset_info?.text ?? null!);
+				if (asset) {
+					this._wait_release_asset_as.push(asset);
+				}
+
+				callback_f(asset ? null! : new Error(), asset?.text ?? null!);
 			};
 		}
 
 		this._init_task = new Promise<void>((resolve_f) => {
 			// json 文件
 			if (path_s_) {
-				mk.asset.get_dir(path_s_, {
-					type: cc.JsonAsset,
-					completed_f: (error, asset_as) => {
+				mk.asset.get_dir(path_s_, cc.JsonAsset, null, {
+					completed_f: async (error, asset_as) => {
 						if (error) {
 							mk.error("加载proto文件失败, 请检查路径是否正确!");
+							resolve_f();
 
 							return;
 						}
 
-						let count_n = 0;
+						// 等待释放
+						this._wait_release_asset_as.push(...asset_as);
 
-						for (const v of asset_as) {
-							protobufjs.load(path_s_ + "/" + v.name, (error, root) => {
-								if (!error) {
-									this._read_type(this._mess, root);
-								} else {
-									mk.warn(error);
-								}
+						const task_as = asset_as.map((v) => {
+							return new Promise<void>((resolve2_f) => {
+								protobufjs.load(path_s_ + "/" + v.name, (error, root) => {
+									if (!error) {
+										this._read_type(this._mess, root);
+									} else {
+										mk.error(error);
+									}
 
-								++count_n;
+									resolve2_f();
+								});
 							});
-						}
+						});
+
+						await Promise.all(task_as);
 
 						resolve_f();
 					},
@@ -76,6 +85,9 @@ class codec_proto extends mk.codec_base {
 				this._read_type(this._mess, json_module);
 				resolve_f();
 			}
+		}).then(() => {
+			// 删除资源引用
+			this._wait_release_asset_as.forEach((v) => v.decRef());
 		});
 
 		return;
@@ -90,6 +102,7 @@ class codec_proto extends mk.codec_base {
 	private _mess: Record<string, protobufjs.Root> = Object.create(null);
 	private _mess_map = new Map<number, protobufjs.Type>();
 	private _init_task: Promise<void>;
+	private _wait_release_asset_as: cc.Asset[] = [];
 	/* -------------------------------segmentation------------------------------- */
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
