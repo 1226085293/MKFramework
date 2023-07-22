@@ -587,7 +587,7 @@ export namespace mk_bundle_ {
 		}
 
 		/** 卸载回调 */
-		close(): boolean | null | Promise<boolean | null> {
+		close(): void | Promise<void> {
 			if (!this.open_b) {
 				mk_log.error("bundle 已经卸载");
 				throw "中断";
@@ -608,8 +608,6 @@ export namespace mk_bundle_ {
 					delete this.node_pool_tab[k_s];
 				}
 			}
-
-			return true;
 		}
 
 		/**

@@ -383,7 +383,7 @@ declare namespace mk {
 			/** 加载回调 */
 			open(): void | Promise<void>;
 			/** 卸载回调 */
-			close(): boolean | null | Promise<boolean | null>;
+			close(): void | Promise<void>;
 			/**
 			 * 跟随释放
 			 * @param args_ 要跟随模块释放的对象或列表
@@ -466,36 +466,36 @@ declare namespace mk {
 		 * 监听事件
 		 * @param type_ 事件类型
 		 * @param callback_ 触发回调
-		 * @param this_ 事件目标对象
+		 * @param target_ 事件目标对象
 		 * @param once_b_ 是否触发单次
 		 * @returns 触发回调
 		 */
 		on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 			type_: T | T[],
 			callback_: T2,
-			this_?: any,
+			target_?: any,
 			once_b_?: boolean
 		): typeof callback_ | null;
 		/**
 		 * 监听单次事件
 		 * @param type_ 事件类型
 		 * @param callback_ 触发回调
-		 * @param this_ 事件目标对象
+		 * @param target_ 事件目标对象
 		 * @returns 触发回调
 		 */
 		once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(
 			type_: T | T[],
 			callback_: T2,
-			this_?: any
+			target_?: any
 		): typeof callback_ | null;
 		/**
 		 * 取消监听事件
 		 * @param type_ 事件类型
 		 * @param callback_ 触发回调
-		 * @param this_ 事件目标对象
+		 * @param target_ 事件目标对象
 		 * @returns 触发回调
 		 */
-		off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void;
+		off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, target_?: any): void;
 		/**
 		 * 派发事件
 		 * @param type_ 事件类型

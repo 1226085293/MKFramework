@@ -147,7 +147,7 @@ export namespace bundle_ {
     }
     export abstract class bundle_manage_base implements asset_.follow_release_object {
         constructor();
-        close(): boolean | null | Promise<boolean | null>;
+        close(): void | Promise<void>;
         data?: data_sharer;
         abstract event: event_target<any>;
         // Warning: (ae-forgotten-export) The symbol "mk_release_" needs to be exported by the entry point mk_export.d.ts
@@ -226,9 +226,9 @@ export class event_target<CT> extends cc_2.EventTarget {
     key: {
         [k in keyof CT]: k;
     };
-    off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, this_?: any): void;
-    on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any, once_b_?: boolean): typeof callback_ | null;
-    once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, this_?: any): typeof callback_ | null;
+    off<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_?: T2, target_?: any): void;
+    on<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, target_?: any, once_b_?: boolean): typeof callback_ | null;
+    once<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T | T[], callback_: T2, target_?: any): typeof callback_ | null;
     // @beta
     request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
 }
