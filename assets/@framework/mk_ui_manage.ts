@@ -7,7 +7,7 @@ import mk_obj_pool from "./mk_obj_pool";
 import mk_asset, { mk_asset_ } from "./resources/mk_asset";
 import mk_status_task from "./task/mk_status_task";
 import mk_tool from "./@private/tool/mk_tool";
-import { mk_release_ } from "./resources/mk_release";
+import { mk_release_ } from "./mk_release";
 
 namespace _mk_ui_manage {
 	export type source_type<T extends { type_s?: string } | {}> =

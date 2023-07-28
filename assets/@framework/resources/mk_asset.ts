@@ -6,7 +6,7 @@ import mk_logger from "../mk_logger";
 import mk_bundle from "./mk_bundle";
 import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
-import { mk_release_ } from "./mk_release";
+import { mk_release_ } from "../mk_release";
 
 namespace _mk_asset {
 	/** loadRemote 配置类型 */

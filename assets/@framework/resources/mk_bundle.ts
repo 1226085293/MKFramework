@@ -7,7 +7,7 @@ import * as cc from "cc";
 import mk_status_task from "../task/mk_status_task";
 import mk_data_sharer from "../mk_data_sharer";
 import mk_tool_func from "../@private/tool/mk_tool_func";
-import mk_release, { mk_release_ } from "./mk_release";
+import mk_release, { mk_release_ } from "../mk_release";
 import { mk_asset_ } from "./mk_asset";
 
 namespace _mk_bundle {

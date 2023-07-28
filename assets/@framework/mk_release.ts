@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import { mk_log } from "../mk_logger";
+import { mk_log } from "./mk_logger";
 
 /**
  * 资源/对象释放器

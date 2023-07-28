@@ -8,7 +8,7 @@ import mk_status_task from "../task/mk_status_task";
 import mk_layer from "./mk_layer";
 import mk_tool from "../@private/tool/mk_tool";
 import { mk_audio_ } from "../audio/mk_audio_export";
-import mk_release, { mk_release_ } from "../resources/mk_release";
+import mk_release, { mk_release_ } from "../mk_release";
 import { mk_asset_ } from "../resources/mk_asset";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
