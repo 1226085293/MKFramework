@@ -15,7 +15,7 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	open(): void {
-		mk.module.view_base.config.window_animation_tab.open["默认"] = (node) => {
+		mk.view_base.config.window_animation_tab.open["默认"] = (node) => {
 			node = node.getChildByName("窗口") ?? node;
 			// 防止 widget 没有进行适配（3.6.3 - 3.7.0）
 			node.getComponentsInChildren(cc.Widget).forEach((v) => v.updateAlignment());
@@ -33,7 +33,7 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 			});
 		};
 
-		mk.module.view_base.config.window_animation_tab.close["默认"] = (node) => {
+		mk.view_base.config.window_animation_tab.close["默认"] = (node) => {
 			node = node.getChildByName("窗口") ?? node;
 
 			return new Promise<void>((resolve_f) => {

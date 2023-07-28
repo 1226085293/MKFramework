@@ -1,6 +1,6 @@
 {
   "creator": {
-    "version": "3.8.0"
+    "version": "3.6.3"
   },
   "scripts": {
     "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",

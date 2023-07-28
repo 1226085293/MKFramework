@@ -34,7 +34,7 @@ export namespace 默认 {
 	class array_extend<CT> extends Array<CT> {
 		private _init_data!: array_init_config;
 		/** 存在视图组件 */
-		private _item_view_type: cc.Constructor<mk.module.view_base> | null = null;
+		private _item_view_type: cc.Constructor<mk.view_base> | null = null;
 		/** 节点池 */
 		private _node_pool!: mk.obj_pool<cc.Node>;
 		/** 任务管线 */
@@ -43,11 +43,11 @@ export namespace 默认 {
 		/** 初始化 */
 		async init(init_: array_init_config): Promise<void> {
 			this._init_data = new array_init_config(init_);
-			this._item_view_type = this._init_data.item.getComponent(mk.module.view_base)?.constructor as any;
+			this._item_view_type = this._init_data.item.getComponent(mk.view_base)?.constructor as any;
 
 			// 模块
 			if (this._item_view_type) {
-				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, {
+				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, cc.director.getScene()!.getComponentInChildren(mk.life_cycle)!, {
 					repeat_b: true,
 					pool_init_fill_n: 8,
 					parent: this._init_data.root,
@@ -217,7 +217,7 @@ export namespace 默认 {
 				// 下标监听修改
 				mk.monitor.on(this, k_n, (value) => {
 					this._task_pipeline.add(async () => {
-						this._init_data!.root.children[k_n].getComponent(mk.module.view_base)?.init?.(value);
+						this._init_data!.root.children[k_n].getComponent(mk.view_base)?.init?.(value);
 						this._init_data.item_update_f?.(this._init_data.root.children[k_n], value);
 					});
 				});

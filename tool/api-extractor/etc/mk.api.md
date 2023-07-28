@@ -13,9 +13,8 @@ export const asset: mk_asset;
 
 // @public (undocumented)
 export namespace asset_ {
-    export interface follow_release_object {
-        follow_release(asset_: cc_2.Asset | cc_2.Asset[]): any;
-    }
+    // Warning: (ae-forgotten-export) The symbol "mk_release_" needs to be exported by the entry point mk_export.d.ts
+    export type follow_release_object = mk_release_.follow_release_object<cc_2.Asset>;
     export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
         bundle_s?: string;
         completed_f?: (error: Error | null, asset: T2) => void;
@@ -150,15 +149,13 @@ export namespace bundle_ {
         close(): void | Promise<void>;
         data?: data_sharer;
         abstract event: event_target<any>;
-        // Warning: (ae-forgotten-export) The symbol "mk_release_" needs to be exported by the entry point mk_export.d.ts
         follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
         abstract name_s: string;
         network?: mk_network_base;
         node_pool_tab: Record<string, cc_2.NodePool>;
         open(): void | Promise<void>;
         open_b: boolean;
-        // Warning: (ae-forgotten-export) The symbol "mk_release" needs to be exported by the entry point mk_export.d.ts
-        protected _release_manage: mk_release;
+        protected _release_manage: release;
     }
     export class load_config {
         constructor(init_: load_config);
@@ -327,6 +324,67 @@ export namespace language_ {
 // @public (undocumented)
 export const language_manage: mk_language_manage;
 
+// @public
+export class layer extends cc_2.Component {
+    get child_layer_n(): number;
+    set child_layer_n(value_n_: number);
+    // (undocumented)
+    static config: layer_.global_config;
+    get init_editor(): void;
+    protected _init_editor(): void;
+    layer_type_n: number;
+    // (undocumented)
+    protected onLoad(): void;
+    static set_layer_refresh_interval(node_: cc_2.Node, interval_ms_n_: number, recursion_b_?: boolean): void;
+    protected _use_layer_b: boolean;
+}
+
+// @public (undocumented)
+export namespace layer_ {
+    export interface global_config {
+        layer_spacing_n: number;
+        layer_type: any;
+    }
+    export interface node_extend {
+        __layer_n?: number;
+        __layer_refresh_interval_ms_n?: number;
+        __layer_timer?: any;
+    }
+}
+
+// @public
+export class life_cycle extends layer implements asset_.follow_release_object {
+    constructor(...args: any[]);
+    close?(): void | Promise<void>;
+    // @internal
+    _close(config_?: _mk_life_cycle.close_config): Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export.d.ts
+    set config(config_: _mk_life_cycle.create_config);
+    protected create?(): void | Promise<void>;
+    event_target_as: {
+        targetOff(target: any): any;
+    }[] | {
+        target_off(target: any): any;
+    }[];
+    follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
+    init(data_?: any): void | Promise<void>;
+    init_data?: any;
+    protected late_close?(): void | Promise<void>;
+    protected _load_task: mk_status_task<void>;
+    protected get _log(): logger;
+    // (undocumented)
+    protected onLoad(): void;
+    protected open?(): void | Promise<void>;
+    // @internal
+    _open(config_?: _mk_life_cycle.open_config): Promise<void>;
+    get open_b(): boolean;
+    protected _open_task: mk_status_task<void>;
+    protected _state: _mk_life_cycle.run_state;
+    get static_b(): boolean;
+    protected _static_b: boolean;
+    get valid_b(): boolean;
+}
+
 // @public (undocumented)
 export const log: (...args_as_: any[]) => void;
 
@@ -420,7 +478,7 @@ class mk_language_label extends mk_language_base {
 }
 
 // @public
-class mk_language_node extends mk_life_cycle {
+class mk_language_node extends life_cycle {
     // (undocumented)
     create(): void | Promise<void>;
     get current_node(): cc_2.Node | null;
@@ -456,66 +514,6 @@ class mk_language_texture extends mk_language_base {
     protected _update_content(): Promise<void>;
     // (undocumented)
     protected _update_mark(): void;
-}
-
-// @public
-class mk_layer extends cc_2.Component {
-    get child_layer_n(): number;
-    set child_layer_n(value_n_: number);
-    // (undocumented)
-    static config: _mk_layer.global_config;
-    get init_editor(): void;
-    protected _init_editor(): void;
-    layer_type_n: number;
-    // (undocumented)
-    protected onLoad(): void;
-    static set_layer_refresh_interval(node_: cc_2.Node, interval_ms_n_: number, recursion_b_?: boolean): void;
-    protected _use_layer_b: boolean;
-}
-
-// @public (undocumented)
-namespace _mk_layer {
-    interface global_config {
-        layer_spacing_n: number;
-        layer_type: any;
-    }
-    interface node_extend {
-        __layer_n?: number;
-        __layer_refresh_interval_ms_n?: number;
-        __layer_timer?: any;
-    }
-}
-
-// @public
-class mk_life_cycle extends mk_layer implements asset_.follow_release_object {
-    constructor(...args: any[]);
-    close?(): void | Promise<void>;
-    // @internal
-    _close(config_?: _mk_life_cycle.close_config): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export.d.ts
-    set config(config_: _mk_life_cycle.create_config);
-    protected create?(): void | Promise<void>;
-    event_target_as: {
-        targetOff(target: any): any;
-    }[] | {
-        target_off(target: any): any;
-    }[];
-    follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
-    init(data_?: any): void | Promise<void>;
-    init_data?: any;
-    protected late_close?(): void | Promise<void>;
-    protected _load_task: mk_status_task<void>;
-    protected get _log(): logger;
-    // (undocumented)
-    protected onLoad(): void;
-    protected open?(): void | Promise<void>;
-    // @internal
-    _open(config_?: _mk_life_cycle.open_config): Promise<void>;
-    get open_b(): boolean;
-    protected _open_task: mk_status_task<void>;
-    protected _state: _mk_life_cycle.run_state;
-    get static_b(): boolean;
-    protected _static_b: boolean;
 }
 
 // @public (undocumented)
@@ -588,14 +586,6 @@ namespace mk_network_base_ {
 }
 
 // @public
-class mk_scene_drive extends mk_life_cycle {
-    // (undocumented)
-    onDestroy(): void;
-    // (undocumented)
-    onLoad(): Promise<void>;
-}
-
-// @public
 class mk_status_task<CT = void> {
     // Warning: (ae-forgotten-export) The symbol "mk_status_task_" needs to be exported by the entry point mk_export.d.ts
     constructor(finish_b_: boolean, init_config_?: mk_status_task_.init_config<CT>);
@@ -612,51 +602,6 @@ class mk_task_pipeline {
     event: event_target<_mk_task_pipeline.event_protocol>;
     get pause_b(): boolean;
     set pause_b(value_b_: boolean);
-}
-
-// @public
-class mk_view_base extends mk_life_cycle {
-    // (undocumented)
-    animation_config: _mk_view_base.animation_config;
-    // (undocumented)
-    get auto_block_input_b(): boolean;
-    set auto_block_input_b(value_b_: boolean);
-    // (undocumented)
-    get auto_mask_b(): boolean;
-    set auto_mask_b(value_b_: boolean);
-    // (undocumented)
-    get auto_widget_b(): boolean;
-    set auto_widget_b(value_b_: boolean);
-    close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "_mk_view_base" needs to be exported by the entry point mk_export.d.ts
-    //
-    // (undocumented)
-    static config: _mk_view_base.global_config;
-    set config(config_: _mk_view_base.create_config);
-    data?: any;
-    protected _init_editor(): void;
-    // (undocumented)
-    protected late_close?(): void | Promise<void>;
-    // (undocumented)
-    protected onLoad(): void;
-    // (undocumented)
-    protected open(): void | Promise<void>;
-    protected _reset_data_b: boolean;
-    // (undocumented)
-    show_alone_b: boolean;
-    get type_s(): string;
-    protected _view_config: mk_view_base_.view_config;
-}
-
-// @public (undocumented)
-namespace mk_view_base_ {
-    class view_config {
-        constructor(init_?: Partial<view_config>);
-        prefab_tab?: Record<string, cc_2.Prefab | string> & {
-            default: cc_2.Prefab | string;
-        };
-        type_s: string;
-    }
 }
 
 // @public
@@ -689,18 +634,6 @@ class mk_websocket_wx<CT extends codec_base = codec_base> extends mk_network_bas
     // (undocumented)
     protected _socket: wx.SocketTask;
 }
-
-declare namespace module_2 {
-    export {
-        mk_layer as layer,
-        _mk_layer as layer_,
-        mk_life_cycle as life_cycle,
-        mk_scene_drive as scene_drive,
-        mk_view_base as view_base,
-        mk_view_base_ as view_base_
-    }
-}
-export { module_2 as module }
 
 // Warning: (ae-forgotten-export) The symbol "mk_monitor" needs to be exported by the entry point mk_export.d.ts
 //
@@ -761,6 +694,20 @@ export class polygon_mask extends cc_2.Component {
 }
 
 // @public
+export class release {
+    add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
+    release(): Promise<void>;
+}
+
+// @public
+export class scene_drive extends life_cycle {
+    // (undocumented)
+    onDestroy(): void;
+    // (undocumented)
+    onLoad(): Promise<void>;
+}
+
+// @public
 export class storage<CT extends Object> {
     // Warning: (ae-forgotten-export) The symbol "mk_storage_" needs to be exported by the entry point mk_export.d.ts
     constructor(init_: mk_storage_.init_config<CT>);
@@ -789,7 +736,7 @@ export const ui_manage: mk_ui_manage;
 
 // @public (undocumented)
 export namespace ui_manage_ {
-    export class close_config<CT extends cc_2.Constructor<mk_view_base>> {
+    export class close_config<CT extends cc_2.Constructor<view_base>> {
         constructor(init_?: close_config<CT>);
         all_b?: boolean;
         destroy_b?: boolean;
@@ -798,13 +745,13 @@ export namespace ui_manage_ {
             type_s: infer T;
         } ? T : never;
     }
-    export class open_config<CT extends cc_2.Constructor<mk_view_base> & Function> {
+    export class open_config<CT extends cc_2.Constructor<view_base> & Function> {
         constructor(init_?: open_config<CT>);
         init?: CT["prototype"]["init_data"];
         parent?: cc_2.Node;
         type?: CT["prototype"]["type_s"];
     }
-    export class regis_config<CT extends cc_2.Constructor<mk_view_base>> {
+    export class regis_config<CT extends cc_2.Constructor<view_base>> {
         constructor(init_?: Partial<regis_config<CT>>);
         load_config?: asset_.get_config<cc_2.Prefab>;
         parent: cc_2.Node | undefined;
@@ -813,11 +760,56 @@ export namespace ui_manage_ {
         pool_max_hold_n: number;
         repeat_b: boolean;
     }
-    export class regis_data<CT extends cc_2.Constructor<mk_view_base>> extends regis_config<CT> {
+    export class regis_data<CT extends cc_2.Constructor<view_base>> extends regis_config<CT> {
         constructor(init_?: Partial<regis_data<CT>>);
         // Warning: (ae-forgotten-export) The symbol "_mk_ui_manage" needs to be exported by the entry point mk_export.d.ts
         source: _mk_ui_manage.source_type<CT>;
-        target: asset_.follow_release_object;
+        target: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
+    }
+}
+
+// @public
+export class view_base extends life_cycle {
+    // (undocumented)
+    animation_config: _mk_view_base.animation_config;
+    // (undocumented)
+    get auto_block_input_b(): boolean;
+    set auto_block_input_b(value_b_: boolean);
+    // (undocumented)
+    get auto_mask_b(): boolean;
+    set auto_mask_b(value_b_: boolean);
+    // (undocumented)
+    get auto_widget_b(): boolean;
+    set auto_widget_b(value_b_: boolean);
+    close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "_mk_view_base" needs to be exported by the entry point mk_export.d.ts
+    //
+    // (undocumented)
+    static config: _mk_view_base.global_config;
+    set config(config_: _mk_view_base.create_config);
+    data?: any;
+    protected _init_editor(): void;
+    // (undocumented)
+    protected late_close?(): void | Promise<void>;
+    // (undocumented)
+    protected onLoad(): void;
+    // (undocumented)
+    protected open(): void | Promise<void>;
+    protected _reset_data_b: boolean;
+    // (undocumented)
+    show_alone_b: boolean;
+    get type_s(): string;
+    protected _view_config: view_base_.view_config;
+}
+
+// @public (undocumented)
+export namespace view_base_ {
+    export class view_config {
+        constructor(init_?: Partial<view_config>);
+        prefab_tab?: Record<string, cc_2.Prefab | string> & {
+            default: cc_2.Prefab | string;
+        };
+        type_s: string;
     }
 }
 

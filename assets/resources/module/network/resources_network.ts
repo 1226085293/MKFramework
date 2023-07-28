@@ -6,7 +6,7 @@ import { test } from "../../bundle/proto/test.js";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_network")
-export class resources_network extends mk.module.view_base {
+export class resources_network extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */

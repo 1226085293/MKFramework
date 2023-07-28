@@ -10,7 +10,7 @@ import main_bundle from "../../bundle/main_bundle";
 const { ccclass, property } = _decorator;
 
 @ccclass("main_main")
-export class main_main extends mk.module.view_base {
+export class main_main extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */

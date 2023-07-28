@@ -5,7 +5,7 @@ import { resources_module_ui_stack_demo } from "./ui/resources_module_ui_stack_d
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_module_ui_stack")
-export class resources_module_ui_stack extends mk.module.view_base {
+export class resources_module_ui_stack extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */
@@ -18,7 +18,7 @@ export class resources_module_ui_stack extends mk.module.view_base {
 	}
 
 	create(): void {
-		mk.ui_manage.regis(resources_module_ui_stack_demo, "db://assets/resources/module/module/ui_stack/ui/resources_module_ui_stack_demo", {
+		mk.ui_manage.regis(resources_module_ui_stack_demo, "db://assets/resources/module/module/ui_stack/ui/resources_module_ui_stack_demo", this, {
 			parent: this.nodes.layout,
 		});
 	}

@@ -7,6 +7,7 @@ import mk_obj_pool from "./mk_obj_pool";
 import mk_asset, { mk_asset_ } from "./resources/mk_asset";
 import mk_status_task from "./task/mk_status_task";
 import mk_tool from "./@private/tool/mk_tool";
+import { mk_release_ } from "./resources/mk_release";
 
 namespace _mk_ui_manage {
 	export type source_type<T extends { type_s?: string } | {}> =
@@ -70,11 +71,16 @@ export class mk_ui_manage extends mk_instance_base {
 	async regis<T extends cc.Constructor<mk_view_base>>(
 		key_: T,
 		source_: _mk_ui_manage.source_type<T>,
-		target_: mk_asset_.follow_release_object,
+		target_: mk_release_.follow_release_object<mk_release_.release_call_back_type>,
 		config_?: Partial<mk_ui_manage_.regis_config<T>>
 	): Promise<void> {
 		/** 模块注册任务 */
 		const ui_regis_task = this._ui_regis_task_map.get(key_);
+
+		// 跟随对象释放
+		target_?.follow_release(async () => {
+			await this.unregis(key_);
+		});
 
 		// 等待模块注册
 		if (ui_regis_task) {
@@ -109,10 +115,10 @@ export class mk_ui_manage extends mk_instance_base {
 				await this.unregis(key_);
 			}
 
-			// 完成注册任务
-			regis_task!.finish(true);
 			// 删除注册任务
 			this._ui_regis_task_map.delete(key_);
+			// 完成注册任务
+			regis_task!.finish(true);
 		};
 
 		/** 来源表 */
@@ -143,7 +149,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 			// 资源路径
 			if (typeof v === "string" && regis_data.pool_init_fill_n > 0) {
-				source = await mk_asset.get(v, cc.Prefab, target_, regis_data.load_config);
+				source = await mk_asset.get(v, cc.Prefab, null, regis_data.load_config);
 			}
 
 			// 预制体/节点
@@ -164,7 +170,7 @@ export class mk_ui_manage extends mk_instance_base {
 					create_f: async () => {
 						// 不存在预制体开始加载
 						if (!source && typeof v === "string") {
-							source = (await mk_asset.get(v, cc.Prefab, target_, regis_data.load_config))!;
+							source = (await mk_asset.get(v, cc.Prefab, null, regis_data.load_config))!;
 						}
 
 						if (!source?.isValid) {
@@ -230,7 +236,7 @@ export class mk_ui_manage extends mk_instance_base {
 			const pool = this._ui_pool_map.get(key_);
 
 			if (pool) {
-				for (const [k_n, v] of pool) {
+				for (const [k_s, v] of pool) {
 					await v.clear();
 				}
 
@@ -774,7 +780,7 @@ export namespace mk_ui_manage_ {
 		/** 来源 */
 		source!: _mk_ui_manage.source_type<CT>;
 		/** 跟随释放对象 */
-		target!: mk_asset_.follow_release_object;
+		target!: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
 	}
 }
 

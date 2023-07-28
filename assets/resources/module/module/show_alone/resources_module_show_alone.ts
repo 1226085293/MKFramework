@@ -3,7 +3,7 @@ import mk from "mk";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_module_show_alone")
-export class resources_module_show_alone extends mk.module.view_base {
+export class resources_module_show_alone extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */

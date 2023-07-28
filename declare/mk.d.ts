@@ -29,13 +29,7 @@ declare namespace mk {
 			remote_option?: _mk_asset.load_remote_option_type;
 		}
 		/** 跟随释放对象 */
-		export interface follow_release_object {
-			/**
-			 * 跟随释放
-			 * @param asset_ 释放资源
-			 */
-			follow_release(asset_: cc_2.Asset | cc_2.Asset[]): any;
-		}
+		export type follow_release_object = mk_release_.follow_release_object<cc_2.Asset>;
 	}
 
 	export declare const audio: mk_audio_base;
@@ -379,7 +373,7 @@ declare namespace mk {
 			/** 数据获取器 */
 			data?: data_sharer;
 			/** 释放管理器 */
-			protected _release_manage: mk_release;
+			protected _release_manage: release;
 			/** 加载回调 */
 			open(): void | Promise<void>;
 			/** 卸载回调 */
@@ -698,6 +692,168 @@ declare namespace mk {
 
 	export declare const language_manage: mk_language_manage;
 
+	/** 层级管理 */
+	export declare class layer extends cc_2.Component {
+		static config: layer_.global_config;
+		/** 初始化编辑器 */
+		get init_editor(): void;
+		/** 层类型 */
+		layer_type_n: number;
+		/** 层级 */
+		get child_layer_n(): number;
+		set child_layer_n(value_n_: number);
+		/**
+		 * 使用 layer
+		 * @defaultValue
+		 * true
+		 * @remarks
+		 * false：关闭 layer 功能
+		 */
+		protected _use_layer_b: boolean;
+		/** 层级 */
+		private _child_layer_n;
+		/**
+		 * 设置层级刷新间隔
+		 * @param node_ 节点
+		 * @param interval_ms_n_ 间隔时间（毫秒）
+		 * @param recursion_b_ 递归
+		 * @remarks
+		 * 设置 node_ 的子节点将延迟 interval_ms_n_ 时间后更新层级
+		 */
+		static set_layer_refresh_interval(node_: cc_2.Node, interval_ms_n_: number, recursion_b_?: boolean): void;
+		protected onLoad(): void;
+		/** 初始化编辑器 */
+		protected _init_editor(): void;
+		/** 更新渲染顺序 */
+		private _update_layer;
+	}
+
+	export declare namespace layer_ {
+		/** 全局配置 */
+		export interface global_config {
+			/** 层级类型枚举 */
+			layer_type: any;
+			/** 层间隔 */
+			layer_spacing_n: number;
+		}
+		/** 节点扩展 */
+		export interface node_extend {
+			/** 层级 */
+			__layer_n?: number;
+			/** 层级改变定时器 */
+			__layer_timer?: any;
+			/** 层级刷新间隔 */
+			__layer_refresh_interval_ms_n?: number;
+		}
+	}
+
+	/**
+	 * 生命周期
+	 * @remarks
+	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
+	 * - open: 子 -> 父
+	 * - close: 父 -> 子
+	 */
+	export declare class life_cycle extends layer implements asset_.follow_release_object {
+		constructor(...args: any[]);
+		/** 初始化数据 */
+		init_data?: any;
+		/**
+		 * 事件对象列表
+		 * @readonly
+		 * @remarks
+		 * 模块关闭后自动清理事件
+		 */
+		event_target_as:
+			| {
+					targetOff(target: any): any;
+			  }[]
+			| {
+					target_off(target: any): any;
+			  }[];
+		/**
+		 * open 状态
+		 * @remarks
+		 * 表示模块已经 open 完成
+		 */
+		get open_b(): boolean;
+		/**
+		 * 有效状态
+		 * @remarks
+		 * 表示模块在 open 中或者已经 open 完成
+		 */
+		get valid_b(): boolean;
+		/** 静态模块 */
+		get static_b(): boolean;
+		/** 设置模块配置 */
+		set config(config_: _mk_life_cycle.create_config);
+		/** 静态模块 */
+		protected _static_b: boolean;
+		/** load任务 */
+		protected _load_task: mk_status_task<void>;
+		/** open任务 */
+		protected _open_task: mk_status_task<void>;
+		/** 运行状态 */
+		protected _state: _mk_life_cycle.run_state;
+		/** 日志 */
+		protected get _log(): logger;
+		/** 日志 */
+		private _log2;
+		/** 释放管理器 */
+		private _release_manage;
+		protected onLoad(): void;
+		/**
+		 * 创建
+		 * @param config_ 创建配置
+		 * @remarks
+		 * 可在此处初始化视图状态
+		 * - 静态模块：onLoad 时调用
+		 * - 动态模块：addChild 后调用
+		 */
+		protected create?(): void | Promise<void>;
+		/**
+		 * 初始化
+		 * @param data_ 初始化数据
+		 * @remarks
+		 * 所有依赖 init_data 初始化的逻辑都应在此进行
+		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
+		 * - 动态模块：onLoad 后，open 前调用
+		 */
+		init(data_?: any): void | Promise<void>;
+		/**
+		 * 打开
+		 * @protected
+		 * @remarks
+		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+		 */
+		protected open?(): void | Promise<void>;
+		/**
+		 * 关闭
+		 * @remarks
+		 * 内部调用：生命周期
+		 * 外部调用：自动回收模块
+		 */
+		close?(): void | Promise<void>;
+		/**
+		 * 关闭后
+		 * @protected
+		 * @remarks
+		 * 在子模块 close 和 late_close 后执行
+		 */
+		protected late_close?(): void | Promise<void>;
+		/**
+		 * 跟随释放
+		 * @param args_ 要跟随模块释放的对象或列表
+		 */
+		follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
+		/* Excluded from this release type: _open */
+		/* Excluded from this release type: _close */
+		/** 递归 open */
+		private _recursive_open;
+		/** 递归 close */
+		private _recursive_close;
+	}
+
 	export declare const log: (...args_as_: any[]) => void;
 
 	/**
@@ -829,18 +985,22 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_asset {
-		/**
-		 * loadRemote 配置类型
-		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRemoteOptions
-		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
-		 */
-		type load_remote_option_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
-		/**
-		 * loadAny 请求类型
-		 * - 3.6: cc.__private._cocos_core_asset_manager_shared__IRequest
-		 * - 3.8: cc.__private._cocos_asset_asset_manager_shared__IRequest;
-		 */
-		type load_any_request_type = cc_2.__private._cocos_asset_asset_manager_shared__IRequest;
+		/** loadRemote 配置类型 */
+		interface load_remote_option_type {
+			uuid?: string;
+			url?: string;
+			path?: string;
+			dir?: string;
+			scene?: string;
+		}
+		/** loadAny 配置类型 */
+		interface load_any_request_type extends Record<string, any> {
+			uuid?: string;
+			url?: string;
+			path?: string;
+			dir?: string;
+			scene?: string;
+		}
 		/** 全局配置 */
 		interface global_config {
 			/** 缓存生命时长 */
@@ -1114,7 +1274,7 @@ declare namespace mk {
 		}
 	}
 
-	declare abstract class mk_language_base extends mk_life_cycle {
+	declare abstract class mk_language_base extends life_cycle {
 		/** 模糊匹配类型 */
 		fuzzy_match_type_b: boolean;
 		/** 类型 */
@@ -1267,7 +1427,7 @@ declare namespace mk {
 	}
 
 	/** 多语言节点 */
-	declare class mk_language_node extends mk_life_cycle {
+	declare class mk_language_node extends life_cycle {
 		/** 语言 */
 		language_s: "zh_cn" | "en_us";
 		/** 语言 */
@@ -1326,158 +1486,6 @@ declare namespace mk {
 		/** 初始化组件 */
 		private _init_component;
 		private _event_texture_data_change;
-	}
-
-	/** 层级管理 */
-	declare class mk_layer extends cc_2.Component {
-		static config: _mk_layer.global_config;
-		/** 初始化编辑器 */
-		get init_editor(): void;
-		/** 层类型 */
-		layer_type_n: number;
-		/** 层级 */
-		get child_layer_n(): number;
-		set child_layer_n(value_n_: number);
-		/**
-		 * 使用 layer
-		 * @defaultValue
-		 * true
-		 * @remarks
-		 * false：关闭 layer 功能
-		 */
-		protected _use_layer_b: boolean;
-		/** 层级 */
-		private _child_layer_n;
-		/**
-		 * 设置层级刷新间隔
-		 * @param node_ 节点
-		 * @param interval_ms_n_ 间隔时间（毫秒）
-		 * @param recursion_b_ 递归
-		 * @remarks
-		 * 设置 node_ 的子节点将延迟 interval_ms_n_ 时间后更新层级
-		 */
-		static set_layer_refresh_interval(node_: cc_2.Node, interval_ms_n_: number, recursion_b_?: boolean): void;
-		protected onLoad(): void;
-		/** 初始化编辑器 */
-		protected _init_editor(): void;
-		/** 更新渲染顺序 */
-		private _update_layer;
-	}
-
-	declare namespace _mk_layer {
-		/** 全局配置 */
-		interface global_config {
-			/** 层级类型枚举 */
-			layer_type: any;
-			/** 层间隔 */
-			layer_spacing_n: number;
-		}
-		/** 节点扩展 */
-		interface node_extend {
-			/** 层级 */
-			__layer_n?: number;
-			/** 层级改变定时器 */
-			__layer_timer?: any;
-			/** 层级刷新间隔 */
-			__layer_refresh_interval_ms_n?: number;
-		}
-	}
-
-	/**
-	 * 生命周期
-	 * @remarks
-	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
-	 * - open: 子 -> 父
-	 * - close: 父 -> 子
-	 */
-	declare class mk_life_cycle extends mk_layer implements asset_.follow_release_object {
-		constructor(...args: any[]);
-		/** 初始化数据 */
-		init_data?: any;
-		/**
-		 * 事件对象列表
-		 * @readonly
-		 * @remarks
-		 * 模块关闭后自动清理事件
-		 */
-		event_target_as:
-			| {
-					targetOff(target: any): any;
-			  }[]
-			| {
-					target_off(target: any): any;
-			  }[];
-		/** open状态 */
-		get open_b(): boolean;
-		/** 静态模块 */
-		get static_b(): boolean;
-		/** 设置模块配置 */
-		set config(config_: _mk_life_cycle.create_config);
-		/** 静态模块 */
-		protected _static_b: boolean;
-		/** load任务 */
-		protected _load_task: mk_status_task<void>;
-		/** open任务 */
-		protected _open_task: mk_status_task<void>;
-		/** 运行状态 */
-		protected _state: _mk_life_cycle.run_state;
-		/** 日志 */
-		protected get _log(): logger;
-		/** 日志 */
-		private _log2;
-		/** 释放管理器 */
-		private _release_manage;
-		protected onLoad(): void;
-		/**
-		 * 创建
-		 * @param config_ 创建配置
-		 * @remarks
-		 * 可在此处初始化视图状态
-		 * - 静态模块：onLoad 时调用
-		 * - 动态模块：addChild 后调用
-		 */
-		protected create?(): void | Promise<void>;
-		/**
-		 * 初始化
-		 * @param data_ 初始化数据
-		 * @remarks
-		 * 所有依赖 init_data 初始化的逻辑都应在此进行
-		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
-		 * - 动态模块：onLoad 后，open 前调用
-		 */
-		init(data_?: any): void | Promise<void>;
-		/**
-		 * 打开
-		 * @protected
-		 * @remarks
-		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
-		 */
-		protected open?(): void | Promise<void>;
-		/**
-		 * 关闭
-		 * @remarks
-		 * 内部调用：生命周期
-		 * 外部调用：自动回收模块
-		 */
-		close?(): void | Promise<void>;
-		/**
-		 * 关闭后
-		 * @protected
-		 * @remarks
-		 * 在子模块 close 和 late_close 后执行
-		 */
-		protected late_close?(): void | Promise<void>;
-		/**
-		 * 跟随释放
-		 * @param args_ 要跟随模块释放的对象或列表
-		 */
-		follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
-		/* Excluded from this release type: _open */
-		/* Excluded from this release type: _close */
-		/** 递归 open */
-		private _recursive_open;
-		/** 递归 close */
-		private _recursive_close;
 	}
 
 	declare namespace _mk_life_cycle {
@@ -2177,42 +2185,23 @@ declare namespace mk {
 		}
 	}
 
-	/**
-	 * 资源释放器
-	 */
-	declare class mk_release {
-		/** 引用节点集合 */
-		private _quote_node_set;
-		/** 引用资源集合 */
-		private _quote_asset_set;
-		/** 引用对象集合 */
-		private _quote_object_set;
-		/**
-		 * 添加释放对象
-		 * @param args_ 要跟随模块释放的对象或列表
-		 */
-		add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
-		/** 释放所有已添加对象 */
-		release(): void;
-	}
-
 	declare namespace mk_release_ {
 		/** 释放对象类型 */
 		type release_object_type = {
-			release(): void;
+			release(): any | Promise<any>;
 		};
+		/** 释放回调类型 */
+		type release_call_back_type = () => any | Promise<any>;
 		/** 释放参数类型 */
-		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type;
-	}
-
-	/** 场景驱动 */
-	declare class mk_scene_drive extends mk_life_cycle {
-		private _close_task;
-		onLoad(): Promise<void>;
-		onDestroy(): void;
-		private _event_restart;
-		private _event_wait_close_scene;
-		private _event_before_scene_switch;
+		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
+		/** 跟随释放类型 */
+		type follow_release_object<T = release_param_type> = {
+			/**
+			 * 跟随释放
+			 * @param object_ 释放对象/释放对象数组
+			 */
+			follow_release(object_: T | T[]): any;
+		};
 	}
 
 	/**
@@ -2328,7 +2317,7 @@ declare namespace mk {
 		 * @remarks
 		 * open 未注册模块时会使用此函数获取注册数据自动注册
 		 */
-		get_regis_data_f?: <T extends cc_2.Constructor<mk_view_base>>(key: T) => ui_manage_.regis_data<T>;
+		get_regis_data_f?: <T extends cc_2.Constructor<view_base>>(key: T) => ui_manage_.regis_data<T>;
 		/** 日志 */
 		private _log;
 		/** 模块注册表 */
@@ -2363,10 +2352,10 @@ declare namespace mk {
 		 * @param config_ 模块配置
 		 * @returns
 		 */
-		regis<T extends cc_2.Constructor<mk_view_base>>(
+		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
 			source_: _mk_ui_manage.source_type<T>,
-			target_: asset_.follow_release_object,
+			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type>,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
 		/**
@@ -2374,16 +2363,16 @@ declare namespace mk {
 		 * @param key_ 模块键
 		 * @returns
 		 */
-		unregis<T extends cc_2.Constructor<mk_view_base>>(key_: T): Promise<void>;
+		unregis<T extends cc_2.Constructor<view_base>>(key_: T): Promise<void>;
 		/** 获取所有模块 */
-		get(): ReadonlyArray<mk_view_base>;
+		get(): ReadonlyArray<view_base>;
 		/**
 		 * 获取指定模块
 		 * @param key_ 模块键
 		 * @param type_ 模块类型
 		 */
 		get<
-			T extends cc_2.Constructor<mk_view_base> & Function,
+			T extends cc_2.Constructor<view_base> & Function,
 			T2 = T extends {
 				type_s: infer T2;
 			}
@@ -2397,7 +2386,7 @@ declare namespace mk {
 		 * @param type_ 模块类型
 		 */
 		get<
-			T extends cc_2.Constructor<mk_view_base> & Function,
+			T extends cc_2.Constructor<view_base> & Function,
 			T2 = T extends {
 				type_s: infer T2;
 			}
@@ -2410,17 +2399,14 @@ declare namespace mk {
 		 * @param key_ 模块类型，必须经过 {@inheritdoc mk_ui_manage.regis} 接口注册过
 		 * @returns
 		 */
-		open<T extends cc_2.Constructor<mk_view_base> & Function, T2 = T["prototype"]>(
-			key_: T,
-			config_?: ui_manage_.open_config<T>
-		): Promise<T2 | null>;
+		open<T extends cc_2.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
 		/**
 		 * 关闭 ui
 		 * @param args_ 节点/模块类型/模块实例
 		 * @param config 配置
 		 * @returns
 		 */
-		close<T extends cc_2.Constructor<mk_view_base>, T2 extends mk_view_base>(
+		close<T extends cc_2.Constructor<view_base>, T2 extends view_base>(
 			args_: cc_2.Node | T | T2,
 			config_?: ui_manage_.close_config<T>
 		): Promise<boolean>;
@@ -2447,61 +2433,14 @@ declare namespace mk {
 					: never);
 	}
 
-	/** 视图基类 */
-	declare class mk_view_base extends mk_life_cycle {
-		static config: _mk_view_base.global_config;
-		show_alone_b: boolean;
-		animation_config: _mk_view_base.animation_config;
-		get auto_mask_b(): boolean;
-		set auto_mask_b(value_b_: boolean);
-		get auto_widget_b(): boolean;
-		set auto_widget_b(value_b_: boolean);
-		get auto_block_input_b(): boolean;
-		set auto_block_input_b(value_b_: boolean);
-		/**
-		 * 视图数据
-		 * @remarks
-		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
-		 */
-		data?: any;
-		/** 视图类型 */
-		get type_s(): string;
-		/** 模块配置 */
-		set config(config_: _mk_view_base.create_config);
-		/**
-		 * 重置 data
-		 * @remarks
-		 * close 后重置 this.data，data 必须为 class 类型
-		 */
-		protected _reset_data_b: boolean;
-		/** 视图配置 */
-		protected _view_config: mk_view_base_.view_config;
-		/** 窗口 */
-		private _wind_b;
-		protected onLoad(): void;
-		protected open(): void | Promise<void>;
-		/**
-		 * 关闭
-		 * @param config_ 关闭配置
-		 */
-		close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
-		protected late_close?(): void | Promise<void>;
-		/** 初始化编辑器 */
-		protected _init_editor(): void;
-		private _get_auto_mask_b;
-		private _set_auto_mask_b;
-		private _set_auto_widget_b;
-		private _set_auto_block_input_b;
-	}
-
 	declare namespace _mk_view_base {
 		/** create 配置 */
 		interface create_config extends _mk_life_cycle.create_config {
 			/** 视图配置 */
-			view_config: mk_view_base_.view_config;
+			view_config: view_base_.view_config;
 		}
 		/** 全局配置 */
-		interface global_config extends _mk_layer.global_config {
+		interface global_config extends layer_.global_config {
 			/** 默认遮罩 */
 			mask_data_tab: {
 				/** 节点名 */
@@ -2539,19 +2478,6 @@ declare namespace mk {
 		class quick_operation {}
 	}
 
-	declare namespace mk_view_base_ {
-		/** 视图模块配置 */
-		class view_config {
-			constructor(init_?: Partial<view_config>);
-			/** 所有预制体路径|资源 */
-			prefab_tab?: Record<string, cc_2.Prefab | string> & {
-				default: cc_2.Prefab | string;
-			};
-			/** 模块类型 */
-			type_s: string;
-		}
-	}
-
 	/** websocket */
 	declare class mk_websocket<CT extends codec_base = codec_base> extends mk_network_base<CT> {
 		constructor(config_?: Partial<mk_websocket_.init_config<CT>>);
@@ -2587,18 +2513,6 @@ declare namespace mk {
 			protocol_ss: string[];
 		}
 	}
-
-	declare namespace module_2 {
-		export {
-			mk_layer as layer,
-			_mk_layer as layer_,
-			mk_life_cycle as life_cycle,
-			mk_scene_drive as scene_drive,
-			mk_view_base as view_base,
-			mk_view_base_ as view_base_,
-		};
-	}
-	export { module_2 as module };
 
 	export declare const monitor: mk_monitor;
 
@@ -2712,6 +2626,37 @@ declare namespace mk {
 		private _event_global_resize;
 	}
 
+	/**
+	 * 资源/对象释放器
+	 */
+	export declare class release {
+		/** 节点集合 */
+		private _node_set;
+		/** 资源集合 */
+		private _asset_set;
+		/** 对象集合 */
+		private _object_set;
+		/** 回调集合 */
+		private _call_back_set;
+		/**
+		 * 添加释放对象
+		 * @param args_ 要跟随模块释放的对象或列表
+		 */
+		add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
+		/** 释放所有已添加对象 */
+		release(): Promise<void>;
+	}
+
+	/** 场景驱动 */
+	export declare class scene_drive extends life_cycle {
+		private _close_task;
+		onLoad(): Promise<void>;
+		onDestroy(): void;
+		private _event_restart;
+		private _event_wait_close_scene;
+		private _event_before_scene_switch;
+	}
+
 	/** 存储器 */
 	export declare class storage<CT extends Object> {
 		constructor(init_: mk_storage_.init_config<CT>);
@@ -2759,7 +2704,7 @@ declare namespace mk {
 
 	export declare namespace ui_manage_ {
 		/** 关闭ui配置 */
-		export class close_config<CT extends cc_2.Constructor<mk_view_base>> {
+		export class close_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: close_config<CT>);
 			/** 类型 */
 			type?: CT extends {
@@ -2779,7 +2724,7 @@ declare namespace mk {
 			destroy_children_b?: boolean;
 		}
 		/** 打开ui配置 */
-		export class open_config<CT extends cc_2.Constructor<mk_view_base> & Function> {
+		export class open_config<CT extends cc_2.Constructor<view_base> & Function> {
 			constructor(init_?: open_config<CT>);
 			/** 初始化数据 */
 			init?: CT["prototype"]["init_data"];
@@ -2789,7 +2734,7 @@ declare namespace mk {
 			parent?: cc_2.Node;
 		}
 		/** 模块注册配置 */
-		export class regis_config<CT extends cc_2.Constructor<mk_view_base>> {
+		export class regis_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: Partial<regis_config<CT>>);
 			/**
 			 * 重复打开
@@ -2825,12 +2770,72 @@ declare namespace mk {
 			pool_init_fill_n: number;
 		}
 		/** 模块注册数据 */
-		export class regis_data<CT extends cc_2.Constructor<mk_view_base>> extends regis_config<CT> {
+		export class regis_data<CT extends cc_2.Constructor<view_base>> extends regis_config<CT> {
 			constructor(init_?: Partial<regis_data<CT>>);
 			/** 来源 */
 			source: _mk_ui_manage.source_type<CT>;
 			/** 跟随释放对象 */
-			target: asset_.follow_release_object;
+			target: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
+		}
+	}
+
+	/** 视图基类 */
+	export declare class view_base extends life_cycle {
+		static config: _mk_view_base.global_config;
+		show_alone_b: boolean;
+		animation_config: _mk_view_base.animation_config;
+		get auto_mask_b(): boolean;
+		set auto_mask_b(value_b_: boolean);
+		get auto_widget_b(): boolean;
+		set auto_widget_b(value_b_: boolean);
+		get auto_block_input_b(): boolean;
+		set auto_block_input_b(value_b_: boolean);
+		/**
+		 * 视图数据
+		 * @remarks
+		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+		 */
+		data?: any;
+		/** 视图类型 */
+		get type_s(): string;
+		/** 模块配置 */
+		set config(config_: _mk_view_base.create_config);
+		/**
+		 * 重置 data
+		 * @remarks
+		 * close 后重置 this.data，data 必须为 class 类型
+		 */
+		protected _reset_data_b: boolean;
+		/** 视图配置 */
+		protected _view_config: view_base_.view_config;
+		/** 窗口 */
+		private _wind_b;
+		protected onLoad(): void;
+		protected open(): void | Promise<void>;
+		/**
+		 * 关闭
+		 * @param config_ 关闭配置
+		 */
+		close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
+		protected late_close?(): void | Promise<void>;
+		/** 初始化编辑器 */
+		protected _init_editor(): void;
+		private _get_auto_mask_b;
+		private _set_auto_mask_b;
+		private _set_auto_widget_b;
+		private _set_auto_block_input_b;
+	}
+
+	export declare namespace view_base_ {
+		/** 视图模块配置 */
+		export class view_config {
+			constructor(init_?: Partial<view_config>);
+			/** 所有预制体路径|资源 */
+			prefab_tab?: Record<string, cc_2.Prefab | string> & {
+				default: cc_2.Prefab | string;
+			};
+			/** 模块类型 */
+			type_s: string;
 		}
 	}
 

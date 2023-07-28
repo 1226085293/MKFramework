@@ -6,7 +6,7 @@ import { main_main } from "../../../scene/main/main_main";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_main_item")
-export class resources_main_item extends mk.module.view_base {
+export class resources_main_item extends mk.view_base {
 	/* --------------- public --------------- */
 	nodes!: nodes;
 	init_data!: typeof resources_main_item.prototype.data;
@@ -14,7 +14,7 @@ export class resources_main_item extends mk.module.view_base {
 		/** 列表文本 */
 		label_s: "",
 		/** 打开视图 */
-		view: null as cc.Constructor<mk.module.view_base> | null,
+		view: null as cc.Constructor<mk.view_base> | null,
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */

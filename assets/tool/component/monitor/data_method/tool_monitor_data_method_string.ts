@@ -92,8 +92,8 @@ export namespace 远程图片 {
 
 					// 找到视图基类添加自动释放
 					const view_comp = tool_node
-						.traverse_parent(node_, (node) => Boolean(node.getComponent(mk.module.view_base)))
-						?.getComponent(mk.module.view_base);
+						.traverse_parent(node_, (node) => Boolean(node.getComponent(mk.view_base)))
+						?.getComponent(mk.view_base);
 
 					if (!view_comp) {
 						mk.error("未找到父模块，不能自动释放动态资源");

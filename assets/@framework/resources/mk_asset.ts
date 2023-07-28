@@ -6,6 +6,7 @@ import mk_logger from "../mk_logger";
 import mk_bundle from "./mk_bundle";
 import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
+import { mk_release_ } from "./mk_release";
 
 namespace _mk_asset {
 	/** loadRemote 配置类型 */
@@ -115,7 +116,7 @@ class mk_asset extends mk_instance_base {
 
 	/* --------------- private --------------- */
 	/** 日志 */
-	private _log = new mk_logger("cache");
+	private _log = new mk_logger("asset");
 	/** 管理表 */
 	private _asset_manage_map = new Map<string, cc.Asset>();
 	/** 释放表 */
@@ -536,13 +537,7 @@ export namespace mk_asset_ {
 	}
 
 	/** 跟随释放对象 */
-	export interface follow_release_object {
-		/**
-		 * 跟随释放
-		 * @param asset_ 释放资源
-		 */
-		follow_release(asset_: cc.Asset | cc.Asset[]): any;
-	}
+	export type follow_release_object = mk_release_.follow_release_object<cc.Asset>;
 }
 
 export default mk_asset.instance();

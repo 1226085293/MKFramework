@@ -7,7 +7,7 @@ import mk from "mk";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_audio")
-export class resources_audio extends mk.module.view_base {
+export class resources_audio extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	@property(resources_audio_nodes)

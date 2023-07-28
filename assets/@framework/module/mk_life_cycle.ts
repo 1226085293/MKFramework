@@ -8,7 +8,7 @@ import mk_status_task from "../task/mk_status_task";
 import mk_layer from "./mk_layer";
 import mk_tool from "../@private/tool/mk_tool";
 import { mk_audio_ } from "../audio/mk_audio_export";
-import mk_release, { mk_release_ } from "../@private/mk_release";
+import mk_release, { mk_release_ } from "../resources/mk_release";
 import { mk_asset_ } from "../resources/mk_asset";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
@@ -121,9 +121,22 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 */
 	event_target_as: { targetOff(target: any): any }[] | { target_off(target: any): any }[] = [];
 
-	/** open状态 */
+	/**
+	 * open 状态
+	 * @remarks
+	 * 表示模块已经 open 完成
+	 */
 	get open_b(): boolean {
 		return this.isValid && this._state === _mk_life_cycle.run_state.open;
+	}
+
+	/**
+	 * 有效状态
+	 * @remarks
+	 * 表示模块在 open 中或者已经 open 完成
+	 */
+	get valid_b(): boolean {
+		return this.isValid && mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open) !== 0;
 	}
 
 	/** 静态模块 */
@@ -260,8 +273,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 				if (args_[0] instanceof mk_audio_._unit) {
 					release_param = (args_ as mk_audio_._unit[]).map((v) => v.clip).filter((v) => v) as any;
 				}
-			} else if (args_ instanceof mk_audio_._unit && args_.clip) {
-				release_param = args_.clip;
+			} else {
+				if (args_ instanceof mk_audio_._unit && args_.clip) {
+					release_param = args_.clip;
+				} else {
+					release_param = args_ as any;
+				}
 			}
 		}
 
@@ -269,7 +286,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 		this._release_manage.add(release_param);
 
 		// 如果模块已经关闭则直接释放
-		if (!this.open_b) {
+		if (!this.valid_b) {
 			this._release_manage.release();
 		}
 
@@ -283,14 +300,17 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 * @internal
 	 */
 	async _open(config_?: _mk_life_cycle.open_config): Promise<void> {
-		// 动态模块 create
-		if (!this.static_b && this.create) {
-			await this.create();
-		}
-
 		// 状态安检
 		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) {
 			return;
+		}
+
+		// 状态更新
+		this._state = _mk_life_cycle.run_state.opening;
+
+		// 动态模块 create
+		if (!this.static_b && this.create) {
+			await this.create();
 		}
 
 		// 参数安检
@@ -298,8 +318,6 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 			config_ = Object.create(null);
 		}
 
-		// 状态更新
-		this._state = _mk_life_cycle.run_state.opening;
 		// 生命周期
 		if (config_) {
 			if (config_.first_b) {

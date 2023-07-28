@@ -7,7 +7,7 @@ import resources_guide_step3 from "./step/resources_guide_step3";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_guide")
-export class resources_guide extends mk.module.view_base {
+export class resources_guide extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */

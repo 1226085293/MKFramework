@@ -147,7 +147,7 @@ export namespace _tool_monitor_trigger {
 }
 
 @ccclass("monitor_trigger")
-export class tool_monitor_trigger extends mk.module.life_cycle {
+export class tool_monitor_trigger extends mk.life_cycle {
 	/* --------------- 属性 --------------- */
 	/** 数据目标 */
 	@property({ displayName: "数据目标", type: cc.Node })

@@ -8,7 +8,7 @@ import { resources_module_ui_stack } from "./ui_stack/resources_module_ui_stack"
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_module")
-export class resources_module extends mk.module.view_base {
+export class resources_module extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */
@@ -37,10 +37,15 @@ export class resources_module extends mk.module.view_base {
 	/* --------------- private --------------- */
 	/* ------------------------------- 生命周期 ------------------------------- */
 	async create(): Promise<void> {
-		mk.ui_manage.regis(resources_module_life_cycle, "db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab");
-		mk.ui_manage.regis(resources_module_show_alone, "db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab");
-		mk.ui_manage.regis(resources_module_layer_control, "db://assets/resources/module/module/layer_control/resources_module_layer_control.prefab");
-		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab");
+		mk.ui_manage.regis(resources_module_life_cycle, "db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab", this);
+		mk.ui_manage.regis(resources_module_show_alone, "db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab", this);
+		mk.ui_manage.regis(
+			resources_module_layer_control,
+			"db://assets/resources/module/module/layer_control/resources_module_layer_control.prefab",
+			this
+		);
+
+		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", this);
 	}
 
 	// init(init_?: typeof this.init_data): void {}

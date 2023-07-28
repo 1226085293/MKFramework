@@ -5,7 +5,7 @@ import mk from "mk";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_module_item")
-export class resources_module_item extends mk.module.view_base {
+export class resources_module_item extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */
@@ -13,7 +13,7 @@ export class resources_module_item extends mk.module.view_base {
 		/** 描述 */
 		desc_s: "",
 		/** 视图 */
-		view: null as cc.Constructor<mk.module.view_base> | null,
+		view: null as cc.Constructor<mk.view_base> | null,
 	};
 
 	/* --------------- protected --------------- */
