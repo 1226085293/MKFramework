@@ -182,7 +182,9 @@ class mk_asset extends mk_instance_base {
 			/** 完成回调 */
 			const completed_f = (error: Error | null, asset: T): void => {
 				if (error) {
-					this._log.error(`加载 ${path_s_} 错误`, error);
+					this._log.error(`get ${path_s_} 错误`, error);
+				} else {
+					this._log.debug(`get ${path_s_} 完成`);
 				}
 
 				if (error || EDITOR) {
@@ -329,11 +331,13 @@ class mk_asset extends mk_instance_base {
 			/** 完成回调 */
 			const completed_f = (error: Error | null): void => {
 				if (error) {
-					this._log.error(`加载 ${path_s_} 错误`, error);
+					this._log.error(`get_dir ${path_s_} 错误`, error);
 
 					// 执行回调
 					get_config.completed_f?.(error, []);
 					resolve_f(null);
+				} else {
+					this._log.debug(`get_dir ${path_s_} 完成`);
 				}
 
 				// 资源初始化
@@ -343,8 +347,14 @@ class mk_asset extends mk_instance_base {
 
 				// 执行回调
 				get_config.completed_f?.(error, dir_asset_as);
+
 				// 跟随释放
-				target_?.follow_release(dir_asset_as);
+				if (target_?.follow_release) {
+					dir_asset_as.forEach((v) => {
+						target_.follow_release(v);
+					});
+				}
+
 				resolve_f(dir_asset_as);
 			};
 

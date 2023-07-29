@@ -48,6 +48,7 @@ class mk_layer extends cc.Component {
 	@property({
 		displayName: "层类型",
 		type: cc.Enum({ 未初始化: 0 }),
+		group: { name: "视图配置", id: "1" },
 		visible: function (this: mk_layer) {
 			return this._use_layer_b;
 		},
@@ -58,6 +59,7 @@ class mk_layer extends cc.Component {
 	@property({
 		displayName: "层级",
 		tooltip: "注意：仅同级节点下生效",
+		group: { name: "视图配置", id: "1" },
 		min: 0,
 		step: 1,
 		visible: function (this: mk_layer) {

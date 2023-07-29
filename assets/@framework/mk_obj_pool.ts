@@ -1,3 +1,5 @@
+import { mk_log } from "./mk_logger";
+
 namespace _mk_obj_pool {
 	/** 配置 */
 	export class config<CT> {
@@ -15,6 +17,8 @@ namespace _mk_obj_pool {
 		reset_f?: (obj: CT, create_b: boolean) => CT | Promise<CT>;
 		/** 释放回调 */
 		clear_f?: (obj_as: CT[]) => void | Promise<void>;
+		/** 销毁回调 */
+		destroy_f?: () => void | Promise<void>;
 		/**
 		 * 剩余对象池数量不足时扩充数量
 		 * @defaultValue 32
@@ -53,6 +57,8 @@ namespace _mk_obj_pool {
 			reset_f?: (obj: CT, create_b: boolean) => CT;
 			/** 释放回调 */
 			clear_f?: (obj_as: CT[]) => void;
+			/** 销毁回调 */
+			destroy_f?: () => void;
 			/**
 			 * 剩余对象池数量不足时扩充数量
 			 * @defaultValue 32
@@ -85,7 +91,15 @@ class mk_obj_pool<CT> {
 		}
 	}
 
+	/* --------------- public --------------- */
+	/** 有效状态 */
+	get valid_b(): boolean {
+		return this._valid_b;
+	}
+
 	/* --------------- private --------------- */
+	/** 有效状态 */
+	private _valid_b = true;
 	/** 对象存储列表 */
 	private _obj_as: CT[] = [];
 	/** 初始化数据 */
@@ -97,6 +111,12 @@ class mk_obj_pool<CT> {
 	 * @returns
 	 */
 	async put(obj_: any): Promise<void> {
+		if (!this._valid_b) {
+			mk_log.error("对象池失效");
+
+			return;
+		}
+
 		if (!obj_) {
 			return;
 		}
@@ -106,13 +126,31 @@ class mk_obj_pool<CT> {
 		if (this._init_data.max_hold_n !== -1 && this._obj_as.length > this._init_data.max_hold_n!) {
 			this._del(0, this._obj_as.length - this._init_data.max_hold_n!);
 		}
+
+		// 失效直接销毁
+		if (!this._valid_b) {
+			await this.clear();
+		}
 	}
 
 	/** 获取对象 */
 	async get(): Promise<CT> {
+		if (!this._valid_b) {
+			mk_log.error("对象池失效");
+
+			return null!;
+		}
+
 		// 检查容量
 		if (!this._obj_as.length) {
 			await this._add();
+		}
+
+		if (!this._valid_b) {
+			mk_log.error("对象池失效");
+			this.clear();
+
+			return null!;
 		}
 
 		return this._obj_as.pop()!;
@@ -125,6 +163,17 @@ class mk_obj_pool<CT> {
 		if (obj_as.length) {
 			await this._init_data.clear_f?.(obj_as);
 		}
+	}
+
+	/**
+	 * 销毁对象池
+	 * @remarks
+	 * 销毁后将无法 get/put
+	 */
+	async destroy(): Promise<void> {
+		this._valid_b = false;
+		await this.clear();
+		await this._init_data.destroy_f?.();
 	}
 
 	/** 添加对象 */
@@ -160,7 +209,15 @@ namespace mk_obj_pool {
 			}
 		}
 
+		/* --------------- public --------------- */
+		/** 有效状态 */
+		get valid_b(): boolean {
+			return this._valid_b;
+		}
+
 		/* --------------- private --------------- */
+		/** 有效状态 */
+		private _valid_b = true;
 		/** 对象存储列表 */
 		private _obj_as: CT[] = [];
 		/** 初始化数据 */
@@ -168,6 +225,12 @@ namespace mk_obj_pool {
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 导入对象 */
 		put(obj_: CT): void {
+			if (!this._valid_b) {
+				mk_log.error("对象池失效");
+
+				return;
+			}
+
 			if (!obj_) {
 				return;
 			}
@@ -181,6 +244,12 @@ namespace mk_obj_pool {
 
 		/** 获取对象 */
 		get(): CT {
+			if (!this._valid_b) {
+				mk_log.error("对象池失效");
+
+				return null!;
+			}
+
 			// 检查容量
 			if (!this._obj_as.length) {
 				this._add();
@@ -196,6 +265,17 @@ namespace mk_obj_pool {
 			if (obj_as.length) {
 				this._init_data.clear_f?.(obj_as);
 			}
+		}
+
+		/**
+		 * 销毁对象池
+		 * @remarks
+		 * 销毁后将无法 get/put
+		 */
+		destroy(): void {
+			this._valid_b = false;
+			this.clear();
+			this._init_data.destroy_f?.();
 		}
 
 		/** 添加对象 */

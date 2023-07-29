@@ -8,6 +8,7 @@ import mk_asset from "../resources/mk_asset";
 import type { _mk_layer } from "./mk_layer";
 import global_config from "../../@config/global_config";
 import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
+import mk_game from "../mk_game";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
@@ -52,7 +53,9 @@ namespace _mk_view_base {
 		};
 
 		/* --------------- 属性 --------------- */
-
+		/**
+		 * @internal
+		 */
 		@property({
 			displayName: "打开动画",
 			type: cc.Enum({ 未初始化: 0 }),
@@ -61,10 +64,16 @@ namespace _mk_view_base {
 			return (animation_config.animation_enum_tab.open[this.open_animation_s] as number) ?? 0;
 		}
 
+		/**
+		 * @internal
+		 */
 		set open_animation_n(value_n_: number) {
 			this.open_animation_s = animation_config.animation_enum_tab.open[value_n_] as string;
 		}
 
+		/**
+		 * @internal
+		 */
 		@property({
 			displayName: "关闭动画",
 			type: cc.Enum({ 未初始化: 0 }),
@@ -73,6 +82,9 @@ namespace _mk_view_base {
 			return (animation_config.animation_enum_tab.close[this.close_animation_s] as number) ?? 0;
 		}
 
+		/**
+		 * @internal
+		 */
 		set close_animation_n(value_n_: number) {
 			this.close_animation_s = animation_config.animation_enum_tab.close[value_n_] as string;
 		}
@@ -85,41 +97,6 @@ namespace _mk_view_base {
 		/** 关闭动画 */
 		@property({ visible: false })
 		close_animation_s = "";
-	}
-
-	/** 快捷操作 */
-	@ccclass("mk_view_base/quick_operation")
-	export class quick_operation {
-		// @property({
-		// 	displayName: "添加遮罩",
-		// 	tooltip: "添加遮罩到根节点下",
-		// })
-		// get auto_mask_b(): boolean {
-		// 	return this._get_auto_mask_b();
-		// }
-		// set auto_mask_b(value_b_) {
-		// 	this._set_auto_mask_b(value_b_);
-		// }
-		// @property({
-		// 	displayName: "0 边距 widget",
-		// 	tooltip: "在节点上添加 0 边距 widget",
-		// })
-		// get auto_widget_b(): boolean {
-		// 	return Boolean(this.getComponent(cc.Widget));
-		// }
-		// set auto_widget_b(value_b_) {
-		// 	this._set_auto_widget_b(value_b_);
-		// }
-		// @property({
-		// 	displayName: "BlockInputEvents",
-		// 	tooltip: "在节点上添加 BlockInputEvents 组件",
-		// })
-		// get auto_block_input_b(): boolean {
-		// 	return Boolean(this.getComponent(cc.BlockInputEvents));
-		// }
-		// set auto_block_input_b(value_b_) {
-		// 	this._set_auto_block_input_b(value_b_);
-		// }
 	}
 }
 
@@ -145,21 +122,21 @@ export class mk_view_base extends mk_life_cycle {
 	@property({
 		displayName: "单独展示",
 		tooltip: "勾选后打开此视图将隐藏所有下级视图，关闭此视图则还原展示",
+		group: { name: "视图配置", id: "1" },
 	})
 	show_alone_b = false;
 
 	@property({
 		displayName: "动画配置",
 		type: _mk_view_base.animation_config,
-		visible: function (this: mk_view_base) {
-			return this._wind_b;
-		},
+		group: { name: "快捷操作", id: "1", displayOrder: 1 },
 	})
 	animation_config: _mk_view_base.animation_config = null!;
 
 	@property({
 		displayName: "添加遮罩",
 		tooltip: "添加遮罩到根节点下",
+		group: { name: "快捷操作", id: "1", displayOrder: 2 },
 	})
 	get auto_mask_b(): boolean {
 		return this._get_auto_mask_b();
@@ -172,6 +149,7 @@ export class mk_view_base extends mk_life_cycle {
 	@property({
 		displayName: "0 边距 widget",
 		tooltip: "在节点上添加 0 边距 widget",
+		group: { name: "快捷操作", id: "1", displayOrder: 3 },
 	})
 	get auto_widget_b(): boolean {
 		return Boolean(this.getComponent(cc.Widget));
@@ -184,6 +162,7 @@ export class mk_view_base extends mk_life_cycle {
 	@property({
 		displayName: "BlockInputEvents",
 		tooltip: "在节点上添加 BlockInputEvents 组件",
+		group: { name: "快捷操作", id: "1", displayOrder: 4 },
 	})
 	get auto_block_input_b(): boolean {
 		return Boolean(this.getComponent(cc.BlockInputEvents));
@@ -227,10 +206,6 @@ export class mk_view_base extends mk_life_cycle {
 	protected _reset_data_b = true;
 	/** 视图配置 */
 	protected _view_config = new mk_view_base_.view_config();
-	/* --------------- private --------------- */
-	/** 窗口 */
-	@property
-	private _wind_b = false;
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
@@ -290,7 +265,7 @@ export class mk_view_base extends mk_life_cycle {
 		const close_animation_f = mk_view_base.config.window_animation_tab?.close?.[this.animation_config?.close_animation_s];
 
 		// 关闭动画
-		if (close_animation_f) {
+		if (!mk_game.restarting_b && close_animation_f) {
 			await close_animation_f(this.node);
 		}
 

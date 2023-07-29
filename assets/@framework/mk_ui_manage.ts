@@ -71,7 +71,7 @@ export class mk_ui_manage extends mk_instance_base {
 	async regis<T extends cc.Constructor<mk_view_base>>(
 		key_: T,
 		source_: _mk_ui_manage.source_type<T>,
-		target_: mk_release_.follow_release_object<mk_release_.release_call_back_type>,
+		target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
 		config_?: Partial<mk_ui_manage_.regis_config<T>>
 	): Promise<void> {
 		/** 模块注册任务 */
@@ -185,7 +185,8 @@ export class mk_ui_manage extends mk_instance_base {
 						obj_as.forEach((v) => {
 							v.destroy();
 						});
-
+					},
+					destroy_f: () => {
 						// 动态加载的资源手动销毁
 						if (typeof v === "string" && source?.isValid) {
 							(source as cc.Prefab).decRef();
@@ -237,7 +238,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 			if (pool) {
 				for (const [k_s, v] of pool) {
-					await v.clear();
+					await v.destroy();
 				}
 
 				this._ui_pool_map.delete(key_);
@@ -674,7 +675,7 @@ export class mk_ui_manage extends mk_instance_base {
 		// 释放对象池
 		this._ui_pool_map.forEach((v) => {
 			v.forEach((v2) => {
-				v2.clear();
+				v2.destroy();
 			});
 		});
 

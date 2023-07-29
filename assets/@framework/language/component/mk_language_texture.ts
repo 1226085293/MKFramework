@@ -33,6 +33,8 @@ class mk_language_texture extends mk_language_base {
 	/* --------------- private --------------- */
 	/** sprite组件 */
 	private _sprite!: cc.Sprite;
+	/** 初始纹理 */
+	private _initial_sprite_frame: cc.SpriteFrame | null = null;
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 重置数据 */
 	protected _reset_data(): void {
@@ -92,8 +94,10 @@ class mk_language_texture extends mk_language_base {
 				return;
 			}
 
-			if (this._sprite.spriteFrame) {
-				this._sprite.spriteFrame.decRef();
+			// 释放初始纹理资源
+			if (this._initial_sprite_frame && this._initial_sprite_frame._uuid !== asset._uuid) {
+				this._initial_sprite_frame.decRef();
+				this._initial_sprite_frame = null;
 			}
 
 			this._sprite.spriteFrame = asset;
@@ -129,6 +133,8 @@ class mk_language_texture extends mk_language_base {
 
 			return;
 		}
+
+		this._initial_sprite_frame = this._sprite.spriteFrame;
 
 		super._init_data();
 	}

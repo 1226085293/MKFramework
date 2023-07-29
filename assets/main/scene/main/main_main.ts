@@ -40,7 +40,7 @@ export class main_main extends mk.view_base {
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	create(): void {
+	async onLoad() {
 		mk.ui_manage.regis(resources_audio, "db://assets/resources/module/audio/resources_audio.prefab", main_bundle);
 		mk.ui_manage.regis(resources_language, "db://assets/resources/module/language/resources_language.prefab", main_bundle);
 		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab", main_bundle);

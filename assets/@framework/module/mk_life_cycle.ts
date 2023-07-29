@@ -16,14 +16,16 @@ const { ccclass, property } = cc._decorator;
 export namespace _mk_life_cycle {
 	/** 运行状态 */
 	export enum run_state {
+		/** 等待打开 */
+		wait_open = 1,
 		/** 打开中 */
-		opening = 1,
+		opening = 2,
 		/** 打开 */
-		open = 2,
+		open = 4,
 		/** 关闭中 */
-		closing = 4,
+		closing = 8,
 		/** 关闭 */
-		close = 8,
+		close = 16,
 	}
 
 	/** 递归 open 配置 */
@@ -122,21 +124,18 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	event_target_as: { targetOff(target: any): any }[] | { target_off(target: any): any }[] = [];
 
 	/**
-	 * open 状态
-	 * @remarks
-	 * 表示模块已经 open 完成
-	 */
-	get open_b(): boolean {
-		return this.isValid && this._state === _mk_life_cycle.run_state.open;
-	}
-
-	/**
 	 * 有效状态
 	 * @remarks
-	 * 表示模块在 open 中或者已经 open 完成
+	 * 表示模块未在(关闭/关闭中)状态
 	 */
 	get valid_b(): boolean {
-		return this.isValid && mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open) !== 0;
+		return (
+			this.isValid &&
+			mk_tool.byte.get_bit(
+				this._state,
+				_mk_life_cycle.run_state.wait_open | _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open
+			) !== 0
+		);
 	}
 
 	/** 静态模块 */
@@ -160,6 +159,11 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	protected _open_task = new mk_status_task(false);
 	/** 运行状态 */
 	protected _state = _mk_life_cycle.run_state.close;
+	/**
+	 * 释放管理器
+	 * @internal
+	 */
+	protected _release_manage = new mk_release();
 
 	/** 日志 */
 	protected get _log(): mk_logger {
@@ -169,14 +173,15 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log2!: mk_logger;
-	/** 释放管理器 */
-	private _release_manage = new mk_release();
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
 		this._load_task.finish(true);
 
 		// 静态模块 create
 		if (this.static_b) {
+			// 状态更新
+			this._state = _mk_life_cycle.run_state.wait_open;
+			// 生命周期
 			this.create?.();
 		}
 	}
@@ -248,49 +253,48 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 		});
 
 		// 释放资源
-		this._release_manage.release();
+		this._release_manage.release_all();
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
-	/**
-	 * 跟随释放
-	 * @param args_ 要跟随模块释放的对象或列表
-	 */
-	follow_release<T = mk_release_.release_param_type & mk_audio_._unit, T2 = T | T[]>(args_: T2): T2 {
-		if (!args_) {
-			return args_;
-		}
-
-		let release_param!: mk_release_.release_param_type | mk_release_.release_param_type[];
-
-		// 参数转换
-		{
-			if (Array.isArray(args_)) {
-				if (!args_.length) {
-					return args_;
-				}
-
-				if (args_[0] instanceof mk_audio_._unit) {
-					release_param = (args_ as mk_audio_._unit[]).map((v) => v.clip).filter((v) => v) as any;
-				}
-			} else {
-				if (args_ instanceof mk_audio_._unit && args_.clip) {
-					release_param = args_.clip;
-				} else {
-					release_param = args_ as any;
-				}
-			}
+	follow_release<T = mk_release_.release_param_type & mk_audio_._unit>(object_: T): T {
+		if (!object_) {
+			return object_;
 		}
 
 		// 添加释放对象
-		this._release_manage.add(release_param);
-
-		// 如果模块已经关闭则直接释放
-		if (!this.valid_b) {
-			this._release_manage.release();
+		if (object_ instanceof mk_audio_._unit) {
+			if (object_.clip) {
+				this._release_manage.add(object_.clip);
+			}
+		} else {
+			this._release_manage.add(object_ as any);
 		}
 
-		return args_;
+		// 如果模块已经关闭则直接释放
+		if (this._state === _mk_life_cycle.run_state.close) {
+			this._log.debug("在模块关闭后跟随释放资源会被立即释放");
+			this._release_manage.release_all();
+		}
+
+		return object_;
+	}
+
+	cancel_release<T = mk_release_.release_param_type & mk_audio_._unit>(object_: T): T {
+		if (!object_) {
+			return object_;
+		}
+
+		// 添加释放对象
+		if (object_ instanceof mk_audio_._unit) {
+			if (object_.clip) {
+				this._release_manage.release(object_.clip);
+			}
+		} else {
+			this._release_manage.release(object_ as any);
+		}
+
+		return object_;
 	}
 
 	/**

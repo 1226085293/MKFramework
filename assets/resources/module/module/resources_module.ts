@@ -1,5 +1,6 @@
 import { _decorator } from "cc";
 import mk from "mk";
+import main_bundle from "../../../main/bundle/main_bundle";
 import { resources_module_layer_control } from "./layer_control/resources_module_layer_control";
 import { resources_module_life_cycle } from "./life_cycle/resources_module_life_cycle";
 import { resources_module_show_alone } from "./show_alone/resources_module_show_alone";
@@ -36,16 +37,26 @@ export class resources_module extends mk.view_base {
 	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
 	/* ------------------------------- 生命周期 ------------------------------- */
-	async create(): Promise<void> {
-		mk.ui_manage.regis(resources_module_life_cycle, "db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab", this);
-		mk.ui_manage.regis(resources_module_show_alone, "db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab", this);
+	onLoad() {
+		mk.ui_manage.regis(
+			resources_module_life_cycle,
+			"db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab",
+			main_bundle
+		);
+
+		mk.ui_manage.regis(
+			resources_module_show_alone,
+			"db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab",
+			main_bundle
+		);
+
 		mk.ui_manage.regis(
 			resources_module_layer_control,
 			"db://assets/resources/module/module/layer_control/resources_module_layer_control.prefab",
-			this
+			main_bundle
 		);
 
-		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", this);
+		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", main_bundle);
 	}
 
 	// init(init_?: typeof this.init_data): void {}
@@ -56,7 +67,7 @@ export class resources_module extends mk.view_base {
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	button_close(): void {
 		this.close({
-			destroy_b: true,
+			destroy_b: false,
 		});
 	}
 	/* ------------------------------- 功能 ------------------------------- */

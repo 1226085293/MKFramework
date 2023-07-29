@@ -358,14 +358,14 @@ declare namespace mk {
 		 * @remarks
 		 * 注意生命周期函数 open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 		 */
-		export abstract class bundle_manage_base implements asset_.follow_release_object {
+		export abstract class bundle_manage_base implements mk_release_.follow_release_object {
 			constructor();
 			/** bundle 名 */
 			abstract name_s: string;
 			/** 事件对象 */
 			abstract event: event_target<any>;
 			/** 管理器有效状态 */
-			open_b: boolean;
+			valid_b: boolean;
 			/** 节点池表 */
 			node_pool_tab: Record<string, cc_2.NodePool>;
 			/** 网络对象 */
@@ -378,11 +378,8 @@ declare namespace mk {
 			open(): void | Promise<void>;
 			/** 卸载回调 */
 			close(): void | Promise<void>;
-			/**
-			 * 跟随释放
-			 * @param args_ 要跟随模块释放的对象或列表
-			 */
-			follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
+			follow_release<T = mk_release_.release_param_type>(object_: T): T;
+			cancel_release<T = mk_release_.release_param_type>(object_: T): T;
 		}
 	}
 
@@ -772,15 +769,9 @@ declare namespace mk {
 					target_off(target: any): any;
 			  }[];
 		/**
-		 * open 状态
-		 * @remarks
-		 * 表示模块已经 open 完成
-		 */
-		get open_b(): boolean;
-		/**
 		 * 有效状态
 		 * @remarks
-		 * 表示模块在 open 中或者已经 open 完成
+		 * 表示模块未在(关闭/关闭中)状态
 		 */
 		get valid_b(): boolean;
 		/** 静态模块 */
@@ -795,12 +786,11 @@ declare namespace mk {
 		protected _open_task: mk_status_task<void>;
 		/** 运行状态 */
 		protected _state: _mk_life_cycle.run_state;
+		/* Excluded from this release type: _release_manage */
 		/** 日志 */
 		protected get _log(): logger;
 		/** 日志 */
 		private _log2;
-		/** 释放管理器 */
-		private _release_manage;
 		protected onLoad(): void;
 		/**
 		 * 创建
@@ -841,11 +831,8 @@ declare namespace mk {
 		 * 在子模块 close 和 late_close 后执行
 		 */
 		protected late_close?(): void | Promise<void>;
-		/**
-		 * 跟随释放
-		 * @param args_ 要跟随模块释放的对象或列表
-		 */
-		follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
+		follow_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
+		cancel_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1311,9 +1298,9 @@ declare namespace mk {
 		protected abstract _set_type_s(value_s_: string): void;
 		/** 重置数据 */
 		protected abstract _reset_data(): void;
-		onLoad(): void;
-		onEnable(): void;
-		onDisable(): void;
+		protected create(): void | Promise<void>;
+		protected open(): void | Promise<void>;
+		close(): void | Promise<void>;
 		/** 初始化数据 */
 		protected _init_data(): void;
 		/** 初始化事件 */
@@ -1445,8 +1432,8 @@ declare namespace mk {
 		get current_node(): cc_2.Node | null;
 		protected _use_layer_b: boolean;
 		private _layout;
-		create(): void | Promise<void>;
-		open(): void;
+		protected create(): void | Promise<void>;
+		protected open(): void | Promise<void>;
 		/** 更新节点展示 */
 		private _update_view;
 		private _event_switch_language;
@@ -1476,6 +1463,8 @@ declare namespace mk {
 		protected _type_s: string;
 		/** sprite组件 */
 		private _sprite;
+		/** 初始纹理 */
+		private _initial_sprite_frame;
 		/** 重置数据 */
 		protected _reset_data(): void;
 		protected _update_content(): Promise<void>;
@@ -1492,14 +1481,16 @@ declare namespace mk {
 	declare namespace _mk_life_cycle {
 		/** 运行状态 */
 		enum run_state {
+			/** 等待打开 */
+			wait_open = 1,
 			/** 打开中 */
-			opening = 1,
+			opening = 2,
 			/** 打开 */
-			open = 2,
+			open = 4,
 			/** 关闭中 */
-			closing = 4,
+			closing = 8,
 			/** 关闭 */
-			close = 8,
+			close = 16,
 		}
 		/** 递归 open 配置 */
 		interface recursive_open_config {
@@ -2128,6 +2119,8 @@ declare namespace mk {
 			reset_f?: (obj: CT, create_b: boolean) => CT | Promise<CT>;
 			/** 释放回调 */
 			clear_f?: (obj_as: CT[]) => void | Promise<void>;
+			/** 销毁回调 */
+			destroy_f?: () => void | Promise<void>;
 			/**
 			 * 剩余对象池数量不足时扩充数量
 			 * @defaultValue 32
@@ -2163,6 +2156,8 @@ declare namespace mk {
 				reset_f?: (obj: CT, create_b: boolean) => CT;
 				/** 释放回调 */
 				clear_f?: (obj_as: CT[]) => void;
+				/** 销毁回调 */
+				destroy_f?: () => void;
 				/**
 				 * 剩余对象池数量不足时扩充数量
 				 * @defaultValue 32
@@ -2196,12 +2191,17 @@ declare namespace mk {
 		/** 释放参数类型 */
 		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
 		/** 跟随释放类型 */
-		type follow_release_object<T = release_param_type> = {
+		type follow_release_object<CT = release_param_type> = {
 			/**
 			 * 跟随释放
 			 * @param object_ 释放对象/释放对象数组
 			 */
-			follow_release(object_: T | T[]): any;
+			follow_release<T extends CT>(object_: T): T;
+			/**
+			 * 取消释放
+			 * @param object_ 取消释放对象/取消释放对象数组
+			 */
+			cancel_release<T extends CT>(object_: T): T;
 		};
 	}
 
@@ -2356,7 +2356,7 @@ declare namespace mk {
 		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
 			source_: _mk_ui_manage.source_type<T>,
-			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type>,
+			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
 		/**
@@ -2466,10 +2466,10 @@ declare namespace mk {
 				/** 关闭动画 */
 				close: Record<string | number, string | number>;
 			};
-			get open_animation_n(): number;
-			set open_animation_n(value_n_: number);
-			get close_animation_n(): number;
-			set close_animation_n(value_n_: number);
+			/* Excluded from this release type: open_animation_n */
+			/* Excluded from this release type: open_animation_n */
+			/* Excluded from this release type: close_animation_n */
+			/* Excluded from this release type: close_animation_n */
 			/** 打开动画 */
 			open_animation_s: string;
 			/** 关闭动画 */
@@ -2533,6 +2533,10 @@ declare namespace mk {
 	/** 异步对象池 */
 	export declare class obj_pool<CT> {
 		constructor(init_: _mk_obj_pool.config<CT>);
+		/** 有效状态 */
+		get valid_b(): boolean;
+		/** 有效状态 */
+		private _valid_b;
 		/** 对象存储列表 */
 		private _obj_as;
 		/** 初始化数据 */
@@ -2547,6 +2551,12 @@ declare namespace mk {
 		get(): Promise<CT>;
 		/** 清空数据 */
 		clear(): Promise<void>;
+		/**
+		 * 销毁对象池
+		 * @remarks
+		 * 销毁后将无法 get/put
+		 */
+		destroy(): Promise<void>;
 		/** 添加对象 */
 		private _add;
 		/** 删除对象 */
@@ -2557,6 +2567,10 @@ declare namespace mk {
 		/** 同步对象池 */
 		export class sync<CT> {
 			constructor(init_?: _mk_obj_pool.sync.config<CT>);
+			/** 有效状态 */
+			get valid_b(): boolean;
+			/** 有效状态 */
+			private _valid_b;
 			/** 对象存储列表 */
 			private _obj_as;
 			/** 初始化数据 */
@@ -2567,6 +2581,12 @@ declare namespace mk {
 			get(): CT;
 			/** 清空数据 */
 			clear(): void;
+			/**
+			 * 销毁对象池
+			 * @remarks
+			 * 销毁后将无法 get/put
+			 */
+			destroy(): void;
 			/** 添加对象 */
 			private _add;
 			/** 删除对象 */
@@ -2643,9 +2663,14 @@ declare namespace mk {
 		 * 添加释放对象
 		 * @param args_ 要跟随模块释放的对象或列表
 		 */
-		add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
-		/** 释放所有已添加对象 */
-		release(): Promise<void>;
+		add<T extends mk_release_.release_param_type>(args_: T): T;
+		/**
+		 * 释放对象
+		 * @param object_ 指定对象
+		 */
+		release(object_?: mk_release_.release_param_type): Promise<void>;
+		/** 释放所有对象 */
+		release_all(): Promise<void>;
 	}
 
 	/** 场景驱动 */
@@ -2809,8 +2834,6 @@ declare namespace mk {
 		protected _reset_data_b: boolean;
 		/** 视图配置 */
 		protected _view_config: view_base_.view_config;
-		/** 窗口 */
-		private _wind_b;
 		protected onLoad(): void;
 		protected open(): void | Promise<void>;
 		/**

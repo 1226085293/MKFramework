@@ -111,16 +111,17 @@ abstract class mk_language_base extends mk_life_cycle {
 	/** 重置数据 */
 	protected abstract _reset_data(): void;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad() {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected create(): void | Promise<void> {
 		// 初始化数据
 		this._init_data();
 	}
 
-	onEnable() {
+	protected open(): void | Promise<void> {
 		this._init_event(true);
 	}
 
-	onDisable() {
+	close(): void | Promise<void> {
 		this._init_event(false);
 	}
 

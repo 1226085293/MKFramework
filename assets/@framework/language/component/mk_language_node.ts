@@ -114,11 +114,12 @@ class mk_language_node extends mk_life_cycle {
 	/* --------------- private --------------- */
 	private _layout: cc.Layout | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	create(): void | Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected create(): void | Promise<void> {
 		this._layout = this.getComponent(cc.Layout);
 	}
 
-	open(): void {
+	protected open(): void | Promise<void> {
 		language_manage.event.on(language_manage.event.key.switch_language, this._event_switch_language, this)?.call(this);
 	}
 

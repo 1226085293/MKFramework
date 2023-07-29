@@ -144,18 +144,21 @@ export namespace bundle_ {
         origin_s?: string;
         version_s?: string;
     }
-    export abstract class bundle_manage_base implements asset_.follow_release_object {
+    export abstract class bundle_manage_base implements mk_release_.follow_release_object {
         constructor();
+        // (undocumented)
+        cancel_release<T = mk_release_.release_param_type>(object_: T): T;
         close(): void | Promise<void>;
         data?: data_sharer;
         abstract event: event_target<any>;
-        follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
+        // (undocumented)
+        follow_release<T = mk_release_.release_param_type>(object_: T): T;
         abstract name_s: string;
         network?: mk_network_base;
         node_pool_tab: Record<string, cc_2.NodePool>;
         open(): void | Promise<void>;
-        open_b: boolean;
         protected _release_manage: release;
+        valid_b: boolean;
     }
     export class load_config {
         constructor(init_: load_config);
@@ -355,6 +358,8 @@ export namespace layer_ {
 // @public
 export class life_cycle extends layer implements asset_.follow_release_object {
     constructor(...args: any[]);
+    // (undocumented)
+    cancel_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
     close?(): void | Promise<void>;
     // @internal
     _close(config_?: _mk_life_cycle.close_config): Promise<void>;
@@ -366,7 +371,8 @@ export class life_cycle extends layer implements asset_.follow_release_object {
     }[] | {
         target_off(target: any): any;
     }[];
-    follow_release<T = mk_release_.release_param_type & audio_._unit, T2 = T | T[]>(args_: T2): T2;
+    // (undocumented)
+    follow_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
     init(data_?: any): void | Promise<void>;
     init_data?: any;
     protected late_close?(): void | Promise<void>;
@@ -377,8 +383,9 @@ export class life_cycle extends layer implements asset_.follow_release_object {
     protected open?(): void | Promise<void>;
     // @internal
     _open(config_?: _mk_life_cycle.open_config): Promise<void>;
-    get open_b(): boolean;
     protected _open_task: mk_status_task<void>;
+    // @internal
+    protected _release_manage: release;
     protected _state: _mk_life_cycle.run_state;
     get static_b(): boolean;
     protected _static_b: boolean;
@@ -480,7 +487,7 @@ class mk_language_label extends mk_language_base {
 // @public
 class mk_language_node extends life_cycle {
     // (undocumented)
-    create(): void | Promise<void>;
+    protected create(): void | Promise<void>;
     get current_node(): cc_2.Node | null;
     get language(): number;
     set language(value_n_: number);
@@ -489,7 +496,7 @@ class mk_language_node extends life_cycle {
     // Warning: (ae-forgotten-export) The symbol "_mk_language_node" needs to be exported by the entry point mk_export.d.ts
     node_as: _mk_language_node.node[];
     // (undocumented)
-    open(): void;
+    protected open(): void | Promise<void>;
     // (undocumented)
     protected _use_layer_b: boolean;
 }
@@ -658,8 +665,10 @@ export class obj_pool<CT> {
     // Warning: (ae-forgotten-export) The symbol "_mk_obj_pool" needs to be exported by the entry point mk_export.d.ts
     constructor(init_: _mk_obj_pool.config<CT>);
     clear(): Promise<void>;
+    destroy(): Promise<void>;
     get(): Promise<CT>;
     put(obj_: any): Promise<void>;
+    get valid_b(): boolean;
 }
 
 // @public (undocumented)
@@ -667,8 +676,10 @@ export namespace obj_pool {
     export class sync<CT> {
         constructor(init_?: _mk_obj_pool.sync.config<CT>);
         clear(): void;
+        destroy(): void;
         get(): CT;
         put(obj_: CT): void;
+        get valid_b(): boolean;
     }
 }
 
@@ -695,8 +706,9 @@ export class polygon_mask extends cc_2.Component {
 
 // @public
 export class release {
-    add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2;
-    release(): Promise<void>;
+    add<T extends mk_release_.release_param_type>(args_: T): T;
+    release(object_?: mk_release_.release_param_type): Promise<void>;
+    release_all(): Promise<void>;
 }
 
 // @public

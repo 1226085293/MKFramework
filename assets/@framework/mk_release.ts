@@ -18,75 +18,56 @@ class mk_release {
 	 * 添加释放对象
 	 * @param args_ 要跟随模块释放的对象或列表
 	 */
-	add<T extends mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2 {
+	add<T extends mk_release_.release_param_type>(args_: T): T {
 		if (!args_) {
 			mk_log.error("添加释放对象错误", args_);
 
 			return args_;
 		}
 
-		let node_as: cc.Node[] | undefined;
-		let asset_as: cc.Asset[] | undefined;
-		let object_as: mk_release_.release_object_type[] | undefined;
-		let call_back_as: mk_release_.release_call_back_type[] | undefined;
-
-		// 参数转换
-		{
-			if (Array.isArray(args_)) {
-				if (!args_.length) {
-					return args_;
-				}
-
-				if (args_[0] instanceof cc.Node) {
-					node_as = args_ as any;
-				} else if (args_[0] instanceof cc.Asset) {
-					asset_as = args_ as any;
-				} else if (typeof args_[0] === "function") {
-					call_back_as = args_;
-				} else {
-					object_as = args_ as any;
-				}
-			} else {
-				if (args_ instanceof cc.Node) {
-					node_as = [args_];
-				} else if (args_ instanceof cc.Asset) {
-					asset_as = [args_];
-				} else if (typeof args_ === "function") {
-					call_back_as = [args_ as any];
-				} else {
-					object_as = [args_ as any];
-				}
-			}
-		}
-
 		// 添加引用数据
-		{
-			node_as?.forEach((v) => {
-				if (v.isValid) {
-					this._node_set.add(v);
-				}
-			});
-
-			asset_as?.forEach((v) => {
-				if (v.isValid) {
-					this._asset_set.add(v);
-				}
-			});
-
-			object_as?.forEach((v) => {
-				this._object_set.add(v);
-			});
-
-			call_back_as?.forEach((v) => {
-				this._call_back_set.add(v);
-			});
+		if (args_ instanceof cc.Node) {
+			if (args_.isValid) {
+				this._node_set.add(args_);
+			}
+		} else if (args_ instanceof cc.Asset) {
+			if (args_.isValid) {
+				this._asset_set.add(args_);
+			}
+		} else if (typeof args_ === "function") {
+			this._call_back_set.add(args_);
+		} else {
+			this._object_set.add(args_);
 		}
 
 		return args_;
 	}
 
-	/** 释放所有已添加对象 */
-	async release(): Promise<void> {
+	/**
+	 * 释放对象
+	 * @param object_ 指定对象
+	 */
+	async release(object_?: mk_release_.release_param_type): Promise<void> {
+		if (object_ instanceof cc.Node) {
+			if (this._node_set.delete(object_) && object_.isValid) {
+				object_.removeFromParent();
+				object_.destroy();
+			}
+		} else if (object_ instanceof cc.Asset) {
+			if (this._asset_set.delete(object_) && object_.isValid) {
+				object_.decRef();
+			}
+		} else if (typeof object_ === "function") {
+			if (this._call_back_set.delete(object_)) {
+				await object_();
+			}
+		} else if (this._object_set.delete(object_ as any)) {
+			await object_!.release();
+		}
+	}
+
+	/** 释放所有对象 */
+	async release_all(): Promise<void> {
 		this._asset_set.forEach((v) => {
 			if (v.isValid) {
 				v.decRef();
@@ -124,12 +105,18 @@ export namespace mk_release_ {
 	export type release_param_type = cc.Node | cc.Asset | release_object_type | release_call_back_type;
 
 	/** 跟随释放类型 */
-	export type follow_release_object<T = release_param_type> = {
+	export type follow_release_object<CT = release_param_type> = {
 		/**
 		 * 跟随释放
 		 * @param object_ 释放对象/释放对象数组
 		 */
-		follow_release(object_: T | T[]): any;
+		follow_release<T extends CT>(object_: T): T;
+
+		/**
+		 * 取消释放
+		 * @param object_ 取消释放对象/取消释放对象数组
+		 */
+		cancel_release<T extends CT>(object_: T): T;
 	};
 }
 

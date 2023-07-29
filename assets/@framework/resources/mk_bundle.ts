@@ -8,7 +8,6 @@ import mk_status_task from "../task/mk_status_task";
 import mk_data_sharer from "../mk_data_sharer";
 import mk_tool_func from "../@private/tool/mk_tool_func";
 import mk_release, { mk_release_ } from "../mk_release";
-import { mk_asset_ } from "./mk_asset";
 
 namespace _mk_bundle {
 	export interface event_protocol {
@@ -522,7 +521,7 @@ export namespace mk_bundle_ {
 	 * @remarks
 	 * 注意生命周期函数 open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 	 */
-	export abstract class bundle_manage_base implements mk_asset_.follow_release_object {
+	export abstract class bundle_manage_base implements mk_release_.follow_release_object {
 		constructor() {
 			// 添加至 bundle 数据
 			setTimeout(() => {
@@ -561,7 +560,7 @@ export namespace mk_bundle_ {
 		/** 事件对象 */
 		abstract event: mk_event_target<any>;
 		/** 管理器有效状态 */
-		open_b = false;
+		valid_b = false;
 		/** 节点池表 */
 		node_pool_tab!: Record<string, cc.NodePool>;
 		/** 网络对象 */
@@ -578,25 +577,26 @@ export namespace mk_bundle_ {
 				throw "中断";
 			}
 
-			if (this.open_b) {
+			if (this.valid_b) {
 				mk_log.error("bundle 已经加载");
 				throw "中断";
 			}
 
-			this.open_b = true;
+			this.valid_b = true;
 		}
 
 		/** 卸载回调 */
 		close(): void | Promise<void> {
-			if (!this.open_b) {
+			if (!this.valid_b) {
 				mk_log.error("bundle 已经卸载");
 				throw "中断";
 			}
 
-			this.open_b = false;
+			this.valid_b = false;
 
 			// 清理事件
 			this.event.clear();
+			// 清理网络事件
 			this.network?.event.clear();
 			// 清理数据
 			this.data?.clear();
@@ -608,22 +608,37 @@ export namespace mk_bundle_ {
 					delete this.node_pool_tab[k_s];
 				}
 			}
+
+			// 释放对象
+			this._release_manage.release_all();
 		}
 
-		/**
-		 * 跟随释放
-		 * @param args_ 要跟随模块释放的对象或列表
-		 */
-		follow_release<T = mk_release_.release_param_type, T2 = T | T[]>(args_: T2): T2 {
-			// 添加释放对象
-			this._release_manage.add(args_);
-
-			// 如果模块已经关闭则直接释放
-			if (!this.open_b) {
-				this._release_manage.release();
+		/* ------------------------------- 功能 ------------------------------- */
+		follow_release<T = mk_release_.release_param_type>(object_: T): T {
+			if (!object_) {
+				return object_;
 			}
 
-			return args_;
+			// 添加释放对象
+			this._release_manage.add(object_ as any);
+
+			// 如果模块已经关闭则直接释放
+			if (!this.valid_b) {
+				this._release_manage.release_all();
+			}
+
+			return object_;
+		}
+
+		cancel_release<T = mk_release_.release_param_type>(object_: T): T {
+			if (!object_) {
+				return object_;
+			}
+
+			// 添加释放对象
+			this._release_manage.release(object_ as any);
+
+			return object_;
 		}
 	}
 }
