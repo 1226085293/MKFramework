@@ -302,7 +302,6 @@ export class mk_polygon_mask extends cc.Component {
 
 		// 更新碰撞状态
 		collision_b = !this.mask || this.mask.inverted ? collision_b : !collision_b;
-
 		// 触摸穿透
 		event_.preventSwallow = collision_b;
 		// 拦截事件
