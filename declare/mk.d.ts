@@ -986,12 +986,13 @@ declare namespace mk {
 
 	declare namespace _mk_asset {
 		/** loadRemote 配置类型 */
-		interface load_remote_option_type {
+		interface load_remote_option_type extends Record<string, any> {
 			uuid?: string;
 			url?: string;
 			path?: string;
 			dir?: string;
 			scene?: string;
+			ext?: string;
 		}
 		/** loadAny 配置类型 */
 		interface load_any_request_type extends Record<string, any> {

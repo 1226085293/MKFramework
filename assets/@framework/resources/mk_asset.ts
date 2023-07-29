@@ -10,12 +10,13 @@ import { mk_release_ } from "../mk_release";
 
 namespace _mk_asset {
 	/** loadRemote 配置类型 */
-	export interface load_remote_option_type {
+	export interface load_remote_option_type extends Record<string, any> {
 		uuid?: string;
 		url?: string;
 		path?: string;
 		dir?: string;
 		scene?: string;
+		ext?: string;
 	}
 
 	/** loadAny 配置类型 */
