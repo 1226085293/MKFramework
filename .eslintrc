@@ -115,7 +115,7 @@
 				"format": ["snake_case"],
 				"filter": {
 					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)]"
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)]"
 				},
 				"leadingUnderscore": "require"
 			},

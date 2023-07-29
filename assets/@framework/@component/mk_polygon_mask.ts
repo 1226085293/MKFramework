@@ -72,6 +72,8 @@ export class mk_polygon_mask extends cc.Component {
 	private _polygon_world_point_v2s!: cc.Vec2[];
 	/** 当前多边形世界点 */
 	private _current_polygon_world_point_v2s!: cc.Vec2[];
+	/** 跟踪节点世界坐标 */
+	private _track_node_world_pos_v3 = cc.v3();
 	/** 输入事件 */
 	private _input_event_as = [
 		cc.Node.EventType.TOUCH_START,
@@ -104,6 +106,10 @@ export class mk_polygon_mask extends cc.Component {
 
 		// 更新初始设计尺寸
 		this._initial_design_size = cc.view.getDesignResolutionSize();
+		// 初始化跟踪节点世界坐标
+		if (this._track_node) {
+			this._track_node.getWorldPosition(this._track_node_world_pos_v3);
+		}
 
 		// 更新数据
 		this._current_polygon_world_point_v2s = this._polygon_world_point_v2s = polygon_comp.worldPoints.map((v_v2) =>
@@ -185,6 +191,14 @@ export class mk_polygon_mask extends cc.Component {
 			for (let i = 0; i < this._input_event_as.length; i++) {
 				this.node.off(this._input_event_as[i], this._event_node_input, this);
 			}
+		}
+	}
+
+	protected update(dt_n_: number): void {
+		// 原生上的 worldPosition 数据已经转到 C++ 内，所以不能监听数据
+		if (this._track_node?.worldPosition.equals(this._track_node_world_pos_v3, 1)) {
+			this._track_node.getWorldPosition(this._track_node_world_pos_v3);
+			this.update_mask();
 		}
 	}
 
@@ -276,17 +290,8 @@ export class mk_polygon_mask extends cc.Component {
 	}
 
 	private _set_track_node(value_: cc.Node): void {
-		if (this._track_node) {
-			mk_monitor.off(this._track_node.worldPosition, "x", this._event_world_position_change, this);
-			mk_monitor.off(this._track_node.worldPosition, "y", this._event_world_position_change, this);
-		}
-
 		this._track_node = value_;
-		if (this._track_node) {
-			mk_monitor.on(this._track_node.worldPosition, "x", this._event_world_position_change, this);
-			mk_monitor.on(this._track_node.worldPosition, "y", this._event_world_position_change, this);
-		}
-
+		this._track_node.getWorldPosition(this._track_node_world_pos_v3);
 		this.update_mask();
 	}
 
