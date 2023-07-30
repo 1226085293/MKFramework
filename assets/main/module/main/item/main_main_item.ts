@@ -1,4 +1,4 @@
-import nodes from "./main_main_item_nodes";
+import main_main_item_nodes from "./main_main_item_nodes";
 import { _decorator } from "cc";
 import * as cc from "cc";
 import mk from "mk";
@@ -7,8 +7,11 @@ const { ccclass, property } = _decorator;
 
 @ccclass("main_main_item")
 export class main_main_item extends mk.view_base {
+	/* --------------- 属性 --------------- */
+	@property(main_main_item_nodes)
+	nodes = new main_main_item_nodes();
+
 	/* --------------- public --------------- */
-	nodes!: nodes;
 	init_data!: typeof main_main_item.prototype.data;
 	data = {
 		/** 列表文本 */
@@ -33,9 +36,5 @@ export class main_main_item extends mk.view_base {
 		if (this.data.view) {
 			mk.ui_manage.open(this.data.view);
 		}
-	}
-
-	onLoad() {
-		this.nodes = new nodes(this.node);
 	}
 }

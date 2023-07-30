@@ -1,11 +1,11 @@
 import * as cc from "cc";
+const { ccclass, property } = cc._decorator;
 
-class nodes {
-	constructor(node: cc.Node) {
-		this.label = node.getChildByPath("+Label@label")!;
-	}
-
+@ccclass("main_main_item_nodes")
+class main_main_item_nodes {
+	/** Label */
+	@property({ displayName: "Label", type: cc.Node })
 	label: cc.Node = null!;
 }
 
-export default nodes;
+export default main_main_item_nodes;

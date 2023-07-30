@@ -7,6 +7,7 @@ import { resources_module } from "../../../resources/module/module/resources_mod
 import { resources_network } from "../../../resources/module/network/resources_network";
 import { main_main_item } from "../../module/main/item/main_main_item";
 import main_bundle from "../../bundle/main_bundle";
+import { resources_hot_update } from "../../../resources/module/hot_update/resources_hot_update";
 const { ccclass, property } = _decorator;
 
 @ccclass("main_main")
@@ -25,7 +26,7 @@ export class main_main extends mk.view_base {
 				view: resources_language,
 			},
 			{
-				label_s: "模块管理",
+				label_s: "模块(UI)",
 				view: resources_module,
 			},
 			{
@@ -35,6 +36,10 @@ export class main_main extends mk.view_base {
 			{
 				label_s: "引导",
 				view: resources_guide,
+			},
+			{
+				label_s: "热更",
+				view: resources_hot_update,
 			},
 		] as typeof main_main_item.prototype.data[],
 	};
@@ -46,5 +51,6 @@ export class main_main extends mk.view_base {
 		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab", main_bundle);
 		mk.ui_manage.regis(resources_network, "db://assets/resources/module/network/resources_network.prefab", main_bundle);
 		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab", main_bundle);
+		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/hot_update/resources_hot_update.prefab", main_bundle);
 	}
 }
