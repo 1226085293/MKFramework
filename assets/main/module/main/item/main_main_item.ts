@@ -5,11 +5,11 @@ import mk from "mk";
 import { main_main } from "../../../scene/main/main_main";
 const { ccclass, property } = _decorator;
 
-@ccclass("resources_main_item")
-export class resources_main_item extends mk.view_base {
+@ccclass("main_main_item")
+export class main_main_item extends mk.view_base {
 	/* --------------- public --------------- */
 	nodes!: nodes;
-	init_data!: typeof resources_main_item.prototype.data;
+	init_data!: typeof main_main_item.prototype.data;
 	data = {
 		/** 列表文本 */
 		label_s: "",

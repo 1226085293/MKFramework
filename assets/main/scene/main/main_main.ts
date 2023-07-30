@@ -5,7 +5,7 @@ import { resources_guide } from "../../../resources/module/guide/resources_guide
 import { resources_language } from "../../../resources/module/language/resources_language";
 import { resources_module } from "../../../resources/module/module/resources_module";
 import { resources_network } from "../../../resources/module/network/resources_network";
-import { resources_main_item } from "../../module/main/item/main_main_item";
+import { main_main_item } from "../../module/main/item/main_main_item";
 import main_bundle from "../../bundle/main_bundle";
 const { ccclass, property } = _decorator;
 
@@ -36,7 +36,7 @@ export class main_main extends mk.view_base {
 				label_s: "引导",
 				view: resources_guide,
 			},
-		] as typeof resources_main_item.prototype.data[],
+		] as typeof main_main_item.prototype.data[],
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */
