@@ -28,11 +28,11 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 48
+      "__id__": 49
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 49
+      "__id__": 50
     },
     "_id": "722162ce-5751-4620-9a9c-205bbbe4479a"
   },
@@ -238,9 +238,6 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 44
-      },
-      {
         "__id__": 45
       },
       {
@@ -248,6 +245,9 @@
       },
       {
         "__id__": 47
+      },
+      {
+        "__id__": 48
       }
     ],
     "_prefab": null,
@@ -337,7 +337,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 411.1882229232387,
+    "_orthoHeight": 375,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -524,9 +524,6 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 37
-      },
-      {
         "__id__": 38
       },
       {
@@ -534,6 +531,9 @@
       },
       {
         "__id__": 40
+      },
+      {
+        "__id__": 41
       }
     ],
     "_prefab": null,
@@ -581,9 +581,6 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 33
-      },
-      {
         "__id__": 34
       },
       {
@@ -591,6 +588,9 @@
       },
       {
         "__id__": 36
+      },
+      {
+        "__id__": 37
       }
     ],
     "_prefab": null,
@@ -638,13 +638,13 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 30
-      },
-      {
         "__id__": 31
       },
       {
         "__id__": 32
+      },
+      {
+        "__id__": 33
       }
     ],
     "_prefab": null,
@@ -1043,7 +1043,16 @@
     "_child_layer_n": 0,
     "show_alone_b": false,
     "animation_config": null,
+    "nodes": {
+      "__id__": 30
+    },
     "_id": "39pCez+f1CNYc8ASvfviqo"
+  },
+  {
+    "__type__": "main_main_item_nodes",
+    "label": {
+      "__id__": 18
+    }
   },
   {
     "__type__": "cc.UITransform",
@@ -1336,7 +1345,7 @@
     "layer_type_n": 0,
     "_child_layer_n": 0,
     "event": {
-      "__id__": 41
+      "__id__": 42
     },
     "_data_key_s": "data.view_list_as",
     "_data_target": {
@@ -1348,7 +1357,7 @@
     "__type__": "monitor_trigger/trigger",
     "event_param_as": [
       {
-        "__id__": 42
+        "__id__": 43
       }
     ],
     "event_s": "默认",
@@ -1358,7 +1367,7 @@
     "__type__": "data_method_array_common",
     "recycle_b": true,
     "event_child_update": {
-      "__id__": 43
+      "__id__": 44
     }
   },
   {
@@ -1464,19 +1473,19 @@
   {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 50
-    },
-    "shadows": {
       "__id__": 51
     },
-    "_skybox": {
+    "shadows": {
       "__id__": 52
     },
-    "fog": {
+    "_skybox": {
       "__id__": 53
     },
-    "octree": {
+    "fog": {
       "__id__": 54
+    },
+    "octree": {
+      "__id__": 55
     }
   },
   {

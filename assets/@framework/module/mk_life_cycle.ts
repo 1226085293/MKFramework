@@ -405,12 +405,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 			// 回收
 			else {
 				ui_manage.close(this.node);
-			}
 
-			return;
+				return;
+			}
 		}
 
-		// 重置数据
+		// 重置状态
 		this._open_task.finish(false);
 	}
 

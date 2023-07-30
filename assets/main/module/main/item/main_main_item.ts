@@ -32,7 +32,7 @@ export class main_main_item extends mk.view_base {
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	/** 按钮-点击 */
-	button_click(): void {
+	async button_click(): Promise<void> {
 		if (this.data.view) {
 			mk.ui_manage.open(this.data.view);
 		}

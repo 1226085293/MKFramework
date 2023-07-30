@@ -51,6 +51,6 @@ export class main_main extends mk.view_base {
 		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab", main_bundle);
 		mk.ui_manage.regis(resources_network, "db://assets/resources/module/network/resources_network.prefab", main_bundle);
 		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab", main_bundle);
-		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/hot_update/resources_hot_update.prefab", main_bundle);
+		mk.ui_manage.regis(resources_hot_update, "db://assets/resources/module/hot_update/resources_hot_update.prefab", main_bundle);
 	}
 }

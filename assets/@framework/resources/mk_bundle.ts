@@ -176,6 +176,8 @@ class mk_bundle extends mk_instance_base {
 					if (error) {
 						this._log.error("bundle加载失败", error);
 						resolve_f(null);
+
+						return;
 					}
 
 					// 添加bundle信息
@@ -336,9 +338,8 @@ class mk_bundle extends mk_instance_base {
 		Object.keys(script_cache_tab).forEach((v_s) => {
 			const current = script_cache_tab[v_s];
 			const parent = script_cache_tab[v_s].p;
-			const child = parent.d;
 
-			if (!parent || !child || current.id !== parent.id) {
+			if (!parent?.d || current.id !== parent.id) {
 				return;
 			}
 
@@ -349,7 +350,10 @@ class mk_bundle extends mk_instance_base {
 
 		// 清理脚本缓存
 		{
-			const bundle_root = bundle_script_tab[bundle_.bundle_s];
+			const bundle_root =
+				Number(self["CocosEngine"].split(".").join("")) < 370
+					? bundle_script_tab[bundle_.bundle_s]?.d[0]
+					: bundle_script_tab[bundle_.bundle_s];
 
 			if (bundle_root) {
 				bundle_root.d.forEach((v: { id: string }) => {
