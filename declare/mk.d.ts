@@ -313,6 +313,10 @@ declare namespace mk {
 			 * loadBundle 时使用
 			 */
 			origin_s?: string;
+		}
+		/** bundle 数据 */
+		export class bundle_data extends bundle_info {
+			constructor(init_: bundle_data);
 			/** 管理器 */
 			manage?: bundle_manage_base;
 		}
@@ -1064,7 +1068,7 @@ declare namespace mk {
 		/** 上个场景名 */
 		pre_scene_s: string;
 		/** bundle列表 */
-		bundle_map: Map<string, bundle_.bundle_info>;
+		bundle_map: Map<string, bundle_.bundle_data>;
 		/** 切换场景状态 */
 		switch_scene_b: boolean;
 		/** 当前场景bundle */
@@ -1087,7 +1091,7 @@ declare namespace mk {
 		 * 设置 bundle 数据
 		 * @param bundle_ bundle 信息
 		 */
-		set(bundle_: bundle_.bundle_info): void;
+		set(bundle_: bundle_.bundle_data): void;
 		/**
 		 * 加载 bundle
 		 * @param args_ bundle 名 | 加载配置
@@ -1102,7 +1106,7 @@ declare namespace mk {
 		 */
 		load_scene(scene_s_: string, config_?: Partial<bundle_.switch_scene_config>): Promise<boolean>;
 		/** 重新加载 bundle */
-		reload(bundle_: string | bundle_.bundle_info): Promise<cc_2.AssetManager.Bundle | null>;
+		reload(bundle_: bundle_.bundle_info & Required<Pick<bundle_.bundle_info, "origin_s">>): Promise<cc_2.AssetManager.Bundle | null>;
 		private _set_bundle_s;
 		private _set_scene_s;
 	}
@@ -2475,8 +2479,6 @@ declare namespace mk {
 			/** 关闭动画 */
 			close_animation_s: string;
 		}
-		/** 快捷操作 */
-		class quick_operation {}
 	}
 
 	/** websocket */
@@ -2627,6 +2629,8 @@ declare namespace mk {
 		private _polygon_world_point_v2s;
 		/** 当前多边形世界点 */
 		private _current_polygon_world_point_v2s;
+		/** 跟踪节点世界坐标 */
+		private _track_node_world_pos_v3;
 		/** 输入事件 */
 		private _input_event_as;
 		/** 临时变量 */
@@ -2635,6 +2639,7 @@ declare namespace mk {
 		protected start(): void;
 		protected onEnable(): void;
 		protected onDisable(): void;
+		protected update(dt_n_: number): void;
 		protected onDestroy(): void;
 		/** 更新遮罩 */
 		update_mask(): void;

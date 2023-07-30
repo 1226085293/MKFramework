@@ -129,14 +129,14 @@ export class mk_view_base extends mk_life_cycle {
 	@property({
 		displayName: "动画配置",
 		type: _mk_view_base.animation_config,
-		group: { name: "快捷操作", id: "1", displayOrder: 1 },
+		group: { name: "视图配置", id: "1" },
 	})
 	animation_config: _mk_view_base.animation_config = null!;
 
 	@property({
 		displayName: "添加遮罩",
 		tooltip: "添加遮罩到根节点下",
-		group: { name: "快捷操作", id: "1", displayOrder: 2 },
+		group: { name: "快捷操作", id: "1" },
 	})
 	get auto_mask_b(): boolean {
 		return this._get_auto_mask_b();
@@ -149,7 +149,7 @@ export class mk_view_base extends mk_life_cycle {
 	@property({
 		displayName: "0 边距 widget",
 		tooltip: "在节点上添加 0 边距 widget",
-		group: { name: "快捷操作", id: "1", displayOrder: 3 },
+		group: { name: "快捷操作", id: "1" },
 	})
 	get auto_widget_b(): boolean {
 		return Boolean(this.getComponent(cc.Widget));
@@ -162,7 +162,7 @@ export class mk_view_base extends mk_life_cycle {
 	@property({
 		displayName: "BlockInputEvents",
 		tooltip: "在节点上添加 BlockInputEvents 组件",
-		group: { name: "快捷操作", id: "1", displayOrder: 4 },
+		group: { name: "快捷操作", id: "1" },
 	})
 	get auto_block_input_b(): boolean {
 		return Boolean(this.getComponent(cc.BlockInputEvents));

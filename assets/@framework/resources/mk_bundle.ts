@@ -86,7 +86,7 @@ class mk_bundle extends mk_instance_base {
 	/** 上个场景名 */
 	pre_scene_s!: string;
 	/** bundle列表 */
-	bundle_map = new Map<string, mk_bundle_.bundle_info>();
+	bundle_map = new Map<string, mk_bundle_.bundle_data>();
 	/** 切换场景状态 */
 	switch_scene_b = false;
 
@@ -125,7 +125,7 @@ class mk_bundle extends mk_instance_base {
 	 * 设置 bundle 数据
 	 * @param bundle_ bundle 信息
 	 */
-	set(bundle_: mk_bundle_.bundle_info): void {
+	set(bundle_: mk_bundle_.bundle_data): void {
 		// 加入 bundle 表
 		this.bundle_map.set(bundle_.bundle_s, bundle_);
 	}
@@ -307,26 +307,16 @@ class mk_bundle extends mk_instance_base {
 	}
 
 	/** 重新加载 bundle */
-	async reload(bundle_: string | mk_bundle_.bundle_info): Promise<cc.AssetManager.Bundle | null> {
+	async reload(bundle_: mk_bundle_.bundle_info & Required<Pick<mk_bundle_.bundle_info, "origin_s">>): Promise<cc.AssetManager.Bundle | null> {
 		if (PREVIEW) {
+			this._log.error("不支持预览模式重载 bundle");
+
 			return null;
 		}
 
 		await this._engine_init_task;
 
-		/** bundle 信息 */
-		let bundle_info: mk_bundle_.bundle_info;
-
-		// 参数转换
-		if (typeof bundle_ === "string") {
-			bundle_info = new mk_bundle_.bundle_info({
-				bundle_s: bundle_,
-			});
-		} else {
-			bundle_info = new mk_bundle_.bundle_info(bundle_);
-		}
-
-		if (this.bundle_s === bundle_info.bundle_s) {
+		if (this.bundle_s === bundle_.bundle_s) {
 			this._log.error("不能在重载 bundle 的场景内进行重载");
 
 			return null;
@@ -340,7 +330,7 @@ class mk_bundle extends mk_instance_base {
 		const script_cache_tab: Record<string, any> = system_js[Reflect.ownKeys(system_js).find((v) => typeof v === "symbol")!];
 
 		// 更新 bundle 信息
-		this.set(bundle_info);
+		this.set(bundle_);
 
 		// 初始化 bundle 脚本表
 		Object.keys(script_cache_tab).forEach((v_s) => {
@@ -359,7 +349,7 @@ class mk_bundle extends mk_instance_base {
 
 		// 清理脚本缓存
 		{
-			const bundle_root = bundle_script_tab[bundle_info.bundle_s];
+			const bundle_root = bundle_script_tab[bundle_.bundle_s];
 
 			if (bundle_root) {
 				bundle_root.d.forEach((v: { id: string }) => {
@@ -374,7 +364,7 @@ class mk_bundle extends mk_instance_base {
 
 		// 清理 ccclass
 		{
-			const reg = new RegExp(`${bundle_info.bundle_s}(_|/)`);
+			const reg = new RegExp(`${bundle_.bundle_s}(_|/)`);
 
 			Object.keys(cc.js._nameToClass)
 				.filter((v_s) => v_s.match(reg) !== null)
@@ -385,7 +375,7 @@ class mk_bundle extends mk_instance_base {
 
 		// 清理 bundle 资源
 		{
-			const bundle = cc.assetManager.getBundle(bundle_info.bundle_s);
+			const bundle = cc.assetManager.getBundle(bundle_.bundle_s);
 
 			if (bundle) {
 				bundle.releaseAll();
@@ -394,7 +384,7 @@ class mk_bundle extends mk_instance_base {
 		}
 
 		// 加载 bundle
-		return this.load(bundle_info);
+		return this.load(bundle_);
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
@@ -467,6 +457,15 @@ export namespace mk_bundle_ {
 		 * loadBundle 时使用
 		 */
 		origin_s?: string;
+	}
+
+	/** bundle 数据 */
+	export class bundle_data extends bundle_info {
+		constructor(init_: bundle_data) {
+			super(init_);
+			Object.assign(this, init_);
+		}
+
 		/** 管理器 */
 		manage?: bundle_manage_base;
 	}

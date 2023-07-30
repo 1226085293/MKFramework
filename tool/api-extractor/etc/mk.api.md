@@ -137,10 +137,13 @@ export const bundle: mk_bundle;
 
 // @public (undocumented)
 export namespace bundle_ {
+    export class bundle_data extends bundle_info {
+        constructor(init_: bundle_data);
+        manage?: bundle_manage_base;
+    }
     export class bundle_info {
         constructor(init_: bundle_info);
         bundle_s: string;
-        manage?: bundle_manage_base;
         origin_s?: string;
         version_s?: string;
     }
@@ -701,6 +704,8 @@ export class polygon_mask extends cc_2.Component {
     protected start(): void;
     get track_node(): cc_2.Node;
     set track_node(value_: cc_2.Node);
+    // (undocumented)
+    protected update(dt_n_: number): void;
     update_mask(): void;
 }
 
