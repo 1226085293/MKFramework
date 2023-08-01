@@ -711,7 +711,7 @@ export class polygon_mask extends cc_2.Component {
 
 // @public
 export class release {
-    add<T extends mk_release_.release_param_type>(args_: T): T;
+    add<T extends mk_release_.release_param_type>(object_: T): T;
     release(object_?: mk_release_.release_param_type): Promise<void>;
     release_all(): Promise<void>;
 }

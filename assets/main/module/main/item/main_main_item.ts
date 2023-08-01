@@ -13,12 +13,12 @@ export class main_main_item extends mk.view_base {
 
 	/* --------------- public --------------- */
 	init_data!: typeof main_main_item.prototype.data;
-	data = {
+	data = new (class {
 		/** 列表文本 */
-		label_s: "",
+		label_s = "";
 		/** 打开视图 */
-		view: null as cc.Constructor<mk.view_base> | null,
-	};
+		view: cc.Constructor<mk.view_base> | (() => any) | null = null;
+	})();
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	init(init_?: typeof this.init_data): void {
@@ -33,7 +33,13 @@ export class main_main_item extends mk.view_base {
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	/** 按钮-点击 */
 	async button_click(): Promise<void> {
-		if (this.data.view) {
+		if (!this.data.view) {
+			return;
+		}
+
+		if (typeof this.data.view === "function") {
+			(this.data.view as any)();
+		} else {
 			mk.ui_manage.open(this.data.view);
 		}
 	}

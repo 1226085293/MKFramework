@@ -126,8 +126,16 @@ class mk_bundle extends mk_instance_base {
 	 * @param bundle_ bundle 信息
 	 */
 	set(bundle_: mk_bundle_.bundle_data): void {
-		// 加入 bundle 表
-		this.bundle_map.set(bundle_.bundle_s, bundle_);
+		const old_data = this.bundle_map.get(bundle_.bundle_s);
+
+		// 更新旧数据
+		if (old_data) {
+			Object.assign(old_data, bundle_);
+		}
+		// 添加新数据
+		else {
+			this.bundle_map.set(bundle_.bundle_s, new mk_bundle_.bundle_data(bundle_));
+		}
 	}
 
 	/**
@@ -207,13 +215,12 @@ class mk_bundle extends mk_instance_base {
 		await this._init_task;
 
 		const config = new mk_bundle_.switch_scene_config(config_);
-		const bundle_info = this.bundle_map.get(config.bundle_s);
 
-		if (!bundle_info) {
-			this._log.error("bundle 信息不存在", config.bundle_s);
-
-			return false;
-		}
+		const bundle_info =
+			this.bundle_map.get(config.bundle_s) ??
+			new mk_bundle_.bundle_info({
+				bundle_s: config.bundle_s,
+			});
 
 		const bundle = await this.load(bundle_info);
 
@@ -336,7 +343,7 @@ class mk_bundle extends mk_instance_base {
 
 		// 初始化 bundle 脚本表
 		Object.keys(script_cache_tab).forEach((v_s) => {
-			const current = script_cache_tab[v_s];
+			const current = script_cache_tab[v_s] as { d: any[]; id: string };
 			const parent = script_cache_tab[v_s].p;
 
 			if (!parent?.d || current.id !== parent.id) {
@@ -350,19 +357,15 @@ class mk_bundle extends mk_instance_base {
 
 		// 清理脚本缓存
 		{
-			const bundle_root =
-				Number(self["CocosEngine"].split(".").join("")) < 370
-					? bundle_script_tab[bundle_.bundle_s]?.d[0]
-					: bundle_script_tab[bundle_.bundle_s];
+			const bundle_root = bundle_script_tab[bundle_.bundle_s]?.d[0];
 
 			if (bundle_root) {
 				bundle_root.d.forEach((v: { id: string }) => {
-					delete script_cache_tab[v.id];
-					delete system_js["registerRegistry"][v.id];
+					system_js.delete(v.id);
 				});
 
-				delete script_cache_tab[bundle_root.id];
-				delete system_js["registerRegistry"][bundle_root.id];
+				system_js.delete(bundle_root.id);
+				system_js.delete(bundle_root.p.id);
 			}
 		}
 

@@ -2666,9 +2666,9 @@ declare namespace mk {
 		private _call_back_set;
 		/**
 		 * 添加释放对象
-		 * @param args_ 要跟随模块释放的对象或列表
+		 * @param object_ 要跟随模块释放的对象或列表
 		 */
-		add<T extends mk_release_.release_param_type>(args_: T): T;
+		add<T extends mk_release_.release_param_type>(object_: T): T;
 		/**
 		 * 释放对象
 		 * @param object_ 指定对象

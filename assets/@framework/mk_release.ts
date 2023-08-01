@@ -16,31 +16,31 @@ class mk_release {
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 添加释放对象
-	 * @param args_ 要跟随模块释放的对象或列表
+	 * @param object_ 要跟随模块释放的对象或列表
 	 */
-	add<T extends mk_release_.release_param_type>(args_: T): T {
-		if (!args_) {
-			mk_log.error("添加释放对象错误", args_);
+	add<T extends mk_release_.release_param_type>(object_: T): T {
+		if (!object_) {
+			mk_log.error("添加释放对象错误", object_);
 
-			return args_;
+			return object_;
 		}
 
 		// 添加引用数据
-		if (args_ instanceof cc.Node) {
-			if (args_.isValid) {
-				this._node_set.add(args_);
+		if (object_ instanceof cc.Node) {
+			if (object_.isValid) {
+				this._node_set.add(object_);
 			}
-		} else if (args_ instanceof cc.Asset) {
-			if (args_.isValid) {
-				this._asset_set.add(args_);
+		} else if (object_ instanceof cc.Asset) {
+			if (object_.isValid) {
+				this._asset_set.add(object_);
 			}
-		} else if (typeof args_ === "function") {
-			this._call_back_set.add(args_);
+		} else if (typeof object_ === "function") {
+			this._call_back_set.add(object_);
 		} else {
-			this._object_set.add(args_);
+			this._object_set.add(object_);
 		}
 
-		return args_;
+		return object_;
 	}
 
 	/**
