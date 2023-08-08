@@ -288,21 +288,18 @@ class mk_bundle extends mk_instance_base {
 						return;
 					}
 
-					// 更新数据
-					this.bundle_s = bundle.name;
-					this.pre_scene_s = this.scene_s;
-					this.scene_s = scene_s_;
 					// 运行场景
 					cc.director.runScene(scene_asset, config?.before_load_callback_f, (error, scene) => {
-						if (!config) {
-							resolve_f(false);
-
-							return;
+						// 更新数据
+						if (!error) {
+							this.bundle_s = bundle.name;
+							this.pre_scene_s = this.scene_s;
+							this.scene_s = scene_s_;
 						}
 
-						resolve_f(true);
 						config.unloaded_callback_f?.();
 						config.launched_callback_f?.(error, scene);
+						resolve_f(!scene);
 					});
 				});
 			}).then((result_b) => {
