@@ -21,18 +21,3 @@ muzzik 开发的 cocos creator 3.x 游戏开发框架 `(beta 阶段)`，欢迎�
 ### 2. 运行
 
 1. `npm run 构建框架声明文件`
-
-## # 构建框架文档
-> 仅限 mk_framework 项目
-
-### 1. 初始化
-
-1. `cd tool\doc-website`
-
-2. `npm i`
-
-### 2. 运行
-
-1. `cd tool\api-extractor & npm run 构建框架文档`
-
-2. `cd tool\doc-website & npm run start`
