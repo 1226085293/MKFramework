@@ -39,5 +39,7 @@ export class hot_update_default extends mk.view_base {
 			origin_s: this.data.remote_url_s + "/" + global_config.asset.bundle.main,
 			version_s: this.data.bundle_version_s,
 		});
+
+		this._log.log("热更完成");
 	}
 }
