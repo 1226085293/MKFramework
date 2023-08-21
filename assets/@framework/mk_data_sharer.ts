@@ -18,6 +18,24 @@ class mk_data_sharer<CT = any> extends mk_instance_base {
 	private _request_map = new Map<any, mk_status_task<any>>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
+	 * 删除数据
+	 * @param key_ 注册键
+	 */
+	delete<T extends keyof CT>(key_: T): void {
+		// 录入数据表
+		this._data_map.delete(key_);
+
+		// 检查请求表
+		const request = this._request_map.get(key_);
+
+		// 返回请求
+		if (request) {
+			request.finish(true, null);
+			this._request_map.delete(key_);
+		}
+	}
+
+	/**
 	 * 设置数据
 	 * @param key_ 注册键
 	 * @param data_ 数据
