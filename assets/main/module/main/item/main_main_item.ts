@@ -37,10 +37,10 @@ export class main_main_item extends mk.view_base {
 			return;
 		}
 
-		if (typeof this.data.view === "function") {
-			(this.data.view as any)();
+		if (cc.js.getSuper(this.data.view) === mk.view_base) {
+			mk.ui_manage.open(this.data.view as any);
 		} else {
-			mk.ui_manage.open(this.data.view);
+			(this.data.view as any)();
 		}
 	}
 }
