@@ -199,6 +199,7 @@ export namespace codec_base_ {
 // @public
 export class data_sharer<CT = any> extends instance_base {
     clear(): void;
+    delete<T extends keyof CT>(key_: T): void;
     get<T extends keyof CT, T2 = CT[T]>(key_: T): T2 | null;
     get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_: T2): T2 extends true ? Promise<T3> : T3 | null;
     // (undocumented)

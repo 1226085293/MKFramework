@@ -425,6 +425,11 @@ declare namespace mk {
 		/** 请求表 */
 		private _request_map;
 		/**
+		 * 删除数据
+		 * @param key_ 注册键
+		 */
+		delete<T extends keyof CT>(key_: T): void;
+		/**
 		 * 设置数据
 		 * @param key_ 注册键
 		 * @param data_ 数据
@@ -916,8 +921,13 @@ declare namespace mk {
 
 	/**
 	 * 资源管理器
-	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
 	 * - 统一加载接口为 get、get_dir
+	 * - 支持 EDITOR 环境加载资源
+	 * - 加载图片无需后缀，通过类型自动添加
+	 * - 加载路径扩展，例：db://xxx.prefab
+	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
+	 * - 通过 cache_lifetime_ms_n 修复短时间内 (释放/加载) 同一资源导致加载资源是已释放后的问题
+	 * - 解决同时加载同一资源多次导致返回的资源对象不一致的问 (对象不一致会导致引用计数不一致)
 	 */
 	declare class mk_asset extends instance_base {
 		constructor();
@@ -1932,6 +1942,8 @@ declare namespace mk {
 			 * @param event socket 事件
 			 */
 			close(event: any): void;
+			/** 重连成功 */
+			reconnect_success(): void;
 			/** 重连失败 */
 			reconnect_fail(): void;
 			/**
