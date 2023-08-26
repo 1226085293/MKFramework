@@ -49,8 +49,13 @@ namespace _mk_asset {
 
 /**
  * 资源管理器
- * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
  * - 统一加载接口为 get、get_dir
+ * - 支持 EDITOR 环境加载资源
+ * - 加载图片无需后缀，通过类型自动添加
+ * - 加载路径扩展，例：db://xxx.prefab
+ * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
+ * - 通过 cache_lifetime_ms_n 修复短时间内 (释放/加载) 同一资源导致加载资源是已释放后的问题
+ * - 解决同时加载同一资源多次导致返回的资源对象不一致的问 (对象不一致会导致引用计数不一致)
  */
 class mk_asset extends mk_instance_base {
 	constructor() {
@@ -152,8 +157,14 @@ class mk_asset extends mk_instance_base {
 
 				// 补齐 bundle
 				if (!EDITOR) {
-					get_config.bundle_s = path_s_.slice(0, path_s_.indexOf("/"));
-					path_s_ = path_s_.slice(get_config.bundle_s.length + 1);
+					const dir_s = path_s_.slice(0, path_s_.indexOf("/"));
+
+					path_s_ = path_s_.slice(dir_s.length + 1);
+
+					// 填充 bundle 名
+					if (!get_config.bundle_s) {
+						get_config.bundle_s = dir_s;
+					}
 				}
 			}
 
@@ -309,6 +320,18 @@ class mk_asset extends mk_instance_base {
 			// 去除无用信息
 			if (path_s_.startsWith("db://assets/")) {
 				path_s_ = path_s_.slice(12);
+
+				// 补齐 bundle
+				if (!EDITOR) {
+					const dir_s = path_s_.slice(0, path_s_.indexOf("/"));
+
+					path_s_ = path_s_.slice(dir_s.length + 1);
+
+					// 填充 bundle 名
+					if (!get_config.bundle_s) {
+						get_config.bundle_s = dir_s;
+					}
+				}
 			}
 
 			// 补全加载配置
@@ -318,7 +341,7 @@ class mk_asset extends mk_instance_base {
 				}
 
 				asset_config = get_config.remote_option as any;
-				asset_config.bundle = get_config.bundle_s ?? "resources";
+				asset_config.bundle = get_config.bundle_s;
 				asset_config.type = type_;
 				asset_config.dir = path_s_;
 			}
@@ -392,7 +415,7 @@ class mk_asset extends mk_instance_base {
 					else {
 						/** 成功状态 */
 						const success_b = await new Promise<boolean>((resolve_f) => {
-							bundle_asset.load(path_s_, type_, (error, asset): void => {
+							bundle_asset.load(v.path, type_, (error, asset): void => {
 								if (error) {
 									completed_f(error);
 
@@ -484,21 +507,39 @@ class mk_asset extends mk_instance_base {
 		/** 当前时间 */
 		const current_time_ms_n = Date.now();
 
-		for (const [k_s, v] of this._asset_release_map.entries()) {
-			// 当前及之后的资源没超过生命时长
-			if (!force_b_ && current_time_ms_n - v.join_time_ms_n < mk_asset.config.cache_lifetime_ms_n) {
-				break;
-			}
+		if (force_b_) {
+			const assets_as: cc.Asset[] = [];
 
-			this._asset_release_map.delete(k_s);
+			this._asset_release_map.forEach((v) => {
+				// 已经被释放或增加了引用计数
+				if (!v.asset.isValid || v.asset.refCount !== 1) {
+					return;
+				}
 
-			// 已经被释放或增加了引用计数
-			if (!v.asset.isValid || v.asset.refCount !== 1) {
-				return;
-			}
+				assets_as.push(v.asset);
+			});
 
+			// 清理释放表
+			this._asset_release_map.clear();
 			// 释放资源
-			this.release(v.asset);
+			this.release(assets_as);
+		} else {
+			for (const [k_s, v] of this._asset_release_map.entries()) {
+				// 当前及之后的资源没超过生命时长
+				if (current_time_ms_n - v.join_time_ms_n < mk_asset.config.cache_lifetime_ms_n) {
+					break;
+				}
+
+				this._asset_release_map.delete(k_s);
+
+				// 已经被释放或增加了引用计数
+				if (!v.asset.isValid || v.asset.refCount !== 1) {
+					return;
+				}
+
+				// 释放资源
+				this.release(v.asset);
+			}
 		}
 	}
 
