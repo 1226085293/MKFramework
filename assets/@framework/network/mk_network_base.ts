@@ -21,6 +21,8 @@ namespace _mk_network_base {
 		 * @param event socket 事件
 		 */
 		close(event: any): void;
+		/** 重连成功 */
+		reconnect_success(): void;
 		/** 重连失败 */
 		reconnect_fail(): void;
 		/**
@@ -449,10 +451,8 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 
 		this._log.warn("socket 重连" + (status_b_ ? "成功" : "失败"));
 
-		// 重连失败
-		if (!status_b_) {
-			this.event.emit(this.event.key.reconnect_fail);
-		}
+		// 事件通知
+		this.event.emit(status_b_ ? this.event.key.reconnect_success : this.event.key.reconnect_fail);
 
 		// 清理重连数据
 		{
