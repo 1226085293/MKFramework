@@ -24,7 +24,7 @@ export { default as ui_manage, mk_ui_manage_ as ui_manage_ } from "./mk_ui_manag
 export { default as guide_manage } from "./guide/mk_guide_manage";
 export type { mk_guide_manage_ as guide_manage_ } from "./guide/mk_guide_manage";
 export { default as dynamic_module } from "./mk_dynamic_module";
-export { default as guide } from "./guide/mk_guide";
+export { default as guide_step_base } from "./guide/mk_guide_step_base";
 export { default as game } from "./mk_game";
 export { mk_polygon_mask as polygon_mask } from "./@component/mk_polygon_mask";
 export { default as release } from "./mk_release";

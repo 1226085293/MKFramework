@@ -526,11 +526,6 @@ declare namespace mk {
 
 	/* Excluded from this release type: global_config */
 
-	declare namespace guide {
-		export { mk_guide_step_base as step_base };
-	}
-	export { guide };
-
 	/** 引导管理器 */
 	export declare class guide_manage {
 		constructor(init_: guide_manage_.init_config);
@@ -559,7 +554,7 @@ declare namespace mk {
 		 * 注册步骤
 		 * @param step_ 步骤实例
 		 */
-		regis(step_: mk_guide_step_base | mk_guide_step_base[]): void;
+		regis(step_: guide_step_base | guide_step_base[]): void;
 		/**
 		 * 运行引导
 		 * @remarks
@@ -647,6 +642,67 @@ declare namespace mk {
 			 */
 			step_update_callback_f(step_n: number): any;
 		}
+	}
+
+	/** 引导步骤基类 */
+	export declare abstract class guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
+		/** 步骤序号 */
+		abstract step_n: number;
+		/**
+		 * 所属场景
+		 * @remarks
+		 * 格式：bundle.scene
+		 */
+		abstract scene_s: string;
+		/** 引导管理器 */
+		guide_manage: guide_manage;
+		/** 操作键列表 */
+		operate_ss: Exclude<keyof CT, symbol>[];
+		/** 操作表返回值 */
+		operate_tab: {
+			[k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
+		};
+		/** 初始化数据 */
+		init_data: any;
+		/** 步骤更新返回数据 */
+		step_update_data: any;
+		/**
+		 * 步骤描述
+		 * @remarks
+		 * 用于日志打印
+		 */
+		describe_s?: string;
+		/**
+		 * 下个步骤
+		 * @remarks
+		 * - length == 1：预加载及 this._next 跳转
+		 * - length > 1：预加载
+		 */
+		next_step_ns?: number[];
+		/**
+		 * 预加载
+		 * @remarks
+		 * 上个步骤 load 后执行
+		 */
+		pre_load?(): void | Promise<void>;
+		/**
+		 * 加载
+		 * @remarks
+		 * 进入当前步骤
+		 */
+		abstract load(): void | Promise<void>;
+		/**
+		 * 卸载
+		 * @remarks
+		 * 退出当前步骤
+		 */
+		unload?(): void | Promise<void>;
+		/**
+		 * 跳转到下个步骤
+		 * @param init_data_ 下个步骤初始化数据
+		 * @returns
+		 */
+		protected _next(init_data_?: any): void;
 	}
 
 	/** 继承单例 */
@@ -1180,67 +1236,6 @@ declare namespace mk {
 		/** 重启中 */
 		get restarting_b(): boolean;
 		restart(): Promise<void>;
-	}
-
-	/** 引导步骤基类 */
-	declare abstract class mk_guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
-		/** 步骤序号 */
-		abstract step_n: number;
-		/**
-		 * 所属场景
-		 * @remarks
-		 * 格式：bundle.scene
-		 */
-		abstract scene_s: string;
-		/** 引导管理器 */
-		guide_manage: guide_manage;
-		/** 操作键列表 */
-		operate_ss: Exclude<keyof CT, symbol>[];
-		/** 操作表返回值 */
-		operate_tab: {
-			[k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
-		};
-		/** 初始化数据 */
-		init_data: any;
-		/** 步骤更新返回数据 */
-		step_update_data: any;
-		/**
-		 * 步骤描述
-		 * @remarks
-		 * 用于日志打印
-		 */
-		describe_s?: string;
-		/**
-		 * 下个步骤
-		 * @remarks
-		 * - length == 1：预加载及 this._next 跳转
-		 * - length > 1：预加载
-		 */
-		next_step_ns?: number[];
-		/**
-		 * 预加载
-		 * @remarks
-		 * 上个步骤 load 后执行
-		 */
-		pre_load?(): void | Promise<void>;
-		/**
-		 * 加载
-		 * @remarks
-		 * 进入当前步骤
-		 */
-		abstract load(): void | Promise<void>;
-		/**
-		 * 卸载
-		 * @remarks
-		 * 退出当前步骤
-		 */
-		unload?(): void | Promise<void>;
-		/**
-		 * 跳转到下个步骤
-		 * @param init_data_ 下个步骤初始化数据
-		 * @returns
-		 */
-		protected _next(init_data_?: any): void;
 	}
 
 	/** http */

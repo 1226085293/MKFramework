@@ -242,13 +242,6 @@ export class event_target<CT> extends cc_2.EventTarget {
 // @public (undocumented)
 export const game: mk_game;
 
-declare namespace guide {
-    export {
-        mk_guide_step_base as step_base
-    }
-}
-export { guide }
-
 // @public
 export class guide_manage {
     constructor(init_: guide_manage_.init_config);
@@ -257,7 +250,7 @@ export class guide_manage {
     get_step(): number;
     get pause_b(): boolean;
     set pause_b(value_b_: boolean);
-    regis(step_: mk_guide_step_base | mk_guide_step_base[]): void;
+    regis(step_: guide_step_base | guide_step_base[]): void;
     run(): Promise<void>;
     set_step(step_n_: number, init_data_?: any): Promise<void>;
 }
@@ -284,6 +277,25 @@ export namespace guide_manage_ {
         reset?: () => any;
         unload?: () => any;
     }
+}
+
+// @public
+export abstract class guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
+    describe_s?: string;
+    guide_manage: guide_manage;
+    init_data: any;
+    abstract load(): void | Promise<void>;
+    protected _next(init_data_?: any): void;
+    next_step_ns?: number[];
+    operate_ss: Exclude<keyof CT, symbol>[];
+    operate_tab: {
+        [k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
+    };
+    pre_load?(): void | Promise<void>;
+    abstract scene_s: string;
+    abstract step_n: number;
+    step_update_data: any;
+    unload?(): void | Promise<void>;
 }
 
 // @public
@@ -425,25 +437,6 @@ export namespace logger_ {
     level: typeof _mk_logger.level;
     // (undocumented)
     export type level = _mk_logger.level;
-}
-
-// @public
-abstract class mk_guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
-    describe_s?: string;
-    guide_manage: guide_manage;
-    init_data: any;
-    abstract load(): void | Promise<void>;
-    protected _next(init_data_?: any): void;
-    next_step_ns?: number[];
-    operate_ss: Exclude<keyof CT, symbol>[];
-    operate_tab: {
-        [k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
-    };
-    pre_load?(): void | Promise<void>;
-    abstract scene_s: string;
-    abstract step_n: number;
-    step_update_data: any;
-    unload?(): void | Promise<void>;
 }
 
 // @public (undocumented)
