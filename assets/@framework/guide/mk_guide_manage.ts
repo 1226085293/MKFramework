@@ -2,7 +2,7 @@ import mk_event_target from "../mk_event_target";
 import mk_logger from "../mk_logger";
 import mk_task_pipeline from "../task/mk_task_pipeline";
 import mk_guide_step_base from "./mk_guide_step_base";
-import bundle from "../resources/mk_bundle";
+import mk_bundle from "../resources/mk_bundle";
 
 /** 引导管理器 */
 class mk_guide_manage {
@@ -109,8 +109,8 @@ class mk_guide_manage {
 				const bundle_s = current_step.scene_s.split(".")[0];
 				const scene_s = current_step.scene_s.split(".")[1];
 
-				if (bundle.bundle_s !== bundle_s || bundle.scene_s !== scene_s) {
-					await bundle.load_scene(scene_s, {
+				if (mk_bundle.bundle_s !== bundle_s || mk_bundle.scene_s !== scene_s) {
+					await mk_bundle.load_scene(scene_s, {
 						bundle_s: bundle_s,
 					});
 				}
