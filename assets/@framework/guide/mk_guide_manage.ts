@@ -10,11 +10,17 @@ class mk_guide_manage {
 		// 初始化数据
 		this._log = new mk_logger(init_.name_s ?? "guide_manage");
 		this._init_config = init_;
+
+		if (this._init_config.current_step_n !== undefined) {
+			this._step_n = this._init_config.current_step_n;
+		}
 	}
 
 	/* --------------- public --------------- */
 	/** 事件 */
 	event = new mk_event_target<mk_guide_manage_.event_protocol>();
+	/** 步骤表 */
+	step_map = new Map<number, mk_guide_step_base>();
 	/** 暂停状态 */
 	get pause_b(): boolean {
 		return this._pause_b;
@@ -22,6 +28,11 @@ class mk_guide_manage {
 
 	set pause_b(value_b_) {
 		this._set_pause_b(value_b_);
+	}
+
+	/** 完成状态 */
+	get finish_b(): boolean {
+		return this._step_n === this._init_config.end_step_n;
 	}
 
 	/* --------------- private --------------- */
@@ -37,8 +48,6 @@ class mk_guide_manage {
 	private _step_n!: number;
 	/** 任务管线 */
 	private _task_pipeline = new mk_task_pipeline();
-	/** 步骤表 */
-	private _step_map = new Map<number, mk_guide_step_base>();
 	/** 步骤预加载任务表 */
 	private _step_preload_map = new Map<number, null | Promise<any>>();
 	/* ------------------------------- 功能 ------------------------------- */
@@ -50,11 +59,11 @@ class mk_guide_manage {
 		if (Array.isArray(step_)) {
 			step_.forEach((v) => {
 				v.guide_manage = this;
-				this._step_map.set(v.step_n, v);
+				this.step_map.set(v.step_n, v);
 			});
 		} else {
 			step_.guide_manage = this;
-			this._step_map.set(step_.step_n, step_);
+			this.step_map.set(step_.step_n, step_);
 		}
 	}
 
@@ -70,9 +79,9 @@ class mk_guide_manage {
 			}
 
 			/** 上次引导步骤 */
-			const pre_step = this._pre_step_n === undefined ? null : this._step_map.get(this._pre_step_n);
+			const pre_step = this._pre_step_n === undefined ? null : this.step_map.get(this._pre_step_n);
 			/** 当前引导步骤 */
-			const current_step = this._step_map.get(this._step_n);
+			const current_step = this.step_map.get(this._step_n);
 
 			// 步骤未注册
 			if (!current_step) {
@@ -86,7 +95,7 @@ class mk_guide_manage {
 			const next_step_as =
 				!current_step.next_step_ns || current_step.next_step_ns.length > 1
 					? null
-					: current_step.next_step_ns.map((v_n) => this._step_map.get(v_n));
+					: current_step.next_step_ns.map((v_n) => this.step_map.get(v_n));
 
 			// 恢复暂停
 			this.pause_b = false;
@@ -176,7 +185,7 @@ class mk_guide_manage {
 			this._step_n = step_n_;
 
 			/** 当前引导步骤 */
-			const current_step = this._step_map.get(this._step_n);
+			const current_step = this.step_map.get(this._step_n);
 
 			// 更新初始化数据
 			if (current_step) {
@@ -185,7 +194,7 @@ class mk_guide_manage {
 
 			// 切换事件
 			this._log.log("切换到步骤", this._step_n, current_step?.describe_s ?? "");
-			this.event.emit(this.event.key.switch);
+			await Promise.all(this.event.request(this.event.key.switch));
 
 			// 请求数据
 			{
@@ -292,6 +301,8 @@ export namespace mk_guide_manage_ {
 
 	/** 初始化配置 */
 	export interface init_config {
+		/** 当前步骤 */
+		current_step_n?: number;
 		/** 结束步骤 */
 		end_step_n?: number;
 		/** 操作表 */
