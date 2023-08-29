@@ -25,3 +25,4 @@ node_modules/
 extensions/
 /tool/api-extractor/dist
 /tool/doc-website/docs/api
+/tool/typedoc/docs
