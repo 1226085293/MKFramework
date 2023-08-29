@@ -27,10 +27,18 @@ namespace global_config {
 
 	/** 资源 */
 	export namespace asset {
-		/** bundle信息 */
-		export const bundle: {
-			[k in keyof { internal: any; resources: any; main: any; config: any; framework: any; hot_update: any }]: k;
-		} = new Proxy(Object.create(null), {
+		/** bundle 键 */
+		interface bundle {
+			internal: any;
+			resources: any;
+			main: any;
+			config: any;
+			framework: any;
+			hot_update: any;
+		}
+
+		/** bundle 键 */
+		export const bundle: { [k in keyof bundle]: k } = new Proxy(Object.create(null), {
 			get: (target, key) => key,
 		});
 
