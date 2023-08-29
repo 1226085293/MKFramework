@@ -10,8 +10,9 @@ namespace _mk_adaptation_node {
 	/** 适配类型 */
 	export enum type {
 		默认,
-		自适应,
-		填充宽高,
+		缩放,
+		自适应_展示完,
+		自适应_填充满,
 		填充宽,
 		填充高,
 	}
@@ -164,7 +165,7 @@ export default class mk_adaptation_node extends cc.Component {
 	/* --------------- private --------------- */
 	/** 适配类型 */
 	@property
-	private _type = _mk_adaptation_node.type.填充宽高;
+	private _type = _mk_adaptation_node.type.默认;
 
 	/** 限制最大缩放 */
 	@property
@@ -230,9 +231,32 @@ export default class mk_adaptation_node extends cc.Component {
 		}, time_ms_n_ * 0.001);
 	}
 
-	/** 填充宽高 */
-	private _fill_width_and_height(design_size_: cc.Size, frame_size_: cc.Size): void {
+	/** 自适应-展示完 */
+	private _adaptive_show_all(design_size_: cc.Size, frame_size_: cc.Size): void {
 		const scale_v2 = cc.v2(design_size_.width / frame_size_.width, design_size_.height / frame_size_.height);
+
+		if (scale_v2.x < scale_v2.y) {
+			scale_v2.y = scale_v2.x;
+		} else {
+			scale_v2.x = scale_v2.y;
+		}
+
+		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
+			this.node.setScale(scale_v2.x, scale_v2.y);
+		} else {
+			this.node.getComponent(cc.UITransform)!.setContentSize(this.original_size.width * scale_v2.x, this.original_size.height * scale_v2.y);
+		}
+	}
+
+	/** 自适应-填充满 */
+	private _adaptive_fill_up(design_size_: cc.Size, frame_size_: cc.Size): void {
+		const scale_v2 = cc.v2(design_size_.width / frame_size_.width, design_size_.height / frame_size_.height);
+
+		if (scale_v2.x < scale_v2.y) {
+			scale_v2.x = scale_v2.y;
+		} else {
+			scale_v2.y = scale_v2.x;
+		}
 
 		if (this.adaptation_mode === _mk_adaptation_node.mode.scale) {
 			this.node.setScale(scale_v2.x, scale_v2.y);
@@ -362,11 +386,14 @@ export default class mk_adaptation_node extends cc.Component {
 			}
 
 			switch (this.type) {
-				case _mk_adaptation_node.type.自适应:
+				case _mk_adaptation_node.type.缩放:
 					this._auto_adaption(design_size, frame_size);
 					break;
-				case _mk_adaptation_node.type.填充宽高:
-					this._fill_width_and_height(design_size, frame_size);
+				case _mk_adaptation_node.type.自适应_展示完:
+					this._adaptive_show_all(design_size, frame_size);
+					break;
+				case _mk_adaptation_node.type.自适应_填充满:
+					this._adaptive_fill_up(design_size, frame_size);
 					break;
 				case _mk_adaptation_node.type.填充宽:
 					this._fill_width(design_size, frame_size);
