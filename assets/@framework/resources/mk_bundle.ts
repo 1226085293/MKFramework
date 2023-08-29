@@ -288,8 +288,14 @@ class mk_bundle extends mk_instance_base {
 						return;
 					}
 
+					/** 管理器 */
+					const manage = this.bundle_map.get(bundle.name)?.manage;
+
 					// 初始化
-					await this.bundle_map.get(bundle.name)!.manage?.init?.();
+					if (manage) {
+						await manage.init?.();
+						manage.valid_b = true;
+					}
 
 					// 运行场景
 					cc.director.runScene(scene_asset, config?.before_load_callback_f, (error, scene) => {
@@ -298,6 +304,8 @@ class mk_bundle extends mk_instance_base {
 							this.bundle_s = bundle.name;
 							this.pre_scene_s = this.scene_s;
 							this.scene_s = scene_s_;
+						} else if (manage) {
+							manage.valid_b = false;
 						}
 
 						config.unloaded_callback_f?.();
@@ -574,7 +582,7 @@ export namespace mk_bundle_ {
 		network?: mk_network_base;
 		/** 数据获取器 */
 		data?: mk_data_sharer;
-		/* --------------- paragraph --------------- */
+		/* --------------- protected --------------- */
 		/** 释放管理器 */
 		protected _release_manage = new mk_release();
 		/* ------------------------------- 生命周期 ------------------------------- */
@@ -644,7 +652,7 @@ export namespace mk_bundle_ {
 			// 添加释放对象
 			this._release_manage.add(object_ as any);
 
-			// 如果模块已经关闭则直接释放
+			// 如果管理器已经关闭则直接释放
 			if (!this.valid_b) {
 				this._release_manage.release_all();
 			}
