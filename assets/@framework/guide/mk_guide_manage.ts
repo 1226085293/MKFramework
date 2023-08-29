@@ -181,6 +181,9 @@ class mk_guide_manage {
 				return;
 			}
 
+			// 切换前事件
+			await Promise.all(this.event.request(this.event.key.before_switch, step_n_));
+
 			// 更新步骤
 			this._step_n = step_n_;
 
@@ -192,9 +195,7 @@ class mk_guide_manage {
 				current_step.init_data = init_data_;
 			}
 
-			// 切换事件
 			this._log.log("切换到步骤", this._step_n, current_step?.describe_s ?? "");
-			await Promise.all(this.event.request(this.event.key.switch));
 
 			// 请求数据
 			{
@@ -262,21 +263,22 @@ export namespace mk_guide_manage_ {
 		/** 恢复 */
 		resume(): void;
 		/**
-		 * 切换步骤
+		 * 切换步骤前
+		 * @param next_step_n 下个步骤
 		 * @remarks
 		 * set_step 时执行
 		 */
-		switch(): void;
+		before_switch(next_step_n: number): void;
 		/**
 		 * 加载步骤
 		 * @remarks
-		 * 可在此处打开遮罩
+		 * 加载步骤(场景/操作)前调用，可在此处打开遮罩
 		 */
 		loading_step(): void;
 		/**
 		 * 加载步骤完成
 		 * @remarks
-		 * 可在此处关闭遮罩
+		 * 步骤 load 执行后调用，可在此处关闭遮罩
 		 */
 		loading_step_complete(): void;
 		/** 中断 */

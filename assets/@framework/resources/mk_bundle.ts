@@ -280,13 +280,16 @@ class mk_bundle extends mk_instance_base {
 			);
 
 			return new Promise<boolean>((resolve_f) => {
-				bundle?.loadScene(scene_s_, (error, scene_asset) => {
+				bundle?.loadScene(scene_s_, async (error, scene_asset) => {
 					if (error) {
 						resolve_f(false);
 						this._log.error(error);
 
 						return;
 					}
+
+					// 初始化
+					await this.bundle_map.get(bundle.name)!.manage?.init?.();
 
 					// 运行场景
 					cc.director.runScene(scene_asset, config?.before_load_callback_f, (error, scene) => {
@@ -527,8 +530,9 @@ export namespace mk_bundle_ {
 	export abstract class bundle_manage_base implements mk_release_.follow_release_object {
 		constructor() {
 			// 添加至 bundle 数据
-			setTimeout(() => {
+			setTimeout(async () => {
 				if (EDITOR && this.name_s === mk_bundle.instance().bundle_s) {
+					await this.init?.();
 					this.open();
 				}
 
@@ -554,7 +558,7 @@ export namespace mk_bundle_ {
 			}) as any;
 
 			// 自动执行生命周期
-			mk_tool_func.run_parent_func(this, ["open", "close"]);
+			mk_tool_func.run_parent_func(this, ["init", "open", "close"]);
 		}
 
 		/* --------------- public --------------- */
@@ -574,7 +578,18 @@ export namespace mk_bundle_ {
 		/** 释放管理器 */
 		protected _release_manage = new mk_release();
 		/* ------------------------------- 生命周期 ------------------------------- */
-		/** 加载回调 */
+		/**
+		 * 初始化
+		 * @remarks
+		 * 从其他 bundle 的场景切换到此 bundle 的场景之前调用
+		 */
+		init?(): void | Promise<void>;
+
+		/**
+		 * 打开回调
+		 * @remarks
+		 * 从其他 bundle 的场景切换到此 bundle 的场景时调用
+		 */
 		open(): void | Promise<void> {
 			if (EDITOR && this.name_s !== "main") {
 				throw "中断";
@@ -588,7 +603,11 @@ export namespace mk_bundle_ {
 			this.valid_b = true;
 		}
 
-		/** 卸载回调 */
+		/**
+		 * 关闭回调
+		 * @remarks
+		 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
+		 */
 		close(): void | Promise<void> {
 			if (!this.valid_b) {
 				mk_log.error("bundle 已经卸载");
