@@ -1,7 +1,7 @@
 import mk_codec_base from "../../mk_codec_base";
 import mk_network_base, { mk_network_base_ } from "../mk_network_base";
 
-/** websocket_wx */
+/** 微信 websocket */
 class mk_websocket_wx<CT extends mk_codec_base = mk_codec_base> extends mk_network_base<CT> {
 	constructor(config_?: Partial<mk_websocket_wx_.init_config<CT>>) {
 		super(config_);

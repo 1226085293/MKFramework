@@ -2,7 +2,12 @@ import mk_instance_base from "../mk_instance_base";
 import mk_codec_base from "../mk_codec_base";
 import * as cc from "cc";
 
-/** http */
+/**
+ * http 模块
+ * - post/get 支持
+ * - 支持任意类型的返回数据解析
+ * - 支持自定义编解码器
+ */
 class mk_http extends mk_instance_base {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 通用方法 */

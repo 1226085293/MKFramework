@@ -72,9 +72,9 @@ export namespace _mk_life_cycle {
 /**
  * 生命周期
  * @remarks
- * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
- * - open: 子 -> 父
- * - close: 父 -> 子
+ * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
+ * - open 顺序: 子 -> 父
+ * - close 顺序: 父 -> 子
  */
 @ccclass
 export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_object {

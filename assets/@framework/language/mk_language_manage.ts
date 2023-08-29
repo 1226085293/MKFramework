@@ -21,7 +21,13 @@ namespace _mk_language_manage {
 	}
 }
 
-/** 多语言管理 */
+/**
+ * 多语言管理
+ * @remarks
+ * - 多语言资源单位为模块，防止无用多语言资源堆积
+ * - 支持多语言(文本/图片/节点)，三种方式满足任何需求
+ * - 支持编辑器预览
+ */
 class mk_language_manage extends mk_instance_base {
 	/* --------------- public --------------- */
 	/** 事件 */

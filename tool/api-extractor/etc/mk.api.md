@@ -29,7 +29,7 @@ export namespace asset_ {
 
 // Warning: (ae-forgotten-export) The symbol "mk_audio_base" needs to be exported by the entry point mk_export.d.ts
 //
-// @public (undocumented)
+// @public
 export const audio: mk_audio_base;
 
 // @public (undocumented)
@@ -524,7 +524,7 @@ class mk_language_texture extends mk_language_base {
     protected _update_mark(): void;
 }
 
-// @public (undocumented)
+// @public
 abstract class mk_network_base<CT extends codec_base = codec_base> extends instance_base {
     constructor(init_?: Partial<mk_network_base_.init_config<CT>>);
     protected _addr_s: string;

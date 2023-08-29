@@ -100,7 +100,13 @@ namespace _mk_view_base {
 	}
 }
 
-/** 视图基类 */
+/**
+ * 视图基类
+ * @remarks
+ * - 添加编辑器快捷操作
+ * - 添加弹窗动画配置
+ * - 独立展示配置
+ */
 @ccclass
 export class mk_view_base extends mk_life_cycle {
 	/* --------------- static --------------- */

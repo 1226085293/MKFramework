@@ -1,6 +1,11 @@
 import * as cc from "cc";
 
-/** 安全事件对象 */
+/**
+ * 安全事件对象
+ * @remarks
+ * 没啥好说的，就是安全
+ * - 获取事件键可以使用 event_target.key.xxx
+ */
 class mk_event_target<CT> extends cc.EventTarget {
 	/** 事件键 */
 	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {

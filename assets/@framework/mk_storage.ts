@@ -7,7 +7,11 @@ namespace _mk_storage {
 	export const storage_path_s = cc.native?.fileUtils?.getWritablePath ? cc.native.fileUtils.getWritablePath() + "/storage_data" : "";
 }
 
-/** 存储器 */
+/**
+ * 存储器(类型安全)
+ * @remarks
+ * - (原生/web)接口分离，获得更高的性能
+ */
 class mk_storage<CT extends Object> {
 	constructor(init_: mk_storage_.init_config<CT>) {
 		this._init_config = init_;

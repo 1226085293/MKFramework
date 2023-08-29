@@ -193,6 +193,15 @@ namespace _mk_network_base {
 	}
 }
 
+/**
+ * 网络系统基类
+ * @remarks
+ * - 支持多实例
+ * - (心跳/断线重连)支持
+ * - 网络消息接口事件化
+ * - 支持消息潮
+ * - 网络消息模拟
+ */
 abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends mk_instance_base {
 	constructor(init_?: Partial<mk_network_base_.init_config<CT>>) {
 		super();

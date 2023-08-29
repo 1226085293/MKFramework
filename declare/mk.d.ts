@@ -32,6 +32,14 @@ declare namespace mk {
 		export type follow_release_object = mk_release_.follow_release_object<cc_2.Asset>;
 	}
 
+	/**
+	 * 音频管理器
+	 * @remarks
+	 * - (动态/静态)音频支持
+	 * - 音频(类型/分组)双分类支持
+	 * - (通用/微信)版本管理器
+	 * - 统一音频事件
+	 */
 	export declare const audio: mk_audio_base;
 
 	export declare namespace audio_ {
@@ -428,7 +436,9 @@ declare namespace mk {
 
 	/**
 	 * 数据共享器
-	 * - 用以模块间共享数据
+	 * @remarks
+	 * 用以模块间共享数据
+	 * - 支持请求数据返回
 	 */
 	export declare class data_sharer<CT = any> extends instance_base {
 		key: {
@@ -470,7 +480,12 @@ declare namespace mk {
 
 	export declare const error: (...args_as_: any[]) => void;
 
-	/** 安全事件对象 */
+	/**
+	 * 安全事件对象
+	 * @remarks
+	 * 没啥好说的，就是安全
+	 * - 获取事件键可以使用 event_target.key.xxx
+	 */
 	export declare class event_target<CT> extends cc_2.EventTarget {
 		/** 事件键 */
 		key: {
@@ -540,7 +555,15 @@ declare namespace mk {
 
 	/* Excluded from this release type: global_config */
 
-	/** 引导管理器 */
+	/**
+	 * 引导管理器
+	 * @remarks
+	 * - 支持多实例
+	 * - 支持任意步骤的(插入/删除)
+	 * - 支持(暂停/完成)引导
+	 * - 支持任意步骤跳转后的状态还原(操作单元)
+	 * - 引导步骤脚本分离，支持组件式挂载
+	 */
 	export declare class guide_manage {
 		constructor(init_: guide_manage_.init_config);
 		/** 事件 */
@@ -724,7 +747,7 @@ declare namespace mk {
 		protected _next(init_data_?: any): void;
 	}
 
-	/** 继承单例 */
+	/** 继承单例(类型安全) */
 	export declare abstract class instance_base {
 		/** 单例方法 */
 		static instance<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): InstanceType<T>;
@@ -773,7 +796,12 @@ declare namespace mk {
 
 	export declare const language_manage: mk_language_manage;
 
-	/** 层级管理 */
+	/**
+	 * 层级管理
+	 * @remarks
+	 * - 动态多类型层级划分
+	 * - 支持类型层级细粒度划分
+	 */
 	export declare class layer extends cc_2.Component {
 		static config: layer_.global_config;
 		/** 初始化编辑器 */
@@ -831,9 +859,9 @@ declare namespace mk {
 	/**
 	 * 生命周期
 	 * @remarks
-	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
-	 * - open: 子 -> 父
-	 * - close: 父 -> 子
+	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
+	 * - open 顺序: 子 -> 父
+	 * - close 顺序: 父 -> 子
 	 */
 	export declare class life_cycle extends layer implements asset_.follow_release_object {
 		constructor(...args: any[]);
@@ -928,9 +956,13 @@ declare namespace mk {
 	export declare const log: (...args_as_: any[]) => void;
 
 	/**
-	 * 日志
+	 * 日志打印器
 	 * @remarks
-	 * 单例对象为 default 打印
+	 * 单例对象打印名为 default
+	 * - 支持多实例
+	 * - 打印等级控制
+	 * - 打印屏蔽控制
+	 * - 报错日志 http 上传
 	 */
 	export declare class logger extends instance_base {
 		constructor(name_s_: string);
@@ -996,6 +1028,7 @@ declare namespace mk {
 
 	/**
 	 * 资源管理器
+	 * @remarks
 	 * - 统一加载接口为 get、get_dir
 	 * - 支持 EDITOR 环境加载资源
 	 * - 加载图片无需后缀，通过类型自动添加
@@ -1003,6 +1036,7 @@ declare namespace mk {
 	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
 	 * - 通过 cache_lifetime_ms_n 修复短时间内 (释放/加载) 同一资源导致加载资源是已释放后的问题
 	 * - 解决同时加载同一资源多次导致返回的资源对象不一致的问 (对象不一致会导致引用计数不一致)
+	 * - 增加强制性资源跟随释放对象
 	 */
 	declare class mk_asset extends instance_base {
 		constructor();
@@ -1143,7 +1177,15 @@ declare namespace mk {
 		private _event_restart;
 	}
 
-	/** bundle 管理 */
+	/**
+	 * bundle 管理器
+	 * @remarks
+	 * - 封装(加载/预加载)场景为 load_scene
+	 * - 支持(远程/本地) bundle
+	 * - 支持 bundle 热更
+	 * - 封装(bundle/scene)切换事件
+	 * - 支持 bundle 管理器，用于子游戏管理
+	 */
 	declare class mk_bundle extends instance_base {
 		constructor();
 		/** 事件 */
@@ -1249,6 +1291,7 @@ declare namespace mk {
 		all<T extends Promise<any>>(module_: T): Awaited<T>;
 	}
 
+	/** 游戏功能管理器 */
 	declare class mk_game extends instance_base {
 		/** 重启中 */
 		private _restarting_b;
@@ -1257,7 +1300,12 @@ declare namespace mk {
 		restart(): Promise<void>;
 	}
 
-	/** http */
+	/**
+	 * http 模块
+	 * - post/get 支持
+	 * - 支持任意类型的返回数据解析
+	 * - 支持自定义编解码器
+	 */
 	declare class mk_http extends instance_base {
 		/** 通用方法 */
 		open(type_s_: "GET" | "POST", url_s_: string, config_?: Partial<mk_http_.config>): Promise<void>;
@@ -1374,7 +1422,13 @@ declare namespace mk {
 		private _event_label_data_change;
 	}
 
-	/** 多语言管理 */
+	/**
+	 * 多语言管理
+	 * @remarks
+	 * - 多语言资源单位为模块，防止无用多语言资源堆积
+	 * - 支持多语言(文本/图片/节点)，三种方式满足任何需求
+	 * - 支持编辑器预览
+	 */
 	declare class mk_language_manage extends instance_base {
 		/** 事件 */
 		event: event_target<_mk_language_manage.event_protocol>;
@@ -1597,9 +1651,9 @@ declare namespace mk {
 	}
 
 	/**
-	 * 数据监听器
+	 * 数据监听器(类型安全)
 	 * @remarks
-	 * 注意：监听回调仅在下一帧被调用
+	 * 可以用以 mvvm 搭建及使用，注意：监听回调仅在下一帧被调用
 	 */
 	declare class mk_monitor extends instance_base {
 		/** 日志管理 */
@@ -1871,6 +1925,15 @@ declare namespace mk {
 		}
 	}
 
+	/**
+	 * 网络系统基类
+	 * @remarks
+	 * - 支持多实例
+	 * - (心跳/断线重连)支持
+	 * - 网络消息接口事件化
+	 * - 支持消息潮
+	 * - 网络消息模拟
+	 */
 	declare abstract class mk_network_base<CT extends codec_base = codec_base> extends instance_base {
 		constructor(init_?: Partial<mk_network_base_.init_config<CT>>);
 		/** 网络事件 */
@@ -2236,9 +2299,9 @@ declare namespace mk {
 	}
 
 	/**
-	 * 状态任务
+	 * 状态任务(类型安全)
 	 * @remarks
-	 * 安全的 promise 封装，防止重复调用 resolve 函数以及添加超时功能，可重复使用
+	 * 封装 promise，防止重复调用 resolve 函数报错以及添加超时功能，可重复使用
 	 */
 	declare class mk_status_task<CT = void> {
 		/**
@@ -2341,6 +2404,14 @@ declare namespace mk {
 		}
 	}
 
+	/**
+	 * 模块管理器
+	 * @remarks
+	 * - 支持模块(注册/打开/关闭/取消注册)
+	 * - 内置模块对象池
+	 * - 模块栈
+	 * - 全屏 UI 展示优化
+	 */
 	declare class mk_ui_manage extends instance_base {
 		constructor();
 		/**
@@ -2507,7 +2578,7 @@ declare namespace mk {
 		}
 	}
 
-	/** websocket */
+	/** 通用 websocket */
 	declare class mk_websocket<CT extends codec_base = codec_base> extends mk_network_base<CT> {
 		constructor(config_?: Partial<mk_websocket_.init_config<CT>>);
 		config: Readonly<mk_websocket_.init_config<CT>>;
@@ -2526,7 +2597,7 @@ declare namespace mk {
 		}
 	}
 
-	/** websocket_wx */
+	/** 微信 websocket */
 	declare class mk_websocket_wx<CT extends codec_base = codec_base> extends mk_network_base<CT> {
 		constructor(config_?: Partial<mk_websocket_wx_.init_config<CT>>);
 		config: Readonly<mk_websocket_wx_.init_config<CT>>;
@@ -2679,7 +2750,10 @@ declare namespace mk {
 	}
 
 	/**
-	 * 资源/对象释放器
+	 * 对象释放器
+	 * @remarks
+	 * - 统一 (cc.Node/cc.Asset) 资源的释放逻辑
+	 * - 可以通过 function 或继承添加自定义释放逻辑
 	 */
 	export declare class release {
 		/** 节点集合 */
@@ -2704,7 +2778,11 @@ declare namespace mk {
 		release_all(): Promise<void>;
 	}
 
-	/** 场景驱动 */
+	/**
+	 * 场景驱动
+	 * @remarks
+	 * 场景加载完成后自动执行生命周期函数，驱动模块系统
+	 */
 	export declare class scene_drive extends life_cycle {
 		private _close_task;
 		onLoad(): Promise<void>;
@@ -2714,7 +2792,11 @@ declare namespace mk {
 		private _event_before_scene_switch;
 	}
 
-	/** 存储器 */
+	/**
+	 * 存储器(类型安全)
+	 * @remarks
+	 * - (原生/web)接口分离，获得更高的性能
+	 */
 	export declare class storage<CT extends Object> {
 		constructor(init_: mk_storage_.init_config<CT>);
 		/** 存储数据键 */
@@ -2836,7 +2918,13 @@ declare namespace mk {
 		}
 	}
 
-	/** 视图基类 */
+	/**
+	 * 视图基类
+	 * @remarks
+	 * - 添加编辑器快捷操作
+	 * - 添加弹窗动画配置
+	 * - 独立展示配置
+	 */
 	export declare class view_base extends life_cycle {
 		static config: _mk_view_base.global_config;
 		show_alone_b: boolean;

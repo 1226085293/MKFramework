@@ -4,7 +4,15 @@ import mk_task_pipeline from "../task/mk_task_pipeline";
 import mk_guide_step_base from "./mk_guide_step_base";
 import mk_bundle from "../resources/mk_bundle";
 
-/** 引导管理器 */
+/**
+ * 引导管理器
+ * @remarks
+ * - 支持多实例
+ * - 支持任意步骤的(插入/删除)
+ * - 支持(暂停/完成)引导
+ * - 支持任意步骤跳转后的状态还原(操作单元)
+ * - 引导步骤脚本分离，支持组件式挂载
+ */
 class mk_guide_manage {
 	constructor(init_: mk_guide_manage_.init_config) {
 		// 初始化数据

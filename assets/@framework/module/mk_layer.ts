@@ -24,7 +24,12 @@ export namespace _mk_layer {
 	}
 }
 
-/** 层级管理 */
+/**
+ * 层级管理
+ * @remarks
+ * - 动态多类型层级划分
+ * - 支持类型层级细粒度划分
+ */
 @ccclass
 class mk_layer extends cc.Component {
 	/* --------------- static --------------- */

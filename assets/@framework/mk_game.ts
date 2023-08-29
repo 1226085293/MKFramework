@@ -2,6 +2,7 @@ import * as cc from "cc";
 import global_event from "../@config/global_event";
 import mk_instance_base from "./mk_instance_base";
 
+/** 游戏功能管理器 */
 class mk_game extends mk_instance_base {
 	/** 重启中 */
 	private _restarting_b = false;

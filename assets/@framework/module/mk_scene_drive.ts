@@ -7,7 +7,11 @@ import mk_status_task from "../task/mk_status_task";
 
 const { ccclass, property } = cc._decorator;
 
-/** 场景驱动 */
+/**
+ * 场景驱动
+ * @remarks
+ * 场景加载完成后自动执行生命周期函数，驱动模块系统
+ */
 @ccclass
 class mk_scene_drive extends mk_life_cycle {
 	/* --------------- private --------------- */
