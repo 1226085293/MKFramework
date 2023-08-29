@@ -156,6 +156,7 @@ export namespace bundle_ {
         abstract event: event_target<any>;
         // (undocumented)
         follow_release<T = mk_release_.release_param_type>(object_: T): T;
+        init?(): void | Promise<void>;
         abstract name_s: string;
         network?: mk_network_base;
         node_pool_tab: Record<string, cc_2.NodePool>;
@@ -247,26 +248,29 @@ export class guide_manage {
     constructor(init_: guide_manage_.init_config);
     event: event_target<guide_manage_.event_protocol>;
     finish(): void;
+    get finish_b(): boolean;
     get_step(): number;
     get pause_b(): boolean;
     set pause_b(value_b_: boolean);
     regis(step_: guide_step_base | guide_step_base[]): void;
     run(): Promise<void>;
     set_step(step_n_: number, init_data_?: any): Promise<void>;
+    step_map: Map<number, guide_step_base<any>>;
 }
 
 // @public (undocumented)
 export namespace guide_manage_ {
     export interface event_protocol {
+        before_switch(next_step_n: number): void;
         break(): void;
         finish(): void;
         loading_step(): void;
         loading_step_complete(): void;
         pause(): void;
         resume(): void;
-        switch(): void;
     }
     export interface init_config {
+        current_step_n?: number;
         end_step_n?: number;
         name_s?: string;
         operate_tab?: Record<string, operate_cell>;
@@ -292,7 +296,7 @@ export abstract class guide_step_base<CT extends Record<string, guide_manage_.op
         [k in keyof CT]: ReturnType<Awaited<CT[k]["load"]>> | undefined;
     };
     pre_load?(): void | Promise<void>;
-    abstract scene_s: string;
+    scene_s?: string;
     abstract step_n: number;
     step_update_data: any;
     unload?(): void | Promise<void>;

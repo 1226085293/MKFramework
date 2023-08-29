@@ -378,9 +378,23 @@ declare namespace mk {
 			data?: data_sharer;
 			/** 释放管理器 */
 			protected _release_manage: release;
-			/** 加载回调 */
+			/**
+			 * 初始化
+			 * @remarks
+			 * 从其他 bundle 的场景切换到此 bundle 的场景之前调用
+			 */
+			init?(): void | Promise<void>;
+			/**
+			 * 打开回调
+			 * @remarks
+			 * 从其他 bundle 的场景切换到此 bundle 的场景时调用
+			 */
 			open(): void | Promise<void>;
-			/** 卸载回调 */
+			/**
+			 * 关闭回调
+			 * @remarks
+			 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
+			 */
 			close(): void | Promise<void>;
 			follow_release<T = mk_release_.release_param_type>(object_: T): T;
 			cancel_release<T = mk_release_.release_param_type>(object_: T): T;
@@ -531,9 +545,13 @@ declare namespace mk {
 		constructor(init_: guide_manage_.init_config);
 		/** 事件 */
 		event: event_target<guide_manage_.event_protocol>;
+		/** 步骤表 */
+		step_map: Map<number, guide_step_base<any>>;
 		/** 暂停状态 */
 		get pause_b(): boolean;
 		set pause_b(value_b_: boolean);
+		/** 完成状态 */
+		get finish_b(): boolean;
 		/** 日志 */
 		private _log;
 		/** 初始化配置 */
@@ -546,8 +564,6 @@ declare namespace mk {
 		private _step_n;
 		/** 任务管线 */
 		private _task_pipeline;
-		/** 步骤表 */
-		private _step_map;
 		/** 步骤预加载任务表 */
 		private _step_preload_map;
 		/**
@@ -585,21 +601,22 @@ declare namespace mk {
 			/** 恢复 */
 			resume(): void;
 			/**
-			 * 切换步骤
+			 * 切换步骤前
+			 * @param next_step_n 下个步骤
 			 * @remarks
 			 * set_step 时执行
 			 */
-			switch(): void;
+			before_switch(next_step_n: number): void;
 			/**
 			 * 加载步骤
 			 * @remarks
-			 * 可在此处打开遮罩
+			 * 加载步骤(场景/操作)前调用，可在此处打开遮罩
 			 */
 			loading_step(): void;
 			/**
 			 * 加载步骤完成
 			 * @remarks
-			 * 可在此处关闭遮罩
+			 * 步骤 load 执行后调用，可在此处关闭遮罩
 			 */
 			loading_step_complete(): void;
 			/** 中断 */
@@ -622,6 +639,8 @@ declare namespace mk {
 		}
 		/** 初始化配置 */
 		export interface init_config {
+			/** 当前步骤 */
+			current_step_n?: number;
 			/** 结束步骤 */
 			end_step_n?: number;
 			/** 操作表 */
@@ -653,7 +672,7 @@ declare namespace mk {
 		 * @remarks
 		 * 格式：bundle.scene
 		 */
-		abstract scene_s: string;
+		scene_s?: string;
 		/** 引导管理器 */
 		guide_manage: guide_manage;
 		/** 操作键列表 */
@@ -1597,25 +1616,25 @@ declare namespace mk {
 		 */
 		wait<T, T2 extends keyof T>(value_: T, key_: T2): Promise<void>;
 		/**
-		 * 监听数据更新
+		 * 递归监听数据更新
 		 * @param value_ 监听对象
 		 * @param on_callback_f_ on 触发回调
 		 * @param target_ 绑定对象
 		 */
-		on(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): _mk_monitor.type_on_callback<any> | null;
+		on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): void;
 		/**
-		 * 监听数据更新
+		 * 递归监听数据更新
 		 * @param value_ 监听对象
 		 * @param on_callback_f_ on 触发回调
 		 * @param off_callback_f_ off 触发回调
 		 * @param target_ 绑定对象
 		 */
-		on(
+		on_recursion(
 			value_: any,
 			on_callback_f_: _mk_monitor.type_on_callback<any>,
 			off_callback_f_: _mk_monitor.type_off_callback,
 			target_?: any
-		): _mk_monitor.type_on_callback<any> | null;
+		): void;
 		/**
 		 * 监听数据更新
 		 * @param value_ 监听对象
@@ -1673,18 +1692,18 @@ declare namespace mk {
 			target_?: any
 		): _mk_monitor.type_on_callback<T[T2]> | null;
 		/**
-		 * 取消监听数据更新
+		 * 递归取消监听数据更新
 		 * @param value_ 监听对象
 		 * @param target_ 绑定目标
 		 */
-		off(value_: any, target_?: any): Promise<any>;
+		off_recursion(value_: any, target_?: any): Promise<any>;
 		/**
-		 * 取消监听数据更新
+		 * 递归取消监听数据更新
 		 * @param value_ 监听对象
 		 * @param on_callback_f_ on 触发回调
 		 * @param target_ 绑定目标
 		 */
-		off(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
+		off_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
 		/**
 		 * 取消监听数据更新
 		 * @param value_ 监听对象

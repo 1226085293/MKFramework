@@ -129,104 +129,90 @@ class mk_monitor extends mk_instance_base {
 	}
 
 	/**
-	 * 监听数据更新
+	 * 递归监听数据更新
 	 * @param value_ 监听对象
 	 * @param on_callback_f_ on 触发回调
 	 * @param target_ 绑定对象
 	 */
-	on(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): _mk_monitor.type_on_callback<any> | null;
+	on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): void;
 	/**
-	 * 监听数据更新
+	 * 递归监听数据更新
 	 * @param value_ 监听对象
 	 * @param on_callback_f_ on 触发回调
 	 * @param off_callback_f_ off 触发回调
 	 * @param target_ 绑定对象
 	 */
-	on(
-		value_: any,
-		on_callback_f_: _mk_monitor.type_on_callback<any>,
-		off_callback_f_: _mk_monitor.type_off_callback,
-		target_?: any
-	): _mk_monitor.type_on_callback<any> | null;
-	/**
-	 * 监听数据更新
-	 * @param value_ 监听对象
-	 * @param key_ 监听键
-	 * @param on_callback_f_ on 触发回调
-	 * @param target_ 绑定对象
-	 */
-	on<T, T2 extends keyof T>(
-		value_: T,
-		key_: T2,
-		on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
-		target_?: any
-	): _mk_monitor.type_on_callback<T[T2]> | null;
-	/**
-	 * 监听数据更新
-	 * @param value_ 监听对象
-	 * @param key_ 监听键
-	 * @param on_callback_f_ on 触发回调
-	 * @param off_callback_f_ off 触发回调
-	 * @param target_ 绑定对象
-	 */
-	on<T, T2 extends keyof T>(
-		value_: T,
-		key_: T2,
-		on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
-		off_callback_f_: _mk_monitor.type_off_callback,
-		target_?: any
-	): _mk_monitor.type_on_callback<T[T2]> | null;
-	on<T, T2 extends keyof T>(
-		value_: T,
-		args2_: T2 | _mk_monitor.type_on_callback<T[T2]>,
-		args3_?: any,
-		args4_?: any,
-		target_?: any
-	): _mk_monitor.type_on_callback<T[T2]> | null {
-		const key: T2 | undefined = typeof args2_ === "function" ? undefined : args2_;
-		const on_callback_f: _mk_monitor.type_on_callback<any> = key === undefined ? args2_ : args3_;
+	on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, off_callback_f_: _mk_monitor.type_off_callback, target_?: any): void;
+	on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, args3_: any, target_?: any): void {
+		const target: any = target_ ?? (typeof args3_ === "object" ? args3_ : undefined);
+		const off_callback_f: _mk_monitor.type_off_callback | undefined = typeof args3_ === "function" ? args3_ : undefined;
 
-		const off_callback_f: _mk_monitor.type_off_callback | undefined =
-			typeof args4_ === "function" ? args4_ : key === undefined ? (typeof args3_ === "function" ? args3_ : undefined) : undefined;
+		mk_tool.object.traverse(value_, (value: any, key_s: string, path_s: string) => {
+			if (!["string", "number", "boolean", "symbol"].includes(typeof value)) {
+				return;
+			}
 
-		const target: any = target_ ?? (typeof args4_ === "object" ? args4_ : typeof args3_ === "object" ? args3_ : undefined);
+			let parent = value_;
 
-		// 单独键监听
-		if (key !== undefined) {
-			return this._on(value_, key, {
-				on_callback_f: on_callback_f,
+			// 更新父级对象
+			if (path_s.length !== 0) {
+				path_s.split("/").forEach((v_s) => {
+					parent = parent[v_s];
+				});
+			}
+
+			this._on(parent, key_s as any, {
+				path_s: `${path_s ? "/" : ""}${key_s}`,
+				on_callback_f: on_callback_f_,
 				off_callback_f: off_callback_f,
 				target: target,
 			});
-		}
-		// 递归监听
-		else {
-			mk_tool.object.traverse(value_, (value: any, key_s: string, path_s: string) => {
-				const type_s = typeof value;
+		});
+	}
 
-				if (!["string", "number", "boolean", "symbol"].includes(type_s)) {
-					return;
-				}
+	/**
+	 * 监听数据更新
+	 * @param value_ 监听对象
+	 * @param key_ 监听键
+	 * @param on_callback_f_ on 触发回调
+	 * @param target_ 绑定对象
+	 */
+	on<T, T2 extends keyof T>(
+		value_: T,
+		key_: T2,
+		on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+		target_?: any
+	): _mk_monitor.type_on_callback<T[T2]> | null;
+	/**
+	 * 监听数据更新
+	 * @param value_ 监听对象
+	 * @param key_ 监听键
+	 * @param on_callback_f_ on 触发回调
+	 * @param off_callback_f_ off 触发回调
+	 * @param target_ 绑定对象
+	 */
+	on<T, T2 extends keyof T>(
+		value_: T,
+		key_: T2,
+		on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+		off_callback_f_: _mk_monitor.type_off_callback,
+		target_?: any
+	): _mk_monitor.type_on_callback<T[T2]> | null;
+	on<T, T2 extends keyof T>(
+		value_: T,
+		key_: T2,
+		on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+		args4_: any,
+		target_?: any
+	): _mk_monitor.type_on_callback<T[T2]> | null {
+		const off_callback_f: _mk_monitor.type_off_callback | undefined = typeof args4_ === "function" ? args4_ : undefined;
+		const target: any = target_ ?? (typeof args4_ === "object" ? args4_ : undefined);
 
-				let parent = value_;
-
-				// 更新父级对象
-				if (path_s.length !== 0) {
-					path_s.split("/").forEach((v_s) => {
-						parent = parent[v_s];
-					});
-				}
-
-				this._on(parent, key_s as any, {
-					path_s: `${path_s ? "/" : ""}${key_s}`,
-					on_callback_f: on_callback_f,
-					off_callback_f: off_callback_f,
-					target: target,
-				});
-			});
-
-			return null;
-		}
+		return this._on(value_, key_, {
+			on_callback_f: on_callback_f_,
+			off_callback_f: off_callback_f,
+			target: target,
+		});
 	}
 
 	/**
@@ -276,18 +262,51 @@ class mk_monitor extends mk_instance_base {
 	}
 
 	/**
-	 * 取消监听数据更新
+	 * 递归取消监听数据更新
 	 * @param value_ 监听对象
 	 * @param target_ 绑定目标
 	 */
-	off(value_: any, target_?: any): Promise<any>;
+	off_recursion(value_: any, target_?: any): Promise<any>;
 	/**
-	 * 取消监听数据更新
+	 * 递归取消监听数据更新
 	 * @param value_ 监听对象
 	 * @param on_callback_f_ on 触发回调
 	 * @param target_ 绑定目标
 	 */
-	off(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
+	off_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
+	off_recursion(value_: any, args2_: any, target_?: any): Promise<any> {
+		const on_callback_f: _mk_monitor.type_on_callback<any> | undefined = typeof args2_ === "function" ? args2_ : undefined;
+		const target = target_ ?? (typeof args2_ === "object" ? args2_ : undefined);
+		const task_as: Promise<any>[] = [];
+
+		mk_tool.object.traverse(value_, (value: any, key_s: string, path_s: string) => {
+			const type_s = typeof value;
+
+			if (!["string", "number", "boolean", "symbol"].includes(type_s)) {
+				return;
+			}
+
+			let parent = value_;
+
+			// 更新父级对象
+			if (path_s.length !== 0) {
+				path_s.split("/").forEach((v_s) => {
+					parent = parent[v_s];
+				});
+			}
+
+			task_as.push(
+				...this._off(parent, key_s, {
+					path_s_: `${path_s ? "/" : ""}${key_s}`,
+					on_callback_f_: on_callback_f,
+					target_: target,
+				})
+			);
+		});
+
+		return Promise.all(task_as);
+	}
+
 	/**
 	 * 取消监听数据更新
 	 * @param value_ 监听对象
@@ -303,48 +322,12 @@ class mk_monitor extends mk_instance_base {
 	 * @param target_ 绑定目标
 	 */
 	off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
-	off(value_: any, args2_: any, args3_?: any, target_?: any): Promise<any> {
-		const key = ["string", "number", "boolean", "symbol"].includes(typeof args2_) ? args2_ : undefined;
-
-		const on_callback_f: _mk_monitor.type_on_callback<any> | undefined =
-			typeof args3_ === "function" ? args3_ : typeof args2_ === "function" ? args2_ : undefined;
-
-		const target = target_ ?? (typeof args3_ === "object" ? args3_ : typeof args2_ === "object" ? args2_ : undefined);
-
-		// 递归取消监听
-		if (value_ && !key) {
-			const task_as: Promise<any>[] = [];
-
-			mk_tool.object.traverse(value_, (value: any, key_s: string, path_s: string) => {
-				const type_s = typeof value;
-
-				if (!["string", "number", "boolean", "symbol"].includes(type_s)) {
-					return;
-				}
-
-				let parent = value_;
-
-				// 更新父级对象
-				if (path_s.length !== 0) {
-					path_s.split("/").forEach((v_s) => {
-						parent = parent[v_s];
-					});
-				}
-
-				task_as.push(
-					...this._off(parent, key_s, {
-						path_s_: `${path_s ? "/" : ""}${key_s}`,
-						on_callback_f_: on_callback_f,
-						target_: target,
-					})
-				);
-			});
-
-			return Promise.all(task_as);
-		}
+	off<T, T2 extends keyof T>(value_: T, key_: T2, args3_?: any, target_?: any): Promise<any> {
+		const on_callback_f: _mk_monitor.type_on_callback<any> | undefined = typeof args3_ === "function" ? args3_ : undefined;
+		const target = target_ ?? (typeof args3_ === "object" ? args3_ : undefined);
 
 		return Promise.all(
-			this._off(value_, key, {
+			this._off(value_, key_, {
 				on_callback_f_: on_callback_f,
 				target_: target,
 			})
