@@ -15,7 +15,7 @@ abstract class mk_guide_step_base<CT extends Record<string, mk_guide_manage_.ope
 	 * @remarks
 	 * 格式：bundle.scene
 	 */
-	abstract scene_s: string;
+	scene_s?: string;
 	/** 引导管理器 */
 	guide_manage!: mk_guide_manage;
 	/** 操作键列表 */

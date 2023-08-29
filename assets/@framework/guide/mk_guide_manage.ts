@@ -105,7 +105,7 @@ class mk_guide_manage {
 			});
 
 			// 加载场景
-			if (current_step.scene_s.includes(".")) {
+			if (current_step.scene_s?.includes(".")) {
 				const bundle_s = current_step.scene_s.split(".")[0];
 				const scene_s = current_step.scene_s.split(".")[1];
 
