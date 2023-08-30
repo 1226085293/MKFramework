@@ -107,9 +107,7 @@ export class mk_polygon_mask extends cc.Component {
 		// 更新初始设计尺寸
 		this._initial_design_size = cc.view.getDesignResolutionSize();
 		// 初始化跟踪节点世界坐标
-		if (this._track_node) {
-			this._track_node.getWorldPosition(this._track_node_world_pos_v3);
-		}
+		this._track_node?.getWorldPosition(this._track_node_world_pos_v3);
 
 		// 更新数据
 		this._current_polygon_world_point_v2s = this._polygon_world_point_v2s = polygon_comp.worldPoints.map((v_v2) =>
@@ -168,8 +166,8 @@ export class mk_polygon_mask extends cc.Component {
 
 		// 屏蔽触摸
 		if (this.shield_touch_b) {
-			for (let i = 0; i < this._input_event_as.length; i++) {
-				this.node.on(this._input_event_as[i], this._event_node_input, this);
+			for (const v of this._input_event_as) {
+				this.node.on(v, this._event_node_input, this);
 			}
 		}
 
@@ -177,10 +175,10 @@ export class mk_polygon_mask extends cc.Component {
 	}
 
 	protected onDisable(): void {
-		// 屏蔽触摸
+		// 取消屏蔽触摸
 		if (this.shield_touch_b) {
-			for (let i = 0; i < this._input_event_as.length; i++) {
-				this.node.off(this._input_event_as[i], this._event_node_input, this);
+			for (const v of this._input_event_as) {
+				this.node.off(v, this._event_node_input, this);
 			}
 		}
 	}
@@ -264,8 +262,9 @@ export class mk_polygon_mask extends cc.Component {
 		if (point_v2s.length > 1) {
 			graphics_comp.clear();
 			graphics_comp.moveTo(point_v2s[0].x, point_v2s[0].y);
-			for (let k_n = 1, len_n = point_v2s.length; k_n < len_n; ++k_n) {
-				graphics_comp.lineTo(point_v2s[k_n].x, point_v2s[k_n].y);
+
+			for (const v_v2 of point_v2s) {
+				graphics_comp.lineTo(v_v2.x, v_v2.y);
 			}
 
 			graphics_comp.close();
