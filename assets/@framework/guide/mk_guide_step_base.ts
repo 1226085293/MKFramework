@@ -49,10 +49,11 @@ abstract class mk_guide_step_base<CT extends Record<string, mk_guide_manage_.ope
 
 	/**
 	 * 加载
+	 * @param jump_b_ 跳转状态
 	 * @remarks
 	 * 进入当前步骤
 	 */
-	abstract load(): void | Promise<void>;
+	abstract load(jump_b_: boolean): void | Promise<void>;
 
 	/**
 	 * 卸载

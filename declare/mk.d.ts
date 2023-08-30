@@ -613,6 +613,8 @@ declare namespace mk {
 		get_step(): number;
 		/** 完成引导 */
 		finish(): void;
+		/** 更新步骤数据 */
+		private _update_step_data;
 		private _set_pause_b;
 	}
 
@@ -729,10 +731,11 @@ declare namespace mk {
 		pre_load?(): void | Promise<void>;
 		/**
 		 * 加载
+		 * @param jump_b_ 跳转状态
 		 * @remarks
 		 * 进入当前步骤
 		 */
-		abstract load(): void | Promise<void>;
+		abstract load(jump_b_: boolean): void | Promise<void>;
 		/**
 		 * 卸载
 		 * @remarks
@@ -2745,7 +2748,6 @@ declare namespace mk {
 		private _set_offset_v3;
 		private _set_track_node;
 		private _event_node_input;
-		private _event_world_position_change;
 		private _event_global_resize;
 	}
 

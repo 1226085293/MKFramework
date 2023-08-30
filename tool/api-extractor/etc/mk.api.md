@@ -288,7 +288,7 @@ export abstract class guide_step_base<CT extends Record<string, guide_manage_.op
     describe_s?: string;
     guide_manage: guide_manage;
     init_data: any;
-    abstract load(): void | Promise<void>;
+    abstract load(jump_b_: boolean): void | Promise<void>;
     protected _next(init_data_?: any): void;
     next_step_ns?: number[];
     operate_ss: Exclude<keyof CT, symbol>[];

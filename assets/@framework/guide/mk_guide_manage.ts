@@ -90,6 +90,8 @@ class mk_guide_manage {
 			const pre_step = this._pre_step_n === undefined ? null : this.step_map.get(this._pre_step_n);
 			/** 当前引导步骤 */
 			const current_step = this.step_map.get(this._step_n);
+			/** 跳转状态 */
+			const jump_b = !pre_step?.next_step_ns?.includes(this._step_n);
 
 			// 步骤未注册
 			if (!current_step) {
@@ -173,7 +175,7 @@ class mk_guide_manage {
 			this._pre_step_n = current_step.step_n;
 
 			// 执行步骤 load
-			await current_step.load();
+			await current_step.load(jump_b);
 
 			// 加载步骤完成事件
 			await Promise.all(this.event.request(this.event.key.loading_step_complete));
