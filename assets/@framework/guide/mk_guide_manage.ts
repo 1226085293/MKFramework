@@ -99,6 +99,11 @@ class mk_guide_manage {
 				return;
 			}
 
+			// 初始步骤数据
+			if (this._pre_step_n === undefined && !current_step.step_update_data && !this._update_step_data()) {
+				return;
+			}
+
 			/** 下次引导步骤 */
 			const next_step_as =
 				!current_step.next_step_ns || current_step.next_step_ns.length > 1
@@ -205,23 +210,9 @@ class mk_guide_manage {
 
 			this._log.log("切换到步骤", this._step_n, current_step?.describe_s ?? "");
 
-			// 请求数据
-			{
-				const result = this._init_config.step_update_callback_f(this._step_n);
-
-				// 引导中断
-				if ((result ?? null) === null) {
-					this._pause_b = true;
-					this.event.emit(this.event.key.break);
-					this._log.warn("引导中断");
-
-					return;
-				}
-
-				// 更新步骤数据
-				if (current_step) {
-					current_step.step_update_data = result;
-				}
+			// 更新步骤数据
+			if (!this._update_step_data()) {
+				return;
 			}
 
 			// 步骤完成
@@ -248,6 +239,35 @@ class mk_guide_manage {
 		this._log.log("引导完成");
 		this.pause_b = true;
 		this.event.emit(this.event.key.finish);
+	}
+
+	/** 更新步骤数据 */
+	private _update_step_data(): boolean {
+		/** 当前引导步骤 */
+		const current_step = this.step_map.get(this._step_n);
+
+		if (!current_step) {
+			return false;
+		}
+
+		/** 步骤数据 */
+		const step_data = this._init_config.step_update_callback_f(this._step_n);
+
+		// 引导中断
+		if ((step_data ?? null) === null) {
+			this._pause_b = true;
+			this.event.emit(this.event.key.break);
+			this._log.warn("引导中断");
+
+			return false;
+		}
+
+		// 更新步骤数据
+		if (current_step) {
+			current_step.step_update_data = step_data;
+		}
+
+		return true;
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
