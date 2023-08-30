@@ -153,17 +153,8 @@ export class mk_polygon_mask extends cc.Component {
 			polygon_comp.destroy();
 		}
 
-		// 事件监听
-		{
-			// 全局事件
-			global_event.on(global_event.key.resize, this._event_global_resize, this);
-
-			// 数据事件
-			if (this._track_node) {
-				mk_monitor.on(this._track_node.worldPosition, "x", this._event_world_position_change, this);
-				mk_monitor.on(this._track_node.worldPosition, "y", this._event_world_position_change, this);
-			}
-		}
+		// 全局事件
+		global_event.on(global_event.key.resize, this._event_global_resize, this);
 	}
 
 	protected start(): void {
@@ -306,11 +297,6 @@ export class mk_polygon_mask extends cc.Component {
 		event_.preventSwallow = collision_b;
 		// 拦截事件
 		event_.propagationStopped = !collision_b;
-	}
-
-	private _event_world_position_change(): void {
-		this.unschedule(this.update_mask);
-		this.scheduleOnce(this.update_mask);
 	}
 
 	/* ------------------------------- 全局事件 ------------------------------- */
