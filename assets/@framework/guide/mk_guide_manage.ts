@@ -171,12 +171,18 @@ class mk_guide_manage {
 				this._step_preload_map.delete(current_step.step_n);
 			}
 
+			// 卸载步骤
+			if (pre_step) {
+				// 执行上个步骤 unload
+				await pre_step.unload?.();
+				// 卸载步骤事件
+				await Promise.all(this.event.request(this.event.key.after_unload_step, pre_step));
+			}
+
 			// 更新上个步骤
 			this._pre_step_n = current_step.step_n;
-
 			// 执行步骤 load
 			await current_step.load(jump_b);
-
 			// 加载步骤完成事件
 			await Promise.all(this.event.request(this.event.key.loading_step_complete));
 		});
@@ -305,6 +311,8 @@ export namespace mk_guide_manage_ {
 		 * 加载步骤(场景/操作)前调用，可在此处打开遮罩
 		 */
 		loading_step(): void;
+		/** 卸载步骤后 */
+		after_unload_step(step: mk_guide_step_base): void;
 		/**
 		 * 加载步骤完成
 		 * @remarks
