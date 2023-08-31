@@ -639,6 +639,11 @@ declare namespace mk {
 			 */
 			loading_step(): void;
 			/**
+			 * 卸载步骤后
+			 * @param step 卸载的步骤
+			 */
+			after_unload_step(step: guide_step_base): void;
+			/**
 			 * 加载步骤完成
 			 * @remarks
 			 * 步骤 load 执行后调用，可在此处关闭遮罩

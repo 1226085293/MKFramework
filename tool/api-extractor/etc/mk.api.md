@@ -261,6 +261,7 @@ export class guide_manage {
 // @public (undocumented)
 export namespace guide_manage_ {
     export interface event_protocol {
+        after_unload_step(step: guide_step_base): void;
         before_switch(next_step_n: number): void;
         break(): void;
         finish(): void;
