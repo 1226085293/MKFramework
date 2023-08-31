@@ -1,7 +1,7 @@
 import * as cc from "cc";
 import { mk_log } from "../mk_logger";
 import type mk_guide_manage from "./mk_guide_manage";
-import { mk_guide_manage_ } from "./mk_guide_manage";
+import type { mk_guide_manage_ } from "./mk_guide_manage";
 import { _decorator } from "cc";
 const { ccclass, property } = _decorator;
 
