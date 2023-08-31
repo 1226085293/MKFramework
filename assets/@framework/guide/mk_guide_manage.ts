@@ -311,7 +311,10 @@ export namespace mk_guide_manage_ {
 		 * 加载步骤(场景/操作)前调用，可在此处打开遮罩
 		 */
 		loading_step(): void;
-		/** 卸载步骤后 */
+		/**
+		 * 卸载步骤后
+		 * @param step 卸载的步骤
+		 */
 		after_unload_step(step: mk_guide_step_base): void;
 		/**
 		 * 加载步骤完成
