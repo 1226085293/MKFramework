@@ -258,15 +258,6 @@ class mk_guide_manage {
 	private _update_step_data(): boolean {
 		/** 当前引导步骤 */
 		const current_step = this.step_map.get(this._step_n);
-
-		if (!current_step) {
-			this._pause_b = true;
-			this.event.emit(this.event.key.break);
-			this._log.warn(`当前步骤 ${this._step_n} 未注册，引导中断`);
-
-			return false;
-		}
-
 		/** 步骤数据 */
 		const step_data = this._init_config.step_update_callback_f(this._step_n);
 
@@ -282,6 +273,12 @@ class mk_guide_manage {
 		// 更新步骤数据
 		if (current_step) {
 			current_step.step_update_data = step_data;
+		} else {
+			this._pause_b = true;
+			this.event.emit(this.event.key.break);
+			this._log.warn(`当前步骤 ${this._step_n} 未注册，引导中断`);
+
+			return false;
 		}
 
 		return true;
