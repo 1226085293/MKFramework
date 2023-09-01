@@ -43,6 +43,11 @@ class mk_guide_manage {
 		return this._step_n === this._init_config.end_step_n;
 	}
 
+	/** 结束步骤 */
+	get end_step_n(): number {
+		return this._init_config.end_step_n ?? 0;
+	}
+
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log!: mk_logger;
@@ -219,7 +224,7 @@ class mk_guide_manage {
 			this._log.log("切换到步骤", this._step_n, current_step?.describe_s ?? "");
 
 			// 更新步骤数据
-			if (!this._update_step_data()) {
+			if (!this._update_step_data() && this._step_n !== this._init_config.end_step_n) {
 				return;
 			}
 
@@ -255,6 +260,10 @@ class mk_guide_manage {
 		const current_step = this.step_map.get(this._step_n);
 
 		if (!current_step) {
+			this._pause_b = true;
+			this.event.emit(this.event.key.break);
+			this._log.warn(`当前步骤 ${this._step_n} 未注册，引导中断`);
+
 			return false;
 		}
 
@@ -265,7 +274,7 @@ class mk_guide_manage {
 		if ((step_data ?? null) === null) {
 			this._pause_b = true;
 			this.event.emit(this.event.key.break);
-			this._log.warn("引导中断");
+			this._log.warn(`当前步骤 ${this._step_n} 数据错误，引导中断`);
 
 			return false;
 		}
