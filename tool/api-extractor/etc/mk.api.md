@@ -246,6 +246,7 @@ export const game: mk_game;
 // @public
 export class guide_manage {
     constructor(init_: guide_manage_.init_config);
+    get end_step_n(): number;
     event: event_target<guide_manage_.event_protocol>;
     finish(): void;
     get finish_b(): boolean;

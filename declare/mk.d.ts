@@ -575,6 +575,8 @@ declare namespace mk {
 		set pause_b(value_b_: boolean);
 		/** 完成状态 */
 		get finish_b(): boolean;
+		/** 结束步骤 */
+		get end_step_n(): number;
 		/** 日志 */
 		private _log;
 		/** 初始化配置 */
