@@ -30,7 +30,6 @@ jobs:
 
       - name: 设置用户名和密码
         run: |
-          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git config --global user.name "muzzik"
           git config --global user.email "1226085293@qq.com"
 
@@ -42,8 +41,6 @@ jobs:
 
       - name: 清空输出目录
         run: |
-          git config --local user.name "muzzik"
-          git config --local user.email "1226085293@qq.com"
           git clone https://github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           rm -rf ${{ env.OUTPUT_PATH }}
