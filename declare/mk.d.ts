@@ -212,9 +212,9 @@ declare namespace mk {
 			/** 循环 */
 			get loop_b(): boolean;
 			set loop_b(value_b_: boolean);
-			/** 总时长(秒) */
+			/** 总时长（秒） */
 			get total_time_s_n(): number;
-			/** 当前时间(秒) */
+			/** 当前时间（秒） */
 			get curr_time_s_n(): number;
 			set curr_time_s_n(value_n_: number);
 			/** 事件对象 */
@@ -481,10 +481,9 @@ declare namespace mk {
 	export declare const error: (...args_as_: any[]) => void;
 
 	/**
-	 * 安全事件对象
+	 * 事件对象（类型安全）
 	 * @remarks
-	 * 没啥好说的，就是安全
-	 * - 获取事件键可以使用 event_target.key.xxx
+	 * - 获取事件键使用 event_target.key.xxx
 	 */
 	export declare class event_target<CT> extends cc_2.EventTarget {
 		/** 事件键 */
@@ -757,7 +756,7 @@ declare namespace mk {
 		protected _next(init_data_?: any): void;
 	}
 
-	/** 继承单例(类型安全) */
+	/** 继承单例（类型安全） */
 	export declare abstract class instance_base {
 		/** 单例方法 */
 		static instance<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): InstanceType<T>;
@@ -1044,8 +1043,8 @@ declare namespace mk {
 	 * - 加载图片无需后缀，通过类型自动添加
 	 * - 加载路径扩展，例：db://xxx.prefab
 	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
-	 * - 通过 cache_lifetime_ms_n 修复短时间内 (释放/加载) 同一资源导致加载资源是已释放后的问题
-	 * - 解决同时加载同一资源多次导致返回的资源对象不一致的问 (对象不一致会导致引用计数不一致)
+	 * - 通过 cache_lifetime_ms_n 修复短时间内(释放/加载)同一资源导致加载资源是已释放后的问题
+	 * - 解决同时加载同一资源多次导致返回的资源对象不一致的问（对象不一致会导致引用计数不一致）
 	 * - 增加强制性资源跟随释放对象
 	 */
 	declare class mk_asset extends instance_base {
@@ -1661,7 +1660,7 @@ declare namespace mk {
 	}
 
 	/**
-	 * 数据监听器(类型安全)
+	 * 数据监听器（类型安全）
 	 * @remarks
 	 * 可以用以 mvvm 搭建及使用，注意：监听回调仅在下一帧被调用
 	 */
@@ -1859,7 +1858,7 @@ declare namespace mk {
 			value: T,
 			/** 旧值 */
 			old_value?: T,
-			/** 值路径(只会在监听无键的对象类型时传递) */
+			/** 值路径（只会在监听无键的对象类型时传递） */
 			path_s?: string
 		) => any;
 		/** off 函数类型 */
@@ -2309,7 +2308,7 @@ declare namespace mk {
 	}
 
 	/**
-	 * 状态任务(类型安全)
+	 * 状态任务（类型安全）
 	 * @remarks
 	 * 封装 promise，防止重复调用 resolve 函数报错以及添加超时功能，可重复使用
 	 */
@@ -2802,7 +2801,7 @@ declare namespace mk {
 	}
 
 	/**
-	 * 存储器(类型安全)
+	 * 存储器（类型安全）
 	 * @remarks
 	 * - (原生/web)接口分离，获得更高的性能
 	 */
