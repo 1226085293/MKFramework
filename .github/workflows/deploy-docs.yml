@@ -3,6 +3,9 @@ name: 更新文档
 on:
   push:
     branches: [dev]
+    
+permissions:
+  contents: write
 
 jobs:
   build:
