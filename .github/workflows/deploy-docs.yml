@@ -39,6 +39,14 @@ jobs:
           changes=$(git diff --name-only)
           echo "::set-output name=changes::$changes"
 
+      - name: 获取已有文件列表
+        id: existing_files
+        run: |
+          git clone https://github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git existing_repo
+          cd existing_repo
+          existing_files=$(git ls-files)
+          echo "::set-output name=files::$existing_files"
+
       - name: 构建框架文档
         run: |
           cd tool/api-extractor
@@ -63,7 +71,7 @@ jobs:
           cp -R "../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/." "./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}"
 
       - name: 推送到输出仓库
-        if: ${{ steps.check_changes.outputs.changes == 'true' }}
+        if: ${{ steps.check_changes.outputs.changes != steps.existing_files.outputs.files }}
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
