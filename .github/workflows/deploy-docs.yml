@@ -6,9 +6,9 @@ env:
   # 输入路径
   INPUT_PATH: tool/api-extractor/docs
   # 输出仓库名
-  OUTPUT_WAREHOUSE_NAME: test
+  OUTPUT_WAREHOUSE_NAME: 1226085293.github.io
   # 输出路径
-  OUTPUT_PATH: tool
+  OUTPUT_PATH: src/MK框架/API 接口
 
 on:
   push:
