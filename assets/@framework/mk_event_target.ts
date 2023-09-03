@@ -3,7 +3,7 @@ import * as cc from "cc";
 /**
  * 安全事件对象
  * @remarks
- * 没啥好说的，就是安全
+ * 没啥好说的，就是安全1
  * - 获取事件键可以使用 event_target.key.xxx
  */
 class mk_event_target<CT> extends cc.EventTarget {
