@@ -65,6 +65,7 @@ jobs:
           else
             echo "::set-output name=files_exist::true"
           fi
+          echo "文件是否存在：${{ steps.check_files.outputs.files_exist }}"
 
       - name: 推送到输出仓库
         if: steps.check_files.outputs.files_exist == 'true'
