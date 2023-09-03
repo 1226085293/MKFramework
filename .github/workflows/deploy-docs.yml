@@ -4,7 +4,7 @@ env:
   # 输入仓库名
   INPUT_WAREHOUSE_NAME: MKFramework
   # 输入路径
-  INPUT_PATH: tool/api-extractor/docs/
+  INPUT_PATH: tool/api-extractor/docs/mk
   # 输出仓库名
   OUTPUT_WAREHOUSE_NAME: 1226085293.github.io
   # 输出路径
