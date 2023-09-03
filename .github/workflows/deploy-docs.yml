@@ -29,9 +29,14 @@ jobs:
           cd test
           rm -rf tool/docs
   
+      - name: Create tool/docs directory in repository B
+        run: |
+          cd test
+          mkdir -p tool/docs
+
       - name: Copy docs folder from repository A to repository B
         run: |
-          cp -R ../MKFramework/tool/api-extractor/docs ./test/tool/docs
+          cp -R ../MKFramework/tool/api-extractor/docs ./tool/docs
   
       - name: Commit and push changes to repository B
         run: |
