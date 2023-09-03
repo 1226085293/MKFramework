@@ -44,17 +44,17 @@ jobs:
           git clone https://github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           if [ -d "${{ env.OUTPUT_PATH }}" ]; then
-            rm -rf ${{ env.OUTPUT_PATH }}
+            rm -rf "${{ env.OUTPUT_PATH }}"
           fi
   
       - name: 创建输出目录
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
-          mkdir -p ${{ env.OUTPUT_PATH }}
+          mkdir -p "${{ env.OUTPUT_PATH }}"
 
       - name: 拷贝文件到输出仓库
         run: |
-          cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/. ./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
+          cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/. "./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}"
 
       - name: 检查是否有文件需要提交
         id: check_changes
