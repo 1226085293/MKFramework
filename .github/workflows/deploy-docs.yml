@@ -59,8 +59,8 @@ jobs:
       - name: 检查文件是否存在
         id: check_files
         run: |
-          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
-          if [ -z "$(ls -A ${{ env.OUTPUT_PATH }})" ]; then
+          cd "${{ env.OUTPUT_WAREHOUSE_NAME }}"
+          if [ -z "$(ls -A "${{ env.OUTPUT_PATH }}")" ]; then
             echo "::set-output name=files_exist::false"
           else
             echo "::set-output name=files_exist::true"
