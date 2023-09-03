@@ -4,11 +4,11 @@ env:
   # 输入仓库名
   INPUT_WAREHOUSE_NAME: MKFramework
   # 输入路径
-  INPUT_PATH: tool/api-extractor/docs
+  INPUT_PATH: tool/api-extractor/docs/mk
   # 输出仓库名
   OUTPUT_WAREHOUSE_NAME: 1226085293.github.io
   # 输出路径
-  OUTPUT_PATH: src/MK框架/API 接口
+  OUTPUT_PATH: src/MK框架/API 接口/mk
 
 on:
   push:
@@ -74,5 +74,5 @@ jobs:
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
-          git commit -m "更新文档"
+          git commit -m "更新 MK 框架 API 文档"
           git push --force https://${{ secrets.ACCESS_TOKEN }}@github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
