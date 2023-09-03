@@ -33,20 +33,6 @@ jobs:
           git config --global user.name "muzzik"
           git config --global user.email "1226085293@qq.com"
 
-      - name: 生成更改标志
-        id: check_changes
-        run: |
-          changes=$(git diff --name-only)
-          echo "::set-output name=changes::$changes"
-
-      - name: 获取已有文件列表
-        id: existing_files
-        run: |
-          git clone https://github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git existing_repo
-          cd existing_repo
-          existing_files=$(git ls-files)
-          echo "::set-output name=files::$existing_files"
-
       - name: 构建框架文档
         run: |
           cd tool/api-extractor
@@ -70,8 +56,18 @@ jobs:
         run: |
           cp -R "../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/." "./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}"
 
+      - name: 检查文件是否存在
+        id: check_files
+        run: |
+          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
+          if [ -z "$(ls -A ${{ env.OUTPUT_PATH }})" ]; then
+            echo "::set-output name=files_exist::false"
+          else
+            echo "::set-output name=files_exist::true"
+          fi
+
       - name: 推送到输出仓库
-        if: ${{ steps.check_changes.outputs.changes != steps.existing_files.outputs.files }}
+        if: steps.check_files.outputs.files_exist == 'true'
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
