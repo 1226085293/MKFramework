@@ -4,7 +4,7 @@ env:
   # 输入仓库名
   INPUT_WAREHOUSE_NAME: MKFramework
   # 输入路径
-  INPUT_PATH: tool/api-extractor/docs/mk
+  INPUT_PATH: tool/api-extractor/docs/
   # 输出仓库名
   OUTPUT_WAREHOUSE_NAME: 1226085293.github.io
   # 输出路径
@@ -55,19 +55,6 @@ jobs:
       - name: 拷贝文件到输出仓库
         run: |
           cp -R "../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/." "./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}"
-
-      - name: 检查是否有文件需要提交
-        id: check_changes
-        run: |
-          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
-          git status --porcelain > changes.txt
-          if [[ -s "changes.txt" ]]; then
-            echo "文档变更，准备提交."
-            echo "::set-output name=changes::true"
-          else
-            echo "文档没有变更."
-            echo "::set-output name=changes::false"
-          fi
 
       - name: 推送到输出仓库
         if: steps.check_changes.outputs.changes == 'true'
