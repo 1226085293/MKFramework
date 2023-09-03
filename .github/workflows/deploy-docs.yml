@@ -1,5 +1,15 @@
 name: 更新文档
 
+env:
+  # 输入仓库名
+  INPUT_WAREHOUSE_NAME: MKFramework
+  # 输入路径
+  INPUT_PATH: tool/api-extractor/docs
+  # 输出仓库名
+  OUTPUT_WAREHOUSE_NAME: test
+  # 输出路径
+  OUTPUT_PATH: tool/docs
+
 on:
   push:
     branches: [dev]
@@ -15,41 +25,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          repository: 1226085293/MKFramework
+          repository: 1226085293/${{ env.INPUT_WAREHOUSE_NAME }}
           fetch-depth: 0
 
-      - name: Install dependencies and build framework docs
+      - name: 设置用户名和密码
+        run: |
+          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
+          git config --global user.name "muzzik"
+          git config --global user.email "1226085293@qq.com"
+
+      - name: 构建框架文档
         run: |
           cd tool/api-extractor
           npm install
           npm run 构建框架文档
 
-      - name: Remove existing tool/docs folder in repository B
+      - name: 清空输出目录
         run: |
           git config --local user.name "muzzik"
           git config --local user.email "1226085293@qq.com"
-          git clone https://github.com/1226085293/test.git # 替换为仓库B的用户名和仓库名
-          cd test
-          rm -rf tool/docs
+          git clone https://github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
+          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
+          rm -rf ${{ env.OUTPUT_PATH }}
   
-      - name: Create tool/docs directory in repository B
+      - name: 创建输出目录
         run: |
-          cd test
-          mkdir -p tool/docs
+          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
+          mkdir -p ${{ env.OUTPUT_PATH }}
 
-      - name: Copy docs folder from repository A to repository B
+      - name: 拷贝文件到输出仓库
         run: |
-          cp -R ../MKFramework/tool/api-extractor/docs ./test/tool/docs
-  
-      - name: List files in tool/docs directory
-        run: |
-          ls -R test/tool/docs
+          cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }} ./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
 
-      - name: Commit and push changes to repository B
+      - name: 推送到输出仓库
         run: |
-          cd test
-          git config --local user.name "muzzik"
-          git config --local user.email "1226085293@qq.com"
+          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
-          git commit -m "Update Docs"
-          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/1226085293/test.git
+          git commit -m "更新文档"
+          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
