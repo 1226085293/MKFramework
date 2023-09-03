@@ -59,4 +59,4 @@ jobs:
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
           git commit -m "更新文档"
-          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
+          git push --force https://${{ secrets.ACCESS_TOKEN }}@github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
