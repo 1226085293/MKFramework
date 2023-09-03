@@ -8,7 +8,7 @@ env:
   # 输出仓库名
   OUTPUT_WAREHOUSE_NAME: test
   # 输出路径
-  OUTPUT_PATH: tool/docs
+  OUTPUT_PATH: tool
 
 on:
   push:
@@ -56,7 +56,21 @@ jobs:
         run: |
           cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }} ./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
 
+      - name: 检查是否有文件需要提交
+        id: check_changes
+        run: |
+          cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
+          git status --porcelain > changes.txt
+          if [[ -s "changes.txt" ]]; then
+            echo "文档变更，准备提交."
+            echo "::set-output name=changes::true"
+          else
+            echo "文档没有变更."
+            echo "::set-output name=changes::false"
+          fi
+
       - name: 推送到输出仓库
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
