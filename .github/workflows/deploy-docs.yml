@@ -57,7 +57,7 @@ jobs:
           cp -R "../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/." "./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}"
 
       - name: 推送到输出仓库
-        # if: steps.check_changes.outputs.changes == 'true'
+        if: steps.check_changes.outputs.changes
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
