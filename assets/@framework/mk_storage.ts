@@ -8,7 +8,7 @@ namespace _mk_storage {
 }
 
 /**
- * 存储器(类型安全)
+ * 存储器（类型安全）
  * @remarks
  * - (原生/web)接口分离，获得更高的性能
  */

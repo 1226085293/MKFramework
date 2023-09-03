@@ -1,4 +1,4 @@
-/** 继承单例(类型安全) */
+/** 继承单例（类型安全） */
 abstract class mk_instance_base {
 	/** 单例方法 */
 	static instance<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): InstanceType<T> {

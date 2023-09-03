@@ -554,7 +554,7 @@ export class mk_ui_manage extends mk_instance_base {
 			return false;
 		}
 
-		// 动态模块(视图 & 数据)更新
+		// 动态模块(视图/数据)更新
 		close_ui_as.forEach((v) => {
 			if (v.static_b) {
 				return;

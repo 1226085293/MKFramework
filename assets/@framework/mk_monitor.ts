@@ -12,7 +12,7 @@ namespace _mk_monitor {
 		value: T,
 		/** 旧值 */
 		old_value?: T,
-		/** 值路径(只会在监听无键的对象类型时传递) */
+		/** 值路径（只会在监听无键的对象类型时传递） */
 		path_s?: string
 	) => any;
 	/** off 函数类型 */
@@ -93,7 +93,7 @@ namespace _mk_monitor {
 }
 
 /**
- * 数据监听器(类型安全)
+ * 数据监听器（类型安全）
  * @remarks
  * 可以用以 mvvm 搭建及使用，注意：监听回调仅在下一帧被调用
  */

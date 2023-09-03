@@ -445,12 +445,12 @@ export namespace mk_audio_base_ {
 			throw "未实现";
 		}
 
-		/** 总时长(秒) */
+		/** 总时长（秒） */
 		get total_time_s_n(): number {
 			return 0;
 		}
 
-		/** 当前时间(秒) */
+		/** 当前时间（秒） */
 		get curr_time_s_n(): number {
 			return 0;
 		}
