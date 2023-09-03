@@ -28,7 +28,7 @@ jobs:
           repository: 1226085293/${{ env.INPUT_WAREHOUSE_NAME }}
           fetch-depth: 0
 
-      - name: 设置用户名和密码
+      - name: 设置用户名和邮箱
         run: |
           git config --global user.name "muzzik"
           git config --global user.email "1226085293@qq.com"
@@ -54,7 +54,7 @@ jobs:
 
       - name: 拷贝文件到输出仓库
         run: |
-          cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }} ./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
+          cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/. ./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
 
       - name: 检查是否有文件需要提交
         id: check_changes
