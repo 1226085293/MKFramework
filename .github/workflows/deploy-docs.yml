@@ -3,7 +3,7 @@ name: 更新文档
 on:
   push:
     branches: [dev]
-    
+
 permissions:
   contents: write
 
@@ -26,8 +26,8 @@ jobs:
 
       - name: Remove existing tool/docs folder in repository B
         run: |
-          git config --global user.name "muzzik"
-          git config --global user.email "1226085293@qq.com"
+          git config --local user.name "muzzik"
+          git config --local user.email "1226085293@qq.com"
           git clone https://github.com/1226085293/test.git # 替换为仓库B的用户名和仓库名
           cd test
           rm -rf tool/docs
@@ -48,6 +48,8 @@ jobs:
       - name: Commit and push changes to repository B
         run: |
           cd test
+          git config --local user.name "muzzik"
+          git config --local user.email "1226085293@qq.com"
           git add .
           git commit -m "Update Docs"
           git push
