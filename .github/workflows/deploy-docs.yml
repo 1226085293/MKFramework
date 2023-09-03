@@ -13,6 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
+          repository: 1226085293/MKFramework
           fetch-depth: 0
 
       - name: Install dependencies and build framework docs
@@ -22,12 +23,12 @@ jobs:
           npm run 构建框架文档
 
       - name: Copy docs folder
-        run: cp -r tool/api-extractor/docs $GITHUB_WORKSPACE/target-repo/src/docs
+        run: cp -r tool/api-extractor/docs $GITHUB_WORKSPACE/docs
 
       - name: Checkout target repository
         uses: actions/checkout@v3
         with:
-          repository: https://github.com/1226085293/test
+          repository: 1226085293/test
           path: target-repo
 
       - name: Commit and push changes
