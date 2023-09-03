@@ -1,6 +1,6 @@
 {
 	/* Base configuration. Do not edit this field. */
-	"include": ["../../temp/declarations/", "../../declare/", "../../assets/@framework"],
+	"include": ["./declare/", "../../temp/declarations/", "../../declare/", "../../assets/@framework"],
 	/* Add your custom configuration here. */
 	"compilerOptions": {
 		"target": "es6",
