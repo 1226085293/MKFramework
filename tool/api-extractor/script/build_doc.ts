@@ -43,7 +43,7 @@ import { argv } from "process";
 			// 重命名为 README.md
 			if (temp_dir_path_s.endsWith(path.join(file_name_s.slice(0, -3), path.sep))) {
 				// 多个属性
-				if (file_as.filter((v2_s) => v2_s.startsWith(v_s.slice(0, -3))).length > 1) {
+				if (file_as.filter((v2_s) => v2_s.startsWith(v_s.slice(0, -2))).length > 1) {
 					output_file_name_s = "README.md";
 					// 添加索引
 					meta_ss.push("index: true");
@@ -56,11 +56,30 @@ import { argv } from "process";
 			// 重置索引路径
 			file_s = file_s
 				// 根路径
-				.replace(/\[Home\]\(\.\/index\.md\)/g, "[Home](/MK框架/docs/index.md)")
-				.replace(/\[mk\]\(\.\/mk\.md\)/g, "[mk](/MK框架/docs/mk/README.md)")
+				.replace(/\[Home\]\(\.\/index\.md\)/g, "[Home](/MK框架/API%20接口/README.md)")
+				.replace(/\[mk\]\(\.\/mk\.md\)/g, "[mk](/MK框架/API%20接口/mk/README.md)")
 				// 文档路径
 				.replace(/\.\/mk\.([\w_\.]+)\.md/g, function (...args_as: any[]) {
-					return `/MK框架/docs/mk/${args_as[1].replace(/\./g, "/").replace(/\/_/g, "/@_")}`;
+					/** 绝对路径，从 mk 开始 */
+					let path_s = args_as[0]
+						.slice(2, Math.min(0, -v_s.lastIndexOf(".", 3)))
+						.replace(/\./g, "/")
+						// 下划线文件夹处理
+						.replace(/\/_/g, "/@_");
+					/** 相对路径 */
+					let relative_path_s = path.relative(dir_path_s, path_s);
+
+					if (!relative_path_s) {
+						if (dir_path_s === path_s) {
+							relative_path_s = `./${output_file_name_s}`;
+						} else {
+							relative_path_s = `./${args_as[1].replace(/\./g, "/").replace(/\/_/g, "/@_")}`;
+						}
+					} else if (relative_path_s.endsWith(".")) {
+						relative_path_s = relative_path_s.slice(0, -1) + "/README.md";
+					}
+
+					return relative_path_s[0] === "." ? relative_path_s.replace(/\\/g, "/") + "/" : `./${relative_path_s}/`;
 				});
 
 			// 添加元数据
@@ -70,6 +89,18 @@ import { argv } from "process";
 			// 拷贝至文件夹，vuePress 不支持下划线前缀和无下划线前缀同名文件同时存在
 			fs.writeFileSync(path.join(temp_dir_path_s, output_file_name_s), file_s);
 		});
+
+		// 修复 mk 路径索引
+		{
+			let file_s = fs.readFileSync(path.join(temp_path_s, "mk/README.md"), "utf-8");
+			let start_n = file_s.indexOf("## mk package");
+
+			file_s = file_s.slice(0, start_n) + file_s.slice(start_n).replace(/\.md/g, "/");
+			fs.writeFileSync(path.join(temp_path_s, "mk/README.md"), file_s);
+		}
+
+		// 排除文件
+		fs.removeSync(path.join(temp_path_s, "index.md"));
 	}
 
 	// 移动到输出路径
