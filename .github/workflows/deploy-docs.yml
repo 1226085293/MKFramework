@@ -21,20 +21,21 @@ jobs:
           npm install
           npm run 构建框架文档
 
-      - name: Copy docs folder
-        run: cp -r tool/api-extractor/docs $GITHUB_WORKSPACE/test/docs
-
-      - name: Checkout target repository
-        uses: actions/checkout@v3
-        with:
-          repository: 1226085293/test
-          path: target-repo
-
-      - name: Commit and push changes
+      - name: Remove existing tool/docs folder in repository B
         run: |
-          cd target-repo
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config --global user.name "1226085293"
+          git config --global user.email "1226085293@qq.com"
+          git clone https://github.com/1226085293/test.git # 替换为仓库B的用户名和仓库名
+          cd test
+          rm -rf tool/docs
+  
+      - name: Copy docs folder from repository A to repository B
+        run: |
+          cp -R ../MKFramework/tool/api-extractor/docs ./test/tool/docs
+  
+      - name: Commit and push changes to repository B
+        run: |
+          cd test
           git add .
-          git commit -m "Update docs"
-          git push origin main
+          git commit -m "Update Docs"
+          git push
