@@ -4,8 +4,12 @@ import * as cc from "cc";
 
 /**
  * http 模块
+ * @remarks
+ *
  * - post/get 支持
+ *
  * - 支持任意类型的返回数据解析
+ *
  * - 支持自定义编解码器
  */
 class mk_http extends mk_instance_base {

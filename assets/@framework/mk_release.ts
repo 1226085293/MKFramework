@@ -4,7 +4,9 @@ import { mk_log } from "./mk_logger";
 /**
  * 对象释放器
  * @remarks
+ *
  * - 统一 (cc.Node/cc.Asset) 资源的释放逻辑
+ *
  * - 可以通过 function 或继承添加自定义释放逻辑
  */
 class mk_release {

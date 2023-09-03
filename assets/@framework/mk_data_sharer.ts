@@ -5,6 +5,7 @@ import mk_status_task from "./task/mk_status_task";
  * 数据共享器
  * @remarks
  * 用以模块间共享数据
+ *
  * - 支持请求数据返回
  */
 class mk_data_sharer<CT = any> extends mk_instance_base {

@@ -35,7 +35,9 @@ abstract class mk_guide_step_base<CT extends Record<string, mk_guide_manage_.ope
 	/**
 	 * 下个步骤
 	 * @remarks
+	 *
 	 * - length == 1：预加载及 this._next 跳转
+	 *
 	 * - length > 1：预加载
 	 */
 	next_step_ns?: number[];

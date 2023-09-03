@@ -50,13 +50,21 @@ namespace _mk_asset {
 /**
  * 资源管理器
  * @remarks
+ *
  * - 统一加载接口为 get、get_dir
+ *
  * - 支持 EDITOR 环境加载资源
+ *
  * - 加载图片无需后缀，通过类型自动添加
+ *
  * - 加载路径扩展，例：db://xxx.prefab
+ *
  * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
+ *
  * - 通过 cache_lifetime_ms_n 修复短时间内(释放/加载)同一资源导致加载资源是已释放后的问题
+ *
  * - 解决同时加载同一资源多次导致返回的资源对象不一致的问（对象不一致会导致引用计数不一致）
+ *
  * - 增加强制性资源跟随释放对象
  */
 class mk_asset extends mk_instance_base {

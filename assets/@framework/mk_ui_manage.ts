@@ -20,9 +20,13 @@ namespace _mk_ui_manage {
 /**
  * 模块管理器
  * @remarks
+ *
  * - 支持模块(注册/打开/关闭/取消注册)
+ *
  * - 内置模块对象池
+ *
  * - 模块栈
+ *
  * - 全屏 UI 展示优化
  */
 export class mk_ui_manage extends mk_instance_base {

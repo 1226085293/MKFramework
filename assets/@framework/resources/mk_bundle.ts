@@ -45,10 +45,15 @@ namespace _mk_bundle {
 /**
  * bundle 管理器
  * @remarks
+ *
  * - 封装(加载/预加载)场景为 load_scene
+ *
  * - 支持(远程/本地) bundle
+ *
  * - 支持 bundle 热更
+ *
  * - 封装(bundle/scene)切换事件
+ *
  * - 支持 bundle 管理器，用于子游戏管理
  */
 class mk_bundle extends mk_instance_base {

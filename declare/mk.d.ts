@@ -35,9 +35,13 @@ declare namespace mk {
 	/**
 	 * 音频管理器
 	 * @remarks
+	 *
 	 * - (动态/静态)音频支持
+	 *
 	 * - 音频(类型/分组)双分类支持
+	 *
 	 * - (通用/微信)版本管理器
+	 *
 	 * - 统一音频事件
 	 */
 	export declare const audio: mk_audio_base;
@@ -110,7 +114,9 @@ declare namespace mk {
 			 * 使用 play 接口，默认使用 playOneShot
 			 * @remarks
 			 * common 使用
+			 *
 			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
+			 *
 			 * - playOneShot 接口不能暂停
 			 */
 			use_play_b?: boolean;
@@ -145,7 +151,9 @@ declare namespace mk {
 			 * 使用 play 接口，默认使用 playOneShot
 			 * @remarks
 			 * common 使用
+			 *
 			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
+			 *
 			 * - playOneShot 接口不能暂停
 			 */
 			use_play_b: boolean;
@@ -196,7 +204,9 @@ declare namespace mk {
 			 * 使用 play 接口，默认使用 playOneShot
 			 * @remarks
 			 * common 使用
+			 *
 			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
+			 *
 			 * - playOneShot 接口不能暂停
 			 */
 			use_play_b?: boolean;
@@ -205,6 +215,8 @@ declare namespace mk {
 			set init_b(value_b_: boolean);
 			/**
 			 * 音量
+			 * @remarks
+			 *
 			 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
 			 */
 			get volume_n(): number;
@@ -278,6 +290,7 @@ declare namespace mk {
 			pause(): void;
 			/**
 			 * 停止
+			 * @remarks
 			 * - 停止后播放的音频将跳过
 			 */
 			stop(state_b_?: boolean): void;
@@ -438,6 +451,7 @@ declare namespace mk {
 	 * 数据共享器
 	 * @remarks
 	 * 用以模块间共享数据
+	 *
 	 * - 支持请求数据返回
 	 */
 	export declare class data_sharer<CT = any> extends instance_base {
@@ -483,7 +497,7 @@ declare namespace mk {
 	/**
 	 * 事件对象（类型安全）
 	 * @remarks
-	 * - 获取事件键使用 event_target.key.xxx
+	 * 获取事件键使用 event_target.key.xxx
 	 */
 	export declare class event_target<CT> extends cc_2.EventTarget {
 		/** 事件键 */
@@ -557,10 +571,15 @@ declare namespace mk {
 	/**
 	 * 引导管理器
 	 * @remarks
+	 *
 	 * - 支持多实例
+	 *
 	 * - 支持任意步骤的(插入/删除)
+	 *
 	 * - 支持(暂停/完成)引导
+	 *
 	 * - 支持任意步骤跳转后的状态还原(操作单元)
+	 *
 	 * - 引导步骤脚本分离，支持组件式挂载
 	 */
 	export declare class guide_manage {
@@ -606,7 +625,9 @@ declare namespace mk {
 		 * @param step_n_ 步骤
 		 * @param init_data_ 初始化数据
 		 * @remarks
+		 *
 		 * - 暂停状态：更新步骤数据
+		 *
 		 * - 正常状态：更新步骤数据，执行步骤生命周期
 		 */
 		set_step(step_n_: number, init_data_?: any): Promise<void>;
@@ -687,7 +708,9 @@ declare namespace mk {
 			 * @param step_n
 			 * @returns null/undefined：更新失败中断引导
 			 * @remarks
+			 *
 			 * - 可在此内更新服务端数据并请求奖励
+			 *
 			 * - 步骤可使用 this.step_update_data 获取返回数据
 			 */
 			step_update_callback_f(step_n: number): any;
@@ -725,7 +748,9 @@ declare namespace mk {
 		/**
 		 * 下个步骤
 		 * @remarks
+		 *
 		 * - length == 1：预加载及 this._next 跳转
+		 *
 		 * - length > 1：预加载
 		 */
 		next_step_ns?: number[];
@@ -808,7 +833,9 @@ declare namespace mk {
 	/**
 	 * 层级管理
 	 * @remarks
+	 *
 	 * - 动态多类型层级划分
+	 *
 	 * - 支持类型层级细粒度划分
 	 */
 	export declare class layer extends cc_2.Component {
@@ -869,7 +896,9 @@ declare namespace mk {
 	 * 生命周期
 	 * @remarks
 	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
+	 *
 	 * - open 顺序: 子 -> 父
+	 *
 	 * - close 顺序: 父 -> 子
 	 */
 	export declare class life_cycle extends layer implements asset_.follow_release_object {
@@ -918,7 +947,9 @@ declare namespace mk {
 		 * @param config_ 创建配置
 		 * @remarks
 		 * 可在此处初始化视图状态
+		 *
 		 * - 静态模块：onLoad 时调用
+		 *
 		 * - 动态模块：addChild 后调用
 		 */
 		protected create?(): void | Promise<void>;
@@ -927,7 +958,9 @@ declare namespace mk {
 		 * @param data_ 初始化数据
 		 * @remarks
 		 * 所有依赖 init_data 初始化的逻辑都应在此进行
+		 *
 		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
+		 *
 		 * - 动态模块：onLoad 后，open 前调用
 		 */
 		init(data_?: any): void | Promise<void>;
@@ -968,9 +1001,13 @@ declare namespace mk {
 	 * 日志打印器
 	 * @remarks
 	 * 单例对象打印名为 default
+	 *
 	 * - 支持多实例
+	 *
 	 * - 打印等级控制
+	 *
 	 * - 打印屏蔽控制
+	 *
 	 * - 报错日志 http 上传
 	 */
 	export declare class logger extends instance_base {
@@ -1038,13 +1075,21 @@ declare namespace mk {
 	/**
 	 * 资源管理器
 	 * @remarks
+	 *
 	 * - 统一加载接口为 get、get_dir
+	 *
 	 * - 支持 EDITOR 环境加载资源
+	 *
 	 * - 加载图片无需后缀，通过类型自动添加
+	 *
 	 * - 加载路径扩展，例：db://xxx.prefab
+	 *
 	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
+	 *
 	 * - 通过 cache_lifetime_ms_n 修复短时间内(释放/加载)同一资源导致加载资源是已释放后的问题
+	 *
 	 * - 解决同时加载同一资源多次导致返回的资源对象不一致的问（对象不一致会导致引用计数不一致）
+	 *
 	 * - 增加强制性资源跟随释放对象
 	 */
 	declare class mk_asset extends instance_base {
@@ -1189,10 +1234,15 @@ declare namespace mk {
 	/**
 	 * bundle 管理器
 	 * @remarks
+	 *
 	 * - 封装(加载/预加载)场景为 load_scene
+	 *
 	 * - 支持(远程/本地) bundle
+	 *
 	 * - 支持 bundle 热更
+	 *
 	 * - 封装(bundle/scene)切换事件
+	 *
 	 * - 支持 bundle 管理器，用于子游戏管理
 	 */
 	declare class mk_bundle extends instance_base {
@@ -1311,8 +1361,12 @@ declare namespace mk {
 
 	/**
 	 * http 模块
+	 * @remarks
+	 *
 	 * - post/get 支持
+	 *
 	 * - 支持任意类型的返回数据解析
+	 *
 	 * - 支持自定义编解码器
 	 */
 	declare class mk_http extends instance_base {
@@ -1434,8 +1488,11 @@ declare namespace mk {
 	/**
 	 * 多语言管理
 	 * @remarks
+	 *
 	 * - 多语言资源单位为模块，防止无用多语言资源堆积
+	 *
 	 * - 支持多语言(文本/图片/节点)，三种方式满足任何需求
+	 *
 	 * - 支持编辑器预览
 	 */
 	declare class mk_language_manage extends instance_base {
@@ -1937,10 +1994,15 @@ declare namespace mk {
 	/**
 	 * 网络系统基类
 	 * @remarks
+	 *
 	 * - 支持多实例
+	 *
 	 * - (心跳/断线重连)支持
+	 *
 	 * - 网络消息接口事件化
+	 *
 	 * - 支持消息潮
+	 *
 	 * - 网络消息模拟
 	 */
 	declare abstract class mk_network_base<CT extends codec_base = codec_base> extends instance_base {
@@ -2184,7 +2246,9 @@ declare namespace mk {
 			/**
 			 * @param network_ 网络实例
 			 * @param interval_ms_n_ 发送间隔
+			 *
 			 * - -1：手动触发
+			 *
 			 * - 0-n：自动发送间隔毫秒
 			 */
 			constructor(network_: mk_network_base, interval_ms_n_: number);
@@ -2192,8 +2256,11 @@ declare namespace mk {
 			private _network;
 			/**
 			 * 发送间隔
+			 * @remarks
+			 *
 			 * - -1：手动触发
-			 * - >0：自动发送间隔毫秒
+			 *
+			 * - \>0：自动发送间隔毫秒
 			 */
 			private _send_interval_ms_n;
 			/** 消息列表 */
@@ -2323,7 +2390,9 @@ declare namespace mk {
 		/**
 		 * 完成状态
 		 * @remarks
+		 *
 		 * - true：任务结束
+		 *
 		 * - false：任务进行中
 		 */
 		get finish_b(): boolean;
@@ -2416,9 +2485,13 @@ declare namespace mk {
 	/**
 	 * 模块管理器
 	 * @remarks
+	 *
 	 * - 支持模块(注册/打开/关闭/取消注册)
+	 *
 	 * - 内置模块对象池
+	 *
 	 * - 模块栈
+	 *
 	 * - 全屏 UI 展示优化
 	 */
 	declare class mk_ui_manage extends instance_base {
@@ -2705,7 +2778,9 @@ declare namespace mk {
 	/**
 	 * 多边形遮罩
 	 * @remarks
+	 *
 	 * - 多边形图片遮罩
+	 *
 	 * - 多边形触摸屏蔽
 	 */
 	export declare class polygon_mask extends cc_2.Component {
@@ -2760,7 +2835,9 @@ declare namespace mk {
 	/**
 	 * 对象释放器
 	 * @remarks
+	 *
 	 * - 统一 (cc.Node/cc.Asset) 资源的释放逻辑
+	 *
 	 * - 可以通过 function 或继承添加自定义释放逻辑
 	 */
 	export declare class release {
@@ -2803,6 +2880,7 @@ declare namespace mk {
 	/**
 	 * 存储器（类型安全）
 	 * @remarks
+	 *
 	 * - (原生/web)接口分离，获得更高的性能
 	 */
 	export declare class storage<CT extends Object> {
@@ -2929,8 +3007,11 @@ declare namespace mk {
 	/**
 	 * 视图基类
 	 * @remarks
+	 *
 	 * - 添加编辑器快捷操作
+	 *
 	 * - 添加弹窗动画配置
+	 *
 	 * - 独立展示配置
 	 */
 	export declare class view_base extends life_cycle {

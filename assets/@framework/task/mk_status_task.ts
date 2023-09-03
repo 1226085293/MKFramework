@@ -28,7 +28,9 @@ class mk_status_task<CT = void> {
 	/**
 	 * 完成状态
 	 * @remarks
+	 *
 	 * - true：任务结束
+	 *
 	 * - false：任务进行中
 	 */
 	get finish_b(): boolean {

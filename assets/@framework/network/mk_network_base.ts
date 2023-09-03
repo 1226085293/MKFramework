@@ -196,10 +196,15 @@ namespace _mk_network_base {
 /**
  * 网络系统基类
  * @remarks
+ *
  * - 支持多实例
+ *
  * - (心跳/断线重连)支持
+ *
  * - 网络消息接口事件化
+ *
  * - 支持消息潮
+ *
  * - 网络消息模拟
  */
 abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends mk_instance_base {
@@ -697,7 +702,9 @@ export namespace mk_network_base_ {
 		/**
 		 * @param network_ 网络实例
 		 * @param interval_ms_n_ 发送间隔
+		 *
 		 * - -1：手动触发
+		 *
 		 * - 0-n：自动发送间隔毫秒
 		 */
 		constructor(network_: mk_network_base, interval_ms_n_: number) {
@@ -709,8 +716,11 @@ export namespace mk_network_base_ {
 		private _network!: mk_network_base;
 		/**
 		 * 发送间隔
+		 * @remarks
+		 *
 		 * - -1：手动触发
-		 * - >0：自动发送间隔毫秒
+		 *
+		 * - \>0：自动发送间隔毫秒
 		 */
 		private _send_interval_ms_n: number;
 		/** 消息列表 */

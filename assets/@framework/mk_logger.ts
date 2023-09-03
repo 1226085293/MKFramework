@@ -49,9 +49,13 @@ namespace _mk_logger {
  * 日志打印器
  * @remarks
  * 单例对象打印名为 default
+ *
  * - 支持多实例
+ *
  * - 打印等级控制
+ *
  * - 打印屏蔽控制
+ *
  * - 报错日志 http 上传
  */
 class mk_logger extends mk_instance_base {

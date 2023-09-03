@@ -309,7 +309,9 @@ export namespace mk_audio_base_ {
 		 * 使用 play 接口，默认使用 playOneShot
 		 * @remarks
 		 * common 使用
+		 *
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
+		 *
 		 * - playOneShot 接口不能暂停
 		 */
 		use_play_b?: boolean;
@@ -347,7 +349,9 @@ export namespace mk_audio_base_ {
 		 * 使用 play 接口，默认使用 playOneShot
 		 * @remarks
 		 * common 使用
+		 *
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
+		 *
 		 * - playOneShot 接口不能暂停
 		 */
 		use_play_b: boolean;
@@ -410,7 +414,9 @@ export namespace mk_audio_base_ {
 		 * 使用 play 接口，默认使用 playOneShot
 		 * @remarks
 		 * common 使用
+		 *
 		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
+		 *
 		 * - playOneShot 接口不能暂停
 		 */
 		use_play_b?: boolean;
@@ -426,6 +432,8 @@ export namespace mk_audio_base_ {
 
 		/**
 		 * 音量
+		 * @remarks
+		 *
 		 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
 		 */
 		get volume_n(): number {
@@ -612,6 +620,7 @@ export namespace mk_audio_base_ {
 
 		/**
 		 * 停止
+		 * @remarks
 		 * - 停止后播放的音频将跳过
 		 */
 		stop(state_b_ = true): void {
