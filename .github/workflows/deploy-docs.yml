@@ -52,4 +52,4 @@ jobs:
           git config --local user.email "1226085293@qq.com"
           git add .
           git commit -m "Update Docs"
-          git push
+          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/1226085293/test.git
