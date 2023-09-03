@@ -1,0 +1,40 @@
+name: 更新文档
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v2
+        with:
+          repository: git@github.com:1226085293/MKFramework.git
+
+      - name: Install dependencies and build framework docs
+        run: |
+          cd tool/api-extractor
+          npm install
+          npm run 构建框架文档
+
+      - name: Copy docs folder
+        run: cp -r tool/api-extractor/docs $GITHUB_WORKSPACE/docs
+
+      - name: Checkout target repository
+        uses: actions/checkout@v2
+        with:
+          repository: git@github.com:1226085293/test.git
+          path: target-repo
+
+      - name: Commit and push changes
+        run: |
+          cd target-repo
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update docs"
+          git push origin main
