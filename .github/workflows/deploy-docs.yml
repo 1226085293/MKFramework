@@ -54,6 +54,10 @@ jobs:
         run: |
           cp -R ../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }} ./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
 
+      - name: 列出更改文件
+        run: |
+          ls -R ${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}
+  
       - name: 推送到输出仓库
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
