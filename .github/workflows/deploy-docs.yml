@@ -13,7 +13,7 @@ jobs:
       - name: Checkout source repository
         uses: actions/checkout@v2
         with:
-          repository: https://github.com/1226085293/MKFramework.git
+          repository: https://github.com/1226085293/MKFramework
 
       - name: Install dependencies and build framework docs
         run: |
@@ -27,7 +27,7 @@ jobs:
       - name: Checkout target repository
         uses: actions/checkout@v2
         with:
-          repository: https://github.com/1226085293/test.git
+          repository: https://github.com/1226085293/test
           path: target-repo
 
       - name: Commit and push changes
