@@ -36,8 +36,12 @@ jobs:
 
       - name: Copy docs folder from repository A to repository B
         run: |
-          cp -R ../MKFramework/tool/api-extractor/docs ./tool/docs
+          cp -R ../MKFramework/tool/api-extractor/docs ./test/tool/docs
   
+      - name: List files in tool/docs directory
+        run: |
+          ls -R test/tool/docs
+
       - name: Commit and push changes to repository B
         run: |
           cd test
