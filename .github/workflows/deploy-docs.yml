@@ -28,11 +28,6 @@ jobs:
           repository: 1226085293/${{ env.INPUT_WAREHOUSE_NAME }}
           fetch-depth: 0
 
-      - name: 设置用户名和邮箱
-        run: |
-          git config --global user.name "muzzik"
-          git config --global user.email "1226085293@qq.com"
-
       - name: 构建框架文档
         run: |
           cd tool/api-extractor
