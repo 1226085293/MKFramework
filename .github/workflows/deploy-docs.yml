@@ -56,19 +56,22 @@ jobs:
         run: |
           cp -R "../${{ env.INPUT_WAREHOUSE_NAME }}/${{ env.INPUT_PATH }}/." "./${{ env.OUTPUT_WAREHOUSE_NAME }}/${{ env.OUTPUT_PATH }}"
 
-      - name: 检查文件是否存在
-        id: check_files
+      - name: 检查提交
+        id: check_commit
         run: |
           cd "${{ env.OUTPUT_WAREHOUSE_NAME }}"
-          if [ -z "$(ls -A "${{ env.OUTPUT_PATH }}")" ]; then
-            echo "::set-output name=files_exist::false"
+          git fetch
+          if [ -n "$(git diff origin/main)" ]; then
+            echo "::set-output name=commit_exists::true"
           else
-            echo "::set-output name=files_exist::true"
+            echo "::set-output name=commit_exists::false"
           fi
-          echo "文件是否存在：${{ steps.check_files.outputs.files_exist }}"
+
+      - name: 打印结果
+        run: echo "提交是否存在：${{ steps.check_commit.outputs.commit_exists }}"
 
       - name: 推送到输出仓库
-        if: steps.check_files.outputs.files_exist == 'true'
+        # if: steps.check_commit.outputs.commit_exists
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
