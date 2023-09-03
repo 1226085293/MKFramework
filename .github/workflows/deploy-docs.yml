@@ -2,8 +2,7 @@ name: 更新文档
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev]
 
 jobs:
   build:
@@ -23,7 +22,7 @@ jobs:
           npm run 构建框架文档
 
       - name: Copy docs folder
-        run: cp -r tool/api-extractor/docs $GITHUB_WORKSPACE/docs
+        run: cp -r tool/api-extractor/docs $GITHUB_WORKSPACE/test/docs
 
       - name: Checkout target repository
         uses: actions/checkout@v3
