@@ -71,7 +71,7 @@ jobs:
         run: echo "提交是否存在：${{ steps.check_commit.outputs.commit_exists }}"
 
       - name: 推送到输出仓库
-        # if: steps.check_commit.outputs.commit_exists
+        if: steps.check_commit.outputs.commit_exists
         run: |
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
           git add .
