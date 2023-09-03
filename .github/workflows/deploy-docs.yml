@@ -12,7 +12,7 @@ env:
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
 
 permissions:
   contents: write
@@ -66,9 +66,6 @@ jobs:
           else
             echo "::set-output name=commit_exists::false"
           fi
-
-      - name: 打印结果
-        run: echo "提交是否存在：${{ steps.check_commit.outputs.commit_exists }}"
 
       - name: 推送到输出仓库
         if: steps.check_commit.outputs.commit_exists == 'true'
