@@ -43,7 +43,9 @@ jobs:
         run: |
           git clone https://github.com/1226085293/${{ env.OUTPUT_WAREHOUSE_NAME }}.git
           cd ${{ env.OUTPUT_WAREHOUSE_NAME }}
-          rm -rf ${{ env.OUTPUT_PATH }}
+          if [ -d "${{ env.OUTPUT_PATH }}" ]; then
+            rm -rf ${{ env.OUTPUT_PATH }}
+          fi
   
       - name: 创建输出目录
         run: |
