@@ -47,6 +47,10 @@ import { argv } from "process";
 					output_file_name_s = "README.md";
 					// 添加索引
 					meta_ss.push("index: true");
+					// 禁止首页展示
+					meta_ss.push("article: false");
+					// 禁止时间线
+					meta_ss.push("timeline: false");
 				} else {
 					// 例：root/aaa/aaa.md -> root/aaa.md
 					temp_dir_path_s = temp_dir_path_s.slice(0, -(output_file_name_s.slice(0, -3).length + path.sep.length));
