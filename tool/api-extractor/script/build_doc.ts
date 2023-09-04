@@ -38,7 +38,14 @@ import { argv } from "process";
 			/** 文件内容 */
 			let file_s = fs.readFileSync(path.join(ouput_path_s, v_s), "utf-8");
 			/** 元数据 */
-			let meta_ss: string[] = [`title: ${file_name_s.slice(0, -3)}`];
+			let meta_ss: string[] = [
+				// 标题
+				`title: ${file_name_s.slice(0, -3)}`,
+				// 禁止首页展示
+				"article: false",
+				// 禁止时间线展示
+				"timeline: false",
+			];
 
 			// 重命名为 README.md
 			if (temp_dir_path_s.endsWith(path.join(file_name_s.slice(0, -3), path.sep))) {
@@ -47,10 +54,6 @@ import { argv } from "process";
 					output_file_name_s = "README.md";
 					// 添加索引
 					meta_ss.push("index: true");
-					// 禁止首页展示
-					meta_ss.push("article: false");
-					// 禁止时间线
-					meta_ss.push("timeline: false");
 				} else {
 					// 例：root/aaa/aaa.md -> root/aaa.md
 					temp_dir_path_s = temp_dir_path_s.slice(0, -(output_file_name_s.slice(0, -3).length + path.sep.length));
