@@ -17,11 +17,5 @@
     "legacyFbxImporter": {
       "visible": true
     }
-  },
-  "layer": [
-    {
-      "name": "RT",
-      "value": 1
-    }
-  ]
+  }
 }
