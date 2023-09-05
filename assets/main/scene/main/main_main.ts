@@ -1,3 +1,5 @@
+import * as cc from "cc";
+import main_main_nodes from "./main_main_nodes";
 import { _decorator } from "cc";
 import mk from "mk";
 import { resources_audio } from "../../../resources/module/audio/resources_audio";
@@ -12,6 +14,9 @@ const { ccclass, property } = _decorator;
 
 @ccclass("main_main")
 export class main_main extends mk.view_base {
+	@property(main_main_nodes)
+	nodes = new main_main_nodes();
+
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */
@@ -45,6 +50,9 @@ export class main_main extends mk.view_base {
 				},
 			},
 		];
+
+		camera_rt: cc.Camera = null!;
+		touch_pos_v2!: cc.Vec2;
 	})();
 
 	/* ------------------------------- 生命周期 ------------------------------- */
@@ -54,5 +62,55 @@ export class main_main extends mk.view_base {
 		mk.ui_manage.regis(resources_module, "db://assets/resources/module/module/resources_module.prefab", main_bundle);
 		mk.ui_manage.regis(resources_network, "db://assets/resources/module/network/resources_network.prefab", main_bundle);
 		mk.ui_manage.regis(resources_guide, "db://assets/resources/module/guide/resources_guide.prefab", main_bundle);
+	}
+
+	open(): void {
+		this.data.camera_rt = this.nodes.camera_rt.getComponent(cc.Camera)!;
+		this.data.camera_rt.targetTexture!.resize(cc.view.getDesignResolutionSize().width, cc.view.getDesignResolutionSize().height);
+
+		this.node.on(
+			cc.Node.EventType.TOUCH_END,
+			(event: cc.EventTouch) => {
+				this.data.touch_pos_v2 = event.getUILocation();
+
+				const node = this.traverse_nodes_f();
+
+				if (node) {
+					node.sprite.color = cc.Color.RED;
+					this.scheduleOnce(() => {
+						node.sprite.color = cc.Color.WHITE;
+					}, 1);
+				}
+			},
+			this
+		);
+	}
+
+	traverse_nodes_f(node_ = this.nodes.check_node, parent_: cc.Node = null!): cc.Node {
+		for (const v of node_.children) {
+			const node = this.traverse_nodes_f(v, node_);
+
+			if (node) {
+				return node;
+			}
+		}
+
+		// 检查碰撞
+		if (parent_) {
+			const old_layer = node_.layer;
+
+			node_.layer = 1;
+			this.data.camera_rt.camera.update();
+
+			const color_as = this.data.camera_rt.targetTexture!.readPixels(this.data.touch_pos_v2.x, this.data.touch_pos_v2.y, 1, 1)!;
+
+			if (color_as.slice(0, 3).find((v) => v !== 0)) {
+				return node_;
+			}
+
+			node_.layer = old_layer;
+		}
+
+		return null!;
 	}
 }
