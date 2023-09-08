@@ -1,4 +1,6 @@
 import * as typedoc from "typedoc";
+import fs from "fs";
+import path from "path";
 
 async function main() {
 	// Application.bootstrap also exists, which will not load plugins
@@ -11,7 +13,7 @@ async function main() {
 		// 输入
 		entryPoints: ["../../assets/@framework/mk_export_docs.ts"],
 		// 输出
-		out: "docs",
+		// out: "docs",
 		// 插件
 		plugin: ["typedoc-plugin-no-inherit", "typedoc-plugin-markdown"],
 		// 排序（markdown 无效）
@@ -20,19 +22,29 @@ async function main() {
 		excludePrivate: true,
 		// 排除 @internal
 		excludeInternal: true,
+		// README
+		readme: "none",
 	});
 
 	const project = await app.convert();
 
-	if (project) {
-		// Project may not have converted correctly
-		const outputDir = "docs";
-
-		// Rendered docs
-		await app.generateDocs(project, outputDir);
-		// Alternatively generate JSON output
-		await app.generateJson(project, outputDir + "/documentation.json");
+	if (!project) {
+		return;
 	}
+
+	// Project may not have converted correctly
+	const outputDir = "./docs";
+
+	// Rendered docs
+	await app.generateDocs(project, outputDir);
+	// Alternatively generate JSON output
+	await app.generateJson(project, outputDir + "/documentation.json");
+
+	// 添加 README 元数据
+	fs.writeFileSync(
+		path.join(outputDir, "README.md"),
+		fs.readFileSync("./README.md", "utf-8") + "\n" + fs.readFileSync(path.join(outputDir, "README.md"), "utf-8")
+	);
 }
 
 main().catch(console.error);
