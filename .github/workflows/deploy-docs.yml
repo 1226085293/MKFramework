@@ -35,9 +35,7 @@ jobs:
 
       - name: 构建框架文档
         run: |
-          cd ./
-          npm install
-          npx run 构建框架文档
+          npm run 构建框架文档
 
       - name: 清空输出目录
         run: |
