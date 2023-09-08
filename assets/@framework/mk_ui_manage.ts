@@ -19,6 +19,7 @@ namespace _mk_ui_manage {
 
 /**
  * 模块管理器
+ * @noInheritDoc
  * @remarks
  *
  * - 支持模块(注册/打开/关闭/取消注册)
@@ -74,7 +75,7 @@ export class mk_ui_manage extends mk_instance_base {
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 注册模块
-	 * @param key_ 模块名
+	 * @param key_ 模块键
 	 * @param source_ 模块来源
 	 * @param target_ 跟随释放对象
 	 * @param config_ 模块配置
@@ -308,7 +309,8 @@ export class mk_ui_manage extends mk_instance_base {
 
 	/**
 	 * 打开模块
-	 * @param key_ 模块类型，必须经过 {@inheritdoc mk_ui_manage.regis} 接口注册过
+	 * @param key_ 模块键，必须经过 {@link regis} 接口注册过
+	 * @param config_ 打开配置
 	 * @returns
 	 */
 	async open<T extends cc.Constructor<mk_view_base> & Function, T2 = T["prototype"]>(
@@ -469,9 +471,9 @@ export class mk_ui_manage extends mk_instance_base {
 	}
 
 	/**
-	 * 关闭 ui
-	 * @param args_ 节点/模块类型/模块实例
-	 * @param config 配置
+	 * 关闭模块
+	 * @param args_ 节点/模块键/模块实例
+	 * @param config_ 关闭配置
 	 * @returns
 	 */
 	async close<T extends cc.Constructor<mk_view_base>, T2 extends mk_view_base>(
@@ -783,7 +785,10 @@ export namespace mk_ui_manage_ {
 		pool_init_fill_n = 1;
 	}
 
-	/** 模块注册数据 */
+	/**
+	 * 模块注册数据
+	 * @noInheritDoc
+	 */
 	export class regis_data<CT extends cc.Constructor<mk_view_base>> extends regis_config<CT> {
 		constructor(init_?: Partial<regis_data<CT>>) {
 			super(init_);

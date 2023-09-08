@@ -7,6 +7,10 @@ import mk_life_cycle from "../../module/mk_life_cycle";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
 
+/**
+ * 多语言组件基类
+ * @noInheritDoc
+ */
 @ccclass
 @executeInEditMode
 abstract class mk_language_base extends mk_life_cycle {

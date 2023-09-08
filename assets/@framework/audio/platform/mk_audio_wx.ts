@@ -4,7 +4,10 @@ import mk_audio_base, { mk_audio_base_ } from "../mk_audio_base";
 
 const { ccclass } = cc._decorator;
 
-/** 微信音频 */
+/**
+ * 微信音频
+ * @noInheritDoc
+ */
 class mk_audio_wx extends mk_audio_base {
 	/* --------------- protected --------------- */
 	/** 日志 */

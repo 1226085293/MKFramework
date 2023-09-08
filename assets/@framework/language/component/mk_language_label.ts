@@ -9,6 +9,10 @@ import mk_language_manage from "../mk_language_manage";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = cc._decorator;
 
+/**
+ * 多语言文本
+ * @noInheritDoc
+ */
 @ccclass
 @executeInEditMode
 class mk_language_label extends mk_language_base {

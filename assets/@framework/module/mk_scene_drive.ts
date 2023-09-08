@@ -9,6 +9,7 @@ const { ccclass, property } = cc._decorator;
 
 /**
  * 场景驱动
+ * @noInheritDoc
  * @remarks
  * 场景加载完成后自动执行生命周期函数，驱动模块系统
  */

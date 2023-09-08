@@ -94,10 +94,11 @@ namespace _mk_monitor {
 
 /**
  * 数据监听器（类型安全）
+ * @noInheritDoc
  * @remarks
  * 可以用以 mvvm 搭建及使用，注意：监听回调仅在下一帧被调用
  */
-class mk_monitor extends mk_instance_base {
+export class mk_monitor extends mk_instance_base {
 	/** 日志管理 */
 	private _log = new mk_logger("monitor");
 	/** 绑定数据图 */

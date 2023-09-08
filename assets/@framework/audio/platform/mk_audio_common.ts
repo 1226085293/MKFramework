@@ -8,6 +8,7 @@ const { ccclass } = cc._decorator;
 
 /**
  * 通用音频
+ * @noInheritDoc
  * @remarks
  *
  * - 引擎 bug：3.7.2 以下版本不能同时播放两个以上的音频

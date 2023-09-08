@@ -12,8 +12,11 @@ namespace _mk_game {
 	}
 }
 
-/** 游戏功能管理器 */
-class mk_game extends mk_instance_base {
+/**
+ * 游戏全局功能
+ * @noInheritDoc
+ */
+export class mk_game extends mk_instance_base {
 	/* --------------- public --------------- */
 	/** 重启中 */
 	get restarting_b(): boolean {

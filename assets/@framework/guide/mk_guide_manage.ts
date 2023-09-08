@@ -6,6 +6,7 @@ import mk_bundle from "../resources/mk_bundle";
 
 /**
  * 引导管理器
+ * @noInheritDoc
  * @remarks
  *
  * - 支持多实例

@@ -22,7 +22,8 @@ namespace _mk_language_manage {
 }
 
 /**
- * 多语言管理
+ * 多语言管理器
+ * @noInheritDoc
  * @remarks
  *
  * - 多语言资源单位为模块，防止无用多语言资源堆积
@@ -31,7 +32,7 @@ namespace _mk_language_manage {
  *
  * - 支持编辑器预览
  */
-class mk_language_manage extends mk_instance_base {
+export class mk_language_manage extends mk_instance_base {
 	/* --------------- public --------------- */
 	/** 事件 */
 	event = new mk_event_target<_mk_language_manage.event_protocol>();

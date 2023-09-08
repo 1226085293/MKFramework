@@ -5,12 +5,8 @@
 	"main": "dist/index.js",
 	"author": "muzzik",
 	"license": "ISC",
-	"scripts": {
-		"构建框架声明文件": "npx ts-node ./script/build_dts.ts",
-		"构建框架文档": "npx ts-node ./script/build_doc.ts"
-	},
+	"scripts": {},
 	"dependencies": {
-		"@microsoft/api-documenter": "^7.22.17",
 		"@microsoft/api-extractor": "^7.34.4",
 		"@types/node": "^20.1.4",
 		"@types/prettier": "^2.7.2",

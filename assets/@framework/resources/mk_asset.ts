@@ -49,6 +49,7 @@ namespace _mk_asset {
 
 /**
  * 资源管理器
+ * @noInheritDoc
  * @remarks
  *
  * - 统一加载接口为 get、get_dir
@@ -67,7 +68,7 @@ namespace _mk_asset {
  *
  * - 增加强制性资源跟随释放对象
  */
-class mk_asset extends mk_instance_base {
+export class mk_asset extends mk_instance_base {
 	constructor() {
 		super();
 
