@@ -1,5 +1,5 @@
 <div style="text-align:center">
-    <img src="./home/logo.png" alt="Image" />
+    <img src="https://gitee.com/muzzik/MKFramework/raw/main/home/logo.png" alt="Image" />
 </div>
 
 # Cocos Creator 3.x 游戏开发框架 (Beta)
@@ -9,7 +9,7 @@
 > 游戏开发必备功能配齐，个人开发经验积累的果实，可以满足大部分游戏开发场景
 
 <div style="text-align:center">
-    <img src="./home/功能简介.png" alt="Image" />
+    <img src="https://gitee.com/muzzik/MKFramework/raw/main/home/功能简介.png" alt="Image" />
 </div>
 
 ---
