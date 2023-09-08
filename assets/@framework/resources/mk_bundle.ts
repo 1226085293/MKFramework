@@ -44,6 +44,7 @@ namespace _mk_bundle {
 
 /**
  * bundle 管理器
+ * @noInheritDoc
  * @remarks
  *
  * - 封装(加载/预加载)场景为 load_scene
@@ -56,7 +57,7 @@ namespace _mk_bundle {
  *
  * - 支持 bundle 管理器，用于子游戏管理
  */
-class mk_bundle extends mk_instance_base {
+export class mk_bundle extends mk_instance_base {
 	constructor() {
 		super();
 
@@ -487,7 +488,10 @@ export namespace mk_bundle_ {
 		origin_s?: string;
 	}
 
-	/** bundle 数据 */
+	/**
+	 * bundle 数据
+	 * @noInheritDoc
+	 */
 	export class bundle_data extends bundle_info {
 		constructor(init_: bundle_data) {
 			super(init_);
@@ -545,6 +549,7 @@ export namespace mk_bundle_ {
 
 	/**
 	 * bundle 管理器基类
+	 * @noInheritDoc
 	 * @remarks
 	 * 注意生命周期函数 open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 	 */

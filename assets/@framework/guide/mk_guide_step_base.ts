@@ -5,7 +5,10 @@ import type { mk_guide_manage_ } from "./mk_guide_manage";
 import { _decorator } from "cc";
 const { ccclass, property } = _decorator;
 
-/** 引导步骤基类 */
+/**
+ * 引导步骤基类
+ * @noInheritDoc
+ */
 @ccclass("mk_guide_step_base")
 abstract class mk_guide_step_base<CT extends Record<string, mk_guide_manage_.operate_cell> = any> extends cc.Component {
 	/** 步骤序号 */

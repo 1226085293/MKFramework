@@ -6,8 +6,8 @@
     "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",
     "prettier 全局格式化": "npx prettier --write ./assets/**/*.ts",
     "查找循环依赖": "npx madge --circular --extensions ts ./assets/",
-    "开启 http 服务器": "npx ts-node tool/script/websocket_server/index.ts",
-    "生成 proto": "npx ts-node ./tool/script/generate_proto/index.ts ./proto ./assets/resources/config/proto 0 test 100"
+    "构建框架 d.ts": "cd ./tool/api-extractor && npx ts-node ./script/build_dts.ts",
+    "构建框架文档": "cd ./tool/typedoc && npx ts-node ./script/build_doc.ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.34.0",
@@ -22,7 +22,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.7.4"
   },
-  "name": "mk_framework",
+  "name": "mk-framework",
   "type": "module",
   "uuid": "0db88ab0-0e0d-4a27-98dc-7d2c966dad01",
   "version": "3.6.3",

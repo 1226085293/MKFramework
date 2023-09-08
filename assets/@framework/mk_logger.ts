@@ -47,6 +47,7 @@ namespace _mk_logger {
 
 /**
  * 日志打印器
+ * @noInheritDoc
  * @remarks
  * 单例对象打印名为 default
  *

@@ -9,6 +9,10 @@ import mk_tool from "../../@private/tool/mk_tool";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode, requireComponent } = cc._decorator;
 
+/**
+ * 多语言图片
+ * @noInheritDoc
+ */
 @ccclass
 @requireComponent(cc.Sprite)
 @executeInEditMode

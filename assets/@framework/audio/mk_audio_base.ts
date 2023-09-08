@@ -10,7 +10,10 @@ import global_config from "../../@config/global_config";
 
 const { ccclass, property } = cc._decorator;
 
-/** 音频基类 */
+/**
+ * 音频基类
+ * @noInheritDoc
+ */
 abstract class mk_audio_base extends mk_instance_base {
 	constructor() {
 		super();

@@ -195,6 +195,7 @@ namespace _mk_network_base {
 
 /**
  * 网络系统基类
+ * @noInheritDoc
  * @remarks
  *
  * - 支持多实例

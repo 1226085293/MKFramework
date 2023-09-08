@@ -4,6 +4,7 @@ import * as cc from "cc";
 
 /**
  * http 模块
+ * @noInheritDoc
  * @remarks
  *
  * - post/get 支持
@@ -12,7 +13,7 @@ import * as cc from "cc";
  *
  * - 支持自定义编解码器
  */
-class mk_http extends mk_instance_base {
+export class mk_http extends mk_instance_base {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 通用方法 */
 	async open(type_s_: "GET" | "POST", url_s_: string, config_?: Partial<mk_http_.config>): Promise<void> {

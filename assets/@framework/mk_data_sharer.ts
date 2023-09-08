@@ -3,6 +3,7 @@ import mk_status_task from "./task/mk_status_task";
 
 /**
  * 数据共享器
+ * @noInheritDoc
  * @remarks
  * 用以模块间共享数据
  *

@@ -102,6 +102,7 @@ namespace _mk_view_base {
 
 /**
  * 视图基类
+ * @noInheritDoc
  * @remarks
  *
  * - 添加编辑器快捷操作

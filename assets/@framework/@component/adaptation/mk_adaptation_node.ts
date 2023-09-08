@@ -31,7 +31,10 @@ namespace _mk_adaptation_node {
 	}
 }
 
-/** 节点适配 */
+/**
+ * 节点适配
+ * @noInheritDoc
+ */
 @ccclass
 @executeInEditMode
 export default class mk_adaptation_node extends cc.Component {

@@ -41,7 +41,10 @@ namespace _mk_language_node {
 	}
 }
 
-/** 多语言节点 */
+/**
+ * 多语言节点
+ * @noInheritDoc
+ */
 @ccclass
 class mk_language_node extends mk_life_cycle {
 	/* --------------- 属性 --------------- */

@@ -71,6 +71,7 @@ export namespace _mk_life_cycle {
 
 /**
  * 生命周期
+ * @noInheritDoc
  * @remarks
  * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
  *

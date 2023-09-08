@@ -26,6 +26,7 @@ export namespace _mk_layer {
 
 /**
  * 层级管理
+ * @noInheritDoc
  * @remarks
  *
  * - 动态多类型层级划分

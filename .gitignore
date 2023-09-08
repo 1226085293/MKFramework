@@ -23,6 +23,7 @@ node_modules/
 #//////////////////////////
 .idea/
 extensions/
-/tool/api-extractor/dist
-/tool/api-extractor/docs
+tool/api-extractor/dist
+tool/api-extractor/docs
 tool/api-extractor/etc
+tool/typedoc/docs

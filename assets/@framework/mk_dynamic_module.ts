@@ -3,10 +3,11 @@ import { mk_log } from "./mk_logger";
 
 /**
  * 动态模块
+ * @noInheritDoc
  * @remarks
  * 用以解除循环引用
  */
-class mk_dynamic_module extends mk_instance_base {
+export class mk_dynamic_module extends mk_instance_base {
 	/**
 	 * 获取模块默认导出
 	 * @param module_ 动态模块

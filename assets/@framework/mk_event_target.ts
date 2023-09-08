@@ -2,6 +2,7 @@ import * as cc from "cc";
 
 /**
  * 事件对象（类型安全）
+ * @noInheritDoc
  * @remarks
  * 获取事件键使用 event_target.key.xxx
  */
