@@ -6,8 +6,8 @@
     "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",
     "prettier 全局格式化": "npx prettier --write ./assets/**/*.ts",
     "查找循环依赖": "npx madge --circular --extensions ts ./assets/",
-    "构建框架 d.ts": "cd ./tool/api-extractor && npx ts-node ./script/build_dts.ts",
-    "构建框架文档": "cd ./tool/typedoc && npx ts-node ./script/build_doc.ts"
+    "构建框架 d.ts": "cd ./tool/api-extractor && npm install && npx ts-node ./script/build_dts.ts",
+    "构建框架文档": "cd ./tool/typedoc && npm install && npx ts-node ./script/build_doc.ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.34.0",
