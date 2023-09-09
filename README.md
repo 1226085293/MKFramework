@@ -20,7 +20,7 @@
 
 案例教程：待添加...
 
-API 接口：https://muzzik.gitee.io/MK%E6%A1%86%E6%9E%B6/API%20%E6%8E%A5%E5%8F%A3/mk/
+API 接口：https://muzzik.gitee.io/MK%E6%A1%86%E6%9E%B6/API%20%E6%8E%A5%E5%8F%A3/
 
 ## 🛠️ 安装框架
 
