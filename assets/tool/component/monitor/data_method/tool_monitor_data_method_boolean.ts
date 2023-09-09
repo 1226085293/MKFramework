@@ -9,13 +9,19 @@ export function check_type(data_: any): boolean {
 }
 
 export namespace 显示隐藏 {
-	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node): void {
+	@ccclass("data_method_boolean/显示隐藏")
+	export class ccclass_params extends tool_monitor_trigger_event {
+		@property({ displayName: "反向" })
+		reverse_b = false;
+	}
+
+	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: ccclass_params): void {
 		mk.monitor
 			.on(
 				target_,
 				key_,
 				(value) => {
-					node_.active = Boolean(value);
+					node_.active = params_?.reverse_b ? !value : Boolean(value);
 				},
 				target_
 			)
