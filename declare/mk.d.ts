@@ -2,83 +2,8 @@
 import global_config from "../assets/@config/global_config";
 import * as cc_2 from "cc";
 
-/**
- * 资源管理器
- * @noInheritDoc
- * @remarks
- *
- * - 统一加载接口为 get、get_dir
- *
- * - 支持 EDITOR 环境加载资源
- *
- * - 加载图片无需后缀，通过类型自动添加
- *
- * - 加载路径扩展，例：db://xxx.prefab
- *
- * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
- *
- * - 通过 cache_lifetime_ms_n 修复短时间内(释放/加载)同一资源导致加载资源是已释放后的问题
- *
- * - 解决同时加载同一资源多次导致返回的资源对象不一致的问（对象不一致会导致引用计数不一致）
- *
- * - 增加强制性资源跟随释放对象
- */
 declare namespace mk {
-	export declare class asset extends instance_base {
-		constructor();
-		/** 全局配置 */
-		static config: _mk_asset.global_config;
-		/** 日志 */
-		private _log;
-		/** 管理表 */
-		private _asset_manage_map;
-		/** 释放表 */
-		private _asset_release_map;
-		/** 释放定时器 */
-		private _release_timer;
-		/**
-		 * 获取资源
-		 * @param path_s_ 资源路径
-		 * @param type_ 资源类型
-		 * @param target_ 跟随释放对象
-		 * @param config_ 获取配置
-		 * @returns
-		 */
-		get<T extends cc_2.Asset>(
-			path_s_: string,
-			type_: cc_2.Constructor<T>,
-			target_: asset_.follow_release_object | null,
-			config_?: asset_.get_config<T>
-		): Promise<T | null>;
-		/**
-		 * 获取文件夹资源
-		 * @param path_s_ 资源路径
-		 * @param type_ 资源类型
-		 * @param target_ 跟随释放对象
-		 * @param config_ 获取配置
-		 * @returns
-		 */
-		get_dir<T extends cc_2.Asset>(
-			path_s_: string,
-			type_: cc_2.Constructor<T>,
-			target_: asset_.follow_release_object | null,
-			config_?: asset_.get_dir_config<T>
-		): Promise<T[] | null>;
-		/**
-		 * 释放资源
-		 * @param asset_ 释放的资源
-		 */
-		release(asset_: cc_2.Asset | cc_2.Asset[]): void;
-		/** 资源初始化 */
-		private _asset_init;
-		/**
-		 * 自动释放资源
-		 * @param force_b_ 强制
-		 * @returns
-		 */
-		private _auto_release_asset;
-		private _event_restart;
-	}
+	export declare const asset: mk_asset;
 
 	export declare namespace asset_ {
 		/** 加载文件夹配置 */
@@ -108,57 +33,18 @@ declare namespace mk {
 	}
 
 	/**
-	 * 音频基类
-	 * @noInheritDoc
+	 * 音频管理器
+	 * @remarks
+	 *
+	 * - (动态/静态)音频支持
+	 *
+	 * - 音频(类型/分组)双分类支持
+	 *
+	 * - (通用/微信)版本管理器
+	 *
+	 * - 统一音频事件
 	 */
-	export declare abstract class audio extends instance_base {
-		constructor();
-		/** 日志 */
-		protected abstract _log: logger;
-		/** 音频组 */
-		protected _group_map: Map<number, audio_.group>;
-		/** 暂停 */
-		abstract pause(audio_: audio_.unit): void;
-		/** 停止 */
-		abstract stop(audio_: audio_.unit): void;
-		/** 获取音频实例 */
-		protected abstract _get_audio_unit<T extends audio_._unit>(init_?: Partial<audio_._unit>): T;
-		/**
-		 * 获取音频组
-		 * @param group_n_ 组类型
-		 * @returns
-		 */
-		get_group(group_n_: number): audio_.group;
-		/**
-		 * 添加音频单元
-		 * @param url_s_ 音频资源路径
-		 * @param target_ 跟随释放对象
-		 * @param config_ 添加配置
-		 */
-		add(url_s_: string, target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
-		/**
-		 * 添加音频单元
-		 * @param url_ss_ 音频资源路径列表
-		 * @param target_ 跟随释放对象
-		 * @param config_ 添加配置
-		 */
-		add(url_ss_: string[], target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<audio_.unit[] | null>;
-		/**
-		 * 播放音效
-		 * @param audio_ 音频单元
-		 * @param config_ 播放配置
-		 * @returns
-		 */
-		play(audio_: audio_.unit, config_?: Partial<audio_.play_config>): boolean;
-		/** 暂停所有音频 */
-		pause_all(): void;
-		/** 恢复所有音频 */
-		resume_all(): void;
-		/** 停止所有音频 */
-		stop_all(): void;
-		/* Excluded from this release type: _add */
-		private _event_restart;
-	}
+	export declare const audio: mk_audio_base;
 
 	export declare namespace audio_ {
 		/** 音频状态 */
@@ -371,7 +257,7 @@ declare namespace mk {
 		}
 		/** 音频组 */
 		export class group {
-			constructor(init_: audio, priority_n_: number);
+			constructor(init_: mk_audio_base, priority_n_: number);
 			/**
 			 * 优先级
 			 * @remarks
@@ -426,72 +312,7 @@ declare namespace mk {
 		}
 	}
 
-	/**
-	 * bundle 管理器
-	 * @noInheritDoc
-	 * @remarks
-	 *
-	 * - 封装(加载/预加载)场景为 load_scene
-	 *
-	 * - 支持(远程/本地) bundle
-	 *
-	 * - 支持 bundle 热更
-	 *
-	 * - 封装(bundle/scene)切换事件
-	 *
-	 * - 支持 bundle 管理器，用于子游戏管理
-	 */
-	export declare class bundle extends instance_base {
-		constructor();
-		/** 事件 */
-		event: event_target<_mk_bundle.event_protocol>;
-		/** 上个场景bundle */
-		pre_bundle_s?: string;
-		/** 上个场景名 */
-		pre_scene_s: string;
-		/** bundle列表 */
-		bundle_map: Map<string, bundle_.bundle_data>;
-		/** 切换场景状态 */
-		switch_scene_b: boolean;
-		/** 当前场景bundle */
-		get bundle_s(): string;
-		set bundle_s(value_s_: string);
-		/** 当前场景名 */
-		get scene_s(): string;
-		set scene_s(value_s: string);
-		/** 初始化任务 */
-		private _init_task;
-		/** 引擎初始化任务 */
-		private _engine_init_task;
-		/** 日志 */
-		private _log;
-		/** 当前场景bundle */
-		private _bundle_s;
-		/** 当前场景名 */
-		private _scene_s;
-		/**
-		 * 设置 bundle 数据
-		 * @param bundle_ bundle 信息
-		 */
-		set(bundle_: bundle_.bundle_data): void;
-		/**
-		 * 加载 bundle
-		 * @param args_ bundle 名 | 加载配置
-		 * @returns
-		 */
-		load(args_: string | bundle_.load_config): Promise<cc_2.AssetManager.Bundle | null>;
-		/**
-		 * 切换场景
-		 * @param scene_s_ 场景名
-		 * @param config_ 切换配置
-		 * @returns
-		 */
-		load_scene(scene_s_: string, config_?: Partial<bundle_.switch_scene_config>): Promise<boolean>;
-		/** 重新加载 bundle */
-		reload(bundle_: bundle_.bundle_info & Required<Pick<bundle_.bundle_info, "origin_s">>): Promise<cc_2.AssetManager.Bundle | null>;
-		private _set_bundle_s;
-		private _set_scene_s;
-	}
+	export declare const bundle: mk_bundle;
 
 	export declare namespace bundle_ {
 		/** bundle 信息 */
@@ -672,26 +493,9 @@ declare namespace mk {
 		clear(): void;
 	}
 
-	/**
-	 * 动态模块
-	 * @noInheritDoc
-	 * @remarks
-	 * 用以解除循环引用
-	 */
-	export declare class dynamic_module extends instance_base {
-		/**
-		 * 获取模块默认导出
-		 * @param module_ 动态模块
-		 * @returns
-		 */
-		default<T extends Promise<any>>(module_: T): Awaited<T>["default"];
-		/**
-		 * 获取模块所有导出
-		 * @param module_ 动态模块
-		 * @returns
-		 */
-		all<T extends Promise<any>>(module_: T): Awaited<T>;
-	}
+	declare const _default: mk_http;
+
+	export declare const dynamic_module: mk_dynamic_module;
 
 	export declare const error: (...args_as_: any[]) => void;
 
@@ -766,26 +570,7 @@ declare namespace mk {
 		private _request_single;
 	}
 
-	/**
-	 * 游戏全局功能
-	 * @noInheritDoc
-	 */
-	export declare class game extends instance_base {
-		/** 重启中 */
-		get restarting_b(): boolean;
-		/** 重启中 */
-		private _restarting_b;
-		/** 暂停数据 */
-		private _pause_data_map;
-		/**
-		 * 重启游戏
-		 * @remarks
-		 * 请不要使用 cc.game.restart()，因为这会影响框架内的数据清理以及生命周期
-		 */
-		restart(): Promise<void>;
-		/* Excluded from this release type: pause */
-		/* Excluded from this release type: resume */
-	}
+	export declare const game: mk_game;
 
 	/* Excluded from this release type: global_config */
 
@@ -1053,69 +838,7 @@ declare namespace mk {
 		}
 	}
 
-	/**
-	 * 多语言管理器
-	 * @noInheritDoc
-	 * @remarks
-	 *
-	 * - 多语言资源单位为模块，防止无用多语言资源堆积
-	 *
-	 * - 支持多语言(文本/图片/节点)，三种方式满足任何需求
-	 *
-	 * - 支持编辑器预览
-	 */
-	export declare class language_manage extends instance_base {
-		/** 事件 */
-		event: event_target<_mk_language_manage.event_protocol>;
-		/** 文本数据 */
-		label_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
-		/** 纹理数据 */
-		texture_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
-		/** 当前语言类型 */
-		get type_s(): keyof typeof global_config.language.type_tab;
-		set type_s(value_: keyof typeof global_config.language.type_tab);
-		/** 获取语言数据 */
-		get data(): global_config.language.type_data;
-		/** 日志 */
-		private _log;
-		/** 当前语言类型 */
-		private _language_s;
-		/**
-		 * 获取文本
-		 * @param type_ 类型
-		 * @param mark_s_ 标识
-		 * @param config_ 配置
-		 * @returns
-		 */
-		get_label(type_: _mk_language_manage.type_type, mark_s_: string, config_?: Partial<language_.label_config>): string;
-		/**
-		 * 获取纹理
-		 * @param type_ 类型
-		 * @param mark_s_ 标记
-		 * @param target_ 跟随释放对象
-		 * @param language_ 语言
-		 * @returns
-		 */
-		get_texture(
-			type_: _mk_language_manage.type_type,
-			mark_s_: string,
-			target_: asset_.follow_release_object,
-			language_?: "zh_cn" | "en_us"
-		): Promise<cc_2.SpriteFrame | null>;
-		/**
-		 * 添加文本数据
-		 * @param type_ 类型
-		 * @param data_ 数据
-		 */
-		add_label(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
-		/**
-		 * 添加纹理数据
-		 * @param type_ 类型
-		 * @param data_ 数据
-		 */
-		add_texture(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
-		private _set_type_s;
-	}
+	export declare const language_manage: mk_language_manage;
 
 	/**
 	 * 层级管理
@@ -1362,6 +1085,83 @@ declare namespace mk {
 		export type level = _mk_logger.level;
 	}
 
+	/**
+	 * 资源管理器
+	 * @noInheritDoc
+	 * @remarks
+	 *
+	 * - 统一加载接口为 get、get_dir
+	 *
+	 * - 支持 EDITOR 环境加载资源
+	 *
+	 * - 加载图片无需后缀，通过类型自动添加
+	 *
+	 * - 加载路径扩展，例：db://xxx.prefab
+	 *
+	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
+	 *
+	 * - 通过 cache_lifetime_ms_n 修复短时间内(释放/加载)同一资源导致加载资源是已释放后的问题
+	 *
+	 * - 解决同时加载同一资源多次导致返回的资源对象不一致的问（对象不一致会导致引用计数不一致）
+	 *
+	 * - 增加强制性资源跟随释放对象
+	 */
+	declare class mk_asset extends instance_base {
+		constructor();
+		/** 全局配置 */
+		static config: _mk_asset.global_config;
+		/** 日志 */
+		private _log;
+		/** 管理表 */
+		private _asset_manage_map;
+		/** 释放表 */
+		private _asset_release_map;
+		/** 释放定时器 */
+		private _release_timer;
+		/**
+		 * 获取资源
+		 * @param path_s_ 资源路径
+		 * @param type_ 资源类型
+		 * @param target_ 跟随释放对象
+		 * @param config_ 获取配置
+		 * @returns
+		 */
+		get<T extends cc_2.Asset>(
+			path_s_: string,
+			type_: cc_2.Constructor<T>,
+			target_: asset_.follow_release_object | null,
+			config_?: asset_.get_config<T>
+		): Promise<T | null>;
+		/**
+		 * 获取文件夹资源
+		 * @param path_s_ 资源路径
+		 * @param type_ 资源类型
+		 * @param target_ 跟随释放对象
+		 * @param config_ 获取配置
+		 * @returns
+		 */
+		get_dir<T extends cc_2.Asset>(
+			path_s_: string,
+			type_: cc_2.Constructor<T>,
+			target_: asset_.follow_release_object | null,
+			config_?: asset_.get_dir_config<T>
+		): Promise<T[] | null>;
+		/**
+		 * 释放资源
+		 * @param asset_ 释放的资源
+		 */
+		release(asset_: cc_2.Asset | cc_2.Asset[]): void;
+		/** 资源初始化 */
+		private _asset_init;
+		/**
+		 * 自动释放资源
+		 * @param force_b_ 强制
+		 * @returns
+		 */
+		private _auto_release_asset;
+		private _event_restart;
+	}
+
 	declare namespace _mk_asset {
 		/** loadRemote 配置类型 */
 		interface load_remote_option_type extends Record<string, any> {
@@ -1395,6 +1195,126 @@ declare namespace mk {
 		}
 	}
 
+	/**
+	 * 音频基类
+	 * @noInheritDoc
+	 */
+	declare abstract class mk_audio_base extends instance_base {
+		constructor();
+		/** 日志 */
+		protected abstract _log: logger;
+		/** 音频组 */
+		protected _group_map: Map<number, audio_.group>;
+		/** 暂停 */
+		abstract pause(audio_: audio_.unit): void;
+		/** 停止 */
+		abstract stop(audio_: audio_.unit): void;
+		/** 获取音频实例 */
+		protected abstract _get_audio_unit<T extends audio_._unit>(init_?: Partial<audio_._unit>): T;
+		/**
+		 * 获取音频组
+		 * @param group_n_ 组类型
+		 * @returns
+		 */
+		get_group(group_n_: number): audio_.group;
+		/**
+		 * 添加音频单元
+		 * @param url_s_ 音频资源路径
+		 * @param target_ 跟随释放对象
+		 * @param config_ 添加配置
+		 */
+		add(url_s_: string, target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
+		/**
+		 * 添加音频单元
+		 * @param url_ss_ 音频资源路径列表
+		 * @param target_ 跟随释放对象
+		 * @param config_ 添加配置
+		 */
+		add(url_ss_: string[], target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<audio_.unit[] | null>;
+		/**
+		 * 播放音效
+		 * @param audio_ 音频单元
+		 * @param config_ 播放配置
+		 * @returns
+		 */
+		play(audio_: audio_.unit, config_?: Partial<audio_.play_config>): boolean;
+		/** 暂停所有音频 */
+		pause_all(): void;
+		/** 恢复所有音频 */
+		resume_all(): void;
+		/** 停止所有音频 */
+		stop_all(): void;
+		/* Excluded from this release type: _add */
+		private _event_restart;
+	}
+
+	/**
+	 * bundle 管理器
+	 * @noInheritDoc
+	 * @remarks
+	 *
+	 * - 封装(加载/预加载)场景为 load_scene
+	 *
+	 * - 支持(远程/本地) bundle
+	 *
+	 * - 支持 bundle 热更
+	 *
+	 * - 封装(bundle/scene)切换事件
+	 *
+	 * - 支持 bundle 管理器，用于子游戏管理
+	 */
+	declare class mk_bundle extends instance_base {
+		constructor();
+		/** 事件 */
+		event: event_target<_mk_bundle.event_protocol>;
+		/** 上个场景bundle */
+		pre_bundle_s?: string;
+		/** 上个场景名 */
+		pre_scene_s: string;
+		/** bundle列表 */
+		bundle_map: Map<string, bundle_.bundle_data>;
+		/** 切换场景状态 */
+		switch_scene_b: boolean;
+		/** 当前场景bundle */
+		get bundle_s(): string;
+		set bundle_s(value_s_: string);
+		/** 当前场景名 */
+		get scene_s(): string;
+		set scene_s(value_s: string);
+		/** 初始化任务 */
+		private _init_task;
+		/** 引擎初始化任务 */
+		private _engine_init_task;
+		/** 日志 */
+		private _log;
+		/** 当前场景bundle */
+		private _bundle_s;
+		/** 当前场景名 */
+		private _scene_s;
+		/**
+		 * 设置 bundle 数据
+		 * @param bundle_ bundle 信息
+		 */
+		set(bundle_: bundle_.bundle_data): void;
+		/**
+		 * 加载 bundle
+		 * @param args_ bundle 名 | 加载配置
+		 * @returns
+		 */
+		load(args_: string | bundle_.load_config): Promise<cc_2.AssetManager.Bundle | null>;
+		/**
+		 * 切换场景
+		 * @param scene_s_ 场景名
+		 * @param config_ 切换配置
+		 * @returns
+		 */
+		load_scene(scene_s_: string, config_?: Partial<bundle_.switch_scene_config>): Promise<boolean>;
+		/** 重新加载 bundle */
+		reload(bundle_: bundle_.bundle_info & Required<Pick<bundle_.bundle_info, "origin_s">>): Promise<cc_2.AssetManager.Bundle | null>;
+		private _set_bundle_s;
+		private _set_scene_s;
+	}
+
 	declare namespace _mk_bundle {
 		interface event_protocol {
 			/** bundle 切换前事件 */
@@ -1426,6 +1346,48 @@ declare namespace mk {
 				pre_scene_s: string;
 			}): void;
 		}
+	}
+
+	/**
+	 * 动态模块
+	 * @noInheritDoc
+	 * @remarks
+	 * 用以解除循环引用
+	 */
+	declare class mk_dynamic_module extends instance_base {
+		/**
+		 * 获取模块默认导出
+		 * @param module_ 动态模块
+		 * @returns
+		 */
+		default<T extends Promise<any>>(module_: T): Awaited<T>["default"];
+		/**
+		 * 获取模块所有导出
+		 * @param module_ 动态模块
+		 * @returns
+		 */
+		all<T extends Promise<any>>(module_: T): Awaited<T>;
+	}
+
+	/**
+	 * 游戏全局功能
+	 * @noInheritDoc
+	 */
+	declare class mk_game extends instance_base {
+		/** 重启中 */
+		get restarting_b(): boolean;
+		/** 重启中 */
+		private _restarting_b;
+		/** 暂停数据 */
+		private _pause_data_map;
+		/**
+		 * 重启游戏
+		 * @remarks
+		 * 请不要使用 cc.game.restart()，因为这会影响框架内的数据清理以及生命周期
+		 */
+		restart(): Promise<void>;
+		/* Excluded from this release type: pause */
+		/* Excluded from this release type: resume */
 	}
 
 	/**
@@ -1561,6 +1523,70 @@ declare namespace mk {
 		private _set_args_ss;
 		protected _event_switch_language(): void;
 		private _event_label_data_change;
+	}
+
+	/**
+	 * 多语言管理器
+	 * @noInheritDoc
+	 * @remarks
+	 *
+	 * - 多语言资源单位为模块，防止无用多语言资源堆积
+	 *
+	 * - 支持多语言(文本/图片/节点)，三种方式满足任何需求
+	 *
+	 * - 支持编辑器预览
+	 */
+	declare class mk_language_manage extends instance_base {
+		/** 事件 */
+		event: event_target<_mk_language_manage.event_protocol>;
+		/** 文本数据 */
+		label_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
+		/** 纹理数据 */
+		texture_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
+		/** 当前语言类型 */
+		get type_s(): keyof typeof global_config.language.type_tab;
+		set type_s(value_: keyof typeof global_config.language.type_tab);
+		/** 获取语言数据 */
+		get data(): global_config.language.type_data;
+		/** 日志 */
+		private _log;
+		/** 当前语言类型 */
+		private _language_s;
+		/**
+		 * 获取文本
+		 * @param type_ 类型
+		 * @param mark_s_ 标识
+		 * @param config_ 配置
+		 * @returns
+		 */
+		get_label(type_: _mk_language_manage.type_type, mark_s_: string, config_?: Partial<language_.label_config>): string;
+		/**
+		 * 获取纹理
+		 * @param type_ 类型
+		 * @param mark_s_ 标记
+		 * @param target_ 跟随释放对象
+		 * @param language_ 语言
+		 * @returns
+		 */
+		get_texture(
+			type_: _mk_language_manage.type_type,
+			mark_s_: string,
+			target_: asset_.follow_release_object,
+			language_?: "zh_cn" | "en_us"
+		): Promise<cc_2.SpriteFrame | null>;
+		/**
+		 * 添加文本数据
+		 * @param type_ 类型
+		 * @param data_ 数据
+		 */
+		add_label(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
+		/**
+		 * 添加纹理数据
+		 * @param type_ 类型
+		 * @param data_ 数据
+		 */
+		add_texture(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
+		private _set_type_s;
 	}
 
 	declare namespace _mk_language_manage {
@@ -1736,6 +1762,197 @@ declare namespace mk {
 			/** 错误上次地址 */
 			error_upload_addr_s?: string;
 		}
+	}
+
+	/**
+	 * 数据监听器（类型安全）
+	 * @noInheritDoc
+	 * @remarks
+	 * 可以用以 mvvm 搭建及使用，注意：监听回调仅在下一帧被调用
+	 */
+	declare class mk_monitor extends instance_base {
+		/** 日志管理 */
+		private _log;
+		/** 绑定数据图 */
+		private _bind_data_map;
+		/** 对象绑定数据图 */
+		private _target_bind_data;
+		/**
+		 * 等待监听回调执行完成
+		 * @param value_ 对象
+		 * @param key_ 键
+		 * @returns
+		 */
+		wait<T, T2 extends keyof T>(value_: T, key_: T2): Promise<void>;
+		/**
+		 * 递归监听数据更新
+		 * @param value_ 监听对象
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定对象
+		 */
+		on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): void;
+		/**
+		 * 递归监听数据更新
+		 * @param value_ 监听对象
+		 * @param on_callback_f_ on 触发回调
+		 * @param off_callback_f_ off 触发回调
+		 * @param target_ 绑定对象
+		 */
+		on_recursion(
+			value_: any,
+			on_callback_f_: _mk_monitor.type_on_callback<any>,
+			off_callback_f_: _mk_monitor.type_off_callback,
+			target_?: any
+		): void;
+		/**
+		 * 监听数据更新
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定对象
+		 */
+		on<T, T2 extends keyof T>(
+			value_: T,
+			key_: T2,
+			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+			target_?: any
+		): _mk_monitor.type_on_callback<T[T2]> | null;
+		/**
+		 * 监听数据更新
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param on_callback_f_ on 触发回调
+		 * @param off_callback_f_ off 触发回调
+		 * @param target_ 绑定对象
+		 */
+		on<T, T2 extends keyof T>(
+			value_: T,
+			key_: T2,
+			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+			off_callback_f_: _mk_monitor.type_off_callback,
+			target_?: any
+		): _mk_monitor.type_on_callback<T[T2]> | null;
+		/**
+		 * 监听单次数据更新
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定对象
+		 */
+		once<T, T2 extends keyof T>(
+			value_: T,
+			key_: T2,
+			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+			target_?: any
+		): _mk_monitor.type_on_callback<T[T2]> | null;
+		/**
+		 * 监听单次数据更新
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param on_callback_f_ on 触发回调
+		 * @param off_callback_f_ off 触发回调
+		 * @param target_ 绑定对象
+		 */
+		once<T, T2 extends keyof T>(
+			value_: T,
+			key_: T2,
+			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
+			off_callback_f_: _mk_monitor.type_off_callback,
+			target_?: any
+		): _mk_monitor.type_on_callback<T[T2]> | null;
+		/**
+		 * 递归取消监听数据更新
+		 * @param value_ 监听对象
+		 * @param target_ 绑定目标
+		 */
+		off_recursion(value_: any, target_?: any): Promise<any>;
+		/**
+		 * 递归取消监听数据更新
+		 * @param value_ 监听对象
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定目标
+		 */
+		off_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
+		/**
+		 * 取消监听数据更新
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param target_ 绑定目标
+		 */
+		off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): Promise<void>;
+		/**
+		 * 取消监听数据更新
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param on_callback_f_ on 触发回调
+		 * @param target_ 绑定目标
+		 */
+		off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
+		/**
+		 * 清理对象绑定的数据
+		 * @param target_ 绑定对象
+		 * @returns
+		 */
+		clear(target_: any): null | Promise<any[]>;
+		/**
+		 * 启用 on 事件
+		 * @param target_ 绑定对象
+		 */
+		enable(target_: any): void;
+		/**
+		 * 启用 on 事件
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param target_ 绑定对象
+		 */
+		enable<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
+		/**
+		 * 启用 on 事件
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param callback_f_ on 触发回调
+		 * @param target_ 绑定对象
+		 */
+		enable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
+		/**
+		 * 禁用 on 事件
+		 * @param target_ 绑定对象
+		 */
+		disable(target_: any): void;
+		/**
+		 * 禁用 on 事件
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param target_ 绑定对象
+		 */
+		disable<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
+		/**
+		 * 禁用 on 事件
+		 * @param value_ 监听对象
+		 * @param key_ 监听键
+		 * @param callback_f_ on 触发回调
+		 * @param target_ 绑定对象
+		 */
+		disable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
+		/**
+		 * 获取绑定数据
+		 * @param value_ 数据
+		 * @param key_ 键
+		 * @param create_b_ 不存在则创建
+		 * @returns
+		 */
+		private _get_bind_data;
+		private _off;
+		/** 删除绑定数据 */
+		private _del_bind_data;
+		/** 添加对象绑定数据 */
+		private _add_target_bind_data;
+		/** 删除对象绑定数据 */
+		private _del_target_bind_data;
+		/** 监听数据更新 */
+		private _on;
+		/** 启用监听事件 */
+		private _set_listener_state;
 	}
 
 	declare namespace _mk_monitor {
@@ -2315,6 +2532,123 @@ declare namespace mk {
 		}
 	}
 
+	/**
+	 * 模块管理器
+	 * @noInheritDoc
+	 * @remarks
+	 *
+	 * - 支持模块(注册/打开/关闭/取消注册)
+	 *
+	 * - 内置模块对象池
+	 *
+	 * - 模块栈
+	 *
+	 * - 全屏 UI 展示优化
+	 */
+	declare class mk_ui_manage extends instance_base {
+		constructor();
+		/**
+		 * 获取模块注册数据
+		 * @remarks
+		 * open 未注册模块时会使用此函数获取注册数据自动注册
+		 */
+		get_regis_data_f?: <T extends cc_2.Constructor<view_base>>(key: T) => ui_manage_.regis_data<T>;
+		/** 日志 */
+		private _log;
+		/** 模块注册表 */
+		private _ui_regis_map;
+		/**
+		 * 模块注册任务表
+		 * @remarks
+		 * 用于 open 时等待注册
+		 */
+		private _ui_regis_task_map;
+		/**
+		 * 模块加载表
+		 * @remarks
+		 * 用于检测重复加载
+		 */
+		private _ui_load_map;
+		/** 模块对象池 */
+		private _ui_pool_map;
+		/** 隐藏模块列表长度 */
+		private _ui_hidden_length_n;
+		/** 模块隐藏集合 */
+		private _ui_hidden_set;
+		/** 当前展示模块列表 */
+		private _ui_show_as;
+		/** 当前模块列表表 */
+		private _ui_map;
+		/**
+		 * 注册模块
+		 * @param key_ 模块键
+		 * @param source_ 模块来源
+		 * @param target_ 跟随释放对象
+		 * @param config_ 模块配置
+		 * @returns
+		 */
+		regis<T extends cc_2.Constructor<view_base>>(
+			key_: T,
+			source_: _mk_ui_manage.source_type<T>,
+			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
+			config_?: Partial<ui_manage_.regis_config<T>>
+		): Promise<void>;
+		/**
+		 * 取消注册模块
+		 * @param key_ 模块键
+		 * @returns
+		 */
+		unregis<T extends cc_2.Constructor<view_base>>(key_: T): Promise<void>;
+		/** 获取所有模块 */
+		get(): ReadonlyArray<view_base>;
+		/**
+		 * 获取指定模块
+		 * @param key_ 模块键
+		 * @param type_ 模块类型
+		 */
+		get<
+			T extends cc_2.Constructor<view_base> & Function,
+			T2 = T extends {
+				type_s: infer T2;
+			}
+				? T2
+				: never,
+			T3 = T["prototype"]
+		>(key_: T, type_?: T2): T3 | null;
+		/**
+		 * 获取指定模块列表
+		 * @param key_ 模块键列表 [type]
+		 * @param type_ 模块类型
+		 */
+		get<
+			T extends cc_2.Constructor<view_base> & Function,
+			T2 = T extends {
+				type_s: infer T2;
+			}
+				? T2
+				: never,
+			T3 = T["prototype"]
+		>(key_: T[], type_?: T2): ReadonlyArray<T3>;
+		/**
+		 * 打开模块
+		 * @param key_ 模块键，必须经过 {@link regis} 接口注册过
+		 * @param config_ 打开配置
+		 * @returns
+		 */
+		open<T extends cc_2.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
+		/**
+		 * 关闭模块
+		 * @param args_ 节点/模块键/模块实例
+		 * @param config_ 关闭配置
+		 * @returns
+		 */
+		close<T extends cc_2.Constructor<view_base>, T2 extends view_base>(
+			args_: cc_2.Node | T | T2,
+			config_?: ui_manage_.close_config<T>
+		): Promise<boolean>;
+		private _event_restart;
+	}
+
 	declare namespace _mk_ui_manage {
 		type source_type<
 			T extends
@@ -2420,203 +2754,14 @@ declare namespace mk {
 		}
 	}
 
-	/**
-	 * 数据监听器（类型安全）
-	 * @noInheritDoc
-	 * @remarks
-	 * 可以用以 mvvm 搭建及使用，注意：监听回调仅在下一帧被调用
-	 */
-	export declare class monitor extends instance_base {
-		/** 日志管理 */
-		private _log;
-		/** 绑定数据图 */
-		private _bind_data_map;
-		/** 对象绑定数据图 */
-		private _target_bind_data;
-		/**
-		 * 等待监听回调执行完成
-		 * @param value_ 对象
-		 * @param key_ 键
-		 * @returns
-		 */
-		wait<T, T2 extends keyof T>(value_: T, key_: T2): Promise<void>;
-		/**
-		 * 递归监听数据更新
-		 * @param value_ 监听对象
-		 * @param on_callback_f_ on 触发回调
-		 * @param target_ 绑定对象
-		 */
-		on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): void;
-		/**
-		 * 递归监听数据更新
-		 * @param value_ 监听对象
-		 * @param on_callback_f_ on 触发回调
-		 * @param off_callback_f_ off 触发回调
-		 * @param target_ 绑定对象
-		 */
-		on_recursion(
-			value_: any,
-			on_callback_f_: _mk_monitor.type_on_callback<any>,
-			off_callback_f_: _mk_monitor.type_off_callback,
-			target_?: any
-		): void;
-		/**
-		 * 监听数据更新
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param on_callback_f_ on 触发回调
-		 * @param target_ 绑定对象
-		 */
-		on<T, T2 extends keyof T>(
-			value_: T,
-			key_: T2,
-			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
-			target_?: any
-		): _mk_monitor.type_on_callback<T[T2]> | null;
-		/**
-		 * 监听数据更新
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param on_callback_f_ on 触发回调
-		 * @param off_callback_f_ off 触发回调
-		 * @param target_ 绑定对象
-		 */
-		on<T, T2 extends keyof T>(
-			value_: T,
-			key_: T2,
-			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
-			off_callback_f_: _mk_monitor.type_off_callback,
-			target_?: any
-		): _mk_monitor.type_on_callback<T[T2]> | null;
-		/**
-		 * 监听单次数据更新
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param on_callback_f_ on 触发回调
-		 * @param target_ 绑定对象
-		 */
-		once<T, T2 extends keyof T>(
-			value_: T,
-			key_: T2,
-			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
-			target_?: any
-		): _mk_monitor.type_on_callback<T[T2]> | null;
-		/**
-		 * 监听单次数据更新
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param on_callback_f_ on 触发回调
-		 * @param off_callback_f_ off 触发回调
-		 * @param target_ 绑定对象
-		 */
-		once<T, T2 extends keyof T>(
-			value_: T,
-			key_: T2,
-			on_callback_f_: _mk_monitor.type_on_callback<T[T2]>,
-			off_callback_f_: _mk_monitor.type_off_callback,
-			target_?: any
-		): _mk_monitor.type_on_callback<T[T2]> | null;
-		/**
-		 * 递归取消监听数据更新
-		 * @param value_ 监听对象
-		 * @param target_ 绑定目标
-		 */
-		off_recursion(value_: any, target_?: any): Promise<any>;
-		/**
-		 * 递归取消监听数据更新
-		 * @param value_ 监听对象
-		 * @param on_callback_f_ on 触发回调
-		 * @param target_ 绑定目标
-		 */
-		off_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
-		/**
-		 * 取消监听数据更新
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param target_ 绑定目标
-		 */
-		off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): Promise<void>;
-		/**
-		 * 取消监听数据更新
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param on_callback_f_ on 触发回调
-		 * @param target_ 绑定目标
-		 */
-		off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
-		/**
-		 * 清理对象绑定的数据
-		 * @param target_ 绑定对象
-		 * @returns
-		 */
-		clear(target_: any): null | Promise<any[]>;
-		/**
-		 * 启用 on 事件
-		 * @param target_ 绑定对象
-		 */
-		enable(target_: any): void;
-		/**
-		 * 启用 on 事件
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param target_ 绑定对象
-		 */
-		enable<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
-		/**
-		 * 启用 on 事件
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param callback_f_ on 触发回调
-		 * @param target_ 绑定对象
-		 */
-		enable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
-		/**
-		 * 禁用 on 事件
-		 * @param target_ 绑定对象
-		 */
-		disable(target_: any): void;
-		/**
-		 * 禁用 on 事件
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param target_ 绑定对象
-		 */
-		disable<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
-		/**
-		 * 禁用 on 事件
-		 * @param value_ 监听对象
-		 * @param key_ 监听键
-		 * @param callback_f_ on 触发回调
-		 * @param target_ 绑定对象
-		 */
-		disable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
-		/**
-		 * 获取绑定数据
-		 * @param value_ 数据
-		 * @param key_ 键
-		 * @param create_b_ 不存在则创建
-		 * @returns
-		 */
-		private _get_bind_data;
-		private _off;
-		/** 删除绑定数据 */
-		private _del_bind_data;
-		/** 添加对象绑定数据 */
-		private _add_target_bind_data;
-		/** 删除对象绑定数据 */
-		private _del_target_bind_data;
-		/** 监听数据更新 */
-		private _on;
-		/** 启用监听事件 */
-		private _set_listener_state;
-	}
+	export declare const monitor: mk_monitor;
 
 	declare namespace network {
 		export {
 			mk_websocket as websocket,
 			mk_websocket_ as websocket_,
 			mk_websocket_wx as websocket_wx,
-			mk_http as http,
+			_default as http,
 			mk_http_ as http_,
 			mk_network_base as base,
 			mk_network_base_ as base_,
@@ -2841,122 +2986,7 @@ declare namespace mk {
 	}
 	export { task };
 
-	/**
-	 * 模块管理器
-	 * @noInheritDoc
-	 * @remarks
-	 *
-	 * - 支持模块(注册/打开/关闭/取消注册)
-	 *
-	 * - 内置模块对象池
-	 *
-	 * - 模块栈
-	 *
-	 * - 全屏 UI 展示优化
-	 */
-	export declare class ui_manage extends instance_base {
-		constructor();
-		/**
-		 * 获取模块注册数据
-		 * @remarks
-		 * open 未注册模块时会使用此函数获取注册数据自动注册
-		 */
-		get_regis_data_f?: <T extends cc_2.Constructor<view_base>>(key: T) => ui_manage_.regis_data<T>;
-		/** 日志 */
-		private _log;
-		/** 模块注册表 */
-		private _ui_regis_map;
-		/**
-		 * 模块注册任务表
-		 * @remarks
-		 * 用于 open 时等待注册
-		 */
-		private _ui_regis_task_map;
-		/**
-		 * 模块加载表
-		 * @remarks
-		 * 用于检测重复加载
-		 */
-		private _ui_load_map;
-		/** 模块对象池 */
-		private _ui_pool_map;
-		/** 隐藏模块列表长度 */
-		private _ui_hidden_length_n;
-		/** 模块隐藏集合 */
-		private _ui_hidden_set;
-		/** 当前展示模块列表 */
-		private _ui_show_as;
-		/** 当前模块列表表 */
-		private _ui_map;
-		/**
-		 * 注册模块
-		 * @param key_ 模块键
-		 * @param source_ 模块来源
-		 * @param target_ 跟随释放对象
-		 * @param config_ 模块配置
-		 * @returns
-		 */
-		regis<T extends cc_2.Constructor<view_base>>(
-			key_: T,
-			source_: _mk_ui_manage.source_type<T>,
-			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
-			config_?: Partial<ui_manage_.regis_config<T>>
-		): Promise<void>;
-		/**
-		 * 取消注册模块
-		 * @param key_ 模块键
-		 * @returns
-		 */
-		unregis<T extends cc_2.Constructor<view_base>>(key_: T): Promise<void>;
-		/** 获取所有模块 */
-		get(): ReadonlyArray<view_base>;
-		/**
-		 * 获取指定模块
-		 * @param key_ 模块键
-		 * @param type_ 模块类型
-		 */
-		get<
-			T extends cc_2.Constructor<view_base> & Function,
-			T2 = T extends {
-				type_s: infer T2;
-			}
-				? T2
-				: never,
-			T3 = T["prototype"]
-		>(key_: T, type_?: T2): T3 | null;
-		/**
-		 * 获取指定模块列表
-		 * @param key_ 模块键列表 [type]
-		 * @param type_ 模块类型
-		 */
-		get<
-			T extends cc_2.Constructor<view_base> & Function,
-			T2 = T extends {
-				type_s: infer T2;
-			}
-				? T2
-				: never,
-			T3 = T["prototype"]
-		>(key_: T[], type_?: T2): ReadonlyArray<T3>;
-		/**
-		 * 打开模块
-		 * @param key_ 模块键，必须经过 {@link regis} 接口注册过
-		 * @param config_ 打开配置
-		 * @returns
-		 */
-		open<T extends cc_2.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
-		/**
-		 * 关闭模块
-		 * @param args_ 节点/模块键/模块实例
-		 * @param config_ 关闭配置
-		 * @returns
-		 */
-		close<T extends cc_2.Constructor<view_base>, T2 extends view_base>(
-			args_: cc_2.Node | T | T2,
-			config_?: ui_manage_.close_config<T>
-		): Promise<boolean>;
-		private _event_restart;
-	}
+	export declare const ui_manage: mk_ui_manage;
 
 	export declare namespace ui_manage_ {
 		/** 关闭ui配置 */

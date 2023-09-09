@@ -6,19 +6,14 @@
 
 import * as cc_2 from 'cc';
 
-// @public
-export class asset extends instance_base {
-    constructor();
-    // Warning: (ae-forgotten-export) The symbol "_mk_asset" needs to be exported by the entry point mk_export_docs.d.ts
-    static config: _mk_asset.global_config;
-    get<T extends cc_2.Asset>(path_s_: string, type_: cc_2.Constructor<T>, target_: asset_.follow_release_object | null, config_?: asset_.get_config<T>): Promise<T | null>;
-    get_dir<T extends cc_2.Asset>(path_s_: string, type_: cc_2.Constructor<T>, target_: asset_.follow_release_object | null, config_?: asset_.get_dir_config<T>): Promise<T[] | null>;
-    release(asset_: cc_2.Asset | cc_2.Asset[]): void;
-}
+// Warning: (ae-forgotten-export) The symbol "mk_asset" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const asset: mk_asset;
 
 // @public (undocumented)
 export namespace asset_ {
-    // Warning: (ae-forgotten-export) The symbol "mk_release_" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "mk_release_" needs to be exported by the entry point mk_export.d.ts
     export type follow_release_object = mk_release_.follow_release_object<cc_2.Asset>;
     export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
         bundle_s?: string;
@@ -26,29 +21,16 @@ export namespace asset_ {
         progress_f?: (
         current_n: number,
         total_n: number) => void;
+        // Warning: (ae-forgotten-export) The symbol "_mk_asset" needs to be exported by the entry point mk_export.d.ts
         remote_option?: _mk_asset.load_remote_option_type;
     }
     export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
 }
 
+// Warning: (ae-forgotten-export) The symbol "mk_audio_base" needs to be exported by the entry point mk_export.d.ts
+//
 // @public
-export abstract class audio extends instance_base {
-    constructor();
-    add(url_s_: string, target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
-    add(url_ss_: string[], target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<audio_.unit[] | null>;
-    // @internal
-    _add(audio_: audio_._unit, group_ns_?: ReadonlyArray<number>): boolean;
-    protected abstract _get_audio_unit<T extends audio_._unit>(init_?: Partial<audio_._unit>): T;
-    get_group(group_n_: number): audio_.group;
-    protected _group_map: Map<number, audio_.group>;
-    protected abstract _log: logger;
-    abstract pause(audio_: audio_.unit): void;
-    pause_all(): void;
-    play(audio_: audio_.unit, config_?: Partial<audio_.play_config>): boolean;
-    resume_all(): void;
-    abstract stop(audio_: audio_.unit): void;
-    stop_all(): void;
-}
+export const audio: mk_audio_base;
 
 // @public (undocumented)
 export namespace audio_ {
@@ -56,7 +38,7 @@ export namespace audio_ {
         dir_b?: boolean;
         group_ns?: number[];
         load_config?: asset_.get_config<cc_2.AudioClip>;
-        // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export_docs.d.ts
+        // Warning: (ae-forgotten-export) The symbol "global_config" needs to be exported by the entry point mk_export.d.ts
         type?: global_config.audio.type;
     }
     export interface event_protocol {
@@ -68,7 +50,7 @@ export namespace audio_ {
         stop(): void;
     }
     export class group {
-        constructor(init_: audio, priority_n_: number);
+        constructor(init_: mk_audio_base, priority_n_: number);
         add_audio(audio_: unit | unit[]): void;
         audio_unit_as: ReadonlyArray<_unit>;
         clear(): unit[];
@@ -148,24 +130,10 @@ export namespace audio_ {
         {};
 }
 
-// @public
-export class bundle extends instance_base {
-    constructor();
-    bundle_map: Map<string, bundle_.bundle_data>;
-    get bundle_s(): string;
-    set bundle_s(value_s_: string);
-    // Warning: (ae-forgotten-export) The symbol "_mk_bundle" needs to be exported by the entry point mk_export_docs.d.ts
-    event: event_target<_mk_bundle.event_protocol>;
-    load(args_: string | bundle_.load_config): Promise<cc_2.AssetManager.Bundle | null>;
-    load_scene(scene_s_: string, config_?: Partial<bundle_.switch_scene_config>): Promise<boolean>;
-    pre_bundle_s?: string;
-    pre_scene_s: string;
-    reload(bundle_: bundle_.bundle_info & Required<Pick<bundle_.bundle_info, "origin_s">>): Promise<cc_2.AssetManager.Bundle | null>;
-    get scene_s(): string;
-    set scene_s(value_s: string);
-    set(bundle_: bundle_.bundle_data): void;
-    switch_scene_b: boolean;
-}
+// Warning: (ae-forgotten-export) The symbol "mk_bundle" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const bundle: mk_bundle;
 
 // @public (undocumented)
 export namespace bundle_ {
@@ -242,11 +210,15 @@ export class data_sharer<CT = any> extends instance_base {
     set<T extends keyof CT, T2 = CT[T]>(key_: T, data_: T2): void;
 }
 
-// @public
-export class dynamic_module extends instance_base {
-    all<T extends Promise<any>>(module_: T): Awaited<T>;
-    default<T extends Promise<any>>(module_: T): Awaited<T>["default"];
-}
+// Warning: (ae-forgotten-export) The symbol "mk_http" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+const _default: mk_http;
+
+// Warning: (ae-forgotten-export) The symbol "mk_dynamic_module" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const dynamic_module: mk_dynamic_module;
 
 // @public (undocumented)
 export const error: (...args_as_: any[]) => void;
@@ -266,15 +238,10 @@ export class event_target<CT> extends cc_2.EventTarget {
     request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
 }
 
-// @public
-export class game extends instance_base {
-    // @beta
-    pause(node_: cc_2.Node, recursion_b_?: boolean): void;
-    restart(): Promise<void>;
-    get restarting_b(): boolean;
-    // @beta
-    resume(node_: cc_2.Node, recursion_b_?: boolean): void;
-}
+// Warning: (ae-forgotten-export) The symbol "mk_game" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const game: mk_game;
 
 // @public
 export class guide_manage {
@@ -360,7 +327,7 @@ export namespace language_ {
             [k in keyof CT]: k;
         };
     }
-    // Warning: (ae-forgotten-export) The symbol "_mk_language_manage" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_language_manage" needs to be exported by the entry point mk_export.d.ts
     export type data_struct<T extends _mk_language_manage.type_type = any> = Record<T, {
         [k in keyof typeof global_config.language.type_tab]: string;
     }>;
@@ -377,19 +344,10 @@ export namespace language_ {
     }
 }
 
-// @public
-export class language_manage extends instance_base {
-    add_label(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
-    add_texture(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
-    get data(): global_config.language.type_data;
-    event: event_target<_mk_language_manage.event_protocol>;
-    get_label(type_: _mk_language_manage.type_type, mark_s_: string, config_?: Partial<language_.label_config>): string;
-    get_texture(type_: _mk_language_manage.type_type, mark_s_: string, target_: asset_.follow_release_object, language_?: "zh_cn" | "en_us"): Promise<cc_2.SpriteFrame | null>;
-    label_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
-    texture_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
-    get type_s(): keyof typeof global_config.language.type_tab;
-    set type_s(value_: keyof typeof global_config.language.type_tab);
-}
+// Warning: (ae-forgotten-export) The symbol "mk_language_manage" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const language_manage: mk_language_manage;
 
 // @public
 export class layer extends cc_2.Component {
@@ -427,7 +385,7 @@ export class life_cycle extends layer implements asset_.follow_release_object {
     close?(): void | Promise<void>;
     // @internal
     _close(config_?: _mk_life_cycle.close_config): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_life_cycle" needs to be exported by the entry point mk_export.d.ts
     set config(config_: _mk_life_cycle.create_config);
     protected create?(): void | Promise<void>;
     event_target_as: {
@@ -462,7 +420,7 @@ export const log: (...args_as_: any[]) => void;
 // @public
 export class logger extends instance_base {
     constructor(name_s_: string);
-    // Warning: (ae-forgotten-export) The symbol "_mk_logger" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_logger" needs to be exported by the entry point mk_export.d.ts
     static config: _mk_logger.global_config;
     // (undocumented)
     debug(...args_as_: any[]): void;
@@ -487,13 +445,6 @@ export namespace logger_ {
     export type level = _mk_logger.level;
 }
 
-// @public
-class mk_http extends instance_base {
-    get(url_s_: string, config_: Partial<mk_http_.config>): Promise<void>;
-    open(type_s_: "GET" | "POST", url_s_: string, config_?: Partial<mk_http_.config>): Promise<void>;
-    post(url_s_: string, config_: Partial<mk_http_.config>): Promise<void>;
-}
-
 // @public (undocumented)
 namespace mk_http_ {
     class config {
@@ -507,7 +458,7 @@ namespace mk_http_ {
     }
 }
 
-// Warning: (ae-forgotten-export) The symbol "mk_language_base" needs to be exported by the entry point mk_export_docs.d.ts
+// Warning: (ae-forgotten-export) The symbol "mk_language_base" needs to be exported by the entry point mk_export.d.ts
 //
 // @public
 class mk_language_label extends mk_language_base {
@@ -545,7 +496,7 @@ class mk_language_node extends life_cycle {
     set language(value_n_: number);
     language_s: "zh_cn" | "en_us";
     layout_adaptation_b: boolean;
-    // Warning: (ae-forgotten-export) The symbol "_mk_language_node" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_language_node" needs to be exported by the entry point mk_export.d.ts
     node_as: _mk_language_node.node[];
     // (undocumented)
     protected open(): void | Promise<void>;
@@ -587,7 +538,7 @@ abstract class mk_network_base<CT extends codec_base = codec_base> extends insta
     config: Readonly<mk_network_base_.init_config<CT>>;
     connect(addr_s_: string): void;
     protected _error(event_: any): void;
-    // Warning: (ae-forgotten-export) The symbol "_mk_network_base" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_network_base" needs to be exported by the entry point mk_export.d.ts
     event: event_target<_mk_network_base.event_protocol<CT>>;
     // (undocumented)
     protected _event_restart(): void;
@@ -646,7 +597,7 @@ namespace mk_network_base_ {
 
 // @public
 class mk_status_task<CT = void> {
-    // Warning: (ae-forgotten-export) The symbol "mk_status_task_" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "mk_status_task_" needs to be exported by the entry point mk_export.d.ts
     constructor(finish_b_: boolean, init_config_?: mk_status_task_.init_config<CT>);
     finish<T extends false>(finish_b_: T): void;
     finish<T extends true>(finish_b_: T, data_: CT): void;
@@ -657,7 +608,7 @@ class mk_status_task<CT = void> {
 // @public
 class mk_task_pipeline {
     add(task_f_: Function): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "_mk_task_pipeline" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_task_pipeline" needs to be exported by the entry point mk_export.d.ts
     event: event_target<_mk_task_pipeline.event_protocol>;
     get pause_b(): boolean;
     set pause_b(value_b_: boolean);
@@ -685,7 +636,7 @@ namespace mk_websocket_ {
 
 // @public
 class mk_websocket_wx<CT extends codec_base = codec_base> extends mk_network_base<CT> {
-    // Warning: (ae-forgotten-export) The symbol "mk_websocket_wx_" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "mk_websocket_wx_" needs to be exported by the entry point mk_export.d.ts
     constructor(config_?: Partial<mk_websocket_wx_.init_config<CT>>);
     // (undocumented)
     config: Readonly<mk_websocket_wx_.init_config<CT>>;
@@ -694,35 +645,17 @@ class mk_websocket_wx<CT extends codec_base = codec_base> extends mk_network_bas
     protected _socket: wx.SocketTask;
 }
 
-// @public
-export class monitor extends instance_base {
-    clear(target_: any): null | Promise<any[]>;
-    disable(target_: any): void;
-    disable<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
-    disable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
-    enable(target_: any): void;
-    enable<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): void;
-    enable<T, T2 extends keyof T>(value_: T, key_: T2, callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): void;
-    off<T, T2 extends keyof T>(value_: T, key_: T2, target_?: any): Promise<void>;
-    off<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): Promise<void>;
-    off_recursion(value_: any, target_?: any): Promise<any>;
-    off_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): Promise<any>;
-    on<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): _mk_monitor.type_on_callback<T[T2]> | null;
-    on<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, off_callback_f_: _mk_monitor.type_off_callback, target_?: any): _mk_monitor.type_on_callback<T[T2]> | null;
-    // Warning: (ae-forgotten-export) The symbol "_mk_monitor" needs to be exported by the entry point mk_export_docs.d.ts
-    on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, target_?: any): void;
-    on_recursion(value_: any, on_callback_f_: _mk_monitor.type_on_callback<any>, off_callback_f_: _mk_monitor.type_off_callback, target_?: any): void;
-    once<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, target_?: any): _mk_monitor.type_on_callback<T[T2]> | null;
-    once<T, T2 extends keyof T>(value_: T, key_: T2, on_callback_f_: _mk_monitor.type_on_callback<T[T2]>, off_callback_f_: _mk_monitor.type_off_callback, target_?: any): _mk_monitor.type_on_callback<T[T2]> | null;
-    wait<T, T2 extends keyof T>(value_: T, key_: T2): Promise<void>;
-}
+// Warning: (ae-forgotten-export) The symbol "mk_monitor" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const monitor: mk_monitor;
 
 declare namespace network {
     export {
         mk_websocket as websocket,
         mk_websocket_ as websocket_,
         mk_websocket_wx as websocket_wx,
-        mk_http as http,
+        _default as http,
         mk_http_ as http_,
         mk_network_base as base,
         mk_network_base_ as base_
@@ -732,7 +665,7 @@ export { network }
 
 // @public
 export class obj_pool<CT> {
-    // Warning: (ae-forgotten-export) The symbol "_mk_obj_pool" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_obj_pool" needs to be exported by the entry point mk_export.d.ts
     constructor(init_: _mk_obj_pool.config<CT>);
     clear(): Promise<void>;
     destroy(): Promise<void>;
@@ -793,7 +726,7 @@ export class scene_drive extends life_cycle {
 
 // @public
 export class storage<CT extends Object> {
-    // Warning: (ae-forgotten-export) The symbol "mk_storage_" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "mk_storage_" needs to be exported by the entry point mk_export.d.ts
     constructor(init_: mk_storage_.init_config<CT>);
     static clear(): void;
     clear(): void;
@@ -813,23 +746,10 @@ declare namespace task {
 }
 export { task }
 
-// @public
-export class ui_manage extends instance_base {
-    constructor();
-    close<T extends cc_2.Constructor<view_base>, T2 extends view_base>(args_: cc_2.Node | T | T2, config_?: ui_manage_.close_config<T>): Promise<boolean>;
-    get(): ReadonlyArray<view_base>;
-    get<T extends cc_2.Constructor<view_base> & Function, T2 = T extends {
-        type_s: infer T2;
-    } ? T2 : never, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
-    get<T extends cc_2.Constructor<view_base> & Function, T2 = T extends {
-        type_s: infer T2;
-    } ? T2 : never, T3 = T["prototype"]>(key_: T[], type_?: T2): ReadonlyArray<T3>;
-    get_regis_data_f?: <T extends cc_2.Constructor<view_base>>(key: T) => ui_manage_.regis_data<T>;
-    open<T extends cc_2.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
-    // Warning: (ae-forgotten-export) The symbol "_mk_ui_manage" needs to be exported by the entry point mk_export_docs.d.ts
-    regis<T extends cc_2.Constructor<view_base>>(key_: T, source_: _mk_ui_manage.source_type<T>, target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null, config_?: Partial<ui_manage_.regis_config<T>>): Promise<void>;
-    unregis<T extends cc_2.Constructor<view_base>>(key_: T): Promise<void>;
-}
+// Warning: (ae-forgotten-export) The symbol "mk_ui_manage" needs to be exported by the entry point mk_export.d.ts
+//
+// @public (undocumented)
+export const ui_manage: mk_ui_manage;
 
 // @public (undocumented)
 export namespace ui_manage_ {
@@ -859,6 +779,7 @@ export namespace ui_manage_ {
     }
     export class regis_data<CT extends cc_2.Constructor<view_base>> extends regis_config<CT> {
         constructor(init_?: Partial<regis_data<CT>>);
+        // Warning: (ae-forgotten-export) The symbol "_mk_ui_manage" needs to be exported by the entry point mk_export.d.ts
         source: _mk_ui_manage.source_type<CT>;
         target: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
     }
@@ -878,7 +799,7 @@ export class view_base extends life_cycle {
     get auto_widget_b(): boolean;
     set auto_widget_b(value_b_: boolean);
     close(config_?: Omit<ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "_mk_view_base" needs to be exported by the entry point mk_export_docs.d.ts
+    // Warning: (ae-forgotten-export) The symbol "_mk_view_base" needs to be exported by the entry point mk_export.d.ts
     //
     // (undocumented)
     static config: _mk_view_base.global_config;
