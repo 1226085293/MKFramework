@@ -26,4 +26,4 @@ API 接口：https://muzzik.gitee.io/MK%E6%A1%86%E6%9E%B6/API%20%E6%8E%A5%E5%8F%
 
 > 框架提供编辑器插件一键安装
 
-[https://github.com/1226085293/mk_framework/releases/tag/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6](https://github.com/1226085293/mk_framework/wiki/%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F)
+<a href="https://github.com/1226085293/mk_framework/wiki/%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F" target="_blank">点击打开安装页面</a>
