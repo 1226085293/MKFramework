@@ -54,7 +54,7 @@ async function main() {
 		file_ss.slice(1).forEach((v_s) => {
 			let file_s = fs.readFileSync(v_s, "utf-8");
 
-			file_s = ["---", "article: false", "timeline: false", "sitemap:\n  exclude: true", "---"].join("\n") + "\n" + file_s;
+			file_s = ["---", "article: false", "timeline: false", "sitemap.exclude: true", "---"].join("\n") + "\n" + file_s;
 			fs.writeFileSync(v_s, file_s);
 		});
 	}
