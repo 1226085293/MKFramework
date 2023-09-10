@@ -7,6 +7,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "glob": "^10.3.4",
     "ts-node": "^10.9.1",
     "typedoc": "^0.25.0",
     "typedoc-plugin-markdown": "^3.16.0",

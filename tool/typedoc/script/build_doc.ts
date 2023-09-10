@@ -1,6 +1,7 @@
 import * as typedoc from "typedoc";
 import fs from "fs";
 import path from "path";
+import * as glob from "glob";
 
 async function main() {
 	// Application.bootstrap also exists, which will not load plugins
@@ -45,6 +46,18 @@ async function main() {
 		path.join(outputDir, "README.md"),
 		fs.readFileSync("./README.md", "utf-8") + "\n" + fs.readFileSync(path.join(outputDir, "README.md"), "utf-8")
 	);
+
+	// 防止在主页展示
+	{
+		const file_ss = glob.globSync(path.join(outputDir, "/**/*.md").replace(/\\/g, "/"));
+
+		file_ss.slice(1).forEach((v_s) => {
+			let file_s = fs.readFileSync(v_s, "utf-8");
+
+			file_s = ["---", "article: false", "timeline: false", "---"].join("\n") + "\n" + file_s;
+			fs.writeFileSync(v_s, file_s);
+		});
+	}
 }
 
 main().catch(console.error);
