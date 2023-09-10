@@ -6,5 +6,6 @@ timeline: false
 dir:
   order: 102
   index: true
-sitemap.exclude: true
+sitemap:
+  exclude: true
 ---
