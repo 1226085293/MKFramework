@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "openhacking.vscode-extension-api-extractor-snippet",
+        "dbaeumer.vscode-eslint",
+        "maggie.eslint-rules-zh-plugin",
+        "eamodio.gitlens",
+        "geddski.macros",
+        "esbenp.prettier-vscode",
+        "whosydd.prettier-config"
+    ]
+}
