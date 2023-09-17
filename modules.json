@@ -1,0 +1,16 @@
+{
+    "mk": [
+        "assets/@framework/*",
+        "assets/@framework.meta",
+        "assets/@config/*",
+        "assets/@config.meta",
+        "import-map.json"
+    ],
+    "tool": [
+        "assets/@tool/*",
+        "assets/@tool.meta"
+    ],
+    "dts": [
+        "tool/api-extractor"
+    ]
+}
