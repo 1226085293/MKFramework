@@ -54,6 +54,15 @@ export class mk_polygon_mask extends cc.Component {
 		this._set_offset_v3(value_v3_);
 	}
 
+	/** 调式模式 */
+	get debug_b(): boolean {
+		return this.debug_b;
+	}
+
+	set debug_b(value_b_) {
+		this._set_debug_b(value_b_);
+	}
+
 	/* --------------- private --------------- */
 	/** 跟踪节点 */
 	@property(cc.Node)
@@ -63,6 +72,10 @@ export class mk_polygon_mask extends cc.Component {
 	@property
 	private _track_node_start_pos_v3 = cc.v3();
 
+	/** 调试模式 */
+	private _debug_b = true;
+	/** 调试绘图组件 */
+	private _graphics?: cc.Graphics;
 	/** 初始设计尺寸 */
 	private _initial_design_size = cc.size();
 	/** 偏移坐标 */
@@ -113,11 +126,12 @@ export class mk_polygon_mask extends cc.Component {
 		this._track_node?.getWorldPosition(this._track_node_world_pos_v3);
 
 		// 更新数据
-		this._current_polygon_world_point_v2s = this._polygon_world_point_v2s = polygon_comp.worldPoints.map((v_v2) =>
+		this.debug_b = this._debug_b;
+		this._current_polygon_local_point_v2s = this._polygon_local_point_v2s = polygon_comp.points.map((v_v2) =>
 			v_v2.clone().add(polygon_comp.offset)
 		);
 
-		this._current_polygon_local_point_v2s = this._polygon_local_point_v2s = polygon_comp.points.map((v_v2) =>
+		this._current_polygon_world_point_v2s = this._polygon_world_point_v2s = polygon_comp.worldPoints.map((v_v2) =>
 			v_v2.clone().add(polygon_comp.offset)
 		);
 
@@ -150,7 +164,6 @@ export class mk_polygon_mask extends cc.Component {
 			}
 
 			this.update_mask();
-
 			polygon_comp.destroy();
 		}
 
@@ -246,6 +259,8 @@ export class mk_polygon_mask extends cc.Component {
 					.add2f(screen_offset2_v3.x, screen_offset2_v3.y)
 					.add2f(this._offset_v3.x, this._offset_v3.y)
 			);
+
+			this._update_graphics();
 		}
 
 		this._update_mask();
@@ -270,7 +285,7 @@ export class mk_polygon_mask extends cc.Component {
 		const point_v2s = this._current_polygon_local_point_v2s;
 
 		// 绘制遮罩
-		if (point_v2s.length > 1) {
+		if (point_v2s?.length > 1) {
 			graphics_comp.clear();
 			graphics_comp.moveTo(point_v2s[0].x, point_v2s[0].y);
 
@@ -284,7 +299,37 @@ export class mk_polygon_mask extends cc.Component {
 		}
 	}
 
+	/** 更新调试绘制 */
+	private _update_graphics(): void {
+		if (EDITOR || !this._debug_b || !this._graphics || !this._current_polygon_local_point_v2s) {
+			return;
+		}
+
+		this._graphics.clear();
+		this._current_polygon_local_point_v2s.forEach((v_v2) => {
+			this._graphics!.circle(v_v2.x, v_v2.y, 5);
+			this._graphics!.stroke();
+		});
+	}
+
 	/* ------------------------------- get/set ------------------------------- */
+	private _set_debug_b(value_b_: boolean): void {
+		this._debug_b = value_b_;
+
+		if (EDITOR) {
+			return;
+		}
+
+		if (this._debug_b && !this._graphics) {
+			this._graphics = this.node.addComponent(cc.Graphics);
+			this._graphics.lineWidth = 6;
+			this._graphics.strokeColor = cc.color(0, 0, 255, 255);
+			this._update_graphics();
+		} else {
+			this._graphics?.clear();
+		}
+	}
+
 	private _set_offset_v3(value_v3_: cc.Vec3): void {
 		this._offset_v3.set(value_v3_);
 		this.update_mask();
