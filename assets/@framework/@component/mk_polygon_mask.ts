@@ -73,7 +73,7 @@ export class mk_polygon_mask extends cc.Component {
 	private _track_node_start_pos_v3 = cc.v3();
 
 	/** 调试模式 */
-	private _debug_b = true;
+	private _debug_b = false;
 	/** 调试绘图组件 */
 	private _graphics?: cc.Graphics;
 	/** 初始设计尺寸 */
