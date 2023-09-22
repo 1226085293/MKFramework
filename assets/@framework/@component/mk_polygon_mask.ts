@@ -188,7 +188,7 @@ export class mk_polygon_mask extends cc.Component {
 
 	protected update(dt_n_: number): void {
 		// 原生上的 worldPosition 数据已经转到 C++ 内，所以不能监听数据
-		if (this._track_node?.worldPosition.equals(this._track_node_world_pos_v3, 1)) {
+		if (!this._track_node?.worldPosition.equals(this._track_node_world_pos_v3, 1)) {
 			this._track_node.getWorldPosition(this._track_node_world_pos_v3);
 			this.update_mask();
 		}
@@ -202,6 +202,11 @@ export class mk_polygon_mask extends cc.Component {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 更新遮罩 */
 	update_mask(): void {
+		// 依赖数据不存在
+		if (!this._polygon_local_point_v2s || !this._polygon_world_point_v2s) {
+			return;
+		}
+
 		// 编辑器更新初始坐标
 		if (EDITOR) {
 			this._track_node_start_pos_v3 = !this._track_node ? cc.v3() : this._track_node.worldPosition.clone();
@@ -248,11 +253,14 @@ export class mk_polygon_mask extends cc.Component {
 
 	/** 更新遮罩 */
 	private _update_mask(): void {
-		if (EDITOR && !this.node.active) {
-			return;
-		}
-
-		if (this.mask?.type !== cc.Mask.Type.GRAPHICS_STENCIL) {
+		if (
+			// 编辑器且节点隐藏
+			(EDITOR && !this.node.active) ||
+			// 遮罩类型不一致
+			this.mask?.type !== cc.Mask.Type.GRAPHICS_STENCIL ||
+			// 依赖数据不存在
+			!this._current_polygon_local_point_v2s
+		) {
 			return;
 		}
 
