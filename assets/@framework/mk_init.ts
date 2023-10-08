@@ -1,5 +1,4 @@
 import * as mk from "./mk_export";
-// import type * as mk from "./../../declare/mk";
 import global_config from "../@config/global_config";
 import * as cc from "cc";
 import { DEBUG, EDITOR } from "cc/env";
