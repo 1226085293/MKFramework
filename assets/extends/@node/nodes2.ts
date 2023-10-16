@@ -31,6 +31,11 @@ class node_extends {
 		});
 	}
 
+	/* --------------- static --------------- */
+	/** 节点扩展数据 */
+	private static _node_extends_map = new Map<cc.Node, node_extends>();
+	/** 渲染顺序更新时间 */
+	private static _order_update_time_n = 0;
 	/* --------------- public --------------- */
 	label!: cc.Label;
 	sprite!: cc.Sprite;
@@ -63,6 +68,7 @@ class node_extends {
 	}
 
 	/* --------------- private --------------- */
+	/** 持有节点 */
 	private _node: cc.Node;
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -140,10 +146,6 @@ class node_extends {
 		}
 	}
 }
-
-const node_extends_map = new Map<cc.Node, node_extends>();
-/** 渲染顺序更新时间 */
-const order_update_time_map = new Map<cc.Node, number>();
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function N(node_: cc.Node, force_b_ = true): node_extends {
