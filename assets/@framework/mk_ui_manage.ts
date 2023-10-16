@@ -22,7 +22,7 @@ namespace _mk_ui_manage {
  * @noInheritDoc
  * @remarks
  *
- * - 支持模块(注册/打开/关闭/取消注册)
+ * - 支持模块(注册/打开/获取/关闭/取消注册)
  *
  * - 内置模块对象池
  *
