@@ -104,7 +104,7 @@ class mk_tool_func extends mk_instance_base {
 		}
 
 		key_as.forEach((key_s_) => {
-			// 不存在或者已修复则退出
+			// 不存在或者已修改则退出
 			if (!target_[key_s_] || mark_tab[key_s_]) {
 				return;
 			}
