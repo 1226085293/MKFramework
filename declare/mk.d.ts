@@ -2909,7 +2909,7 @@ declare namespace mk {
 		/** 对象集合 */
 		private _object_set;
 		/** 回调集合 */
-		private _call_back_set;
+		private _callback_set;
 		/**
 		 * 添加释放对象
 		 * @param object_ 要跟随模块释放的对象或列表

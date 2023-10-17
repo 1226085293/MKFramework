@@ -17,7 +17,7 @@ class mk_release {
 	/** 对象集合 */
 	private _object_set = new Set<mk_release_.release_object_type>();
 	/** 回调集合 */
-	private _call_back_set = new Set<mk_release_.release_call_back_type>();
+	private _callback_set = new Set<mk_release_.release_call_back_type>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 添加释放对象
@@ -40,7 +40,7 @@ class mk_release {
 				this._asset_set.add(object_);
 			}
 		} else if (typeof object_ === "function") {
-			this._call_back_set.add(object_);
+			this._callback_set.add(object_);
 		} else {
 			this._object_set.add(object_);
 		}
@@ -63,7 +63,7 @@ class mk_release {
 				object_.decRef();
 			}
 		} else if (typeof object_ === "function") {
-			if (this._call_back_set.delete(object_)) {
+			if (this._callback_set.delete(object_)) {
 				await object_();
 			}
 		} else if (this._object_set.delete(object_ as any)) {
@@ -90,14 +90,14 @@ class mk_release {
 			await v.release();
 		}
 
-		for (const v_f of this._call_back_set) {
+		for (const v_f of this._callback_set) {
 			await v_f();
 		}
 
 		this._asset_set.clear();
 		this._node_set.clear();
 		this._object_set.clear();
-		this._call_back_set.clear();
+		this._callback_set.clear();
 	}
 }
 
