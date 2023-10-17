@@ -76,11 +76,7 @@ declare namespace mk {
 			 * 0-n：等待播放次数
 			 */
 			readonly wait_play_n: number;
-			/**
-			 * 总时长
-			 * @remarks
-			 * 单位秒
-			 */
+			/** 总时长（秒） */
 			readonly total_time_s_n: number;
 			/** 事件对象 */
 			readonly event: event_target<event_protocol>;
@@ -104,11 +100,7 @@ declare namespace mk {
 			volume_n: number;
 			/** 循环 */
 			loop_b: boolean;
-			/**
-			 * 当前时间
-			 * @remarks
-			 * 单位秒
-			 */
+			/** 当前时间（秒） */
 			curr_time_s_n: number;
 			/**
 			 * 使用 play 接口，默认使用 playOneShot
@@ -2537,7 +2529,7 @@ declare namespace mk {
 	 * @noInheritDoc
 	 * @remarks
 	 *
-	 * - 支持模块(注册/打开/关闭/取消注册)
+	 * - 支持模块(注册/打开/获取/关闭/取消注册)
 	 *
 	 * - 内置模块对象池
 	 *
@@ -2853,10 +2845,17 @@ declare namespace mk {
 		/** 偏移坐标 */
 		get offset_v3(): cc_2.Vec3;
 		set offset_v3(value_v3_: cc_2.Vec3);
+		/** 调式模式 */
+		get debug_b(): boolean;
+		set debug_b(value_b_: boolean);
 		/** 跟踪节点 */
 		private _track_node;
 		/** 跟踪节点初始坐标 */
 		private _track_node_start_pos_v3;
+		/** 调试模式 */
+		private _debug_b;
+		/** 调试绘图组件 */
+		private _graphics?;
 		/** 初始设计尺寸 */
 		private _initial_design_size;
 		/** 偏移坐标 */
@@ -2885,6 +2884,9 @@ declare namespace mk {
 		update_mask(): void;
 		/** 更新遮罩 */
 		private _update_mask;
+		/** 更新调试绘制 */
+		private _update_graphics;
+		private _set_debug_b;
 		private _set_offset_v3;
 		private _set_track_node;
 		private _event_node_input;

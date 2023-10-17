@@ -274,11 +274,7 @@ export namespace mk_audio_base_ {
 		 * 0-n：等待播放次数
 		 */
 		readonly wait_play_n: number;
-		/**
-		 * 总时长
-		 * @remarks
-		 * 单位秒
-		 */
+		/** 总时长（秒） */
 		readonly total_time_s_n: number;
 		/** 事件对象 */
 		readonly event: mk_event_target<event_protocol>;
@@ -302,11 +298,7 @@ export namespace mk_audio_base_ {
 		volume_n: number;
 		/** 循环 */
 		loop_b: boolean;
-		/**
-		 * 当前时间
-		 * @remarks
-		 * 单位秒
-		 */
+		/** 当前时间（秒） */
 		curr_time_s_n: number;
 		/**
 		 * 使用 play 接口，默认使用 playOneShot
