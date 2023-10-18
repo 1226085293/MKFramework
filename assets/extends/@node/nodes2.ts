@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import global_config from "../../@config/global_config";
 
 class node_extends {
 	constructor(node_: cc.Node) {
@@ -36,6 +37,10 @@ class node_extends {
 	private static _node_extends_map = new Map<cc.Node, node_extends>();
 	/** 渲染顺序更新时间 */
 	private static _order_update_time_n = 0;
+	/** 更新任务 */
+	private static _order_update_task_fs: Function[] = [];
+	/** 渲染顺序更新倒计时 */
+	private static _order_update_timer: any = null;
 	/* --------------- public --------------- */
 	label!: cc.Label;
 	sprite!: cc.Sprite;
@@ -74,22 +79,6 @@ class node_extends {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _order_n = 0;
 	/* ------------------------------- 功能 ------------------------------- */
-	/** 更新子节点渲染顺序 */
-	private _update_child_order(node_: cc.Node, callback_f_?: () => any): void {
-		if (!node_?.children.length) {
-			return;
-		}
-
-		/** 同级节点 */
-		const node_as = [...node_.children].sort((va, vb) => (N(va, false)?._order_n ?? 0) - (N(vb, false)?._order_n ?? 0));
-
-		// 更新渲染顺序
-		node_as.forEach((v, k_n) => {
-			v.setSiblingIndex(k_n);
-		});
-
-		callback_f_?.();
-	}
 
 	/* ------------------------------- get/set ------------------------------- */
 	private _set_order_n(value_n_: number): void {
@@ -104,46 +93,47 @@ class node_extends {
 		/** 父节点层级数据 */
 		const parent = N(this._node.parent!);
 
-		// 监听节点变更
-		this._node.on(
-			cc.Node.EventType.PARENT_CHANGED,
-			() => {
-				this._update_child_order(parent._node);
-			},
-			this
-		);
-
-		if (parent) {
-			parent._node.on(
-				cc.Node.EventType.CHILD_ADDED,
-				() => {
-					this._update_child_order(parent._node);
-				},
-				this
-			);
-
-			parent._node.on(
-				cc.Node.EventType.CHILD_REMOVED,
-				() => {
-					this._update_child_order(parent._node);
-				},
-				this
-			);
-
-			const listen_order_changed_f = (): void => {
-				parent._node.once(
-					cc.Node.EventType.SIBLING_ORDER_CHANGED,
-					() => {
-						this._update_child_order(parent._node, () => {
-							listen_order_changed_f();
-						});
-					},
-					this
-				);
-			};
-
-			listen_order_changed_f();
+		if (!parent) {
+			return;
 		}
+
+		/** 距离上次更新的时间 */
+		const time_since_last_update_n = Date.now() - node_extends._order_update_time_n;
+
+		// 添加任务
+		node_extends._order_update_task_fs.push((): void => {
+			if (!parent._node.isValid || parent._node.children.length === 0) {
+				return;
+			}
+
+			/** 同级节点 */
+			const node_as = [...parent._node.children].sort((va, vb) => (N(va, false)?._order_n ?? 0) - (N(vb, false)?._order_n ?? 0));
+
+			// 更新渲染顺序
+			node_as.forEach((v, k_n) => {
+				v.setSiblingIndex(k_n);
+			});
+		});
+
+		// 小于间隔时间更新
+		if (time_since_last_update_n < global_config.view.layer_refresh_interval_ms_n) {
+			// 清理定时器
+			clearTimeout(node_extends._order_update_timer);
+
+			node_extends._order_update_timer = setTimeout(() => {
+				// 更新时间
+				node_extends._order_update_time_n = Date.now();
+				// 更新渲染顺序
+				node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
+			}, global_config.view.layer_refresh_interval_ms_n - time_since_last_update_n);
+
+			return;
+		}
+
+		// 更新时间
+		node_extends._order_update_time_n = Date.now();
+		// 更新渲染顺序
+		node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
 	}
 }
 
