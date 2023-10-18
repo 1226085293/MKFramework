@@ -16,7 +16,9 @@
 
 ## 📗 文档教程
 
-快速入门：待添加...
+快速入门：https://muzzik.gitee.io/mk-framework/quick-start/
+
+功能模块：待添加...
 
 案例教程：待添加...
 

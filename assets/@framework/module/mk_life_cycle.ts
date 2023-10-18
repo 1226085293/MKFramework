@@ -74,10 +74,6 @@ export namespace _mk_life_cycle {
  * @noInheritDoc
  * @remarks
  * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
- *
- * - open 顺序: 子 -> 父
- *
- * - close 顺序: 父 -> 子
  */
 @ccclass
 export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_object {
@@ -225,6 +221,8 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 * @protected
 	 * @remarks
 	 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+	 *
+	 * open 顺序: 子 -> 父
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected open?(): void | Promise<void>;
@@ -232,8 +230,9 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	/**
 	 * 关闭
 	 * @remarks
-	 * 内部调用：生命周期
-	 * 外部调用：自动回收模块
+	 * 模块关闭前调用，可被外部调用（回收模块）
+	 *
+	 *  close 顺序: 父 -> 子
 	 */
 	close?(): void | Promise<void>;
 

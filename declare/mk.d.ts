@@ -900,10 +900,6 @@ declare namespace mk {
 	 * @noInheritDoc
 	 * @remarks
 	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
-	 *
-	 * - open 顺序: 子 -> 父
-	 *
-	 * - close 顺序: 父 -> 子
 	 */
 	export declare class life_cycle extends layer implements asset_.follow_release_object {
 		constructor(...args: any[]);
@@ -973,13 +969,16 @@ declare namespace mk {
 		 * @protected
 		 * @remarks
 		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+		 *
+		 * open 顺序: 子 -> 父
 		 */
 		protected open?(): void | Promise<void>;
 		/**
 		 * 关闭
 		 * @remarks
-		 * 内部调用：生命周期
-		 * 外部调用：自动回收模块
+		 * 模块关闭前调用，可被外部调用（回收模块）
+		 *
+		 *  close 顺序: 父 -> 子
 		 */
 		close?(): void | Promise<void>;
 		/**
