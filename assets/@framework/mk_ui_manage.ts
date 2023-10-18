@@ -225,6 +225,9 @@ export class mk_ui_manage extends mk_instance_base {
 
 	/**
 	 * 取消注册模块
+	 * @remarks
+	 * 注意如果你如果在注册时 target_ 参数不为 null，那么模块资源将跟随 target_ 对象释放，
+	 * 除非你想提前释放，否则不用手动调用此接口
 	 * @param key_ 模块键
 	 * @returns
 	 */
