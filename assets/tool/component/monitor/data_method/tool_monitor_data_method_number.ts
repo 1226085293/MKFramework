@@ -3,6 +3,7 @@ import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { CCInteger } from "cc";
+import N from "../../../../extends/@node/nodes";
 
 const { ccclass, property } = cc._decorator;
 
@@ -71,7 +72,7 @@ export namespace 字符变更 {
 				target_,
 				key_,
 				(value) => {
-					node_.label.string = params_.value_as.find((v) => v.key_n === value)?.value_s ?? "";
+					N(node_).label.string = params_.value_as.find((v) => v.key_n === value)?.value_s ?? "";
 				},
 				target_
 			)

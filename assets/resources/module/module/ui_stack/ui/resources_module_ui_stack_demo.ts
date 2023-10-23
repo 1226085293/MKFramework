@@ -1,6 +1,7 @@
 import nodes from "./resources_module_ui_stack_demo_nodes";
 import { _decorator } from "cc";
 import mk from "mk";
+import N from "../../../../../extends/@node/nodes";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_module_ui_stack_demo")
@@ -19,7 +20,7 @@ export class resources_module_ui_stack_demo extends mk.view_base {
 
 	// create(): void { }
 	init(data_?: typeof this.init_data): void {
-		this.nodes.number.label.string = this.init_data + "";
+		N(this.nodes.number).label.string = this.init_data + "";
 	}
 	// open(): void {}
 

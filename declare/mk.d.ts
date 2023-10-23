@@ -860,15 +860,6 @@ declare namespace mk {
 		protected _use_layer_b: boolean;
 		/** 层级 */
 		private _child_layer_n;
-		/**
-		 * 设置层级刷新间隔
-		 * @param node_ 节点
-		 * @param interval_ms_n_ 间隔时间（毫秒）
-		 * @param recursion_b_ 递归
-		 * @remarks
-		 * 设置 node_ 的子节点将延迟 interval_ms_n_ 时间后更新层级
-		 */
-		static set_layer_refresh_interval(node_: cc_2.Node, interval_ms_n_: number, recursion_b_?: boolean): void;
 		protected onLoad(): void;
 		/** 初始化编辑器 */
 		protected _init_editor(): void;
@@ -883,15 +874,6 @@ declare namespace mk {
 			layer_type: any;
 			/** 层间隔 */
 			layer_spacing_n: number;
-		}
-		/** 节点扩展 */
-		export interface node_extend {
-			/** 层级 */
-			__layer_n?: number;
-			/** 层级改变定时器 */
-			__layer_timer?: any;
-			/** 层级刷新间隔 */
-			__layer_refresh_interval_ms_n?: number;
 		}
 	}
 

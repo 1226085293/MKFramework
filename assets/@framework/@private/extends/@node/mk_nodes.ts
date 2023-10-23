@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import global_config from "../../@config/global_config";
+import global_config from "../../../../@config/global_config";
 
 class node_extends {
 	constructor(node_: cc.Node) {
@@ -120,7 +120,7 @@ class node_extends {
 		}
 
 		/** 父节点层级数据 */
-		const parent = N(this._node.parent!);
+		const parent = MKN(this._node.parent!);
 
 		if (!parent) {
 			this._node.once(
@@ -151,7 +151,7 @@ class node_extends {
 			}
 
 			/** 同级节点 */
-			const node_as = [...parent._node.children].sort((va, vb) => (N(va, false)?._order_n ?? 0) - (N(vb, false)?._order_n ?? 0));
+			const node_as = [...parent._node.children].sort((va, vb) => (MKN(va, false)?._order_n ?? 0) - (MKN(vb, false)?._order_n ?? 0));
 
 			// 更新渲染顺序
 			node_as.forEach((v, k_n) => {
@@ -189,7 +189,7 @@ class node_extends {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function N(node_: cc.Node, force_b_ = true): node_extends {
+function MKN(node_: cc.Node, force_b_ = true): node_extends {
 	if (!node_?.isValid) {
 		return null!;
 	}
@@ -204,7 +204,7 @@ function N(node_: cc.Node, force_b_ = true): node_extends {
 	return node_extend!;
 }
 
-namespace N {
+namespace MKN {
 	/** order 刷新间隔时间（毫秒） */
 	export const order_refresh_interval_ms_n = global_config.view.layer_refresh_interval_ms_n;
 
@@ -222,6 +222,6 @@ namespace N {
 }
 
 // 切换场景后自动清理
-cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, N.clear, this);
+cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, MKN.clear, this);
 
-export default N;
+export default MKN;

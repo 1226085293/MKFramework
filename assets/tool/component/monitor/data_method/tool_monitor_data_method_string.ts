@@ -2,6 +2,7 @@ import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
 import tool_node from "../../../tool_node";
+import N from "../../../../extends/@node/nodes";
 
 const { ccclass, property } = cc._decorator;
 
@@ -30,7 +31,7 @@ export namespace 默认 {
 					if (language_comp?.isValid) {
 						language_comp.mark_s = params_.head_s + String(value) + params_.tail_s;
 					} else {
-						node_.label.string = params_.head_s + String(value) + params_.tail_s;
+						N(node_).label.string = params_.head_s + String(value) + params_.tail_s;
 					}
 				},
 				target_
@@ -57,7 +58,7 @@ export namespace 多余省略 {
 				(value) => {
 					const value_s = String(value);
 
-					node_.label.string = value_s.length <= params_.max_n ? value_s : value_s.slice(0, params_.max_n) + params_.replace_s;
+					N(node_).label.string = value_s.length <= params_.max_n ? value_s : value_s.slice(0, params_.max_n) + params_.replace_s;
 				},
 				target_
 			)
@@ -88,7 +89,7 @@ export namespace 远程图片 {
 						return;
 					}
 
-					node_.sprite.spriteFrame = cc.SpriteFrame.createWithImage(assets);
+					N(node_).sprite.spriteFrame = cc.SpriteFrame.createWithImage(assets);
 
 					// 找到视图基类添加自动释放
 					const view_comp = tool_node
@@ -126,10 +127,10 @@ export namespace 编辑框 {
 				(value) => {
 					const value_s = String(value);
 
-					node_.edit_box.string = value_s;
+					N(node_).edit_box.string = value_s;
 				},
 				() => {
-					node_.edit_box.node.off(cc.EditBox.EventType.EDITING_DID_ENDED);
+					N(node_).edit_box.node.off(cc.EditBox.EventType.EDITING_DID_ENDED);
 				},
 				target_
 			)
@@ -137,8 +138,8 @@ export namespace 编辑框 {
 
 		// 同步修改
 		if (params_.sync_modify_b) {
-			node_.edit_box.node.on(cc.EditBox.EventType.EDITING_DID_ENDED, () => {
-				target_[key_] = (type_s === "string" ? node_.edit_box.string : Number(node_.edit_box.string)) as any;
+			N(node_).edit_box.node.on(cc.EditBox.EventType.EDITING_DID_ENDED, () => {
+				target_[key_] = (type_s === "string" ? N(node_).edit_box.string : Number(N(node_).edit_box.string)) as any;
 			});
 		}
 	}

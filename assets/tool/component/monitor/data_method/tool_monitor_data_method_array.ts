@@ -292,7 +292,7 @@ export namespace 默认 {
 		let layout_node: cc.Node | null = node_;
 
 		if (layout_node.getComponent(cc.ScrollView)?.content) {
-			layout_node = layout_node.scroll_view.content;
+			layout_node = layout_node.getComponent(cc.ScrollView)!.content;
 		}
 
 		if (!layout_node?.children.length) {
