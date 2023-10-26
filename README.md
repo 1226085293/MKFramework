@@ -26,6 +26,13 @@ API 接口：https://muzzik.gitee.io/mk-framework/api/
 
 ## 🛠️ 安装框架
 
-> 框架提供编辑器插件一键安装
+### 依赖环境
+- NodeJs
 
-<a href="https://github.com/1226085293/MKFramework/wiki/%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F" target="_blank">点击打开安装页面</a>
+### NPM 方式
+1. 打开终端
+
+1. 执行 `npm i -g @muzzik/mk-install`，等待安装完成
+1. 执行 `npx mk-install`
+1. 输入你的项目路径回车
+1. 输入 `install` 回车，等待安装完成
