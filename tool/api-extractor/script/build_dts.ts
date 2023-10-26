@@ -61,12 +61,13 @@ const jsonc = require("jsonc-parser");
 
 	// 格式化
 	{
+		let config_path_s = path.join(project_path_s, ".prettierrc.json");
 		let config: prettier.Options = {
 			filepath: "*.ts",
 			parser: "typescript",
 			tabWidth: 4,
 		};
-		const config_file_s = fs.readFileSync(path.join(project_path_s, ".prettierrc.json"), "utf-8");
+		const config_file_s = !fs.existsSync(config_path_s) ? null : fs.readFileSync(path.join(project_path_s, ".prettierrc.json"), "utf-8");
 
 		if (config_file_s) {
 			config = JSON.parse(config_file_s);
