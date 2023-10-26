@@ -18,9 +18,9 @@
 
 快速入门：https://muzzik.gitee.io/mk-framework/quick-start/
 
-功能模块：待添加...
+功能模块：https://muzzik.gitee.io/mk-framework/module/
 
-案例教程：待添加...
+案例教程：https://muzzik.gitee.io/mk-framework/tutorial/
 
 API 接口：https://muzzik.gitee.io/mk-framework/api/
 
