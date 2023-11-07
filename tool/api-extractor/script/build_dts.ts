@@ -2,7 +2,6 @@ import path from "path";
 import child_process from "child_process";
 import fs from "fs-extra";
 import prettier from "prettier";
-import { argv } from "process";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsonc = require("jsonc-parser");
 
