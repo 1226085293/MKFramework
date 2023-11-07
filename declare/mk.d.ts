@@ -469,7 +469,7 @@ declare namespace mk {
 		 * @param key_ 注册键
 		 * @param data_ 数据
 		 */
-		set<T extends keyof CT, T2 = CT[T]>(key_: T, data_: T2): void;
+		set<T extends keyof CT>(key_: T, data_: CT[T]): void;
 		/**
 		 * 获取数据
 		 * @param key_ 注册键
