@@ -11,9 +11,9 @@ class node_extends {
 			} else if (v instanceof cc.Sprite) {
 				this.sprite = v;
 			} else if (v instanceof cc.UIOpacity) {
-				this.ui_opacity = v;
+				this._ui_opacity = v;
 			} else if (v instanceof cc.UITransform) {
-				this.ui_transform = v;
+				this.transform = v;
 			} else if (v instanceof cc.Animation) {
 				this.animation = v;
 			} else if (v instanceof cc.EditBox) {
@@ -44,8 +44,7 @@ class node_extends {
 	/* --------------- public --------------- */
 	label!: cc.Label;
 	sprite!: cc.Sprite;
-	ui_opacity!: cc.UIOpacity;
-	ui_transform!: cc.UITransform;
+	transform!: cc.UITransform;
 	animation!: cc.Animation;
 	edit_box!: cc.EditBox;
 	rich_text!: cc.RichText;
@@ -66,43 +65,45 @@ class node_extends {
 
 	/** 宽 */
 	get width(): number {
-		return this.ui_transform.width;
+		return this.transform.width;
 	}
 
 	set width(value_n_) {
-		this.ui_transform.width = value_n_;
+		this.transform.width = value_n_;
 	}
 
 	/** 高 */
 	get height(): number {
-		return this.ui_transform.height;
+		return this.transform.height;
 	}
 
 	set height(value_n_) {
-		this.ui_transform.height = value_n_;
+		this.transform.height = value_n_;
 	}
 
 	/** 透明度 */
 	get opacity(): number {
-		return this.ui_opacity.opacity;
+		return this._ui_opacity.opacity;
 	}
 
 	set opacity(value_n_) {
-		this.ui_opacity.opacity = value_n_;
+		this._ui_opacity.opacity = value_n_;
 	}
 
 	/** 锚点 */
 	get anchor(): Readonly<cc.Vec2> {
-		return this.ui_transform.anchorPoint;
+		return this.transform.anchorPoint;
 	}
 
 	set anchor(value_v2_: cc.Vec2) {
-		this.ui_transform.anchorPoint = value_v2_;
+		this.transform.anchorPoint = value_v2_;
 	}
 
 	/* --------------- private --------------- */
 	/** 持有节点 */
 	private _node: cc.Node;
+	/** 透明度组件 */
+	private _ui_opacity!: cc.UIOpacity;
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _order_n = 0;
@@ -165,7 +166,7 @@ class node_extends {
 		}
 
 		// 小于间隔时间更新
-		if (node_extends.order_update_timer === null && time_since_last_update_n < global_config.view.layer_refresh_interval_ms_n) {
+		if (time_since_last_update_n < global_config.view.layer_refresh_interval_ms_n) {
 			node_extends.order_update_timer = setTimeout(() => {
 				// 清理定时器数据
 				node_extends.order_update_timer = null;
