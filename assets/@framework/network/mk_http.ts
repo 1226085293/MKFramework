@@ -15,8 +15,18 @@ import * as cc from "cc";
  */
 export class mk_http extends mk_instance_base {
 	/* ------------------------------- 功能 ------------------------------- */
+	/** GET */
+	async get(url_s_: string, config_: Partial<mk_http_.config>): Promise<void> {
+		return await this._open("GET", url_s_, config_);
+	}
+
+	/** POST */
+	async post(url_s_: string, config_: Partial<mk_http_.config>): Promise<void> {
+		return await this._open("POST", url_s_, config_);
+	}
+
 	/** 通用方法 */
-	async open(type_s_: "GET" | "POST", url_s_: string, config_?: Partial<mk_http_.config>): Promise<void> {
+	private async _open(type_s_: "GET" | "POST", url_s_: string, config_?: Partial<mk_http_.config>): Promise<void> {
 		const xml_http = new XMLHttpRequest();
 		let config = new mk_http_.config(config_);
 
@@ -114,16 +124,6 @@ export class mk_http extends mk_instance_base {
 
 			xml_http.send(config.body);
 		});
-	}
-
-	/** GET方法 */
-	async get(url_s_: string, config_: Partial<mk_http_.config>): Promise<void> {
-		return await this.open("GET", url_s_, config_);
-	}
-
-	/** POST方法 */
-	async post(url_s_: string, config_: Partial<mk_http_.config>): Promise<void> {
-		return await this.open("POST", url_s_, config_);
 	}
 }
 
