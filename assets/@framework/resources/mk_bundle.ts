@@ -5,7 +5,7 @@ import mk_network_base from "../network/mk_network_base";
 import { EDITOR, PREVIEW } from "cc/env";
 import * as cc from "cc";
 import mk_status_task from "../task/mk_status_task";
-import mk_data_sharer from "../mk_data_sharer";
+import { mk_data_sharer_ } from "../mk_data_sharer";
 import mk_tool_func from "../@private/tool/mk_tool_func";
 import mk_release, { mk_release_ } from "../mk_release";
 
@@ -599,7 +599,7 @@ export namespace mk_bundle_ {
 		/** 网络对象 */
 		network?: mk_network_base;
 		/** 数据获取器 */
-		data?: mk_data_sharer;
+		data?: mk_data_sharer_.api<any>;
 		/* --------------- protected --------------- */
 		/** 释放管理器 */
 		protected _release_manage = new mk_release();
@@ -647,7 +647,7 @@ export namespace mk_bundle_ {
 			// 清理网络事件
 			this.network?.event.clear();
 			// 清理数据
-			this.data?.clear();
+			this.data?.reset();
 
 			// 清理对象池
 			for (const k_s in this.node_pool_tab) {

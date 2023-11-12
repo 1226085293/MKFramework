@@ -1,97 +1,96 @@
-import mk_instance_base from "./mk_instance_base";
+import * as cc from "cc";
 import mk_status_task from "./task/mk_status_task";
 
 /**
- * 数据共享器
- * @noInheritDoc
+ * 返回一个增加 mk_data_sharer_.api 接口的数据
+ * @param class_ 数据类型
+ * @returns 数据源为 new class_ 的 Proxy
  * @remarks
- * 用以模块间共享数据
- *
- * - 支持请求数据返回
+ * 如果需要监听数据修改，请使用 returns.source
  */
-class mk_data_sharer<CT = any> extends mk_instance_base {
-	/* --------------- public --------------- */
-	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
-		get: (target, key) => key,
-	});
-
-	/* --------------- private --------------- */
-	/** 数据表 */
-	private _data_map = new Map<any, any>();
+export default function mk_data_sharer<T extends Object, T2 = T & mk_data_sharer_.api<T>>(class_: cc.Constructor<T>): T2 {
+	let data: T;
 	/** 请求表 */
-	private _request_map = new Map<any, mk_status_task<any>>();
-	/* ------------------------------- 功能 ------------------------------- */
-	/**
-	 * 删除数据
-	 * @param key_ 注册键
-	 */
-	delete<T extends keyof CT>(key_: T): void {
-		// 录入数据表
-		this._data_map.delete(key_);
+	const request_map = new Map<any, mk_status_task<any>>();
 
-		// 检查请求表
-		const request = this._request_map.get(key_);
-
-		// 返回请求
-		if (request) {
-			request.finish(true, null);
-			this._request_map.delete(key_);
-		}
-	}
-
-	/**
-	 * 设置数据
-	 * @param key_ 注册键
-	 * @param data_ 数据
-	 */
-	set<T extends keyof CT>(key_: T, data_: CT[T]): void {
-		// 录入数据表
-		this._data_map.set(key_, data_);
-
-		// 检查请求表
-		const request = this._request_map.get(key_);
-
-		// 返回请求
-		if (request) {
-			request.finish(true, data_);
-			this._request_map.delete(key_);
-		}
-	}
-
-	/**
-	 * 获取数据
-	 * @param key_ 注册键
-	 */
-	get<T extends keyof CT, T2 = CT[T]>(key_: T): T2 | null;
-	/**
-	 * 获取数据
-	 * @param key_ 注册键
-	 * @param request_ 请求数据，若不存在则等待 set 后返回
-	 */
-	get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_: T2): T2 extends true ? Promise<T3> : T3 | null;
-	get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_?: T2): T2 extends true ? Promise<T3> : T3 | null {
-		const data = this._data_map.get(key_);
-
-		if (data) {
-			return data;
+	const request_f = (key: PropertyKey): any => {
+		if (data[key] !== undefined) {
+			return data[key];
 		}
 
-		// 返回请求
-		if (request_) {
-			const request = new mk_status_task<T3>(false);
+		let request = request_map.get(key);
 
-			this._request_map.set(key_, request);
+		// 新的请求
+		if (!request) {
+			request_map.set(key, (request = new mk_status_task(false)));
 
-			return request.task as any;
+			return request.task;
 		}
 
-		return null!;
-	}
+		// 多次请求
+		if (request && !request.finish_b) {
+			return request.task;
+		}
+	};
 
-	/** 清空 */
-	clear(): void {
-		this._request_map.forEach((v) => v.finish(true, null));
-	}
+	const reset_f = (): void => {
+		request_map.forEach((v) => v.finish(true, null));
+		request_map.clear();
+		data = new class_();
+		data["request"] = request_f;
+		data["reset"] = reset_f;
+		data["source"] = data;
+		data["key"] = new Proxy(Object.create(null), {
+			get: (target, key) => key,
+		});
+	};
+
+	reset_f();
+
+	return new Proxy(
+		{},
+		{
+			get: (target, key2) => data[key2],
+			set(target, key2, new_value) {
+				const request = request_map.get(key2);
+
+				data[key2] = new_value;
+
+				// 处理请求
+				if (request) {
+					request.finish(true, new_value);
+					request_map.delete(key2);
+				}
+
+				return true;
+			},
+		}
+	) as any;
 }
 
-export default mk_data_sharer;
+export namespace mk_data_sharer_ {
+	export interface api<T extends Object, T2 = keyof T> {
+		/**
+		 * 原始数据
+		 * @remarks
+		 * 可用于数据监听
+		 */
+		source: T;
+		/** 数据键 */
+		key: { [k in keyof T]: k };
+
+		/**
+		 * 请求数据
+		 * @param key_ 数据键
+		 * @remarks
+		 * 用于等待指定数据 set
+		 */
+		// @ts-ignore
+		request(key_: T2): Promise<T[T2]>;
+
+		/**
+		 * 重置数据
+		 */
+		reset(): void;
+	}
+}

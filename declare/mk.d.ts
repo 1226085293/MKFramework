@@ -392,7 +392,7 @@ declare namespace mk {
 			/** 网络对象 */
 			network?: mk_network_base;
 			/** 数据获取器 */
-			data?: data_sharer;
+			data?: mk_data_sharer_.api<any>;
 			/** 释放管理器 */
 			protected _release_manage: release;
 			/**
@@ -444,46 +444,13 @@ declare namespace mk {
 	}
 
 	/**
-	 * 数据共享器
-	 * @noInheritDoc
+	 * 返回一个增加 mk_data_sharer_.api 接口的数据
+	 * @param class_ 数据类型
+	 * @returns 数据源为 new class_ 的 Proxy
 	 * @remarks
-	 * 用以模块间共享数据
-	 *
-	 * - 支持请求数据返回
+	 * 如果需要监听数据修改，请使用 returns.source
 	 */
-	export declare class data_sharer<CT = any> extends instance_base {
-		key: {
-			[k in keyof CT]: k;
-		};
-		/** 数据表 */
-		private _data_map;
-		/** 请求表 */
-		private _request_map;
-		/**
-		 * 删除数据
-		 * @param key_ 注册键
-		 */
-		delete<T extends keyof CT>(key_: T): void;
-		/**
-		 * 设置数据
-		 * @param key_ 注册键
-		 * @param data_ 数据
-		 */
-		set<T extends keyof CT>(key_: T, data_: CT[T]): void;
-		/**
-		 * 获取数据
-		 * @param key_ 注册键
-		 */
-		get<T extends keyof CT, T2 = CT[T]>(key_: T): T2 | null;
-		/**
-		 * 获取数据
-		 * @param key_ 注册键
-		 * @param request_ 请求数据，若不存在则等待 set 后返回
-		 */
-		get<T extends keyof CT, T2 extends true | false, T3 = CT[T]>(key_: T, request_: T2): T2 extends true ? Promise<T3> : T3 | null;
-		/** 清空 */
-		clear(): void;
-	}
+	export declare function data_sharer<T extends Object, T2 = T & mk_data_sharer_.api<T>>(class_: cc_2.Constructor<T>): T2;
 
 	declare const _default: mk_http;
 
@@ -1321,6 +1288,32 @@ declare namespace mk {
 		}
 	}
 
+	declare namespace mk_data_sharer_ {
+		interface api<T extends Object, T2 = keyof T> {
+			/**
+			 * 原始数据
+			 * @remarks
+			 * 可用于数据监听
+			 */
+			source: T;
+			/** 数据键 */
+			key: {
+				[k in keyof T]: k;
+			};
+			/**
+			 * 请求数据
+			 * @param key_ 数据键
+			 * @remarks
+			 * 用于等待指定数据 set
+			 */
+			request(key_: T2): Promise<T[T2]>;
+			/**
+			 * 重置数据
+			 */
+			reset(): void;
+		}
+	}
+
 	/**
 	 * 动态模块
 	 * @noInheritDoc
@@ -1375,12 +1368,12 @@ declare namespace mk {
 	 * - 支持自定义编解码器
 	 */
 	declare class mk_http extends instance_base {
-		/** 通用方法 */
-		open(type_s_: "GET" | "POST", url_s_: string, config_?: Partial<mk_http_.config>): Promise<void>;
-		/** GET方法 */
+		/** GET */
 		get(url_s_: string, config_: Partial<mk_http_.config>): Promise<void>;
-		/** POST方法 */
+		/** POST */
 		post(url_s_: string, config_: Partial<mk_http_.config>): Promise<void>;
+		/** 通用方法 */
+		private _open;
 	}
 
 	declare namespace mk_http_ {
