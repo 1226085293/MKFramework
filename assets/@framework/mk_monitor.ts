@@ -108,6 +108,31 @@ export class mk_monitor extends mk_instance_base {
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
+	 * 监听 value_ 数据修改同步到 value2_
+	 * @param value_ 对象
+	 * @param key_ 键
+	 * @param value2_ 对象2
+	 * @param key2_ 键2
+	 * @param target_ 绑定对象
+	 * @returns 监听回调
+	 */
+	sync<T, T2 extends keyof T, T3, T4 extends keyof T3>(
+		value_: T,
+		key_: T2,
+		value2_: T3,
+		key2_: T4,
+		target_?: any
+	): _mk_monitor.type_on_callback<T[T2]> | null {
+		const callback_f = (value: any): void => {
+			value2_[key2_] = value;
+		};
+
+		value2_[key2_] = value_[key_] as any;
+
+		return this.on(value_, key_, callback_f, target_);
+	}
+
+	/**
 	 * 等待监听回调执行完成
 	 * @param value_ 对象
 	 * @param key_ 键
