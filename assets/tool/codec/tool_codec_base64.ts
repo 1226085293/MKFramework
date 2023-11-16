@@ -24,15 +24,15 @@ class tool_codec_base64 extends mk.codec_base {
 	/** 编码 */
 	encode(data_s_: string): string {
 		let result_s = "";
-		let temp1_n: number, temp2_n: number, temp3_n: number, temp4_n: number, temp5_n: number, temp6_n: number, temp7_n: number;
+		let temp_n: number, temp2_n: number, temp3_n: number, temp4_n: number, temp5_n: number, temp6_n: number, temp7_n: number;
 
 		data_s_ = this._utf8_codec.encode(data_s_);
 		for (let k_n = 0; k_n < data_s_.length; ) {
-			temp1_n = data_s_.charCodeAt(k_n++);
+			temp_n = data_s_.charCodeAt(k_n++);
 			temp2_n = data_s_.charCodeAt(k_n++);
 			temp3_n = data_s_.charCodeAt(k_n++);
-			temp4_n = temp1_n >> 2;
-			temp5_n = ((temp1_n & 3) << 4) | (temp2_n >> 4);
+			temp4_n = temp_n >> 2;
+			temp5_n = ((temp_n & 3) << 4) | (temp2_n >> 4);
 			temp6_n = ((temp2_n & 15) << 2) | (temp3_n >> 6);
 			temp7_n = temp3_n & 63;
 			if (isNaN(temp2_n)) {
@@ -54,7 +54,7 @@ class tool_codec_base64 extends mk.codec_base {
 	/** 解码 */
 	decode(data_s_: string): string {
 		let result_s = "";
-		let temp1_n: number, temp2_n: number, temp3_n: number, temp4_n: number, temp5_n: number, temp6_n: number, temp7_n: number;
+		let temp_n: number, temp2_n: number, temp3_n: number, temp4_n: number, temp5_n: number, temp6_n: number, temp7_n: number;
 
 		// eslint-disable-next-line no-useless-escape
 		data_s_ = data_s_.replace(/[^A-Za-z0-9\+\/\=]/g, "");
@@ -63,10 +63,10 @@ class tool_codec_base64 extends mk.codec_base {
 			temp5_n = _tool_codec_base64.str_lib_ss.indexOf(data_s_.charAt(k_n++));
 			temp6_n = _tool_codec_base64.str_lib_ss.indexOf(data_s_.charAt(k_n++));
 			temp7_n = _tool_codec_base64.str_lib_ss.indexOf(data_s_.charAt(k_n++));
-			temp1_n = (temp4_n << 2) | (temp5_n >> 4);
+			temp_n = (temp4_n << 2) | (temp5_n >> 4);
 			temp2_n = ((temp5_n & 15) << 4) | (temp6_n >> 2);
 			temp3_n = ((temp6_n & 3) << 6) | temp7_n;
-			result_s = result_s + String.fromCharCode(temp1_n);
+			result_s = result_s + String.fromCharCode(temp_n);
 			if (temp6_n != 64) {
 				result_s = result_s + String.fromCharCode(temp2_n);
 			}
