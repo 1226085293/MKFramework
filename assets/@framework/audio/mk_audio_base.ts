@@ -256,16 +256,8 @@ export namespace mk_audio_base_ {
 
 	/** 安全音频单元 */
 	export interface unit {
-		/** 初始化状态 */
-		readonly init_b: boolean;
 		/** 分组 */
 		readonly group_ns: ReadonlyArray<number>;
-		/**
-		 * 当前停止分组
-		 * @remarks
-		 * 停止时优先级最大的分组
-		 */
-		readonly stop_group_n: number | null;
 		/** 播放状态 */
 		readonly state: state;
 		/**
@@ -353,7 +345,7 @@ export namespace mk_audio_base_ {
 	}
 
 	/** 事件协议 */
-	interface event_protocol {
+	export interface event_protocol {
 		/** 初始化 */
 		init(): void;
 		/** 播放 */

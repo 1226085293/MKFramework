@@ -58,16 +58,8 @@ declare namespace mk {
 		}
 		/** 安全音频单元 */
 		export interface unit {
-			/** 初始化状态 */
-			readonly init_b: boolean;
 			/** 分组 */
 			readonly group_ns: ReadonlyArray<number>;
-			/**
-			 * 当前停止分组
-			 * @remarks
-			 * 停止时优先级最大的分组
-			 */
-			readonly stop_group_n: number | null;
 			/** 播放状态 */
 			readonly state: state;
 			/**
@@ -300,8 +292,6 @@ declare namespace mk {
 			private _update_stop_group;
 		}
 		const unit: Omit<unit, keyof Function> & (new (init_?: Partial<unit>) => Omit<unit, keyof Function>);
-		{
-		}
 	}
 
 	export declare const bundle: mk_bundle;
