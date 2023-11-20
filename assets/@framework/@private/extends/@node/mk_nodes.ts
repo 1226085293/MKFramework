@@ -1,5 +1,6 @@
 import * as cc from "cc";
 import global_config from "../../../../@config/global_config";
+import global_event from "../../../../@config/global_event";
 
 class node_extends {
 	constructor(node_: cc.Node) {
@@ -223,5 +224,7 @@ namespace MKN {
 
 // 切换场景后自动清理
 cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, MKN.clear, this);
+// 重启时自动清理
+global_event.on(global_event.key.restart, MKN.clear, this);
 
 export default MKN;

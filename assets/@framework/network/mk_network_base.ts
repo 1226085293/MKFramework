@@ -592,6 +592,10 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 
 	/* ------------------------------- 全局事件 ------------------------------- */
 	protected _event_restart(): void {
+		// 写睡眠
+		this._write_sleep_b = true;
+		// 关闭网络事件
+		this.event.emit(this.event.key.close, null);
 		// 清理事件
 		this.event.clear();
 		this.message.clear();
@@ -711,6 +715,9 @@ export namespace mk_network_base_ {
 		constructor(network_: mk_network_base, interval_ms_n_: number) {
 			this._network = network_;
 			this._send_interval_ms_n = interval_ms_n_;
+
+			// 事件监听
+			global_event.on(global_event.key.restart, this._event_restart, this);
 		}
 
 		/** 网络节点 */
@@ -742,12 +749,18 @@ export namespace mk_network_base_ {
 			// 发送定时器
 			if (this._send_interval_ms_n > 0 && !this._send_timer) {
 				this._send_timer = setInterval(() => {
+					// 没有消息取消定时任务
+					if (!this._mess_as.length) {
+						clearInterval(this._send_timer);
+						this._send_timer = null;
+
+						return;
+					}
+
 					while (this._mess_as.length) {
 						this._network._send(this._mess_as.shift());
 					}
-
-					this._send_timer = null;
-				});
+				}, this._send_interval_ms_n);
 			}
 		}
 
@@ -760,6 +773,12 @@ export namespace mk_network_base_ {
 			while (this._mess_as.length) {
 				this._network._send(this._mess_as.shift());
 			}
+		}
+
+		/* ------------------------------- 全局事件 ------------------------------- */
+		private _event_restart(): void {
+			clearInterval(this._send_timer);
+			this._send_timer = null;
 		}
 	}
 }

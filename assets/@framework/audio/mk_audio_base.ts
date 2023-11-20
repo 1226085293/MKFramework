@@ -234,7 +234,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	}
 
 	/* ------------------------------- 全局事件 ------------------------------- */
-	private _event_restart(): void {
+	protected _event_restart(): void {
 		// 停止所有音频
 		this.stop_all();
 

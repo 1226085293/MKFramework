@@ -33,6 +33,8 @@ class mk_audio_common extends mk_audio_base {
 	private _curr_play_n = 0;
 	/** AudioSource 对象池 */
 	private _audio_source_pool!: mk_obj_pool.sync<cc.AudioSource>;
+	/** 倒计时集合 */
+	private _timer_set = new Set<any>();
 	/* ------------------------------- 功能 ------------------------------- */
 	play(audio_: mk_audio_base_.unit, config_?: Partial<mk_audio_base_.play_config>): boolean {
 		const audio = audio_ as mk_audio_common_._unit;
@@ -141,17 +143,19 @@ class mk_audio_common extends mk_audio_base {
 			audio_.audio_source!.playOneShot(audio_.clip!);
 			// 播放开始
 			this._node_audio_started(audio_);
-			setTimeout(() => {
-				/** 当前状态 */
-				const curr_state = audio_.state;
 
+			const timer = setTimeout(() => {
+				// 删除倒计时
+				this._timer_set.delete(timer);
 				// 播放结束
 				this._node_audio_ended(audio_);
 				// loop
-				if (audio_.loop_b && curr_state === mk_audio_base_.state.play) {
+				if (audio_.loop_b && audio_.state === mk_audio_base_.state.play) {
 					this.play(audio_);
 				}
 			}, audio_.total_time_s_n * 1000);
+
+			this._timer_set.add(timer);
 		}
 
 		if (last_state === mk_audio_base_.state.stop) {
@@ -273,6 +277,13 @@ class mk_audio_common extends mk_audio_base {
 			this.play(audio_);
 			--audio_.wait_play_n;
 		}
+	}
+
+	/* ------------------------------- 全局事件 ------------------------------- */
+	protected _event_restart(): void {
+		super._event_restart();
+		this._timer_set.forEach((v) => clearTimeout(v));
+		this._timer_set.clear();
 	}
 }
 
