@@ -845,6 +845,12 @@ declare namespace mk {
 		/** 初始化数据 */
 		init_data?: any;
 		/**
+		 * 视图数据
+		 * @remarks
+		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+		 */
+		data?: any;
+		/**
 		 * 事件对象列表
 		 * @readonly
 		 * @remarks
@@ -876,6 +882,12 @@ declare namespace mk {
 		/** 运行状态 */
 		protected _state: _mk_life_cycle.run_state;
 		/* Excluded from this release type: _release_manage */
+		/**
+		 * 重置 data
+		 * @remarks
+		 * close 后重置 this.data，data 必须为 class 类型
+		 */
+		protected _reset_data_b: boolean;
 		/** 日志 */
 		protected get _log(): logger;
 		/** 日志 */
@@ -1175,7 +1187,7 @@ declare namespace mk {
 		/** 停止所有音频 */
 		stop_all(): void;
 		/* Excluded from this release type: _add */
-		private _event_restart;
+		protected _event_restart(): void;
 	}
 
 	/**
@@ -2293,6 +2305,7 @@ declare namespace mk {
 			send(data_: Parameters<CT["encode"]>[0]): void;
 			/** 触发发送 */
 			trigger(): void;
+			private _event_restart;
 		}
 	}
 
@@ -2908,6 +2921,15 @@ declare namespace mk {
 	}
 
 	/**
+	 * 场景基类
+	 * @remarks
+	 * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
+	 */
+	export declare class scene_base extends life_cycle {
+		protected _use_layer_b: boolean;
+	}
+
+	/**
 	 * 场景驱动
 	 * @noInheritDoc
 	 * @remarks
@@ -3074,25 +3096,12 @@ declare namespace mk {
 		set auto_widget_b(value_b_: boolean);
 		get auto_block_input_b(): boolean;
 		set auto_block_input_b(value_b_: boolean);
-		/**
-		 * 视图数据
-		 * @remarks
-		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
-		 */
-		data?: any;
 		/** 视图类型 */
 		get type_s(): string;
 		/** 模块配置 */
 		set config(config_: _mk_view_base.create_config);
-		/**
-		 * 重置 data
-		 * @remarks
-		 * close 后重置 this.data，data 必须为 class 类型
-		 */
-		protected _reset_data_b: boolean;
 		/** 视图配置 */
 		protected _view_config: view_base_.view_config;
-		protected onLoad(): void;
 		protected open(): void | Promise<void>;
 		/**
 		 * 关闭
