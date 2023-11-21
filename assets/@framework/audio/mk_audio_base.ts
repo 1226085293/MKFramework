@@ -360,7 +360,10 @@ export namespace mk_audio_base_ {
 		end(): void;
 	}
 
-	/** 音频单元 */
+	/**
+	 * 音频单元
+	 * @internal
+	 */
 	@ccclass("mk_audio_base/unit")
 	export abstract class _unit {
 		constructor(init_?: Partial<_unit>) {
