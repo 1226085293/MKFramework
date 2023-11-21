@@ -643,13 +643,18 @@ export class mk_ui_manage extends mk_instance_base {
 
 		// 生命周期
 		for (const v of close_ui_as) {
-			await v._close({
+			// 组件已经被销毁
+			if (!v.isValid) {
+				continue;
+			}
+
+			await v._close?.({
 				first_b: true,
 				destroy_children_b: config.destroy_children_b,
 			});
 
 			// 节点已在生命周期内被销毁
-			if (!v.node?.isValid) {
+			if (!cc.isValid(v.node, true)) {
 				continue;
 			}
 
