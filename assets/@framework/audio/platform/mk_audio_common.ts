@@ -132,7 +132,6 @@ class mk_audio_common extends mk_audio_base {
 			// play 接口计数，若超出 maxAudioChannel 继续播放则会停止之前播放的音频，故退出
 			if (last_state === mk_audio_base_.state.stop && this._curr_play_n > cc.AudioSource.maxAudioChannel) {
 				this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
-				--this._curr_play_n;
 				this.stop(audio_);
 
 				return;
