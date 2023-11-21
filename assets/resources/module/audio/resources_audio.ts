@@ -272,7 +272,6 @@ export class resources_audio extends mk.view_base {
 		const canvas = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!;
 		/** 触摸世界坐标 */
 		const touch_pos_v3 = event.getUILocation();
-
 		/** 距中心点距离 */
 		const dist_n = cc.v2(touch_pos_v3.x - N(canvas.node).transform.width * 0.5, touch_pos_v3.y - N(canvas.node).transform.height * 0.5).length();
 
