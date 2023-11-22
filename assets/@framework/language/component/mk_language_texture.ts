@@ -39,6 +39,19 @@ class mk_language_texture extends mk_language_base {
 	private _sprite!: cc.Sprite;
 	/** 初始纹理 */
 	private _initial_sprite_frame: cc.SpriteFrame | null = null;
+	/* ------------------------------- 生命周期 ------------------------------- */
+	protected onEnable(): void {
+		if (EDITOR) {
+			language.event.on(language.event.key.texture_data_change, this._event_texture_data_change, this)?.call(this);
+		}
+	}
+
+	protected onDisable(): void {
+		if (EDITOR) {
+			language.event.off(language.event.key.texture_data_change, this._event_texture_data_change, this);
+		}
+	}
+
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 重置数据 */
 	protected _reset_data(): void {
@@ -141,17 +154,6 @@ class mk_language_texture extends mk_language_base {
 		this._initial_sprite_frame = this._sprite.spriteFrame;
 
 		super._init_data();
-	}
-
-	protected _init_event(state_b_: boolean): void {
-		super._init_event(state_b_);
-		if (EDITOR) {
-			if (state_b_) {
-				language.event.on(language.event.key.texture_data_change, this._event_texture_data_change, this)?.call(this);
-			} else {
-				language.event.off(language.event.key.texture_data_change, this._event_texture_data_change, this);
-			}
-		}
 	}
 
 	/** 初始化组件 */

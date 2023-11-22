@@ -150,7 +150,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1624,
+      "width": 1280,
       "height": 750
     },
     "_anchorPoint": {
@@ -288,7 +288,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 772,
+      "x": 600,
       "y": 335,
       "z": 0
     },
@@ -781,6 +781,8 @@
     "__prefab": {
       "__id__": 33
     },
+    "layer_type_n": 0,
+    "_child_layer_n": 0,
     "_type_s": "resources_language",
     "_mark_s": "示例",
     "direction_adaptation_b": true,
@@ -937,6 +939,8 @@
     "__prefab": {
       "__id__": 41
     },
+    "layer_type_n": 0,
+    "_child_layer_n": 0,
     "_type_s": "resources_language",
     "_mark_s": "示例",
     "_id": ""
@@ -2078,7 +2082,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1624,
+      "width": 1280,
       "height": 750
     },
     "_anchorPoint": {
@@ -2161,7 +2165,6 @@
     "animation_config": {
       "__id__": 101
     },
-    "_wind_b": true,
     "_id": ""
   },
   {

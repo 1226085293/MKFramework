@@ -24,8 +24,8 @@ class mk_language_label extends mk_language_base {
 	/* --------------- 属性 --------------- */
 	/** label 适配 */
 	@property({
-		displayName: "方向适配",
-		tooltip: "根据语言配置从左到右或从右到左",
+		displayName: "水平对齐适配",
+		tooltip: "根据语言配置设置 Label 的水平对齐方式 Horizontal Align",
 	})
 	direction_adaptation_b = false;
 
@@ -61,6 +61,18 @@ class mk_language_label extends mk_language_base {
 	/** label组件 */
 	private _label!: cc.Label | cc.RichText | null;
 	/* ------------------------------- 生命周期 ------------------------------- */
+	protected onEnable(): void {
+		if (EDITOR) {
+			language.event.on(language.event.key.label_data_change, this._event_label_data_change, this)?.call(this);
+		}
+	}
+
+	protected onDisable(): void {
+		if (EDITOR) {
+			language.event.off(language.event.key.label_data_change, this._event_label_data_change, this);
+		}
+	}
+
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 重置数据 */
 	protected _reset_data(): void {
@@ -149,17 +161,6 @@ class mk_language_label extends mk_language_base {
 		}
 
 		super._init_data();
-	}
-
-	protected _init_event(state_b_: boolean): void {
-		super._init_event(state_b_);
-		if (EDITOR) {
-			if (state_b_) {
-				language.event.on(language.event.key.label_data_change, this._event_label_data_change, this)?.call(this);
-			} else {
-				language.event.off(language.event.key.label_data_change, this._event_label_data_change, this);
-			}
-		}
 	}
 
 	/** 方向适配 */

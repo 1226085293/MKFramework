@@ -36,13 +36,15 @@ declare namespace mk {
 	 * 音频管理器
 	 * @remarks
 	 *
-	 * - (动态/静态)音频支持
+	 * - 音频分组，支持对不同类型的音频批量控制
 	 *
-	 * - 音频(类型/分组)双分类支持
+	 * - 支持(动态/静态)音频
 	 *
-	 * - (通用/微信)版本管理器
+	 * - (通用/微信)版本
 	 *
-	 * - 统一音频事件
+	 * - 增加对 playOnShot 接口的事件支持
+	 *
+	 * - 通用版本超出播放数量限制后停止当前音频而不是之前的
 	 */
 	export declare const audio: mk_audio_base;
 
@@ -1393,6 +1395,8 @@ declare namespace mk {
 		private _args_ss;
 		/** label组件 */
 		private _label;
+		protected onEnable(): void;
+		protected onDisable(): void;
 		/** 重置数据 */
 		protected _reset_data(): void;
 		protected _update_content(): void;
@@ -1400,7 +1404,6 @@ declare namespace mk {
 		protected _set_type(value_: number): void;
 		protected _set_type_s(value_s_: string): void;
 		protected _init_data(): void;
-		protected _init_event(state_b_: boolean): void;
 		/** 方向适配 */
 		private _direction_adaptation;
 		/** 初始化组件 */
@@ -1548,6 +1551,8 @@ declare namespace mk {
 		private _sprite;
 		/** 初始纹理 */
 		private _initial_sprite_frame;
+		protected onEnable(): void;
+		protected onDisable(): void;
 		/** 重置数据 */
 		protected _reset_data(): void;
 		protected _update_content(): Promise<void>;
@@ -1555,7 +1560,6 @@ declare namespace mk {
 		protected _set_type(value_: number): void;
 		protected _set_type_s(value_s_: string): void;
 		protected _init_data(): void;
-		protected _init_event(state_b_: boolean): void;
 		/** 初始化组件 */
 		private _init_component;
 		private _event_texture_data_change;
