@@ -315,7 +315,7 @@ export class mk_view_base extends mk_life_cycle {
 			return false;
 		}
 
-		return Boolean(this.node.children[0].getComponent(cc.Sprite) && this.node.children[0].getComponent(cc.Widget));
+		return Boolean(this.node.children[0].name === mk_view_base.config.mask_data_tab.node_name_s);
 	}
 
 	private async _set_auto_mask_b(value_b_: boolean): Promise<void> {
