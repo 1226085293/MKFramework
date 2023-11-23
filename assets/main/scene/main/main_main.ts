@@ -1,4 +1,3 @@
-import main_main_nodes from "./main_main_nodes";
 import { _decorator } from "cc";
 import mk from "mk";
 import { resources_audio } from "../../../resources/module/audio/resources_audio";
@@ -12,12 +11,9 @@ import global_config from "../../../@config/global_config";
 const { ccclass, property } = _decorator;
 
 @ccclass("main_main")
-export class main_main extends mk.view_base {
+export class main_main extends mk.static_view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
-	@property(main_main_nodes)
-	nodes = new main_main_nodes();
-
 	/* --------------- public --------------- */
 	data = new (class {
 		version_s = global_config.constant.version_s;
