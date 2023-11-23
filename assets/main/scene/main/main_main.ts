@@ -27,7 +27,7 @@ export class main_main extends mk.view_base {
 				view: resources_audio,
 			},
 			{
-				label_s: "多语言(language)",
+				label_s: "多语言\n(language)",
 				view: resources_language,
 			},
 			{
