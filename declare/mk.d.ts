@@ -2844,15 +2844,6 @@ declare namespace mk {
 	}
 
 	/**
-	 * 场景基类
-	 * @remarks
-	 * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
-	 */
-	export declare class scene_base extends life_cycle {
-		protected _use_layer_b: boolean;
-	}
-
-	/**
 	 * 场景驱动
 	 * @noInheritDoc
 	 * @remarks
@@ -2865,6 +2856,15 @@ declare namespace mk {
 		private _event_restart;
 		private _event_wait_close_scene;
 		private _event_before_scene_switch;
+	}
+
+	/**
+	 * 场景基类
+	 * @remarks
+	 * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
+	 */
+	export declare class static_view_base extends life_cycle {
+		protected _use_layer_b: boolean;
 	}
 
 	/**

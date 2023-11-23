@@ -8,8 +8,8 @@ const { ccclass, property } = cc._decorator;
  * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
  */
 @ccclass
-export class mk_scene_base extends mk_life_cycle {
+export class mk_static_view_base extends mk_life_cycle {
 	protected _use_layer_b = false;
 }
 
-export default mk_scene_base;
+export default mk_static_view_base;
