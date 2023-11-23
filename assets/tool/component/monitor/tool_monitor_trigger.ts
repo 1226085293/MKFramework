@@ -136,7 +136,6 @@ export namespace _tool_monitor_trigger {
 					/** 参数类型 */
 					const ccclass = tool_monitor_data_method[this.type_s][this.event_s]?.ccclass_params;
 
-					console.log(this.event_param_as[0]);
 					// 更新参数
 					this.event_param_as.splice(0, this.event_param_as.length);
 					if (ccclass?.["__props__"].length) {
