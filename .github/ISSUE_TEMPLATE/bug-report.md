@@ -9,6 +9,10 @@ labels: ["bug"]
 
 #### 您使用的版本？ | Your usage version?
 
+CocosCreator：
+
+MKFramework：
+
 #### 您使用的场景？ | Your usage scenarios?
 
 #### 您做了什么操作？ | What did you do?
