@@ -61,7 +61,7 @@ class mk_language_texture extends mk_language_base {
 		this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
 		// 默认标记
 		this.mark_s = this._mark_enum[0];
-		// 更新文本
+		// 更新内容
 		this._update_content();
 
 		// 更新编辑器

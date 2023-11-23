@@ -86,7 +86,7 @@ class mk_language_label extends mk_language_base {
 		this._args_ss = [];
 		// 方向适配
 		this._direction_adaptation();
-		// 更新文本
+		// 更新内容
 		this._update_content();
 		// 更新编辑器
 		this._update_editor();
