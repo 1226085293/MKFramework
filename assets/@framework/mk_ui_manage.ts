@@ -326,6 +326,14 @@ export class mk_ui_manage extends mk_instance_base {
 			return null;
 		}
 
+		/** 模块注册任务 */
+		const ui_regis_task = this._ui_regis_task_map.get(key_);
+
+		// 等待模块注册
+		if (ui_regis_task) {
+			await ui_regis_task.task;
+		}
+
 		/** 注册数据 */
 		let regis_data = this._ui_regis_map.get(key_);
 
