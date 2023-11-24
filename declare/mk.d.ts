@@ -29,7 +29,7 @@ declare namespace mk {
 			remote_option?: _mk_asset.load_remote_option_type;
 		}
 		/** 跟随释放对象 */
-		export type follow_release_object = mk_release_.follow_release_object<cc_2.Asset>;
+		export type follow_release_object = release_.follow_release_object<cc_2.Asset>;
 	}
 
 	/**
@@ -290,7 +290,7 @@ declare namespace mk {
 		 * @remarks
 		 * 注意生命周期函数 init、open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 		 */
-		export abstract class bundle_manage_base implements mk_release_.follow_release_object {
+		export abstract class bundle_manage_base implements release_.follow_release_object {
 			constructor();
 			/** bundle 名 */
 			abstract name_s: string;
@@ -324,8 +324,8 @@ declare namespace mk {
 			 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
 			 */
 			close(): void | Promise<void>;
-			follow_release<T = mk_release_.release_param_type>(object_: T): T;
-			cancel_release<T = mk_release_.release_param_type>(object_: T): T;
+			follow_release<T = release_.release_param_type>(object_: T): T;
+			cancel_release<T = release_.release_param_type>(object_: T): T;
 		}
 	}
 
@@ -860,8 +860,8 @@ declare namespace mk {
 		 * 在子模块 close 和 late_close 后执行
 		 */
 		protected late_close?(): void | Promise<void>;
-		follow_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
-		cancel_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
+		follow_release<T = release_.release_param_type & audio_._unit>(object_: T): T;
+		cancel_release<T = release_.release_param_type & audio_._unit>(object_: T): T;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -2308,30 +2308,6 @@ declare namespace mk {
 		}
 	}
 
-	declare namespace mk_release_ {
-		/** 释放对象类型 */
-		type release_object_type = {
-			release(): any | Promise<any>;
-		};
-		/** 释放回调类型 */
-		type release_call_back_type = () => any | Promise<any>;
-		/** 释放参数类型 */
-		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
-		/** 跟随释放类型 */
-		type follow_release_object<CT = release_param_type> = {
-			/**
-			 * 跟随释放
-			 * @param object_ 释放对象/释放对象数组
-			 */
-			follow_release<T extends CT>(object_: T): T;
-			/**
-			 * 取消释放
-			 * @param object_ 取消释放对象/取消释放对象数组
-			 */
-			cancel_release<T extends CT>(object_: T): T;
-		};
-	}
-
 	/**
 	 * 状态任务（类型安全）
 	 * @remarks
@@ -2498,7 +2474,7 @@ declare namespace mk {
 		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
 			source_: _mk_ui_manage.source_type<T>,
-			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
+			target_: release_.follow_release_object<release_.release_call_back_type> | null,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
 		/**
@@ -2833,14 +2809,38 @@ declare namespace mk {
 		 * 添加释放对象
 		 * @param object_ 要跟随模块释放的对象或列表
 		 */
-		add<T extends mk_release_.release_param_type>(object_: T): T;
+		add<T extends release_.release_param_type>(object_: T): T;
 		/**
 		 * 释放对象
 		 * @param object_ 指定对象
 		 */
-		release(object_?: mk_release_.release_param_type): Promise<void>;
+		release(object_?: release_.release_param_type): Promise<void>;
 		/** 释放所有对象 */
 		release_all(): Promise<void>;
+	}
+
+	export declare namespace release_ {
+		/** 释放对象类型 */
+		export type release_object_type = {
+			release(): any | Promise<any>;
+		};
+		/** 释放回调类型 */
+		export type release_call_back_type = () => any | Promise<any>;
+		/** 释放参数类型 */
+		export type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
+		/** 跟随释放类型 */
+		export type follow_release_object<CT = release_param_type> = {
+			/**
+			 * 跟随释放
+			 * @param object_ 释放对象/释放对象数组
+			 */
+			follow_release<T extends CT>(object_: T): T;
+			/**
+			 * 取消释放
+			 * @param object_ 取消释放对象/取消释放对象数组
+			 */
+			cancel_release<T extends CT>(object_: T): T;
+		};
 	}
 
 	/**
@@ -2994,7 +2994,7 @@ declare namespace mk {
 			/** 来源 */
 			source: _mk_ui_manage.source_type<CT>;
 			/** 跟随释放对象 */
-			target: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
+			target: release_.follow_release_object<release_.release_call_back_type>;
 		}
 	}
 
