@@ -16,8 +16,6 @@
 
 ## 📗 文档教程
 
-AI 助手：https://poe.com/MKFrameworkAI
-
 快速入门：https://muzzik.gitee.io/mk-framework/quick-start/
 
 功能模块：https://muzzik.gitee.io/mk-framework/module/
@@ -25,6 +23,10 @@ AI 助手：https://poe.com/MKFrameworkAI
 案例教程：https://muzzik.gitee.io/mk-framework/tutorial/
 
 API 接口：https://muzzik.gitee.io/mk-framework/api/
+
+AI 助手（GPT3.5/免费）：[MKFrameworkAI](https://poe.com/MKFrameworkAI)
+
+AI 助手（GPT4/需订阅）：[MKFrameworkAI-GPT4](https://poe.com/MKFrameworkAI-GPT4)
 
 ## 🛠️ 安装框架
 
