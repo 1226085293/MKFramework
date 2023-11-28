@@ -16,6 +16,8 @@
 
 ## 📗 文档教程
 
+AI 助手：https://poe.com/MKFrameworkAI
+
 快速入门：https://muzzik.gitee.io/mk-framework/quick-start/
 
 功能模块：https://muzzik.gitee.io/mk-framework/module/
