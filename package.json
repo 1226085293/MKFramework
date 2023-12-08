@@ -27,6 +27,6 @@
   "uuid": "0db88ab0-0e0d-4a27-98dc-7d2c966dad01",
   "version": "3.6.3",
   "dependencies": {
-    "protobufjs": "^7.1.2"
+    "protobufjs": "^7.2.4"
   }
 }
