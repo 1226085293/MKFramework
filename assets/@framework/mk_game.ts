@@ -50,9 +50,9 @@ export class mk_game extends mk_instance_base {
 	 */
 	pause(node_: cc.Node, recursion_b_ = false): void {
 		/** 龙骨 */
-		const dragon_bones = node_.getComponent(cc.dragonBones.ArmatureDisplay);
+		const dragon_bones = !cc.dragonBones ? null : node_.getComponent(cc.dragonBones.ArmatureDisplay);
 		/** spine */
-		const spine = node_.getComponent(cc.sp.Skeleton);
+		const spine = !cc.sp ? null : node_.getComponent(cc.sp.Skeleton);
 		/** 暂停数据 */
 		let pause_data = this._pause_data_map.get(node_);
 
@@ -95,9 +95,9 @@ export class mk_game extends mk_instance_base {
 	 */
 	resume(node_: cc.Node, recursion_b_ = false): void {
 		/** 龙骨 */
-		const dragon_bones = node_.getComponent(cc.dragonBones.ArmatureDisplay);
+		const dragon_bones = !cc.dragonBones ? null : node_.getComponent(cc.dragonBones.ArmatureDisplay);
 		/** spine */
-		const spine = node_.getComponent(cc.sp.Skeleton);
+		const spine = !cc.sp ? null : node_.getComponent(cc.sp.Skeleton);
 		/** 暂停数据 */
 		const pause_data = this._pause_data_map.get(node_);
 
