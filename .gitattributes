@@ -1,4 +1,7 @@
+# lf 换行符
 *           text=auto
 *.meta      text eol=lf
 *.ts        text eol=lf
 *.js        text eol=lf
+# 大小写敏感
+*           case-sensitive
