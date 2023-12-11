@@ -36,16 +36,16 @@ export class resources_network extends mk.view_base {
 	// create(): void {}
 	// init(init_?: typeof this.init_data): void {}
 	open(): void {
-		// this._ws.connect("ws://127.0.0.1:8848");
+		this._ws.connect("ws://127.0.0.1:8848");
 		this._ws2.connect("ws://127.0.0.1:8849");
 
 		this._ws.event.on(this._ws.event.key.recv, this._network_recv, this);
 		this._ws2.event.on(this._ws.event.key.recv, this._network_recv2, this);
 
-		// 监听指定消息
-		this._ws2.message.on(test.test_c, (value) => {
-			this._log.log("收到指定消息", value);
-		});
+		// // 监听指定消息
+		// this._ws2.message.on(test.test_c, (value) => {
+		// 	this.data.chat2_ss.push("网络 2 收到：" + value.data);
+		// });
 
 		// // 请求指定消息（等待返回、需在消息体添加消息序号并修改对应编解码）
 		// this._ws2.message.request(test.test_c.create())?.then((value) => {
@@ -93,7 +93,7 @@ export class resources_network extends mk.view_base {
 	}
 
 	private _network_recv2(event_: any): void {
-		this.data.chat2_ss.push("网络 2 收到：" + JSON.stringify(event_.data));
+		this.data.chat2_ss.push("网络 2 收到：" + event_.data);
 	}
 	/* ------------------------------- 自定义事件 ------------------------------- */
 }
