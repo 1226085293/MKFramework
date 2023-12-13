@@ -2,17 +2,8 @@
     <img src="https://gitee.com/muzzik/MKFramework/raw/main/home/logo.png" alt="Image" />
 </div> -->
 
-<!-- <div style="text-align:left">
+<div style="text-align:left">
     <img src="./home/logo.png" alt="Image" />
-</div> -->
-
-<div style="display: flex; align-items: center;">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine" />
-    <img src="./home/logo.png" alt="Image" />
-    <div style="margin-left: 10px; text-align: left; font-family: 'Tangerine', serif;">
-        <div style="font-family: Arial, sans-serif; font-size: 80px;">MK</div>
-        <div style="font-family: Arial, sans-serif; font-size: 60px;">Framework</div>
-    </div>
 </div>
 
 # Cocos Creator 3.x 游戏开发框架 (Beta)
