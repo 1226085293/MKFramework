@@ -40,3 +40,17 @@ AI 助手（GPT4/需订阅）：[MKFrameworkAI-GPT4](https://poe.com/MKFramework
 1. 执行 `npx mk-install`
 1. 输入你的项目路径回车
 1. 输入 `install` 回车，等待安装完成
+
+## 😀 仓库说明
+
+> 本仓库为 MKFramework 的示例项目，如果对框架模块有疑惑可参考此项目代码使用，如果示例不存在请联系开发人员补充
+
+### 项目初始化
+
+1. 控制台执行 `npm i`
+
+## 📭 联系方式
+
+- QQ 群：200351945
+
+- 微信：_muzzik
