@@ -148,7 +148,6 @@
 				"trailingUnderscore": "allowSingleOrDouble"
 			}
 		],
-
 		// 成员排序
 		"@typescript-eslint/member-ordering": [
 			"error",
