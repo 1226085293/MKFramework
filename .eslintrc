@@ -14,12 +14,28 @@
 	"plugins": ["@typescript-eslint", "eslint-plugin-prettier", "unused-imports"],
 	"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
 	"env": {
-		"browser": true,
-		"node": true
+		"browser": false,
+		"node": false
 	},
 	"ignorePatterns": ["tool/**"],
 	"globals": {},
 	"rules": {
+		// 禁止全局变量
+		"no-restricted-globals": ["error", "Node"],
+		// 禁止导入
+		"@typescript-eslint/no-restricted-imports": ["error",
+			{
+				"patterns": [
+					// 禁止使用 @framework 内的模块
+					{
+						"group": ["@framework"],
+						"message": "请使用 mk.xxx，而不是直接导入 @framework"
+					}
+				],
+				// 禁止使用 NodeJs 模块
+				"paths": ["assert","buffer","child_process","cluster","crypto","dgram","dns","domain","events","freelist","fs","http","https","module","net","os","path","punycode","querystring","readline","repl","smalloc","stream","string_decoder","sys","timers","tls","tracing","tty","url","util","vm","zlib"]
+			}
+		],
 		// 禁止返回类型 void 混合其他
 		"@typescript-eslint/no-invalid-void-type": "error",
 		// 一致的泛型构造函数
@@ -30,7 +46,7 @@
 		"@typescript-eslint/ban-types": "off",
 		// 不能在 promise 回调使用 async 函数
 		"no-async-promise-executor": "off",
-		// 未使用的变量
+		// 不允许未使用的变量
 		"@typescript-eslint/no-unused-vars": "off",
 		// 自动删除未使用的导入
 		"unused-imports/no-unused-imports": "error",
