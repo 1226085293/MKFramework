@@ -5,12 +5,15 @@
 		"singleline",
 		"unregis"
 	],
-	"commentTranslate.targetLanguage": "en",
+	"commentTranslate.targetLanguage": "zh-CN",
 	"search.exclude": {
 		"**/node_modules": true,
 		"**/bower_components": true,
 		"**/*.code-search": true,
 		"tool/": true
 	},
-	"typescript.tsdk": "node_modules\\typescript\\lib"
+	// 使用本地的 typescript 版本
+	"typescript.tsdk": "node_modules\\typescript\\lib",
+	// 排除自动导入提示
+	"typescript.preferences.autoImportFileExcludePatterns": ["./assets/@framework/**"]
 }
