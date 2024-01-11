@@ -64,6 +64,11 @@ class mk_storage<CT extends Object> {
 			/** 存储数据 */
 			let storage_data_s = JSON.stringify(data_);
 
+			// 与本地数据一致
+			if (this._cache[key_s] === storage_data_s) {
+				return true;
+			}
+
 			// 录入缓存
 			this._cache[key_s] = storage_data_s;
 
