@@ -117,11 +117,15 @@ export class resources_audio extends mk.view_base {
 		{
 			// 使用动态加载
 			{
-				// this.music = (await mk.audio.add("db://assets/resources/module/audio/audio/Strictlyviolin荀博,马克Musician - Are You Lost.mp3", {
-				// 	type: global_config.audio.type.music,
-				// }))!;
-				// this.effect = (await mk.audio.add("db://assets/resources/module/audio/audio/龙卷风声音_耳聆网_[声音ID：36225].mp3"))!;
-				// this.effect2 = (await mk.audio.add("db://assets/resources/module/audio/audio/水滴声音_耳聆网__声音ID：11407_.mp3"))!;
+				// this.music = (await mk.audio.add(
+				// 	"db://assets/resources/module/audio/audio/Strictlyviolin荀博,马克Musician - Are You Lost.mp3",
+				// 	this,
+				// 	{
+				// 		type: global_config.audio.type.music,
+				// 	}
+				// ))!;
+				// this.effect = (await mk.audio.add("db://assets/resources/module/audio/audio/龙卷风声音_耳聆网_[声音ID：36225].mp3", this))!;
+				// this.effect2 = (await mk.audio.add("db://assets/resources/module/audio/audio/水滴声音_耳聆网__声音ID：11407_.mp3", this))!;
 			}
 
 			// 使用 play 接口
@@ -272,7 +276,6 @@ export class resources_audio extends mk.view_base {
 		const canvas = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!;
 		/** 触摸世界坐标 */
 		const touch_pos_v3 = event.getUILocation();
-
 		/** 距中心点距离 */
 		const dist_n = cc.v2(touch_pos_v3.x - N(canvas.node).transform.width * 0.5, touch_pos_v3.y - N(canvas.node).transform.height * 0.5).length();
 

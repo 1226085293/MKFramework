@@ -1,9 +1,7 @@
 {
-	/* Base configuration. Do not edit this field. */
 	"extends": "./temp/tsconfig.cocos.json",
 	"types": ["./declare/"],
 	"exclude": ["./tool"],
-	/* Add your custom configuration here. */
 	"compilerOptions": {
 		"target": "es6",
 		"lib": ["es2015", "es2017", "ES2020", "ES2022", "dom"],

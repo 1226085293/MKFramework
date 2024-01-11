@@ -28,6 +28,7 @@ export { default as guide_step_base } from "./guide/mk_guide_step_base";
 export { mk_game as game } from "./mk_game";
 export { mk_polygon_mask as polygon_mask } from "./@component/mk_polygon_mask";
 export { default as release } from "./mk_release";
+export type { mk_release_ as release_ } from "./mk_release";
 
 const log = mk_log.log.bind(mk_log);
 const warn = mk_log.warn.bind(mk_log);

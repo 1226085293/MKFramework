@@ -39,6 +39,19 @@ class mk_language_texture extends mk_language_base {
 	private _sprite!: cc.Sprite;
 	/** 初始纹理 */
 	private _initial_sprite_frame: cc.SpriteFrame | null = null;
+	/* ------------------------------- 生命周期 ------------------------------- */
+	protected onEnable(): void {
+		if (EDITOR) {
+			language.event.on(language.event.key.texture_data_change, this._event_texture_data_change, this)?.call(this);
+		}
+	}
+
+	protected onDisable(): void {
+		if (EDITOR) {
+			language.event.off(language.event.key.texture_data_change, this._event_texture_data_change, this);
+		}
+	}
+
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 重置数据 */
 	protected _reset_data(): void {
@@ -48,7 +61,7 @@ class mk_language_texture extends mk_language_base {
 		this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
 		// 默认标记
 		this.mark_s = this._mark_enum[0];
-		// 更新文本
+		// 更新内容
 		this._update_content();
 
 		// 更新编辑器
@@ -141,17 +154,6 @@ class mk_language_texture extends mk_language_base {
 		this._initial_sprite_frame = this._sprite.spriteFrame;
 
 		super._init_data();
-	}
-
-	protected _init_event(state_b_: boolean): void {
-		super._init_event(state_b_);
-		if (EDITOR) {
-			if (state_b_) {
-				language.event.on(language.event.key.texture_data_change, this._event_texture_data_change, this)?.call(this);
-			} else {
-				language.event.off(language.event.key.texture_data_change, this._event_texture_data_change, this);
-			}
-		}
 	}
 
 	/** 初始化组件 */

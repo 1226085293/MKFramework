@@ -29,20 +29,22 @@ declare namespace mk {
 			remote_option?: _mk_asset.load_remote_option_type;
 		}
 		/** 跟随释放对象 */
-		export type follow_release_object = mk_release_.follow_release_object<cc_2.Asset>;
+		export type follow_release_object = release_.follow_release_object<cc_2.Asset>;
 	}
 
 	/**
 	 * 音频管理器
 	 * @remarks
 	 *
-	 * - (动态/静态)音频支持
+	 * - 音频分组，支持对不同类型的音频批量控制
 	 *
-	 * - 音频(类型/分组)双分类支持
+	 * - 支持(动态/静态)音频
 	 *
-	 * - (通用/微信)版本管理器
+	 * - (通用/微信)版本
 	 *
-	 * - 统一音频事件
+	 * - 增加对 playOnShot 接口的事件支持
+	 *
+	 * - 通用版本超出播放数量限制后停止当前音频而不是之前的
 	 */
 	export declare const audio: mk_audio_base;
 
@@ -58,16 +60,8 @@ declare namespace mk {
 		}
 		/** 安全音频单元 */
 		export interface unit {
-			/** 初始化状态 */
-			readonly init_b: boolean;
 			/** 分组 */
 			readonly group_ns: ReadonlyArray<number>;
-			/**
-			 * 当前停止分组
-			 * @remarks
-			 * 停止时优先级最大的分组
-			 */
-			readonly stop_group_n: number | null;
 			/** 播放状态 */
 			readonly state: state;
 			/**
@@ -165,88 +159,7 @@ declare namespace mk {
 			/** 结束 */
 			end(): void;
 		}
-		/** 音频单元 */
-		export abstract class _unit {
-			constructor(init_?: Partial<_unit>);
-			/** 音频资源 */
-			clip: cc_2.AudioClip | null;
-			/** 音频类型 */
-			type: global_config.audio.type;
-			/** 事件对象 */
-			_event?: event_target<event_protocol>;
-			/** 分组 */
-			group_ns: number[];
-			/**
-			 * 当前停止分组
-			 * @remarks
-			 * 停止时优先级最大的分组
-			 */
-			stop_group_n: number | null;
-			/** 播放状态 */
-			state: state;
-			/**
-			 * 等待播放次数
-			 * @remarks
-			 * -1：关闭，0-n：等待播放次数
-			 */
-			wait_play_n: number;
-			/** 真实音量 */
-			real_volume_n: number;
-			/**
-			 * 使用 play 接口，默认使用 playOneShot
-			 * @remarks
-			 * common 使用
-			 *
-			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
-			 *
-			 * - playOneShot 接口不能暂停
-			 */
-			use_play_b?: boolean;
-			/** 初始化状态 */
-			get init_b(): boolean;
-			set init_b(value_b_: boolean);
-			/**
-			 * 音量
-			 * @remarks
-			 *
-			 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
-			 */
-			get volume_n(): number;
-			set volume_n(value_n_: number);
-			/** 循环 */
-			get loop_b(): boolean;
-			set loop_b(value_b_: boolean);
-			/** 总时长（秒） */
-			get total_time_s_n(): number;
-			/** 当前时间（秒） */
-			get curr_time_s_n(): number;
-			set curr_time_s_n(value_n_: number);
-			/** 事件对象 */
-			get event(): event_target<event_protocol>;
-			/** 等待播放开关 */
-			get wait_play_b(): boolean;
-			set wait_play_b(value_b_: boolean);
-			/**
-			 * 音频组件
-			 * @remarks
-			 * common 使用
-			 */
-			get audio_source(): cc_2.AudioSource | null;
-			set audio_source(value_: cc_2.AudioSource | null);
-			/** 初始化状态 */
-			protected _init_b: boolean;
-			/** 更新音量 */
-			abstract update_volume(): void;
-			/** 克隆 */
-			protected abstract _clone(): _unit;
-			/** 克隆 */
-			clone(): _unit;
-			/**
-			 * 克隆
-			 * @param value_n_ 克隆数量
-			 */
-			clone(value_n_: number): _unit[];
-		}
+		/* Excluded from this release type: _unit */
 		/** 音频组 */
 		export class group {
 			constructor(init_: mk_audio_base, priority_n_: number);
@@ -300,8 +213,6 @@ declare namespace mk {
 			private _update_stop_group;
 		}
 		const unit: Omit<unit, keyof Function> & (new (init_?: Partial<unit>) => Omit<unit, keyof Function>);
-		{
-		}
 	}
 
 	export declare const bundle: mk_bundle;
@@ -379,7 +290,7 @@ declare namespace mk {
 		 * @remarks
 		 * 注意生命周期函数 init、open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 		 */
-		export abstract class bundle_manage_base implements mk_release_.follow_release_object {
+		export abstract class bundle_manage_base implements release_.follow_release_object {
 			constructor();
 			/** bundle 名 */
 			abstract name_s: string;
@@ -413,8 +324,8 @@ declare namespace mk {
 			 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
 			 */
 			close(): void | Promise<void>;
-			follow_release<T = mk_release_.release_param_type>(object_: T): T;
-			cancel_release<T = mk_release_.release_param_type>(object_: T): T;
+			follow_release<T = release_.release_param_type>(object_: T): T;
+			cancel_release<T = release_.release_param_type>(object_: T): T;
 		}
 	}
 
@@ -855,6 +766,12 @@ declare namespace mk {
 		/** 初始化数据 */
 		init_data?: any;
 		/**
+		 * 视图数据
+		 * @remarks
+		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+		 */
+		data?: any;
+		/**
 		 * 事件对象列表
 		 * @readonly
 		 * @remarks
@@ -886,6 +803,12 @@ declare namespace mk {
 		/** 运行状态 */
 		protected _state: _mk_life_cycle.run_state;
 		/* Excluded from this release type: _release_manage */
+		/**
+		 * 重置 data
+		 * @remarks
+		 * close 后重置 this.data，data 必须为 class 类型
+		 */
+		protected _reset_data_b: boolean;
 		/** 日志 */
 		protected get _log(): logger;
 		/** 日志 */
@@ -937,8 +860,8 @@ declare namespace mk {
 		 * 在子模块 close 和 late_close 后执行
 		 */
 		protected late_close?(): void | Promise<void>;
-		follow_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
-		cancel_release<T = mk_release_.release_param_type & audio_._unit>(object_: T): T;
+		follow_release<T = release_.release_param_type & audio_._unit>(object_: T): T;
+		cancel_release<T = release_.release_param_type & audio_._unit>(object_: T): T;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1185,7 +1108,7 @@ declare namespace mk {
 		/** 停止所有音频 */
 		stop_all(): void;
 		/* Excluded from this release type: _add */
-		private _event_restart;
+		protected _event_restart(): void;
 	}
 
 	/**
@@ -1472,6 +1395,8 @@ declare namespace mk {
 		private _args_ss;
 		/** label组件 */
 		private _label;
+		protected onEnable(): void;
+		protected onDisable(): void;
 		/** 重置数据 */
 		protected _reset_data(): void;
 		protected _update_content(): void;
@@ -1479,7 +1404,6 @@ declare namespace mk {
 		protected _set_type(value_: number): void;
 		protected _set_type_s(value_s_: string): void;
 		protected _init_data(): void;
-		protected _init_event(state_b_: boolean): void;
 		/** 方向适配 */
 		private _direction_adaptation;
 		/** 初始化组件 */
@@ -1627,6 +1551,8 @@ declare namespace mk {
 		private _sprite;
 		/** 初始纹理 */
 		private _initial_sprite_frame;
+		protected onEnable(): void;
+		protected onDisable(): void;
 		/** 重置数据 */
 		protected _reset_data(): void;
 		protected _update_content(): Promise<void>;
@@ -1634,7 +1560,6 @@ declare namespace mk {
 		protected _set_type(value_: number): void;
 		protected _set_type_s(value_s_: string): void;
 		protected _init_data(): void;
-		protected _init_event(state_b_: boolean): void;
 		/** 初始化组件 */
 		private _init_component;
 		private _event_texture_data_change;
@@ -2303,6 +2228,7 @@ declare namespace mk {
 			send(data_: Parameters<CT["encode"]>[0]): void;
 			/** 触发发送 */
 			trigger(): void;
+			private _event_restart;
 		}
 	}
 
@@ -2380,30 +2306,6 @@ declare namespace mk {
 				init_fill_n?: number | undefined;
 			}
 		}
-	}
-
-	declare namespace mk_release_ {
-		/** 释放对象类型 */
-		type release_object_type = {
-			release(): any | Promise<any>;
-		};
-		/** 释放回调类型 */
-		type release_call_back_type = () => any | Promise<any>;
-		/** 释放参数类型 */
-		type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
-		/** 跟随释放类型 */
-		type follow_release_object<CT = release_param_type> = {
-			/**
-			 * 跟随释放
-			 * @param object_ 释放对象/释放对象数组
-			 */
-			follow_release<T extends CT>(object_: T): T;
-			/**
-			 * 取消释放
-			 * @param object_ 取消释放对象/取消释放对象数组
-			 */
-			cancel_release<T extends CT>(object_: T): T;
-		};
 	}
 
 	/**
@@ -2572,7 +2474,7 @@ declare namespace mk {
 		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
 			source_: _mk_ui_manage.source_type<T>,
-			target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
+			target_: release_.follow_release_object<release_.release_call_back_type> | null,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
 		/**
@@ -2907,14 +2809,38 @@ declare namespace mk {
 		 * 添加释放对象
 		 * @param object_ 要跟随模块释放的对象或列表
 		 */
-		add<T extends mk_release_.release_param_type>(object_: T): T;
+		add<T extends release_.release_param_type>(object_: T): T;
 		/**
 		 * 释放对象
 		 * @param object_ 指定对象
 		 */
-		release(object_?: mk_release_.release_param_type): Promise<void>;
+		release(object_?: release_.release_param_type): Promise<void>;
 		/** 释放所有对象 */
 		release_all(): Promise<void>;
+	}
+
+	export declare namespace release_ {
+		/** 释放对象类型 */
+		export type release_object_type = {
+			release(): any | Promise<any>;
+		};
+		/** 释放回调类型 */
+		export type release_call_back_type = () => any | Promise<any>;
+		/** 释放参数类型 */
+		export type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
+		/** 跟随释放类型 */
+		export type follow_release_object<CT = release_param_type> = {
+			/**
+			 * 跟随释放
+			 * @param object_ 释放对象/释放对象数组
+			 */
+			follow_release<T extends CT>(object_: T): T;
+			/**
+			 * 取消释放
+			 * @param object_ 取消释放对象/取消释放对象数组
+			 */
+			cancel_release<T extends CT>(object_: T): T;
+		};
 	}
 
 	/**
@@ -2930,6 +2856,15 @@ declare namespace mk {
 		private _event_restart;
 		private _event_wait_close_scene;
 		private _event_before_scene_switch;
+	}
+
+	/**
+	 * 场景基类
+	 * @remarks
+	 * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
+	 */
+	export declare class static_view_base extends life_cycle {
+		protected _use_layer_b: boolean;
 	}
 
 	/**
@@ -3059,7 +2994,7 @@ declare namespace mk {
 			/** 来源 */
 			source: _mk_ui_manage.source_type<CT>;
 			/** 跟随释放对象 */
-			target: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
+			target: release_.follow_release_object<release_.release_call_back_type>;
 		}
 	}
 
@@ -3084,25 +3019,12 @@ declare namespace mk {
 		set auto_widget_b(value_b_: boolean);
 		get auto_block_input_b(): boolean;
 		set auto_block_input_b(value_b_: boolean);
-		/**
-		 * 视图数据
-		 * @remarks
-		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
-		 */
-		data?: any;
 		/** 视图类型 */
 		get type_s(): string;
 		/** 模块配置 */
 		set config(config_: _mk_view_base.create_config);
-		/**
-		 * 重置 data
-		 * @remarks
-		 * close 后重置 this.data，data 必须为 class 类型
-		 */
-		protected _reset_data_b: boolean;
 		/** 视图配置 */
 		protected _view_config: view_base_.view_config;
-		protected onLoad(): void;
 		protected open(): void | Promise<void>;
 		/**
 		 * 关闭

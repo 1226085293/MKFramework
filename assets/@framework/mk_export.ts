@@ -8,6 +8,7 @@ export type { _mk_layer as layer_ } from "./module/mk_layer";
 export { default as life_cycle } from "./module/mk_life_cycle";
 export { default as scene_drive } from "./module/mk_scene_drive";
 export { default as view_base, mk_view_base_ as view_base_ } from "./module/mk_view_base";
+export { default as static_view_base } from "./module/mk_static_view_base";
 export { default as network } from "./network/mk_network";
 export { default as bundle, mk_bundle_ as bundle_ } from "./resources/mk_bundle";
 export { default as asset } from "./resources/mk_asset";
@@ -28,6 +29,7 @@ export { default as guide_step_base } from "./guide/mk_guide_step_base";
 export { default as game } from "./mk_game";
 export { mk_polygon_mask as polygon_mask } from "./@component/mk_polygon_mask";
 export { default as release } from "./mk_release";
+export type { mk_release_ as release_ } from "./mk_release";
 
 const log = mk_log.log.bind(mk_log);
 const warn = mk_log.warn.bind(mk_log);

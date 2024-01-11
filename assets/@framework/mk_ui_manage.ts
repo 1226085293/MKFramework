@@ -326,6 +326,14 @@ export class mk_ui_manage extends mk_instance_base {
 			return null;
 		}
 
+		/** 模块注册任务 */
+		const ui_regis_task = this._ui_regis_task_map.get(key_);
+
+		// 等待模块注册
+		if (ui_regis_task) {
+			await ui_regis_task.task;
+		}
+
 		/** 注册数据 */
 		let regis_data = this._ui_regis_map.get(key_);
 
@@ -643,13 +651,18 @@ export class mk_ui_manage extends mk_instance_base {
 
 		// 生命周期
 		for (const v of close_ui_as) {
-			await v._close({
+			// 组件已经被销毁
+			if (!v.isValid) {
+				continue;
+			}
+
+			await v._close?.({
 				first_b: true,
 				destroy_children_b: config.destroy_children_b,
 			});
 
 			// 节点已在生命周期内被销毁
-			if (!v.node?.isValid) {
+			if (!cc.isValid(v.node, true)) {
 				continue;
 			}
 

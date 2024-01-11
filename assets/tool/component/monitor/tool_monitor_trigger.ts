@@ -104,8 +104,6 @@ export namespace _tool_monitor_trigger {
 
 					return true;
 				}
-
-				this.event_param_as[0]?.type_check_b;
 			}
 
 			return false;
@@ -133,14 +131,17 @@ export namespace _tool_monitor_trigger {
 
 			// 更新事件参数
 			if (EDITOR) {
-				/** 参数类型 */
-				const ccclass = tool_monitor_data_method[this.type_s][this.event_s]?.ccclass_params;
+				// 延迟一帧防止编辑器展示错误
+				setTimeout(() => {
+					/** 参数类型 */
+					const ccclass = tool_monitor_data_method[this.type_s][this.event_s]?.ccclass_params;
 
-				// 更新参数
-				this.event_param_as.splice(0, this.event_param_as.length);
-				if (ccclass?.["__props__"].length) {
-					this.event_param_as.push(new ccclass());
-				}
+					// 更新参数
+					this.event_param_as.splice(0, this.event_param_as.length);
+					if (ccclass?.["__props__"].length) {
+						this.event_param_as.push(new ccclass());
+					}
+				}, 0);
 			}
 		}
 	}

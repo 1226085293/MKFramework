@@ -7,7 +7,6 @@ import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
 import type { _mk_layer } from "./mk_layer";
 import global_config from "../../@config/global_config";
-import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
 import mk_game from "../mk_game";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
@@ -183,12 +182,6 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	/* --------------- public --------------- */
-	/**
-	 * 视图数据
-	 * @remarks
-	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
-	 */
-	data?: any;
 
 	/** 视图类型 */
 	get type_s(): string {
@@ -208,38 +201,10 @@ export class mk_view_base extends mk_life_cycle {
 	}
 
 	/* --------------- protected --------------- */
-	/**
-	 * 重置 data
-	 * @remarks
-	 * close 后重置 this.data，data 必须为 class 类型
-	 */
-	protected _reset_data_b = true;
 	/** 视图配置 */
 	protected _view_config = new mk_view_base_.view_config();
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected onLoad(): void {
-		/** 参数表 */
-		const attr_tab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
-		/** 参数键列表 */
-		const attr_key_ss = Object.keys(attr_tab);
-
-		// 初始化音频单元
-		attr_key_ss.forEach((v_s) => {
-			if (!v_s.endsWith("$_$ctor")) {
-				return;
-			}
-
-			/** 属性名 */
-			const name_s = v_s.slice(0, -7);
-
-			// 初始化音频单元
-			if (this[name_s] instanceof mk_audio_._unit) {
-				mk_audio._add(this[name_s]);
-			}
-		});
-	}
-
 	protected open(): void | Promise<void>;
 	protected async open(): Promise<void> {
 		/** 打开动画函数 */
@@ -281,11 +246,6 @@ export class mk_view_base extends mk_life_cycle {
 
 		// 重置数据
 		this._view_config.type_s = "default";
-
-		// 重置数据
-		if (this.data && this._reset_data_b) {
-			mk_tool.object.reset(this.data, true);
-		}
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
@@ -355,7 +315,7 @@ export class mk_view_base extends mk_life_cycle {
 			return false;
 		}
 
-		return Boolean(this.node.children[0].getComponent(cc.Sprite) && this.node.children[0].getComponent(cc.Widget));
+		return Boolean(this.node.children[0].name === mk_view_base.config.mask_data_tab.node_name_s);
 	}
 
 	private async _set_auto_mask_b(value_b_: boolean): Promise<void> {

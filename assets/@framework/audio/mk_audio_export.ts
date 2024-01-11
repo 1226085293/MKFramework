@@ -11,12 +11,14 @@ Object.assign(mk_audio_base_, self.wx ? mk_audio_wx_ : mk_audio_common_);
  * 音频管理器
  * @remarks
  *
- * - (动态/静态)音频支持
+ * - 音频分组，支持对不同类型的音频批量控制
  *
- * - 音频(类型/分组)双分类支持
+ * - 支持(动态/静态)音频
  *
- * - (通用/微信)版本管理器
+ * - (通用/微信)版本
  *
- * - 统一音频事件
+ * - 增加对 playOnShot 接口的事件支持
+ *
+ * - 通用版本超出播放数量限制后停止当前音频而不是之前的
  */
 export const mk_audio: mk_audio_base = self.wx ? audio_wx : audio_common;

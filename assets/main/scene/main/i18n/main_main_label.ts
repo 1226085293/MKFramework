@@ -9,8 +9,8 @@ export default new mk.language_.label_data(cc.js.getClassName(main_main), {
 		en_us: "audio",
 	},
 	"模块(UI)": {
-		zh_cn: "模块(UI)",
-		en_us: "module(UI)",
+		zh_cn: "模块\n(UI)",
+		en_us: "module\n(UI)",
 	},
 	网络: {
 		zh_cn: "网络",

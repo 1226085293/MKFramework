@@ -5,7 +5,7 @@ import { mk_log } from "./mk_logger";
  * 动态模块
  * @noInheritDoc
  * @remarks
- * 用以解除循环引用
+ * 更优雅的使用动态模块，不必每次 await import(...)
  */
 export class mk_dynamic_module extends mk_instance_base {
 	/**

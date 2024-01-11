@@ -7,7 +7,7 @@ import monitor from "../mk_monitor";
 import mk_status_task from "../task/mk_status_task";
 import mk_layer from "./mk_layer";
 import mk_tool from "../@private/tool/mk_tool";
-import { mk_audio_ } from "../audio/mk_audio_export";
+import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
 import mk_release, { mk_release_ } from "../mk_release";
 import { mk_asset_ } from "../resources/mk_asset";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
@@ -115,6 +115,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	/** 初始化数据 */
 	init_data?: any;
 	/**
+	 * 视图数据
+	 * @remarks
+	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+	 */
+	data?: any;
+	/**
 	 * 事件对象列表
 	 * @readonly
 	 * @remarks
@@ -163,6 +169,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 * @internal
 	 */
 	protected _release_manage = new mk_release();
+	/**
+	 * 重置 data
+	 * @remarks
+	 * close 后重置 this.data，data 必须为 class 类型
+	 */
+	protected _reset_data_b = true;
 
 	/** 日志 */
 	protected get _log(): mk_logger {
@@ -175,6 +187,26 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
 		this._load_task.finish(true);
+
+		/** 参数表 */
+		const attr_tab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
+		/** 参数键列表 */
+		const attr_key_ss = Object.keys(attr_tab);
+
+		// 初始化音频单元
+		attr_key_ss.forEach((v_s) => {
+			if (!v_s.endsWith("$_$ctor")) {
+				return;
+			}
+
+			/** 属性名 */
+			const name_s = v_s.slice(0, -7);
+
+			// 初始化音频单元
+			if (this[name_s] instanceof mk_audio_._unit) {
+				mk_audio._add(this[name_s]);
+			}
+		});
 
 		// 静态模块 create
 		if (this.static_b) {
@@ -244,11 +276,6 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected late_close?(): void | Promise<void> {
-		// 取消所有定时器
-		this.unscheduleAllCallbacks();
-		// 取消数据监听事件
-		monitor.clear(this);
-
 		// 清理事件
 		this.event_target_as.splice(0, this.event_target_as.length).forEach((v) => {
 			if (v.targetOff) {
@@ -258,8 +285,16 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 			}
 		});
 
+		// 取消所有定时器
+		this.unscheduleAllCallbacks();
+		// 取消数据监听事件
+		monitor.clear(this);
 		// 释放资源
 		this._release_manage.release_all();
+		// 重置数据
+		if (this.data && this._reset_data_b) {
+			mk_tool.object.reset(this.data, true);
+		}
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
