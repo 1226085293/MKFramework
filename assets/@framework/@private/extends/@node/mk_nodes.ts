@@ -12,9 +12,9 @@ class node_extends {
 			} else if (v instanceof cc.Sprite) {
 				this.sprite = v;
 			} else if (v instanceof cc.UIOpacity) {
-				this.ui_opacity = v;
+				this._ui_opacity = v;
 			} else if (v instanceof cc.UITransform) {
-				this.ui_transform = v;
+				this.transform = v;
 			} else if (v instanceof cc.Animation) {
 				this.animation = v;
 			} else if (v instanceof cc.EditBox) {
@@ -31,6 +31,9 @@ class node_extends {
 				this.toggle = v;
 			}
 		});
+
+		node_.on(cc.Node.EventType.PARENT_CHANGED, this._event_node_parent_changed, this);
+		this._event_node_parent_changed();
 	}
 
 	/* --------------- static --------------- */
@@ -45,8 +48,7 @@ class node_extends {
 	/* --------------- public --------------- */
 	label!: cc.Label;
 	sprite!: cc.Sprite;
-	ui_opacity!: cc.UIOpacity;
-	ui_transform!: cc.UITransform;
+	transform!: cc.UITransform;
 	animation!: cc.Animation;
 	edit_box!: cc.EditBox;
 	rich_text!: cc.RichText;
@@ -67,38 +69,38 @@ class node_extends {
 
 	/** 宽 */
 	get width(): number {
-		return this.ui_transform.width;
+		return this.transform.width;
 	}
 
 	set width(value_n_) {
-		this.ui_transform.width = value_n_;
+		this.transform.width = value_n_;
 	}
 
 	/** 高 */
 	get height(): number {
-		return this.ui_transform.height;
+		return this.transform.height;
 	}
 
 	set height(value_n_) {
-		this.ui_transform.height = value_n_;
+		this.transform.height = value_n_;
 	}
 
 	/** 透明度 */
 	get opacity(): number {
-		return this.ui_opacity.opacity;
+		return this._ui_opacity.opacity;
 	}
 
 	set opacity(value_n_) {
-		this.ui_opacity.opacity = value_n_;
+		this._ui_opacity.opacity = value_n_;
 	}
 
 	/** 锚点 */
 	get anchor(): Readonly<cc.Vec2> {
-		return this.ui_transform.anchorPoint;
+		return this.transform.anchorPoint;
 	}
 
 	set anchor(value_v2_: cc.Vec2) {
-		this.ui_transform.anchorPoint = value_v2_;
+		this.transform.anchorPoint = value_v2_;
 	}
 
 	/* --------------- private --------------- */
@@ -107,39 +109,50 @@ class node_extends {
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _order_n = 0;
-	/* ------------------------------- 功能 ------------------------------- */
-
-	/* ------------------------------- get/set ------------------------------- */
-	private _set_order_n(value_n_: number): void {
-		if (
-			// 未改变渲染顺序
-			this._order_n === value_n_ ||
-			// 节点失效
-			!this._node.isValid
-		) {
+	/** 透明度组件 */
+	private _ui_opacity!: cc.UIOpacity;
+	/* ------------------------------- 节点事件 ------------------------------- */
+	private _event_node_parent_changed(): void {
+		if (!this._node.parent?.isValid) {
 			return;
 		}
 
-		/** 父节点层级数据 */
-		const parent = MKN(this._node.parent!);
-
-		if (!parent) {
-			this._node.once(
-				cc.Node.EventType.PARENT_CHANGED,
+		// 避免 children 数据未更新
+		if (!this._node.parent.children.includes(this._node)) {
+			this._node.parent.once(
+				cc.Node.EventType.CHILD_ADDED,
 				() => {
-					// 延迟一帧避免 children 数据未更新
-					setTimeout(() => {
-						this._set_order_n(value_n_);
-					}, 0);
+					this._set_order_n(this._order_n, true);
 				},
 				this
 			);
+		} else {
+			this._set_order_n(this._order_n, true);
+		}
+	}
 
+	/* ------------------------------- get/set ------------------------------- */
+	private _set_order_n(value_n_: number, force_b_ = false): void {
+		if (
+			// 节点失效
+			!this._node.isValid ||
+			// 未改变渲染顺序
+			(this._order_n === value_n_ &&
+				// 强制更新
+				!force_b_)
+		) {
 			return;
 		}
 
 		// 更新渲染顺序
 		this._order_n = value_n_;
+
+		const parent = MKN(this._node.parent!);
+
+		// 父节点不存在
+		if (!parent) {
+			return;
+		}
 
 		/** 距离上次更新的时间 */
 		const time_since_last_update_n = Date.now() - node_extends._order_update_time_n;
@@ -179,13 +192,10 @@ class node_extends {
 			return;
 		}
 
-		// 延迟一帧避免同帧内使用 children 下标获取节点不正确
-		setTimeout(() => {
-			// 更新时间
-			node_extends._order_update_time_n = Date.now();
-			// 更新渲染顺序
-			node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
-		}, 0);
+		// 更新时间
+		node_extends._order_update_time_n = Date.now();
+		// 更新渲染顺序
+		node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
 	}
 }
 
