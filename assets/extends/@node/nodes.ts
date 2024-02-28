@@ -1,5 +1,6 @@
 import * as cc from "cc";
 import global_config from "../../@config/global_config";
+import global_event from "../../@config/global_event";
 
 class node_extends {
 	constructor(node_: cc.Node) {
@@ -30,6 +31,9 @@ class node_extends {
 				this.toggle = v;
 			}
 		});
+
+		node_.on(cc.Node.EventType.PARENT_CHANGED, this._event_node_parent_changed, this);
+		this._event_node_parent_changed();
 	}
 
 	/* --------------- static --------------- */
@@ -102,44 +106,53 @@ class node_extends {
 	/* --------------- private --------------- */
 	/** 持有节点 */
 	private _node: cc.Node;
-	/** 透明度组件 */
-	private _ui_opacity!: cc.UIOpacity;
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _order_n = 0;
-	/* ------------------------------- 功能 ------------------------------- */
-
-	/* ------------------------------- get/set ------------------------------- */
-	private _set_order_n(value_n_: number): void {
-		if (
-			// 未改变渲染顺序
-			this._order_n === value_n_ ||
-			// 节点失效
-			!this._node.isValid
-		) {
+	/** 透明度组件 */
+	private _ui_opacity!: cc.UIOpacity;
+	/* ------------------------------- 节点事件 ------------------------------- */
+	private _event_node_parent_changed(): void {
+		if (!this._node.parent?.isValid) {
 			return;
 		}
 
-		/** 父节点层级数据 */
-		const parent = N(this._node.parent!);
-
-		if (!parent) {
-			this._node.once(
-				cc.Node.EventType.PARENT_CHANGED,
+		// 避免 children 数据未更新
+		if (!this._node.parent.children.includes(this._node)) {
+			this._node.parent.once(
+				cc.Node.EventType.CHILD_ADDED,
 				() => {
-					// 延迟一帧避免 children 数据未更新
-					setTimeout(() => {
-						this._set_order_n(value_n_);
-					}, 0);
+					this._set_order_n(this._order_n, true);
 				},
 				this
 			);
+		} else {
+			this._set_order_n(this._order_n, true);
+		}
+	}
 
+	/* ------------------------------- get/set ------------------------------- */
+	private _set_order_n(value_n_: number, force_b_ = false): void {
+		if (
+			// 节点失效
+			!this._node.isValid ||
+			// 未改变渲染顺序
+			(this._order_n === value_n_ &&
+				// 强制更新
+				!force_b_)
+		) {
 			return;
 		}
 
 		// 更新渲染顺序
 		this._order_n = value_n_;
+
+		const parent = N(this._node.parent!);
+
+		// 父节点不存在
+		if (!parent) {
+			return;
+		}
 
 		/** 距离上次更新的时间 */
 		const time_since_last_update_n = Date.now() - node_extends._order_update_time_n;
@@ -166,7 +179,7 @@ class node_extends {
 		}
 
 		// 小于间隔时间更新
-		if (time_since_last_update_n < global_config.view.layer_refresh_interval_ms_n) {
+		if (node_extends.order_update_timer === null && time_since_last_update_n < global_config.view.layer_refresh_interval_ms_n) {
 			node_extends.order_update_timer = setTimeout(() => {
 				// 清理定时器数据
 				node_extends.order_update_timer = null;
@@ -179,13 +192,10 @@ class node_extends {
 			return;
 		}
 
-		// 延迟一帧避免同帧内使用 children 下标获取节点不正确
-		setTimeout(() => {
-			// 更新时间
-			node_extends._order_update_time_n = Date.now();
-			// 更新渲染顺序
-			node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
-		}, 0);
+		// 更新时间
+		node_extends._order_update_time_n = Date.now();
+		// 更新渲染顺序
+		node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
 	}
 }
 
@@ -224,5 +234,7 @@ namespace N {
 
 // 切换场景后自动清理
 cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, N.clear, this);
+// 重启时自动清理
+global_event.on(global_event.key.restart, N.clear, this);
 
 export default N;

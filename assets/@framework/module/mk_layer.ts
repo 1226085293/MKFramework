@@ -89,7 +89,7 @@ class mk_layer extends cc.Component {
 	private _child_layer_n = 0;
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected onLoad() {
+	protected onEnable() {
 		if (!this._use_layer_b) {
 			return;
 		}
