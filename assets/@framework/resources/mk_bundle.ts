@@ -173,7 +173,7 @@ export class mk_bundle extends mk_instance_base {
 				bundle_s: load_config.bundle_s,
 			});
 
-		await this._engine_init_task;
+		await this._engine_init_task.task;
 
 		/** bundle 资源 */
 		const bundle = cc.assetManager.getBundle(bundle_info.bundle_s);
@@ -226,7 +226,7 @@ export class mk_bundle extends mk_instance_base {
 			return false;
 		}
 
-		await this._init_task;
+		await this._init_task.task;
 
 		const config = new mk_bundle_.switch_scene_config(config_);
 
@@ -345,7 +345,7 @@ export class mk_bundle extends mk_instance_base {
 			return null;
 		}
 
-		await this._engine_init_task;
+		await this._engine_init_task.task;
 
 		if (this.bundle_s === bundle_.bundle_s) {
 			this._log.error("不能在重载 bundle 的场景内进行重载");
