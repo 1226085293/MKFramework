@@ -267,7 +267,7 @@ class mk_guide_manage {
 		/** 当前引导步骤 */
 		const current_step = this.step_map.get(this._step_n);
 		/** 步骤数据 */
-		const step_data = this._init_config.step_update_callback_f(this._step_n);
+		const step_data = !this._init_config.step_update_callback_f ? true : this._init_config.step_update_callback_f(this._step_n);
 
 		// 引导中断
 		if ((step_data ?? null) === null) {
@@ -373,14 +373,15 @@ export namespace mk_guide_manage_ {
 		/**
 		 * 步骤更新回调
 		 * @param step_n
-		 * @returns null/undefined：更新失败中断引导
+		 * @returns null/undefined：更新失败，中断引导
 		 * @remarks
+		 * - 默认返回 true
 		 *
 		 * - 可在此内更新服务端数据并请求奖励
 		 *
 		 * - 步骤可使用 this.step_update_data 获取返回数据
 		 */
-		step_update_callback_f(step_n: number): any;
+		step_update_callback_f?(step_n: number): any;
 	}
 }
 
