@@ -179,6 +179,15 @@ export class mk_asset extends mk_instance_base {
 				}
 			}
 
+			// 删除路径后缀
+			if (!EDITOR && !remote_b) {
+				const index_n = path_s_.lastIndexOf(".");
+
+				if (index_n !== -1) {
+					path_s_ = path_s_.slice(0, index_n);
+				}
+			}
+
 			// 图片类型后缀
 			if (!remote_b) {
 				const asset_type = type_ as any;
@@ -187,15 +196,6 @@ export class mk_asset extends mk_instance_base {
 					path_s_ += "/spriteFrame";
 				} else if (asset_type === cc.Texture2D && !path_s_.endsWith("/texture")) {
 					path_s_ += "/texture";
-				}
-			}
-
-			// 删除路径后缀
-			if (!EDITOR && !remote_b) {
-				const index_n = path_s_.lastIndexOf(".");
-
-				if (index_n !== -1) {
-					path_s_ = path_s_.slice(0, index_n);
 				}
 			}
 		}
