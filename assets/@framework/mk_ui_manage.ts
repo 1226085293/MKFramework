@@ -462,10 +462,8 @@ export class mk_ui_manage extends mk_instance_base {
 			// 模块配置
 			view_comp.config = {
 				static_b: false,
-				view_config: {
-					prefab_tab: regis_data.source as any,
-					type_s: config_.type as any,
-				},
+				prefab_tab: regis_data.source as any,
+				type_s: config_.type as any,
 			};
 
 			// 加入父节点
@@ -748,7 +746,7 @@ export namespace mk_ui_manage_ {
 		/** 初始化数据 */
 		init?: CT["prototype"]["init_data"];
 		/** 类型 */
-		type?: CT["prototype"]["type_s"] = "default";
+		type?: keyof CT["prototype"]["_prefab_tab"] = "default";
 		/** 父节点 */
 		parent?: cc.Node;
 	}

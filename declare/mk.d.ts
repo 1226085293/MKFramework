@@ -2560,8 +2560,12 @@ declare namespace mk {
 	declare namespace _mk_view_base {
 		/** create 配置 */
 		interface create_config extends _mk_life_cycle.create_config {
-			/** 视图配置 */
-			view_config: view_base_.view_config;
+			/** 所有预制体路径|资源 */
+			prefab_tab?: Record<string, cc_2.Prefab | string> & {
+				default: cc_2.Prefab | string;
+			};
+			/** 模块类型 */
+			type_s: string;
 		}
 		/** 全局配置 */
 		interface global_config extends layer_.global_config {
@@ -2946,7 +2950,7 @@ declare namespace mk {
 			/** 初始化数据 */
 			init?: CT["prototype"]["init_data"];
 			/** 类型 */
-			type?: CT["prototype"]["type_s"];
+			type?: keyof CT["prototype"]["_prefab_tab"];
 			/** 父节点 */
 			parent?: cc_2.Node;
 		}
@@ -3024,8 +3028,12 @@ declare namespace mk {
 		get type_s(): string;
 		/** 模块配置 */
 		set config(config_: _mk_view_base.create_config);
-		/** 视图配置 */
-		protected _view_config: view_base_.view_config;
+		/** 所有预制体路径|资源 */
+		protected _prefab_tab?: Record<string, cc_2.Prefab | string> & {
+			default: cc_2.Prefab | string;
+		};
+		/** 模块类型 */
+		private _type_s;
 		protected open(): void | Promise<void>;
 		/**
 		 * 关闭
@@ -3039,19 +3047,6 @@ declare namespace mk {
 		private _set_auto_mask_b;
 		private _set_auto_widget_b;
 		private _set_auto_block_input_b;
-	}
-
-	export declare namespace view_base_ {
-		/** 视图模块配置 */
-		export class view_config {
-			constructor(init_?: Partial<view_config>);
-			/** 所有预制体路径|资源 */
-			prefab_tab?: Record<string, cc_2.Prefab | string> & {
-				default: cc_2.Prefab | string;
-			};
-			/** 模块类型 */
-			type_s: string;
-		}
 	}
 
 	export declare const warn: (...args_as_: any[]) => void;
