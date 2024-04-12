@@ -10,11 +10,16 @@ import mk_tool from "./@private/tool/mk_tool";
 import { mk_release_ } from "./mk_release";
 
 namespace _mk_ui_manage {
-	export type source_type<T extends { type_s?: string } | {}> =
+	/** 模块类型 */
+	// @ts-ignore
+	export type module_type<T extends cc.Constructor<mk_view_base>> = T["prototype"]["type_s"] | "default";
+
+	/** 注册资源类型 */
+	export type regis_source_type<T extends cc.Constructor<mk_view_base>> =
 		| cc.Prefab
 		| string
 		| cc.Node
-		| (T extends { type_s: string } ? Record<T["type_s"], cc.Prefab | string | cc.Node> & { default: cc.Prefab | string | cc.Node } : never);
+		| (T extends cc.Constructor<mk_view_base> ? Record<module_type<T>, cc.Prefab | string | cc.Node> : never);
 }
 
 /**
@@ -83,7 +88,7 @@ export class mk_ui_manage extends mk_instance_base {
 	 */
 	async regis<T extends cc.Constructor<mk_view_base>>(
 		key_: T,
-		source_: _mk_ui_manage.source_type<T>,
+		source_: _mk_ui_manage.regis_source_type<T>,
 		target_: mk_release_.follow_release_object<mk_release_.release_call_back_type> | null,
 		config_?: Partial<mk_ui_manage_.regis_config<T>>
 	): Promise<void> {
@@ -269,20 +274,17 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @param key_ 模块键
 	 * @param type_ 模块类型
 	 */
-	get<T extends cc.Constructor<mk_view_base> & Function, T2 = T extends { type_s: infer T2 } ? T2 : never, T3 = T["prototype"]>(
-		key_: T,
-		type_?: T2
-	): T3 | null;
+	get<T extends cc.Constructor<mk_view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
 	/**
 	 * 获取指定模块列表
 	 * @param key_ 模块键列表 [type]
 	 * @param type_ 模块类型
 	 */
-	get<T extends cc.Constructor<mk_view_base> & Function, T2 = T extends { type_s: infer T2 } ? T2 : never, T3 = T["prototype"]>(
+	get<T extends cc.Constructor<mk_view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(
 		key_: T[],
 		type_?: T2
 	): ReadonlyArray<T3>;
-	get<T extends cc.Constructor<mk_view_base> & Function, T2 = T extends { type_s: infer T2 } ? T2 : never, T3 = T["prototype"]>(
+	get<T extends cc.Constructor<mk_view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(
 		key_?: T | T[],
 		type_?: T2
 	): mk_view_base[] | T3 | T3[] | null {
@@ -462,7 +464,6 @@ export class mk_ui_manage extends mk_instance_base {
 			// 模块配置
 			view_comp.config = {
 				static_b: false,
-				prefab_tab: regis_data.source as any,
 				type_s: config_.type as any,
 			};
 
@@ -724,7 +725,7 @@ export namespace mk_ui_manage_ {
 		}
 
 		/** 类型 */
-		type?: CT extends { type_s: infer T } ? T : never;
+		type?: _mk_ui_manage.module_type<CT>;
 		/** 关闭全部指定类型的模块 */
 		all_b?: boolean;
 		/** 销毁节点 */
@@ -746,7 +747,7 @@ export namespace mk_ui_manage_ {
 		/** 初始化数据 */
 		init?: CT["prototype"]["init_data"];
 		/** 类型 */
-		type?: keyof CT["prototype"]["_prefab_tab"] = "default";
+		type?: _mk_ui_manage.module_type<CT> = "default";
 		/** 父节点 */
 		parent?: cc.Node;
 	}
@@ -810,7 +811,7 @@ export namespace mk_ui_manage_ {
 		}
 
 		/** 来源 */
-		source!: _mk_ui_manage.source_type<CT>;
+		source!: _mk_ui_manage.regis_source_type<CT>;
 		/** 跟随释放对象 */
 		target!: mk_release_.follow_release_object<mk_release_.release_call_back_type>;
 	}

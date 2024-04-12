@@ -14,8 +14,6 @@ const { ccclass, property } = cc._decorator;
 namespace _mk_view_base {
 	/** create 配置 */
 	export interface create_config extends _mk_life_cycle.create_config {
-		/** 所有预制体路径|资源 */
-		prefab_tab?: Record<string, cc.Prefab | string> & { default: cc.Prefab | string };
 		/** 模块类型 */
 		type_s: string;
 	}
@@ -185,10 +183,11 @@ export class mk_view_base extends mk_life_cycle {
 
 	/* --------------- public --------------- */
 
-	/** 视图类型 */
-	get type_s(): string {
-		return this._type_s;
-	}
+	/**
+	 * 模块类型
+	 * @readonly
+	 */
+	type_s = "default";
 
 	/** 模块配置 */
 	set config(config_: _mk_view_base.create_config) {
@@ -196,21 +195,13 @@ export class mk_view_base extends mk_life_cycle {
 			this._static_b = config_.static_b;
 		}
 
-		if (config_.prefab_tab) {
-			this._prefab_tab = config_.prefab_tab;
-		}
-
 		if (config_.type_s) {
-			this._type_s = config_.type_s;
+			this.type_s = config_.type_s;
 		}
 	}
 
 	/* --------------- protected --------------- */
-	/** 所有预制体路径|资源 */
-	protected _prefab_tab?: Record<string, cc.Prefab | string> & { default: cc.Prefab | string };
 	/* --------------- private --------------- */
-	/** 模块类型 */
-	private _type_s = "default";
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected open(): void | Promise<void>;
 	protected async open(): Promise<void> {
@@ -252,7 +243,7 @@ export class mk_view_base extends mk_life_cycle {
 		}
 
 		// 重置数据
-		this._type_s = "default";
+		this.type_s = "default";
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */

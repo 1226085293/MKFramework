@@ -2474,7 +2474,7 @@ declare namespace mk {
 		 */
 		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
-			source_: _mk_ui_manage.source_type<T>,
+			source_: _mk_ui_manage.regis_source_type<T>,
 			target_: release_.follow_release_object<release_.release_call_back_type> | null,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
@@ -2494,29 +2494,16 @@ declare namespace mk {
 		 * @param key_ 模块键
 		 * @param type_ 模块类型
 		 */
-		get<
-			T extends cc_2.Constructor<view_base> & Function,
-			T2 = T extends {
-				type_s: infer T2;
-			}
-				? T2
-				: never,
-			T3 = T["prototype"]
-		>(key_: T, type_?: T2): T3 | null;
+		get<T extends cc_2.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
 		/**
 		 * 获取指定模块列表
 		 * @param key_ 模块键列表 [type]
 		 * @param type_ 模块类型
 		 */
-		get<
-			T extends cc_2.Constructor<view_base> & Function,
-			T2 = T extends {
-				type_s: infer T2;
-			}
-				? T2
-				: never,
-			T3 = T["prototype"]
-		>(key_: T[], type_?: T2): ReadonlyArray<T3>;
+		get<T extends cc_2.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(
+			key_: T[],
+			type_?: T2
+		): ReadonlyArray<T3>;
 		/**
 		 * 打开模块
 		 * @param key_ 模块键，必须经过 {@link regis} 接口注册过
@@ -2538,32 +2525,19 @@ declare namespace mk {
 	}
 
 	declare namespace _mk_ui_manage {
-		type source_type<
-			T extends
-				| {
-						type_s?: string;
-				  }
-				| {}
-		> =
+		/** 模块类型 */
+		type module_type<T extends cc_2.Constructor<view_base>> = T["prototype"]["type_s"] | "default";
+		/** 注册资源类型 */
+		type regis_source_type<T extends cc_2.Constructor<view_base>> =
 			| cc_2.Prefab
 			| string
 			| cc_2.Node
-			| (T extends {
-					type_s: string;
-			  }
-					? Record<T["type_s"], cc_2.Prefab | string | cc_2.Node> & {
-							default: cc_2.Prefab | string | cc_2.Node;
-					  }
-					: never);
+			| (T extends cc_2.Constructor<view_base> ? Record<module_type<T>, cc_2.Prefab | string | cc_2.Node> : never);
 	}
 
 	declare namespace _mk_view_base {
 		/** create 配置 */
 		interface create_config extends _mk_life_cycle.create_config {
-			/** 所有预制体路径|资源 */
-			prefab_tab?: Record<string, cc_2.Prefab | string> & {
-				default: cc_2.Prefab | string;
-			};
 			/** 模块类型 */
 			type_s: string;
 		}
@@ -2928,11 +2902,7 @@ declare namespace mk {
 		export class close_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: close_config<CT>);
 			/** 类型 */
-			type?: CT extends {
-				type_s: infer T;
-			}
-				? T
-				: never;
+			type?: _mk_ui_manage.module_type<CT>;
 			/** 关闭全部指定类型的模块 */
 			all_b?: boolean;
 			/** 销毁节点 */
@@ -2950,7 +2920,7 @@ declare namespace mk {
 			/** 初始化数据 */
 			init?: CT["prototype"]["init_data"];
 			/** 类型 */
-			type?: keyof CT["prototype"]["_prefab_tab"];
+			type?: _mk_ui_manage.module_type<CT>;
 			/** 父节点 */
 			parent?: cc_2.Node;
 		}
@@ -2997,7 +2967,7 @@ declare namespace mk {
 		export class regis_data<CT extends cc_2.Constructor<view_base>> extends regis_config<CT> {
 			constructor(init_?: Partial<regis_data<CT>>);
 			/** 来源 */
-			source: _mk_ui_manage.source_type<CT>;
+			source: _mk_ui_manage.regis_source_type<CT>;
 			/** 跟随释放对象 */
 			target: release_.follow_release_object<release_.release_call_back_type>;
 		}
@@ -3024,16 +2994,13 @@ declare namespace mk {
 		set auto_widget_b(value_b_: boolean);
 		get auto_block_input_b(): boolean;
 		set auto_block_input_b(value_b_: boolean);
-		/** 视图类型 */
-		get type_s(): string;
+		/**
+		 * 模块类型
+		 * @readonly
+		 */
+		type_s: string;
 		/** 模块配置 */
 		set config(config_: _mk_view_base.create_config);
-		/** 所有预制体路径|资源 */
-		protected _prefab_tab?: Record<string, cc_2.Prefab | string> & {
-			default: cc_2.Prefab | string;
-		};
-		/** 模块类型 */
-		private _type_s;
 		protected open(): void | Promise<void>;
 		/**
 		 * 关闭

@@ -11,7 +11,6 @@ const { ccclass, property } = _decorator;
 export class resources_language extends mk.view_base {
 	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
-
 	/* --------------- public --------------- */
 	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
