@@ -50,29 +50,17 @@ abstract class mk_audio_base extends mk_instance_base {
 
 	/**
 	 * 添加音频单元
-	 * @param url_s_ 音频资源路径
+	 * @param url_ 音频资源路径 | 音频资源路径列表
 	 * @param target_ 跟随释放对象
 	 * @param config_ 添加配置
 	 */
-	add(
-		url_s_: string,
+	async add<T extends string | string[], T2 extends true | false = false>(
+		url_: T,
 		target_: mk_asset_.follow_release_object,
-		config_?: mk_audio_base_.add_config
-	): Promise<(mk_audio_base_.unit & mk_audio_base_.unit[]) | null>;
-	/**
-	 * 添加音频单元
-	 * @param url_ss_ 音频资源路径列表
-	 * @param target_ 跟随释放对象
-	 * @param config_ 添加配置
-	 */
-	add(url_ss_: string[], target_: mk_asset_.follow_release_object, config_?: mk_audio_base_.add_config): Promise<mk_audio_base_.unit[] | null>;
-	async add(
-		url_: string | string[],
-		target_: mk_asset_.follow_release_object,
-		config_?: mk_audio_base_.add_config
-	): Promise<mk_audio_base_.unit | mk_audio_base_.unit[] | null> {
+		config_?: mk_audio_base_.add_config<T2>
+	): Promise<T2 extends true ? (mk_audio_base_.unit | null)[] : T extends string ? mk_audio_base_.unit | null : (mk_audio_base_.unit | null)[]> {
 		if (EDITOR) {
-			return null;
+			return null!;
 		}
 
 		/** 路径列表 */
@@ -85,8 +73,8 @@ abstract class mk_audio_base extends mk_instance_base {
 			url_ss = url_;
 		}
 
-		const audio_as: mk_audio_base_._unit[] = [];
-		let result: mk_audio_base_._unit | mk_audio_base_._unit[];
+		const audio_as: (mk_audio_base_._unit | null)[] = [];
+		let result: mk_audio_base_._unit | (mk_audio_base_._unit | null)[];
 
 		if (config_?.dir_b) {
 			for (const v_s of url_ss) {
@@ -108,6 +96,7 @@ abstract class mk_audio_base extends mk_instance_base {
 				const asset = await mk_asset.get(v_s, cc.AudioClip, target_, config_?.load_config);
 
 				if (!asset) {
+					audio_as.push(null!);
 					continue;
 				}
 
@@ -119,11 +108,15 @@ abstract class mk_audio_base extends mk_instance_base {
 				audio_as.push(audio);
 			}
 
-			result = audio_as.length === 1 ? audio_as[0] : audio_as;
+			result = (!Array.isArray(url_) ? audio_as[0] : audio_as) as any;
 		}
 
 		// 添加音频
 		audio_as.forEach((v) => {
+			if (!v) {
+				return;
+			}
+
 			this._add(v, config_?.group_ns);
 		});
 
@@ -315,13 +308,13 @@ export namespace mk_audio_base_ {
 	}
 
 	/** add 配置 */
-	export interface add_config {
+	export interface add_config<T extends boolean> {
 		/** 类型 */
 		type?: global_config.audio.type;
 		/** 分组 */
 		group_ns?: number[];
 		/** 文件夹 */
-		dir_b?: boolean;
+		dir_b?: T;
 		/** 加载配置 */
 		load_config?: mk_asset_.get_config<cc.AudioClip>;
 	}

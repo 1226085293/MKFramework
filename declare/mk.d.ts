@@ -117,13 +117,13 @@ declare namespace mk {
 			clone<T extends this>(value_n_: number): T[];
 		}
 		/** add 配置 */
-		export interface add_config {
+		export interface add_config<T extends boolean> {
 			/** 类型 */
 			type?: global_config.audio.type;
 			/** 分组 */
 			group_ns?: number[];
 			/** 文件夹 */
-			dir_b?: boolean;
+			dir_b?: T;
 			/** 加载配置 */
 			load_config?: asset_.get_config<cc_2.AudioClip>;
 		}
@@ -1083,18 +1083,15 @@ declare namespace mk {
 		get_group(group_n_: number): audio_.group;
 		/**
 		 * 添加音频单元
-		 * @param url_s_ 音频资源路径
+		 * @param url_ 音频资源路径 | 音频资源路径列表
 		 * @param target_ 跟随释放对象
 		 * @param config_ 添加配置
 		 */
-		add(url_s_: string, target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<(audio_.unit & audio_.unit[]) | null>;
-		/**
-		 * 添加音频单元
-		 * @param url_ss_ 音频资源路径列表
-		 * @param target_ 跟随释放对象
-		 * @param config_ 添加配置
-		 */
-		add(url_ss_: string[], target_: asset_.follow_release_object, config_?: audio_.add_config): Promise<audio_.unit[] | null>;
+		add<T extends string | string[], T2 extends true | false = false>(
+			url_: T,
+			target_: asset_.follow_release_object,
+			config_?: audio_.add_config<T2>
+		): Promise<T2 extends true ? (audio_.unit | null)[] : T extends string ? audio_.unit | null : (audio_.unit | null)[]>;
 		/**
 		 * 播放音效
 		 * @param audio_ 音频单元
