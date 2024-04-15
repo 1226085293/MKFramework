@@ -124,7 +124,6 @@ class mk_event_target<CT> extends cc.EventTarget {
 	 * 请求事件
 	 * @param type_ 事件类型
 	 * @param args_ 事件参数
-	 * @beta
 	 * @remarks
 	 * 等待请求事件返回
 	 */

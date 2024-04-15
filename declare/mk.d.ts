@@ -430,7 +430,14 @@ declare namespace mk {
 		has<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
 		/** 清空所有事件 */
 		clear(): void;
-		/* Excluded from this release type: request */
+		/**
+		 * 请求事件
+		 * @param type_ 事件类型
+		 * @param args_ 事件参数
+		 * @remarks
+		 * 等待请求事件返回
+		 */
+		request<T extends keyof CT, T2 extends Parameters<CT[T]>, T3 extends ReturnType<CT[T]>>(type_: T | T[], ...args_: T2): Promise<T3>[];
 		/**
 		 * 请求单个事件
 		 * @param type_ 事件类型
@@ -1273,8 +1280,18 @@ declare namespace mk {
 		 * 请不要使用 cc.game.restart()，因为这会影响框架内的数据清理以及生命周期
 		 */
 		restart(): Promise<void>;
-		/* Excluded from this release type: pause */
-		/* Excluded from this release type: resume */
+		/**
+		 * 暂停节点
+		 * @param node_ 目标节点
+		 * @param recursion_b_ 是否递归子节点
+		 */
+		pause(node_: cc_2.Node, recursion_b_?: boolean): void;
+		/**
+		 * 恢复节点
+		 * @param node_ 目标节点
+		 * @param recursion_b_ 是否递归子节点
+		 */
+		resume(node_: cc_2.Node, recursion_b_?: boolean): void;
 	}
 
 	/**
