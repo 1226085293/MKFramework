@@ -54,10 +54,9 @@ class mk_storage<CT extends Object> {
 	 * 设置存储数据
 	 * @param key_ 存储键
 	 * @param data_ 存储数据
-	 * @param effective_time_ms_n_ 失效时间
-	 * @returns storage.status
+	 * @returns 成功状态
 	 */
-	set<T extends keyof CT>(key_: T, data_: any): boolean {
+	set<T extends keyof CT, T2 extends CT[T]>(key_: T, data_: T2): boolean {
 		const key_s = String(key_);
 
 		try {

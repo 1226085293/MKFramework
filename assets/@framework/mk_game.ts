@@ -44,7 +44,6 @@ export class mk_game extends mk_instance_base {
 
 	/**
 	 * 暂停节点
-	 * @beta
 	 * @param node_ 目标节点
 	 * @param recursion_b_ 是否递归子节点
 	 */
@@ -89,7 +88,6 @@ export class mk_game extends mk_instance_base {
 
 	/**
 	 * 恢复节点
-	 * @beta
 	 * @param node_ 目标节点
 	 * @param recursion_b_ 是否递归子节点
 	 */
