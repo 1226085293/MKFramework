@@ -322,7 +322,7 @@ export namespace mk_guide_manage_ {
 		/**
 		 * 加载步骤
 		 * @remarks
-		 * 加载步骤(场景/操作)前调用，可在此处打开遮罩
+		 * 加载步骤(场景/操作)前调用
 		 */
 		loading_step(): void;
 		/**
@@ -333,7 +333,7 @@ export namespace mk_guide_manage_ {
 		/**
 		 * 加载步骤完成
 		 * @remarks
-		 * 步骤 load 执行后调用，可在此处关闭遮罩
+		 * 步骤 load 执行后调用
 		 */
 		loading_step_complete(): void;
 		/** 中断 */
