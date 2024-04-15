@@ -42,14 +42,17 @@ export class resources_network extends mk.view_base {
 		this._ws.event.on(this._ws.event.key.recv, this._network_recv, this);
 		this._ws2.event.on(this._ws.event.key.recv, this._network_recv2, this);
 
-		// // 监听指定消息
-		// this._ws2.message.on(test.test_c, (value) => {
-		// 	this.data.chat2_ss.push("网络 2 收到：" + value.data);
-		// });
+		// // 发送消息
+		// this._ws2.message.send(test.test_c.create());
 
 		// // 请求指定消息（等待返回、需在消息体添加消息序号并修改对应编解码）
 		// this._ws2.message.request(test.test_c.create())?.then((value) => {
 		// 	this._log.log("收到请求消息", value);
+		// });
+
+		// // 监听指定消息
+		// this._ws2.message.on(test.test_c, (value) => {
+		// 	this.data.chat2_ss.push("网络 2 收到：" + value.data);
 		// });
 
 		this.schedule(() => {
