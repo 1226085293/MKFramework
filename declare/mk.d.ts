@@ -2226,6 +2226,8 @@ declare namespace mk {
 			send(data_: Parameters<CT["encode"]>[0]): void;
 			/** 触发发送 */
 			trigger(): void;
+			/** 清理所有未发送消息 */
+			clear(): void;
 			private _event_restart;
 		}
 	}

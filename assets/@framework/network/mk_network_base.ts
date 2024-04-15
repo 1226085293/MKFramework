@@ -431,15 +431,23 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 			return;
 		}
 
-		// 存在发送数据且上次发送已经结束，避免超出缓存
-		if (this._write_as.length && !this._socket.bufferedAmount) {
-			const data = this.config.codec ? await this.config.codec.encode(this._write_as.pop()) : this._write_as.pop();
-
-			if ((data ?? null) !== null) {
-				this._socket.send(data);
-			}
-		} else {
+		// 发送完成进入睡眠
+		if (this._write_as.length === 0) {
 			this._write_sleep_b = true;
+
+			return;
+		}
+
+		let data_as = this._write_as.splice(0, this._write_as.length);
+
+		if (this.config.codec) {
+			data_as = await Promise.all(data_as.map((v) => this.config.codec!.encode(v)));
+		}
+
+		for (const v of data_as) {
+			if ((v ?? null) !== null) {
+				this._socket.send(v);
+			}
 		}
 	}
 
@@ -773,6 +781,11 @@ export namespace mk_network_base_ {
 			while (this._mess_as.length) {
 				this._network._send(this._mess_as.shift());
 			}
+		}
+
+		/** 清理所有未发送消息 */
+		clear(): void {
+			this._mess_as.splice(0, this._mess_as.length);
 		}
 
 		/* ------------------------------- 全局事件 ------------------------------- */
