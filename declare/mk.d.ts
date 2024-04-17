@@ -839,7 +839,7 @@ declare namespace mk {
 		 * @remarks
 		 * 所有依赖 init_data 初始化的逻辑都应在此进行
 		 *
-		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
+		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块，会等待模块 onLoad
 		 *
 		 * - 动态模块：onLoad 后，open 前调用
 		 */
@@ -848,7 +848,7 @@ declare namespace mk {
 		 * 打开
 		 * @protected
 		 * @remarks
-		 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+		 * onLoad，init 后执行，在此处执行无需 init_data 支持的模块初始化操作
 		 *
 		 * open 顺序: 子 -> 父
 		 */
@@ -2865,9 +2865,6 @@ declare namespace mk {
 	/**
 	 * 存储器（类型安全）
 	 * @noInheritDoc
-	 * @remarks
-	 *
-	 * - (原生/web)接口分离，获得更高的性能
 	 */
 	export declare class storage<CT extends Object> {
 		constructor(init_: mk_storage_.init_config<CT>);

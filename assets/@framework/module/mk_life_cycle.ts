@@ -237,14 +237,17 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 * @remarks
 	 * 所有依赖 init_data 初始化的逻辑都应在此进行
 	 *
-	 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块
+	 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块，会等待模块 onLoad
 	 *
 	 * - 动态模块：onLoad 后，open 前调用
 	 */
 	// @ts-ignore
 	init(data_?: any): void | Promise<void>;
 	async init(data_?: any): Promise<void> {
-		await this._load_task.task;
+		if (!this._load_task.finish_b) {
+			await this._load_task.task;
+		}
+
 		this.init_data = data_;
 	}
 
@@ -252,12 +255,17 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	 * 打开
 	 * @protected
 	 * @remarks
-	 * init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+	 * onLoad，init 后执行，在此处执行无需 init_data 支持的模块初始化操作
 	 *
 	 * open 顺序: 子 -> 父
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected open?(): void | Promise<void>;
+	protected async open?(): Promise<void> {
+		if (!this._load_task.finish_b) {
+			await this._load_task.task;
+		}
+	}
 
 	/**
 	 * 关闭
@@ -400,7 +408,9 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 			return;
 		}
 
-		await this._open_task.task;
+		if (!this._open_task.finish_b) {
+			await this._open_task.task;
+		}
 
 		// 节点安检
 		if (!this.node) {
