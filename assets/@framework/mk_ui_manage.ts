@@ -146,7 +146,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 		// 初始化来源表
 		{
-			// 资源路径/克隆节点
+			// 资源路径/节点
 			if (typeof source_ !== "object" || source_ instanceof cc.Node) {
 				source_tab["default"] = source_;
 			}
