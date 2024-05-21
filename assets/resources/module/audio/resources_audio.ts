@@ -4,7 +4,6 @@ import { _decorator } from "cc";
 import global_config from "../../../@config/global_config";
 import resources_config from "../../bundle/resources_config";
 import mk from "mk";
-import N from "../../../extends/@node/nodes";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_audio")
@@ -276,8 +275,11 @@ export class resources_audio extends mk.view_base {
 		const canvas = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!;
 		/** 触摸世界坐标 */
 		const touch_pos_v3 = event.getUILocation();
+
 		/** 距中心点距离 */
-		const dist_n = cc.v2(touch_pos_v3.x - N(canvas.node).transform.width * 0.5, touch_pos_v3.y - N(canvas.node).transform.height * 0.5).length();
+		const dist_n = cc
+			.v2(touch_pos_v3.x - mk.N(canvas.node).transform.width * 0.5, touch_pos_v3.y - mk.N(canvas.node).transform.height * 0.5)
+			.length();
 
 		// 更新方块位置
 		this.nodes.cube.worldPosition = cc.v3(touch_pos_v3.x, touch_pos_v3.y);

@@ -28,12 +28,6 @@ namespace _mk_asset {
 		scene?: string;
 	}
 
-	/** 全局配置 */
-	export interface global_config {
-		/** 缓存生命时长 */
-		cache_lifetime_ms_n: number;
-	}
-
 	/** 释放信息 */
 	export class release_info {
 		constructor(init_?: Partial<release_info>) {
@@ -117,7 +111,7 @@ export class mk_asset extends mk_instance_base {
 		}
 
 		// 定时自动释放资源
-		this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset.config.cache_lifetime_ms_n);
+		this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset._config.cache_lifetime_ms_n);
 
 		// 事件监听
 		setTimeout(() => {
@@ -127,9 +121,7 @@ export class mk_asset extends mk_instance_base {
 
 	/* --------------- static --------------- */
 	/** 全局配置 */
-	static config: _mk_asset.global_config = {
-		cache_lifetime_ms_n: global_config.asset.cache_lifetime_ms_n,
-	};
+	private static _config = global_config.asset.config;
 
 	/* --------------- private --------------- */
 	/** 日志 */
@@ -537,7 +529,7 @@ export class mk_asset extends mk_instance_base {
 		} else {
 			for (const [k_s, v] of this._asset_release_map.entries()) {
 				// 当前及之后的资源没超过生命时长
-				if (current_time_ms_n - v.join_time_ms_n < mk_asset.config.cache_lifetime_ms_n) {
+				if (current_time_ms_n - v.join_time_ms_n < mk_asset._config.cache_lifetime_ms_n) {
 					break;
 				}
 

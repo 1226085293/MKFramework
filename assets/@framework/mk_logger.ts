@@ -1,47 +1,17 @@
-import { DEBUG, EDITOR } from "cc/env";
+import { EDITOR } from "cc/env";
 import * as cc from "cc";
 import mk_instance_base from "./mk_instance_base";
 import mk_http from "./network/mk_http";
 import global_config from "../@config/global_config";
+// import mk_config from "./mk_config";
 
 namespace _mk_logger {
-	export enum level {
-		/** 禁止所有日志输出 */
-		none,
-		/** 调试 */
-		debug = 1,
-		/** 打印 */
-		log = 2,
-		/** 警告 */
-		warn = 4,
-		/** 错误 */
-		error = 8,
-		/** debug 及以上 */
-		debug_up = debug | log | warn | error,
-		/** log 及以上 */
-		log_up = log | warn | error,
-		/** warn 及以上 */
-		warn_up = warn | error,
-	}
-
 	/** 计时日志 */
 	export interface time_log {
 		/** 开始时间 */
 		start_time_ms_n: number;
 		/** 上次毫秒 */
 		last_time_ms_n: number;
-	}
-
-	/** 全局配置 */
-	export interface global_config {
-		/** 日志等级 */
-		level_n: _mk_logger.level;
-		/** 日志缓存行数 */
-		cache_row_n: number;
-		/** 错误处理函数 */
-		error_handling_f?: (...args_as: any[]) => any;
-		/** 错误上次地址 */
-		error_upload_addr_s?: string;
 	}
 }
 
@@ -71,40 +41,17 @@ class mk_logger extends mk_instance_base {
 			return;
 		}
 
-		// 输出定位
-		if (global_config.log.output_position_b) {
-			this.debug = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.debug]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.debug, true)
-			);
-
-			this.log = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.log]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.log, true)
-			);
-
-			this.warn = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.warn]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.warn, true)
-			);
-
-			this.error = this._log_func_tab["debug"][mk_logger_.level[mk_logger_.level.error]].bind(
-				this._log_func_tab["debug"]["target"],
-				this._get_log_head(mk_logger_.level.error, true)
-			);
-		}
-
 		// 错误监听
 		if (!mk_logger._init_b) {
 			mk_logger._init_b = true;
 
 			const upload_f = (...args_as: any[]): void => {
 				// 添加日志缓存
-				mk_logger._add_log_cache(_mk_logger.level.error, mk_log._get_log_head(_mk_logger.level.error, true), args_as);
+				mk_logger._add_log_cache(global_config.log.level.error, mk_log._get_log_head(global_config.log.level.error, true), args_as);
 
 				// 上传错误日志
-				if (mk_logger.config.error_upload_addr_s) {
-					mk_http.post(mk_logger.config.error_upload_addr_s, {
+				if (mk_logger._config.error_upload_addr_s) {
+					mk_http.post(mk_logger._config.error_upload_addr_s, {
 						body: JSON.stringify(mk_logger._cache_ss),
 					});
 
@@ -113,7 +60,7 @@ class mk_logger extends mk_instance_base {
 				}
 
 				// 错误处理
-				mk_logger.config.error_handling_f?.(...args_as);
+				mk_logger._config.error_handling_f?.(...args_as);
 			};
 
 			if (cc.sys.isBrowser) {
@@ -148,12 +95,7 @@ class mk_logger extends mk_instance_base {
 
 	/* --------------- static --------------- */
 	/** 全局配置 */
-	static config: _mk_logger.global_config = {
-		level_n: _mk_logger.level.debug_up,
-		cache_row_n: global_config.log.cache_row_n,
-		error_upload_addr_s: global_config.log.error_upload_addr_s,
-	};
-
+	private static _config = global_config.log.config;
 	/** 初始化状态 */
 	private static _init_b = false;
 	/** 所有 log 对象 */
@@ -169,14 +111,21 @@ class mk_logger extends mk_instance_base {
 	private _name_s!: string;
 	/** 日志函数表 */
 	private _log_func_tab = {
-		debug: {
+		[global_config.log.log_object_type.mk]: {
+			target: this,
+			debug: this.debug,
+			log: this.log,
+			warn: this.warn,
+			error: this.error,
+		},
+		[global_config.log.log_object_type.console]: {
 			target: console,
 			debug: console.debug,
 			log: console.log,
 			warn: console.warn,
 			error: console.error,
 		},
-		release: {
+		[global_config.log.log_object_type.cc]: {
 			target: cc,
 			debug: cc.debug,
 			log: cc.log,
@@ -217,8 +166,8 @@ class mk_logger extends mk_instance_base {
 	 * @param args_as_ 参数
 	 * @returns
 	 */
-	private static _add_log_cache(level_: mk_logger_.level, head_s_: string, ...args_as_: any[]): void {
-		if (!args_as_?.length || mk_logger.config.cache_row_n <= 0) {
+	private static _add_log_cache(level_: global_config.log.level, head_s_: string, ...args_as_: any[]): void {
+		if (!args_as_?.length || mk_logger._config.cache_row_n <= 0) {
 			return;
 		}
 
@@ -227,7 +176,7 @@ class mk_logger extends mk_instance_base {
 
 		// 填充参数内容
 		{
-			if (level_ === mk_logger_.level.error) {
+			if (level_ === global_config.log.level.error) {
 				args_as_.forEach((v) => {
 					let json_s = "";
 
@@ -254,26 +203,26 @@ class mk_logger extends mk_instance_base {
 		mk_logger._cache_ss.push(content_s);
 
 		// 超出缓存删除顶部日志
-		if (mk_logger._cache_ss.length > mk_logger.config.cache_row_n) {
+		if (mk_logger._cache_ss.length > mk_logger._config.cache_row_n) {
 			mk_logger._cache_ss.splice(0, 1);
 		}
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
 	debug(...args_as_: any[]): void {
-		this._log(mk_logger_.level.debug, ...args_as_);
+		this._log(global_config.log.level.debug, ...args_as_);
 	}
 
 	log(...args_as_: any[]): void {
-		this._log(mk_logger_.level.log, ...args_as_);
+		this._log(global_config.log.level.log, ...args_as_);
 	}
 
 	warn(...args_as_: any[]): void {
-		this._log(mk_logger_.level.warn, ...args_as_);
+		this._log(global_config.log.level.warn, ...args_as_);
 	}
 
 	error(...args_as_: any[]): void {
-		this._log(mk_logger_.level.error, ...args_as_);
+		this._log(global_config.log.level.error, ...args_as_);
 	}
 
 	/** 计时开始 */
@@ -289,7 +238,7 @@ class mk_logger extends mk_instance_base {
 		time_log.start_time_ms_n = time_log.last_time_ms_n = Date.now();
 		this._time_map.set(name_s_, time_log);
 		if (args_as_?.length) {
-			this._log(mk_logger_.level.log, name_s_, ...args_as_);
+			this._log(global_config.log.level.log, name_s_, ...args_as_);
 		}
 	}
 
@@ -306,7 +255,7 @@ class mk_logger extends mk_instance_base {
 		const curr_time_ms_n = Date.now();
 
 		if (args_as_?.length) {
-			this._log(mk_logger_.level.log, name_s_, ...args_as_, `耗时：${(curr_time_ms_n - time_log.last_time_ms_n) / 1000}s`);
+			this._log(global_config.log.level.log, name_s_, ...args_as_, `耗时：${(curr_time_ms_n - time_log.last_time_ms_n) / 1000}s`);
 		}
 
 		time_log.last_time_ms_n = curr_time_ms_n;
@@ -322,29 +271,27 @@ class mk_logger extends mk_instance_base {
 			return;
 		}
 
-		this._log(mk_logger_.level.log, name_s_, ...args_as_, `总耗时：${(Date.now() - time_log.start_time_ms_n) / 1000}s`);
+		this._log(global_config.log.level.log, name_s_, ...args_as_, `总耗时：${(Date.now() - time_log.start_time_ms_n) / 1000}s`);
 		this._time_map.delete(name_s_);
 	}
 
 	/** 日志头 */
-	private _get_log_head(level_: mk_logger_.level, time_b_ = true): string {
+	private _get_log_head(level_: global_config.log.level, time_b_ = true): string {
 		const date = new Date();
 
 		if (time_b_) {
 			/** 当前日期时间 */
 			const time_s = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.${date.getMilliseconds()}`;
 
-			return `${this._name_s} <${mk_logger_.level[level_]}> [${time_s}]：`;
+			return `${this._name_s} <${global_config.log.level[level_]}> [${time_s}]：`;
 		} else {
-			return `${this._name_s} <${mk_logger_.level[level_]}>：`;
+			return `${this._name_s} <${global_config.log.level[level_]}>：`;
 		}
 	}
 
-	private _log(level_: mk_logger_.level, ...args_as_: any[]): void {
-		let log_f: (...args_as: any) => void;
-
+	private _log(level_: global_config.log.level, ...args_as_: any[]): void {
 		// 打印等级限制
-		if (!(mk_logger.config.level_n & level_)) {
+		if (!(mk_logger._config.level_n & level_)) {
 			return;
 		}
 
@@ -359,27 +306,14 @@ class mk_logger extends mk_instance_base {
 			}
 		}
 
-		// 获取打印函数
-		{
-			if (DEBUG) {
-				log_f = this._log_func_tab["debug"][mk_logger_.level[level_]];
-			} else {
-				log_f = this._log_func_tab["release"][mk_logger_.level[level_]];
-			}
-		}
-
+		/** 日志头 */
 		const head_s = this._get_log_head(level_);
 
 		// 更新缓存
 		mk_logger._add_log_cache(level_, head_s, ...args_as_);
 		// 打印日志
-		log_f(head_s, ...args_as_);
+		this._log_func_tab[mk_logger._config.log_object_type][global_config.log.level[level_]](head_s, ...args_as_);
 	}
-}
-
-export namespace mk_logger_ {
-	export const level = _mk_logger.level;
-	export type level = _mk_logger.level;
 }
 
 export const mk_log = mk_logger.instance("default");

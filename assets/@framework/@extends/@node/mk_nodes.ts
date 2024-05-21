@@ -1,6 +1,6 @@
 import * as cc from "cc";
-import global_config from "../../@config/global_config";
-import global_event from "../../@config/global_event";
+import global_config from "../../../@config/global_config";
+import global_event from "../../../@config/global_event";
 
 class node_extends {
 	constructor(node_: cc.Node) {
@@ -41,6 +41,8 @@ class node_extends {
 	static node_extends_map = new Map<cc.Node, node_extends>();
 	/** 渲染顺序更新倒计时 */
 	static order_update_timer: any = null;
+	/** 全局配置 */
+	private static _config = global_config.view.config;
 	/** 渲染顺序更新时间 */
 	private static _order_update_time_n = 0;
 	/** 更新任务 */
@@ -147,7 +149,7 @@ class node_extends {
 		// 更新渲染顺序
 		this._order_n = value_n_;
 
-		const parent = N(this._node.parent!);
+		const parent = MKN(this._node.parent!);
 
 		// 父节点不存在
 		if (!parent) {
@@ -165,7 +167,7 @@ class node_extends {
 			}
 
 			/** 同级节点 */
-			const node_as = [...parent._node.children].sort((va, vb) => (N(va, false)?._order_n ?? 0) - (N(vb, false)?._order_n ?? 0));
+			const node_as = [...parent._node.children].sort((va, vb) => (MKN(va, false)?._order_n ?? 0) - (MKN(vb, false)?._order_n ?? 0));
 
 			// 更新渲染顺序
 			node_as.forEach((v, k_n) => {
@@ -179,7 +181,7 @@ class node_extends {
 		}
 
 		// 小于间隔时间更新
-		if (node_extends.order_update_timer === null && time_since_last_update_n < global_config.view.layer_refresh_interval_ms_n) {
+		if (node_extends.order_update_timer === null && time_since_last_update_n < node_extends._config.layer_refresh_interval_ms_n) {
 			node_extends.order_update_timer = setTimeout(() => {
 				// 清理定时器数据
 				node_extends.order_update_timer = null;
@@ -187,7 +189,7 @@ class node_extends {
 				node_extends._order_update_time_n = Date.now();
 				// 更新渲染顺序
 				node_extends._order_update_task_fs.splice(0, node_extends._order_update_task_fs.length).forEach((v_f) => v_f());
-			}, global_config.view.layer_refresh_interval_ms_n - time_since_last_update_n);
+			}, node_extends._config.layer_refresh_interval_ms_n - time_since_last_update_n);
 
 			return;
 		}
@@ -200,7 +202,7 @@ class node_extends {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function N(node_: cc.Node, force_b_ = true): node_extends {
+function MKN(node_: cc.Node, force_b_ = true): node_extends {
 	if (!node_?.isValid) {
 		return null!;
 	}
@@ -215,10 +217,7 @@ function N(node_: cc.Node, force_b_ = true): node_extends {
 	return node_extend!;
 }
 
-namespace N {
-	/** order 刷新间隔时间（毫秒） */
-	export const order_refresh_interval_ms_n = global_config.view.layer_refresh_interval_ms_n;
-
+namespace MKN {
 	/** 清理节点数据 */
 	export function clear(): void {
 		// 清理定时器
@@ -233,8 +232,8 @@ namespace N {
 }
 
 // 切换场景后自动清理
-cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, N.clear, this);
+cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, MKN.clear, this);
 // 重启时自动清理
-global_event.on(global_event.key.restart, N.clear, this);
+global_event.on(global_event.key.restart, MKN.clear, this);
 
-export default N;
+export default MKN;

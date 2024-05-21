@@ -5,9 +5,8 @@ import { mk_life_cycle, _mk_life_cycle } from "./mk_life_cycle";
 import dynamic_module from "../mk_dynamic_module";
 import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
-import type { _mk_layer } from "./mk_layer";
-import global_config from "../../@config/global_config";
 import mk_game from "../mk_game";
+import global_config from "../../@config/global_config";
 const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
@@ -18,23 +17,23 @@ namespace _mk_view_base {
 		type_s: string;
 	}
 
-	/** 全局配置 */
-	export interface global_config extends _mk_layer.global_config {
-		/** 默认遮罩 */
-		mask_data_tab: {
-			/** 节点名 */
-			node_name_s?: string;
-			/** 预制体路径 */
-			prefab_path_s: string;
-		};
-		/** 窗口动画 */
-		readonly window_animation_tab: Readonly<{
-			/** 打开动画 */
-			open: Record<string, (value: cc.Node) => void | Promise<void>>;
-			/** 关闭动画 */
-			close: Record<string, (value: cc.Node) => void | Promise<void>>;
-		}>;
-	}
+	// /** 全局配置 */
+	// export interface global_config {
+	// 	/** 默认遮罩 */
+	// 	mask_data_tab: {
+	// 		/** 节点名 */
+	// 		node_name_s?: string;
+	// 		/** 预制体路径 */
+	// 		prefab_path_s: string;
+	// 	};
+	// 	/** 窗口动画 */
+	// 	readonly window_animation_tab: Readonly<{
+	// 		/** 打开动画 */
+	// 		open: Record<string, (value: cc.Node) => void | Promise<void>>;
+	// 		/** 关闭动画 */
+	// 		close: Record<string, (value: cc.Node) => void | Promise<void>>;
+	// 	}>;
+	// }
 
 	/** 动画配置 */
 	@ccclass("mk_view_base/animation_config")
@@ -112,21 +111,8 @@ namespace _mk_view_base {
  */
 @ccclass
 export class mk_view_base extends mk_life_cycle {
-	/* --------------- static --------------- */
-	static config: _mk_view_base.global_config = {
-		layer_type: global_config.view.layer_type,
-		layer_spacing_n: global_config.view.layer_spacing_n,
-		mask_data_tab: global_config.view.mask_data_tab,
-		window_animation_tab: {
-			open: {
-				无: null!,
-			},
-			close: {
-				无: null!,
-			},
-		},
-	};
-
+	// /* --------------- static --------------- */
+	// private static _config = global_config.view.config;
 	/* --------------- 属性 --------------- */
 	@property({
 		displayName: "单独展示",
@@ -206,7 +192,7 @@ export class mk_view_base extends mk_life_cycle {
 	protected open(): void | Promise<void>;
 	protected async open(): Promise<void> {
 		/** 打开动画函数 */
-		const open_animation_f = mk_view_base.config.window_animation_tab?.open?.[this.animation_config?.open_animation_s];
+		const open_animation_f = mk_view_base._config.window_animation_tab?.open?.[this.animation_config?.open_animation_s];
 
 		// 更新 widget，防止在节点池内 widget 未更新
 		cc.view.emit("canvas-resize");
@@ -235,7 +221,7 @@ export class mk_view_base extends mk_life_cycle {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async late_close?(): Promise<void> {
 		/** 关闭动画函数 */
-		const close_animation_f = mk_view_base.config.window_animation_tab?.close?.[this.animation_config?.close_animation_s];
+		const close_animation_f = mk_view_base._config.window_animation_tab?.close?.[this.animation_config?.close_animation_s];
 
 		// 关闭动画
 		if (!mk_game.restarting_b && close_animation_f) {
@@ -250,43 +236,21 @@ export class mk_view_base extends mk_life_cycle {
 	/** 初始化编辑器 */
 	protected _init_editor(): void {
 		super._init_editor();
-		if (!mk_view_base.config) {
-			return;
-		}
 
-		// 初始化数据
+		// 窗口动画枚举
 		{
-			// 窗口动画枚举
-			if (mk_view_base.config.window_animation_tab) {
-				// 打开
-				if (mk_view_base.config.window_animation_tab.open) {
-					_mk_view_base.animation_config.animation_enum_tab.open = cc.Enum(
-						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.open)
-					);
+			// 打开
+			{
+				_mk_view_base.animation_config.animation_enum_tab.open = cc.Enum(
+					mk_tool.enum.obj_to_enum(mk_view_base._config.window_animation_tab.open)
+				);
 
-					if (this.animation_config && !this.animation_config.open_animation_s) {
-						this.animation_config.open_animation_s = Object.keys(_mk_view_base.animation_config.animation_enum_tab.open)[0];
-					}
+				if (this.animation_config && !this.animation_config.open_animation_s) {
+					this.animation_config.open_animation_s = Object.keys(_mk_view_base.animation_config.animation_enum_tab.open)[0];
 				}
 
-				// 关闭
-				if (mk_view_base.config.window_animation_tab.close) {
-					_mk_view_base.animation_config.animation_enum_tab.close = cc.Enum(
-						mk_tool.enum.obj_to_enum(mk_view_base.config.window_animation_tab.close)
-					);
-
-					if (this.animation_config && !this.animation_config.close_animation_s) {
-						this.animation_config.close_animation_s = Object.keys(_mk_view_base.animation_config.animation_enum_tab.close)[0];
-					}
-				}
-			}
-		}
-
-		// 更新编辑器
-		if (EDITOR) {
-			// 窗口动画
-			if (mk_view_base.config.window_animation_tab) {
-				if (mk_view_base.config.window_animation_tab.open) {
+				// 更新编辑器
+				if (EDITOR) {
 					cc.CCClass.Attr.setClassAttr(
 						_mk_view_base.animation_config,
 						"open_animation_n",
@@ -294,8 +258,20 @@ export class mk_view_base extends mk_life_cycle {
 						cc.Enum.getList(_mk_view_base.animation_config.animation_enum_tab.open)
 					);
 				}
+			}
 
-				if (mk_view_base.config.window_animation_tab.close) {
+			// 关闭
+			{
+				_mk_view_base.animation_config.animation_enum_tab.close = cc.Enum(
+					mk_tool.enum.obj_to_enum(mk_view_base._config.window_animation_tab.close)
+				);
+
+				if (this.animation_config && !this.animation_config.close_animation_s) {
+					this.animation_config.close_animation_s = Object.keys(_mk_view_base.animation_config.animation_enum_tab.close)[0];
+				}
+
+				// 更新编辑器
+				if (EDITOR) {
 					cc.CCClass.Attr.setClassAttr(
 						_mk_view_base.animation_config,
 						"close_animation_n",
@@ -313,17 +289,17 @@ export class mk_view_base extends mk_life_cycle {
 			return false;
 		}
 
-		return Boolean(this.node.children[0].name === mk_view_base.config.mask_data_tab.node_name_s);
+		return Boolean(this.node.children[0].name === global_config.view.mask_data_tab.node_name_s);
 	}
 
 	private async _set_auto_mask_b(value_b_: boolean): Promise<void> {
 		// 添加遮罩
 		if (value_b_) {
-			if (!mk_view_base.config.mask_data_tab.prefab_path_s) {
+			if (!global_config.view.mask_data_tab.prefab_path_s) {
 				return;
 			}
 
-			const prefab = await mk_asset.get(mk_view_base.config.mask_data_tab.prefab_path_s, cc.Prefab, this);
+			const prefab = await mk_asset.get(global_config.view.mask_data_tab.prefab_path_s, cc.Prefab, this);
 
 			if (!prefab) {
 				return;
@@ -332,8 +308,8 @@ export class mk_view_base extends mk_life_cycle {
 			const node = cc.instantiate(prefab);
 
 			// 设置节点名
-			if (mk_view_base.config.mask_data_tab.node_name_s) {
-				node.name = mk_view_base.config.mask_data_tab.node_name_s;
+			if (global_config.view.mask_data_tab.node_name_s) {
+				node.name = global_config.view.mask_data_tab.node_name_s;
 			}
 
 			// 添加到父节点

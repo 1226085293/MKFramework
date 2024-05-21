@@ -1,7 +1,7 @@
 import { EDITOR } from "cc/env";
 import * as cc from "cc";
 import global_config from "../../@config/global_config";
-import MKN from "../@private/extends/@node/mk_nodes";
+import MKN from "../@extends/@node/mk_nodes";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, executeInEditMode } = cc._decorator;
 
@@ -27,11 +27,7 @@ export namespace _mk_layer {
 @ccclass
 class mk_layer extends cc.Component {
 	/* --------------- static --------------- */
-	static config: _mk_layer.global_config = {
-		layer_type: global_config.view.layer_type,
-		layer_spacing_n: global_config.view.layer_spacing_n,
-	};
-
+	protected static _config = global_config.view.config;
 	/* --------------- 属性 --------------- */
 	/** 初始化编辑器 */
 	@property({
@@ -107,7 +103,7 @@ class mk_layer extends cc.Component {
 		// 更新编辑器
 		if (EDITOR) {
 			// 层类型
-			cc.CCClass.Attr.setClassAttr(mk_layer, "layer_type_n", "enumList", cc.Enum.getList(cc.Enum(mk_layer.config.layer_type)));
+			cc.CCClass.Attr.setClassAttr(mk_layer, "layer_type_n", "enumList", cc.Enum.getList(cc.Enum(global_config.view.layer_type)));
 		}
 	}
 
@@ -118,7 +114,7 @@ class mk_layer extends cc.Component {
 		}
 
 		/** 当前层 */
-		const layer_n = this.layer_type_n * mk_layer.config.layer_spacing_n + this._child_layer_n;
+		const layer_n = this.layer_type_n * mk_layer._config.layer_spacing_n + this._child_layer_n;
 
 		// 更新渲染顺序
 		MKN(this.node).order_n = layer_n;

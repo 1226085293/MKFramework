@@ -1,7 +1,6 @@
 import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
-import N from "../../../../extends/@node/nodes";
 
 const { ccclass, property } = cc._decorator;
 
@@ -46,7 +45,7 @@ export namespace 字符变更 {
 				target_,
 				key_,
 				(value) => {
-					N(node_).label.string = value ? params_.true_s : params_.false_s;
+					mk.N(node_).label.string = value ? params_.true_s : params_.false_s;
 				},
 				target_
 			)
@@ -69,7 +68,7 @@ export namespace 勾选框 {
 			node_.on(
 				cc.Toggle.EventType.TOGGLE,
 				(event_f = () => {
-					target_[key_] = N(node_).toggle.isChecked as any;
+					target_[key_] = mk.N(node_).toggle.isChecked as any;
 				})
 			);
 		}
@@ -79,7 +78,7 @@ export namespace 勾选框 {
 				target_,
 				key_,
 				(value) => {
-					N(node_).toggle.isChecked = value as boolean;
+					mk.N(node_).toggle.isChecked = value as boolean;
 				},
 				() => {
 					node_.off(cc.Toggle.EventType.TOGGLE, event_f);
@@ -103,7 +102,7 @@ export namespace 勾选框禁用状态 {
 				target_,
 				key_,
 				(value) => {
-					N(node_).toggle.interactable = (params_.reverse_b ? value : !value) as boolean;
+					mk.N(node_).toggle.interactable = (params_.reverse_b ? value : !value) as boolean;
 				},
 				target_
 			)

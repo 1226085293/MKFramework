@@ -3,7 +3,6 @@ import { _decorator } from "cc";
 import mk from "mk";
 import tool from "../../../tool/tool";
 import { test } from "../../bundle/proto/test.js";
-import N from "../../../extends/@node/nodes";
 const { ccclass, property } = _decorator;
 
 @ccclass("resources_network")
@@ -86,7 +85,7 @@ export class resources_network extends mk.view_base {
 	/* ------------------------------- 编辑器事件 ------------------------------- */
 	/** item 更新函数 */
 	event_item_update(node_: cc.Node, data_s_: string): void {
-		N(node_).label.string = data_s_ + "";
+		mk.N(node_).label.string = data_s_ + "";
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
