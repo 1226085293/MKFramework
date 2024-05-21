@@ -728,7 +728,15 @@ declare namespace mk {
 	 * - 支持类型层级细粒度划分
 	 */
 	export declare class layer extends cc_2.Component {
-		static config: layer_.global_config;
+		protected static _config: {
+			layer_spacing_n: number;
+			layer_refresh_interval_ms_n: number;
+			window_animation_tab: Readonly<{
+				open: Record<string, (value: cc_2.Node) => void | Promise<void>>;
+				/** 初始化编辑器 */
+				close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
+			}>;
+		};
 		/** 初始化编辑器 */
 		get init_editor(): void;
 		/** 层类型 */
@@ -897,7 +905,7 @@ declare namespace mk {
 	export declare class logger extends instance_base {
 		constructor(name_s_: string);
 		/** 全局配置 */
-		static config: _mk_logger.global_config;
+		private static _config;
 		/** 初始化状态 */
 		private static _init_b;
 		/** 所有 log 对象 */
@@ -951,11 +959,6 @@ declare namespace mk {
 		private _log;
 	}
 
-	export declare namespace logger_ {
-		const level: typeof _mk_logger.level;
-		export type level = _mk_logger.level;
-	}
-
 	/**
 	 * 资源管理器
 	 * @noInheritDoc
@@ -980,7 +983,7 @@ declare namespace mk {
 	declare class mk_asset extends instance_base {
 		constructor();
 		/** 全局配置 */
-		static config: _mk_asset.global_config;
+		private static _config;
 		/** 日志 */
 		private _log;
 		/** 管理表 */
@@ -1050,11 +1053,6 @@ declare namespace mk {
 			path?: string;
 			dir?: string;
 			scene?: string;
-		}
-		/** 全局配置 */
-		interface global_config {
-			/** 缓存生命时长 */
-			cache_lifetime_ms_n: number;
 		}
 		/** 释放信息 */
 		class release_info {
@@ -1628,45 +1626,6 @@ declare namespace mk {
 			first_b?: boolean;
 			/** 销毁动态子节点 */
 			destroy_children_b?: boolean;
-		}
-	}
-
-	declare namespace _mk_logger {
-		enum level {
-			/** 禁止所有日志输出 */
-			none = 0,
-			/** 调试 */
-			debug = 1,
-			/** 打印 */
-			log = 2,
-			/** 警告 */
-			warn = 4,
-			/** 错误 */
-			error = 8,
-			/** debug 及以上 */
-			debug_up = 15,
-			/** log 及以上 */
-			log_up = 14,
-			/** warn 及以上 */
-			warn_up = 12,
-		}
-		/** 计时日志 */
-		interface time_log {
-			/** 开始时间 */
-			start_time_ms_n: number;
-			/** 上次毫秒 */
-			last_time_ms_n: number;
-		}
-		/** 全局配置 */
-		interface global_config {
-			/** 日志等级 */
-			level_n: _mk_logger.level;
-			/** 日志缓存行数 */
-			cache_row_n: number;
-			/** 错误处理函数 */
-			error_handling_f?: (...args_as: any[]) => any;
-			/** 错误上次地址 */
-			error_upload_addr_s?: string;
 		}
 	}
 
@@ -2557,23 +2516,6 @@ declare namespace mk {
 			/** 模块类型 */
 			type_s: string;
 		}
-		/** 全局配置 */
-		interface global_config extends layer_.global_config {
-			/** 默认遮罩 */
-			mask_data_tab: {
-				/** 节点名 */
-				node_name_s?: string;
-				/** 预制体路径 */
-				prefab_path_s: string;
-			};
-			/** 窗口动画 */
-			readonly window_animation_tab: Readonly<{
-				/** 打开动画 */
-				open: Record<string, (value: cc_2.Node) => void | Promise<void>>;
-				/** 关闭动画 */
-				close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
-			}>;
-		}
 		/** 动画配置 */
 		class animation_config {
 			/** 动画枚举表 */
@@ -2638,6 +2580,13 @@ declare namespace mk {
 
 	export declare const monitor: mk_monitor;
 
+	export declare function N(node_: cc_2.Node, force_b_?: boolean): node_extends;
+
+	export declare namespace N {
+		/** 清理节点数据 */
+		export function clear(): void;
+	}
+
 	declare namespace network {
 		export {
 			mk_websocket as websocket,
@@ -2650,6 +2599,53 @@ declare namespace mk {
 		};
 	}
 	export { network };
+
+	declare class node_extends {
+		constructor(node_: cc_2.Node);
+		/** 节点扩展数据 */
+		static node_extends_map: Map<cc_2.Node, node_extends>;
+		/** 渲染顺序更新倒计时 */
+		static order_update_timer: any;
+		/** 全局配置 */
+		private static _config;
+		/** 渲染顺序更新时间 */
+		private static _order_update_time_n;
+		/** 更新任务 */
+		private static _order_update_task_fs;
+		label: cc_2.Label;
+		sprite: cc_2.Sprite;
+		transform: cc_2.UITransform;
+		animation: cc_2.Animation;
+		edit_box: cc_2.EditBox;
+		rich_text: cc_2.RichText;
+		layout: cc_2.Layout;
+		progress_bar: cc_2.ProgressBar;
+		slider: cc_2.Slider;
+		toggle: cc_2.Toggle;
+		/** 节点渲染次序 */
+		get order_n(): number;
+		set order_n(value_n_: number);
+		/** 宽 */
+		get width(): number;
+		set width(value_n_: number);
+		/** 高 */
+		get height(): number;
+		set height(value_n_: number);
+		/** 透明度 */
+		get opacity(): number;
+		set opacity(value_n_: number);
+		/** 锚点 */
+		get anchor(): Readonly<cc_2.Vec2>;
+		set anchor(value_v2_: cc_2.Vec2);
+		/** 持有节点 */
+		private _node;
+		/** 节点渲染次序 */
+		private _order_n;
+		/** 透明度组件 */
+		private _ui_opacity;
+		private _event_node_parent_changed;
+		private _set_order_n;
+	}
 
 	/** 异步对象池 */
 	export declare class obj_pool<CT> {
@@ -2997,7 +2993,6 @@ declare namespace mk {
 	 * - 独立展示配置
 	 */
 	export declare class view_base extends life_cycle {
-		static config: _mk_view_base.global_config;
 		show_alone_b: boolean;
 		animation_config: _mk_view_base.animation_config;
 		get auto_mask_b(): boolean;
