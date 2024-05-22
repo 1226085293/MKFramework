@@ -2,6 +2,7 @@ import mk from "mk";
 import main_config from "./main_config";
 import main_event_protocol from "./main_event";
 import * as cc from "cc";
+import global_config from "global_config";
 
 class main_bundle extends mk.bundle_.bundle_manage_base {
 	name_s = "main";
@@ -15,7 +16,7 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	open(): void {
-		mk.view_base.config.window_animation_tab.open["默认"] = (node) => {
+		global_config.view.config.window_animation_tab.open["默认"] = (node) => {
 			node = node.getChildByName("窗口") ?? node;
 			// 防止 widget 没有进行适配（3.6.3 - 3.7.0）
 			node.getComponentsInChildren(cc.Widget).forEach((v) => v.updateAlignment());
@@ -33,7 +34,7 @@ class main_bundle extends mk.bundle_.bundle_manage_base {
 			});
 		};
 
-		mk.view_base.config.window_animation_tab.close["默认"] = (node) => {
+		global_config.view.config.window_animation_tab.close["默认"] = (node) => {
 			node = node.getChildByName("窗口") ?? node;
 
 			return new Promise<void>((resolve_f) => {

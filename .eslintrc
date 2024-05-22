@@ -17,7 +17,9 @@
 		"browser": false,
 		"node": false
 	},
-	"globals": {},
+	"globals": {
+		"self": true
+	},
 	"rules": {
 		// 禁止全局变量
 		"no-restricted-globals": ["error", "Node"],
