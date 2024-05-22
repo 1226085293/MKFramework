@@ -7,7 +7,7 @@ import { resources_module } from "../../../resources/module/module/resources_mod
 import { resources_network } from "../../../resources/module/network/resources_network";
 import main_bundle from "../../bundle/main_bundle";
 import { main_main_item } from "../../module/main/item/main_main_item";
-import global_config from "../../../@config/global_config";
+import global_config from "global_config";
 const { ccclass, property } = _decorator;
 
 @ccclass("main_main")

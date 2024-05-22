@@ -1,6 +1,6 @@
 {
 	"extends": "./temp/tsconfig.cocos.json",
-	"types": ["./declare/"],
+	"types": ["./extensions/mk-framework/@types/mk-framework/"],
 	"exclude": ["./tool"],
 	"compilerOptions": {
 		"target": "es6",
@@ -16,7 +16,13 @@
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
 		"paths": {
-			"mk": ["./declare/mk.d.ts"]
+			"mk": ["./extensions/mk-framework/@types/mk-framework/mk.d.ts"],
+			"global_config": [
+			  "./extensions/mk-framework/assets/mk-framework/@config/global_config.ts"
+			],
+			"global_event": [
+			  "./extensions/mk-framework/assets/mk-framework/@config/global_event.ts"
+			]
 		}
 	}
 }

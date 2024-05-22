@@ -1,7 +1,7 @@
 import { DEBUG } from "cc/env";
 import mk from "mk";
 import protobufjs from "protobufjs/minimal.js";
-import global_config from "../../@config/global_config";
+import global_config from "global_config";
 
 /** 编解码器 - protobufjs(静态) */
 class codec_proto_static extends mk.codec_base {

@@ -22,7 +22,8 @@ node_modules/
 # WebStorm
 #//////////////////////////
 .idea/
-extensions/
+extensions/*
+!extensions/mk-framework
 tool/api-extractor/dist
 tool/api-extractor/docs
 tool/api-extractor/etc

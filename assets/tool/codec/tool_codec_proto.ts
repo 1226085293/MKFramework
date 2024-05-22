@@ -1,7 +1,7 @@
 import * as cc from "cc";
 import mk from "mk";
 import protobufjs from "protobufjs/light.js";
-import global_config from "../../@config/global_config";
+import global_config from "global_config";
 
 /** 编解码器-protobufjs(动态) */
 class codec_proto extends mk.codec_base {

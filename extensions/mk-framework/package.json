@@ -1,0 +1,74 @@
+{
+	"$schema": "./@types/schema/package/index.json",
+	"package_version": 2,
+	"name": "mk-framework",
+	"version": "1.0.0",
+	"author": "_muzzik",
+	"editor": ">=3.3.2",
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w"
+	},
+	"description": "i18n:mk-framework.description",
+	"main": "./dist/main.js",
+	"contributions": {
+		"messages": {
+			"install": {
+				"methods": [
+					"install"
+				]
+			},
+			"build": {
+				"methods": [
+					"build"
+				]
+			},
+			"help": {
+				"methods": [
+					"help"
+				]
+			}
+		},
+		"menu": [
+			{
+				"path": "i18n:menu.extension/i18n:mk-framework.name",
+				"label": "i18n:mk-framework.install",
+				"message": "install"
+			},
+			{
+				"path": "i18n:menu.extension/i18n:mk-framework.name",
+				"label": "i18n:mk-framework.build",
+				"message": "build"
+			},
+			{
+				"path": "i18n:menu.extension/i18n:mk-framework.name",
+				"label": "i18n:mk-framework.help",
+				"message": "help"
+			}
+		],
+		"asset-db": {
+			"mount": {
+				"path": "./assets/mk-framework",
+				"readonly": false
+			}
+		}
+	},
+	"panels": {},
+	"devDependencies": {
+		"@cocos/creator-types": "^3.8.2",
+		"@types/axios": "^0.14.0",
+		"@types/cjson": "^0.5.3",
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^18.17.1",
+		"typescript": "^4.3.4"
+	},
+	"dependencies": {
+		"@microsoft/api-extractor": "^7.43.7",
+		"axios": "^1.6.8",
+		"cjson": "^0.5.0",
+		"fast-glob": "^3.3.2",
+		"fs-extra": "^11.2.0",
+		"isomorphic-git": "^1.25.9",
+		"prettier": "^3.2.5"
+	}
+}

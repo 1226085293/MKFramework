@@ -1,6 +1,6 @@
 import { _decorator } from "cc";
 import mk from "mk";
-import global_config from "../../../@config/global_config";
+import global_config from "global_config";
 const { ccclass, property } = _decorator;
 
 @ccclass("hot_update_default")
