@@ -64,19 +64,19 @@ export default async function (): Promise<void> {
 		})
 		.then(async () => {
 			console.log("获取版本");
-			const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}/tags`;
-			const html_s = (await axios.get(remote_url_s)).data as string;
-			const tag_ss = html_s.match(/(?<=(data-ref="))([^"]*)(?=")/g) as string[];
+			// const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}/tags`;
+			// const html_s = (await axios.get(remote_url_s)).data as string;
+			// const tag_ss = html_s.match(/(?<=(data-ref="))([^"]*)(?=")/g) as string[];
 
-			tag_ss.sort((va_s, vb_s) => {
-				const va_version_n = va_s[0] === "v" ? -Number(va_s.slice(1).replace(/\./g, "")) : 999;
-				const vb_version_n = vb_s[0] === "v" ? -Number(vb_s.slice(1).replace(/\./g, "")) : 999;
+			// tag_ss.sort((va_s, vb_s) => {
+			// 	const va_version_n = va_s[0] === "v" ? -Number(va_s.slice(1).replace(/\./g, "")) : 999;
+			// 	const vb_version_n = vb_s[0] === "v" ? -Number(vb_s.slice(1).replace(/\./g, "")) : 999;
 
-				return va_version_n - vb_version_n;
-			});
+			// 	return va_version_n - vb_version_n;
+			// });
 
 			// version_s = tag_ss[0];
-			version_s = "plugin";
+			version_s = "dev";
 		})
 		.then(async () => {
 			console.log(`下载框架(${version_s})`);
