@@ -5,6 +5,8 @@ Welcome to use MKFramework. MKFramework is the game code framework of the game e
 ## Install
 
 ```bash
+# Install dependencies
+npm run install
 # Construct
 npm run build
 ```

@@ -5,6 +5,8 @@
 ## 安装
 
 ```bash
+# 安装依赖
+npm run install
 # 构建
 npm run build
 ```
