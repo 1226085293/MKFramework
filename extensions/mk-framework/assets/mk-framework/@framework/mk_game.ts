@@ -36,8 +36,8 @@ export class mk_game extends mk_instance_base {
 	 */
 	async restart(): Promise<void> {
 		this._restarting_b = true;
-		await Promise.all(global_event.request(global_event.key.restart));
 		await Promise.all(global_event.request(global_event.key.wait_close_scene));
+		await Promise.all(global_event.request(global_event.key.restart));
 		cc.game.restart();
 		this._restarting_b = false;
 	}
