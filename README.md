@@ -16,13 +16,13 @@
 
 ## 📗 文档教程
 
-快速入门：https://muzzik.gitee.io/mk-framework/quick-start/
+快速入门：https://1226085293.github.io/mk-framework/quick-start/
 
-功能模块：https://muzzik.gitee.io/mk-framework/module/
+功能模块：https://1226085293.github.io/mk-framework/module/
 
-案例教程：https://muzzik.gitee.io/mk-framework/tutorial/
+案例教程：https://1226085293.github.io/mk-framework/tutorial/
 
-API 接口：https://muzzik.gitee.io/mk-framework/api/
+API 接口：https://1226085293.github.io/mk-framework/api/
 
 AI 助手（GPT3.5/免费）：[MKFrameworkAI](https://poe.com/MKFrameworkAI)
 

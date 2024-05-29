@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: 📜 官方文档 | GO Ldap Admin Doc
-    url: https://muzzik.gitee.io/mk-framework/
+    url: https://1226085293.github.io/mk-framework/
     about: 关于项目的功能用法以及设计考量，都会在官网进行呈现，提交问题之前，请先阅读官方文档，如果还不能满足，则再提问题。
 
   - name: 👀 Github论坛 | GitHub Discussions
