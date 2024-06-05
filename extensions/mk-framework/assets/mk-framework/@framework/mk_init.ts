@@ -13,7 +13,7 @@ if (!EDITOR) {
 
 	// 显示调试信息
 	cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
-		if (global_config.constant.show_debug_info) {
+		if (global_config.constant.show_debug_info_b) {
 			cc.profiler.showStats();
 		} else {
 			cc.profiler.hideStats();

@@ -11,7 +11,7 @@ namespace global_config {
 		/** 游戏版本 */
 		export const version_s = "1.0.0";
 		/** 显示左下角调试信息 */
-		export const show_debug_info = false;
+		export const show_debug_info_b = false;
 	}
 
 	/** 音频 */
