@@ -21,6 +21,7 @@
 		"self": true
 	},
 	"rules": {
+		"indent": [4,"tab"],
 		// 禁止全局变量
 		"no-restricted-globals": ["error", "Node"],
 		// 禁止导入
@@ -40,7 +41,7 @@
 		// 禁止返回类型 void 混合其他
 		"@typescript-eslint/no-invalid-void-type": "error",
 		// 一致的泛型构造函数
-		"@typescript-eslint/consistent-generic-constructors": ["error", "constructor"],
+		"@typescript-eslint/consistent-generic-constructors": "error",
 		// 使用 Record 代替 { [k: type]: type }
 		"@typescript-eslint/consistent-indexed-object-style": ["error", "record"],
 		// 不允许使用大类型
@@ -94,7 +95,7 @@
 			}
 		],
 		// 类成员换行
-		"@typescript-eslint/lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+		"@typescript-eslint/lines-between-class-members": "error",
 		// 换行规则
 		"@typescript-eslint/padding-line-between-statements": [
 			"error",
