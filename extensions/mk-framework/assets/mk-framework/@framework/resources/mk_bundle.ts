@@ -139,16 +139,16 @@ export class mk_bundle extends mk_instance_base {
 	 * 设置 bundle 数据
 	 * @param bundle_ bundle 信息
 	 */
-	set(bundle_: mk_bundle_.bundle_data): void {
-		const old_data = this.bundle_map.get(bundle_.bundle_s);
+	set(bundle_: Omit<mk_bundle_.bundle_data, "manage">): void {
+		let bundle_data = this.bundle_map.get(bundle_.bundle_s);
 
 		// 更新旧数据
-		if (old_data) {
-			Object.assign(old_data, bundle_);
+		if (bundle_data) {
+			Object.assign(bundle_data, bundle_);
 		}
 		// 添加新数据
 		else {
-			this.bundle_map.set(bundle_.bundle_s, new mk_bundle_.bundle_data(bundle_));
+			this.bundle_map.set(bundle_.bundle_s, (bundle_data = new mk_bundle_.bundle_data(bundle_)));
 		}
 	}
 
@@ -163,7 +163,7 @@ export class mk_bundle extends mk_instance_base {
 			typeof args_ === "string"
 				? new mk_bundle_.load_config({
 						bundle_s: args_,
-				  })
+					})
 				: args_;
 
 		/** bundle 信息 */
@@ -188,7 +188,7 @@ export class mk_bundle extends mk_instance_base {
 			}
 
 			cc.assetManager.loadBundle(
-				bundle_info.origin_s!,
+				bundle_info.origin_s ?? bundle_info.bundle_s,
 				{
 					version: bundle_info.version_s,
 					// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -464,10 +464,6 @@ export namespace mk_bundle_ {
 	export class bundle_info {
 		constructor(init_: bundle_info) {
 			Object.assign(this, init_);
-
-			if (!this.origin_s) {
-				this.origin_s = this.bundle_s;
-			}
 		}
 
 		/**
@@ -483,7 +479,7 @@ export namespace mk_bundle_ {
 		 * @defaultValue
 		 * this.bundle_s
 		 * @remarks
-		 * loadBundle 时使用
+		 * loadBundle 时使用，不存在时将使用 bundle_s 进行 loadBundle
 		 */
 		origin_s?: string;
 	}
@@ -498,7 +494,7 @@ export namespace mk_bundle_ {
 			Object.assign(this, init_);
 		}
 
-		/** 管理器 */
+		/** bundle 管理器 */
 		manage?: bundle_manage_base;
 	}
 
@@ -565,7 +561,7 @@ export namespace mk_bundle_ {
 				mk_bundle.instance().set({
 					bundle_s: this.name_s,
 					manage: this,
-				});
+				} as mk_bundle_.bundle_data);
 			}, 0);
 
 			if (EDITOR) {

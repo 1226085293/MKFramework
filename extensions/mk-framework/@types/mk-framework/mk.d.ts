@@ -234,7 +234,7 @@ declare namespace mk {
 			 * @defaultValue
 			 * this.bundle_s
 			 * @remarks
-			 * loadBundle 时使用
+			 * loadBundle 时使用，不存在时将使用 bundle_s 进行 loadBundle
 			 */
 			origin_s?: string;
 		}
@@ -244,7 +244,7 @@ declare namespace mk {
 		 */
 		export class bundle_data extends bundle_info {
 			constructor(init_: bundle_data);
-			/** 管理器 */
+			/** bundle 管理器 */
 			manage?: bundle_manage_base;
 		}
 		/** load 配置 */
@@ -733,7 +733,6 @@ declare namespace mk {
 			layer_refresh_interval_ms_n: number;
 			window_animation_tab: Readonly<{
 				open: Record<string, (value: cc.Node) => void | Promise<void>>;
-				/** 初始化编辑器 */
 				close: Record<string, (value: cc.Node) => void | Promise<void>>;
 			}>;
 		};
@@ -1161,7 +1160,7 @@ declare namespace mk {
 		 * 设置 bundle 数据
 		 * @param bundle_ bundle 信息
 		 */
-		set(bundle_: bundle_.bundle_data): void;
+		set(bundle_: Omit<bundle_.bundle_data, "manage">): void;
 		/**
 		 * 加载 bundle
 		 * @param args_ bundle 名 | 加载配置
