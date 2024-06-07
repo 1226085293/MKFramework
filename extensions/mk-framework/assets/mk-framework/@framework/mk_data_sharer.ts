@@ -50,16 +50,16 @@ export default function mk_data_sharer<T extends Object, T2 = T & mk_data_sharer
 	return new Proxy(
 		{},
 		{
-			get: (target, key2) => data[key2],
-			set(target, key2, new_value) {
-				const request = request_map.get(key2);
+			get: (target, key) => data[key],
+			set(target, key, new_value) {
+				const request = request_map.get(key);
 
-				data[key2] = new_value;
+				data[key] = new_value;
 
 				// 处理请求
 				if (request) {
 					request.finish(true, new_value);
-					request_map.delete(key2);
+					request_map.delete(key);
 				}
 
 				return true;
