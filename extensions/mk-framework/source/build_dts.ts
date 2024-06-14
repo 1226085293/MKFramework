@@ -15,6 +15,9 @@ export default async function run(): Promise<void> {
 	/** 声明文件路径 */
 	const dts_path_s = (api_extractor.dtsRollup.publicTrimmedFilePath as string).replace("<projectFolder>", plugin_path_s);
 
+	// 删除 d.ts
+	fs.removeSync(dts_path_s);
+
 	// 编译 ts
 	await new Promise<void>((resolve_f, reject_f) => {
 		child_process.exec(
@@ -54,14 +57,8 @@ export default async function run(): Promise<void> {
 			"\n}\n export default mk;";
 	}
 
-	// // 添加全局配置引用
-	// dts_file_s = '///<reference path="../assets/@config/global_config.ts"/>\n' + dts_file_s;
-
 	// 添加全局配置引用
-	dts_file_s = `import global_config from "../../assets/@config/global_config"\n` + dts_file_s;
-
-	// 禁止错误检查
-	dts_file_s = "//@ts-nocheck\n" + dts_file_s;
+	dts_file_s = `import global_config from "../../assets/mk-framework/@config/global_config";\n` + dts_file_s;
 	// @link 链接处理
 	dts_file_s = dts_file_s.replace(/@link mk_/g, "@link ");
 
@@ -95,7 +92,7 @@ export default async function run(): Promise<void> {
 	fs.remove(path.join(plugin_path_s, "assets", build_tsconfig.compilerOptions.outDir));
 }
 
-if (argv.length !== 0) {
+if (argv.slice(2)[0] === "build") {
 	(global.Editor as any) = {
 		Project: {
 			path: cwd(),

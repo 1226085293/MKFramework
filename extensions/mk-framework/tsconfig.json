@@ -1,6 +1,6 @@
 {
 	"extends": "./base.tsconfig.json",
-	"exclude": ["./assets/*"],
+	"exclude": ["./assets/*", "./@types/mk-framework"],
 	"compilerOptions": {
 		"outDir": "./dist",
 		"rootDir": "./source",

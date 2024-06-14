@@ -1,16 +1,14 @@
-//@ts-nocheck
-import global_config from "../../assets/@config/global_config";
-
-import * as cc from "cc";
+import global_config from "../../assets/mk-framework/@config/global_config";
+import * as cc_2 from "cc";
 
 declare namespace mk {
 	export declare const asset: mk_asset;
 
 	export declare namespace asset_ {
 		/** 加载文件夹配置 */
-		export type get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
+		export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
 		/** 加载配置 */
-		export interface get_config<T extends cc.Asset = cc.Asset, T2 = T> {
+		export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
 			/**
 			 * bundle 名
 			 * @defaultValue
@@ -30,7 +28,7 @@ declare namespace mk {
 			remote_option?: _mk_asset.load_remote_option_type;
 		}
 		/** 跟随释放对象 */
-		export type follow_release_object = release_.follow_release_object<cc.Asset>;
+		export type follow_release_object = release_.follow_release_object<cc_2.Asset>;
 	}
 
 	/**
@@ -84,9 +82,9 @@ declare namespace mk {
 			 * @remarks
 			 * common 使用
 			 */
-			readonly audio_source: cc.AudioSource | null;
+			readonly audio_source: cc_2.AudioSource | null;
 			/** 音频资源 */
-			clip: cc.AudioClip | null;
+			clip: cc_2.AudioClip | null;
 			/**
 			 * 音量
 			 * @remarks
@@ -126,7 +124,7 @@ declare namespace mk {
 			/** 文件夹 */
 			dir_b?: T;
 			/** 加载配置 */
-			load_config?: asset_.get_config<cc.AudioClip>;
+			load_config?: asset_.get_config<cc_2.AudioClip>;
 		}
 		/** play 配置 */
 		export interface play_config {
@@ -277,13 +275,13 @@ declare namespace mk {
 			 * @param total_n 总数量
 			 * @param item 当前项目
 			 */
-			progress_callback_f?(finish_n: number, total_n: number, item?: cc.AssetManager.RequestItem): void;
+			progress_callback_f?(finish_n: number, total_n: number, item?: cc_2.AssetManager.RequestItem): void;
 			/** 加载前调用的函数 */
-			before_load_callback_f?: cc.Director.OnBeforeLoadScene;
+			before_load_callback_f?: cc_2.Director.OnBeforeLoadScene;
 			/** 启动后调用的函数 */
-			launched_callback_f?: cc.Director.OnSceneLaunched;
+			launched_callback_f?: cc_2.Director.OnSceneLaunched;
 			/** 场景卸载后回调 */
-			unloaded_callback_f?: cc.Director.OnUnload;
+			unloaded_callback_f?: cc_2.Director.OnUnload;
 		}
 		/**
 		 * bundle 管理器基类
@@ -300,7 +298,7 @@ declare namespace mk {
 			/** 管理器有效状态 */
 			valid_b: boolean;
 			/** 节点池表 */
-			node_pool_tab: Record<string, cc.NodePool>;
+			node_pool_tab: Record<string, cc_2.NodePool>;
 			/** 网络对象 */
 			network?: mk_network_base;
 			/** 数据获取器 */
@@ -362,7 +360,7 @@ declare namespace mk {
 	 * @remarks
 	 * 如果需要监听数据修改，请使用 returns.source
 	 */
-	export declare function data_sharer<T extends Object, T2 = T & mk_data_sharer_.api<T>>(class_: cc.Constructor<T>): T2;
+	export declare function data_sharer<T extends Object, T2 = T & mk_data_sharer_.api<T>>(class_: cc_2.Constructor<T>): T2;
 
 	declare const _default: mk_http;
 
@@ -376,7 +374,7 @@ declare namespace mk {
 	 * @remarks
 	 * 获取事件键使用 event_target.key.xxx
 	 */
-	export declare class event_target<CT> extends cc.EventTarget {
+	export declare class event_target<CT> extends cc_2.EventTarget {
 		/** 事件键 */
 		key: {
 			[k in keyof CT]: k;
@@ -607,7 +605,7 @@ declare namespace mk {
 	 * 引导步骤基类
 	 * @noInheritDoc
 	 */
-	export declare abstract class guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc.Component {
+	export declare abstract class guide_step_base<CT extends Record<string, guide_manage_.operate_cell> = any> extends cc_2.Component {
 		/** 步骤序号 */
 		abstract step_n: number;
 		/**
@@ -728,13 +726,13 @@ declare namespace mk {
 	 *
 	 * - 支持类型层级细粒度划分
 	 */
-	export declare class layer extends cc.Component {
+	export declare class layer extends cc_2.Component {
 		protected static _config: {
 			layer_spacing_n: number;
 			layer_refresh_interval_ms_n: number;
 			window_animation_tab: Readonly<{
-				open: Record<string, (value: cc.Node) => void | Promise<void>>;
-				close: Record<string, (value: cc.Node) => void | Promise<void>>;
+				open: Record<string, (value: cc_2.Node) => void | Promise<void>>;
+				close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
 			}>;
 		};
 		/** 初始化编辑器 */
@@ -1000,9 +998,9 @@ declare namespace mk {
 		 * @param config_ 获取配置
 		 * @returns
 		 */
-		get<T extends cc.Asset>(
+		get<T extends cc_2.Asset>(
 			path_s_: string,
-			type_: cc.Constructor<T>,
+			type_: cc_2.Constructor<T>,
 			target_: asset_.follow_release_object | null,
 			config_?: asset_.get_config<T>
 		): Promise<T | null>;
@@ -1014,9 +1012,9 @@ declare namespace mk {
 		 * @param config_ 获取配置
 		 * @returns
 		 */
-		get_dir<T extends cc.Asset>(
+		get_dir<T extends cc_2.Asset>(
 			path_s_: string,
-			type_: cc.Constructor<T>,
+			type_: cc_2.Constructor<T>,
 			target_: asset_.follow_release_object | null,
 			config_?: asset_.get_dir_config<T>
 		): Promise<T[] | null>;
@@ -1024,7 +1022,7 @@ declare namespace mk {
 		 * 释放资源
 		 * @param asset_ 释放的资源
 		 */
-		release(asset_: cc.Asset | cc.Asset[]): void;
+		release(asset_: cc_2.Asset | cc_2.Asset[]): void;
 		/** 资源初始化 */
 		private _asset_init;
 		/**
@@ -1060,7 +1058,7 @@ declare namespace mk {
 			/** 添加时间 */
 			join_time_ms_n: number;
 			/** 资源 */
-			asset: cc.Asset;
+			asset: cc_2.Asset;
 		}
 	}
 
@@ -1167,7 +1165,7 @@ declare namespace mk {
 		 * @param args_ bundle 名 | 加载配置
 		 * @returns
 		 */
-		load(args_: string | bundle_.load_config): Promise<cc.AssetManager.Bundle | null>;
+		load(args_: string | bundle_.load_config): Promise<cc_2.AssetManager.Bundle | null>;
 		/**
 		 * 切换场景
 		 * @param scene_s_ 场景名
@@ -1176,7 +1174,7 @@ declare namespace mk {
 		 */
 		load_scene(scene_s_: string, config_?: Partial<bundle_.switch_scene_config>): Promise<boolean>;
 		/** 重新加载 bundle */
-		reload(bundle_: bundle_.bundle_info & Required<Pick<bundle_.bundle_info, "origin_s">>): Promise<cc.AssetManager.Bundle | null>;
+		reload(bundle_: bundle_.bundle_info & Required<Pick<bundle_.bundle_info, "origin_s">>): Promise<cc_2.AssetManager.Bundle | null>;
 		private _set_bundle_s;
 		private _set_scene_s;
 	}
@@ -1283,13 +1281,13 @@ declare namespace mk {
 		 * @param node_ 目标节点
 		 * @param recursion_b_ 是否递归子节点
 		 */
-		pause(node_: cc.Node, recursion_b_?: boolean): void;
+		pause(node_: cc_2.Node, recursion_b_?: boolean): void;
 		/**
 		 * 恢复节点
 		 * @param node_ 目标节点
 		 * @param recursion_b_ 是否递归子节点
 		 */
-		resume(node_: cc.Node, recursion_b_?: boolean): void;
+		resume(node_: cc_2.Node, recursion_b_?: boolean): void;
 	}
 
 	/**
@@ -1476,7 +1474,7 @@ declare namespace mk {
 			mark_s_: string,
 			target_: asset_.follow_release_object,
 			language_?: "zh_cn" | "en_us"
-		): Promise<cc.SpriteFrame | null>;
+		): Promise<cc_2.SpriteFrame | null>;
 		/**
 		 * 添加文本数据
 		 * @param type_ 类型
@@ -1524,7 +1522,7 @@ declare namespace mk {
 		/** layout 适配 */
 		layout_adaptation_b: boolean;
 		/** 当前语言节点 */
-		get current_node(): cc.Node | null;
+		get current_node(): cc_2.Node | null;
 		protected _use_layer_b: boolean;
 		private _layout;
 		protected create(): void | Promise<void>;
@@ -1544,7 +1542,7 @@ declare namespace mk {
 			/** 语言 */
 			language_s: "zh_cn" | "en_us";
 			/** 节点 */
-			node: cc.Node;
+			node: cc_2.Node;
 		}
 	}
 
@@ -1595,14 +1593,14 @@ declare namespace mk {
 		/** 递归 open 配置 */
 		interface recursive_open_config {
 			/** 递归目标节点 */
-			target: cc.Node;
+			target: cc_2.Node;
 			/** 激活状态 */
 			active_b: boolean;
 		}
 		/** 递归 close 配置 */
 		interface recursive_close_config {
 			/** 递归目标节点 */
-			target: cc.Node;
+			target: cc_2.Node;
 			/** 激活状态 */
 			active_b: boolean;
 			/** 销毁动态子节点 */
@@ -2038,24 +2036,24 @@ declare namespace mk {
 			recv(data: NonVoid<ReturnType<T["decode"]>>): void;
 		}
 		/** 消息事件 */
-		class message_event<CT extends codec_base = codec_base> extends cc.EventTarget {
+		class message_event<CT extends codec_base = codec_base> extends cc_2.EventTarget {
 			constructor(network_: mk_network_base);
 			/** 网络实例 */
 			private _network;
 			/** 日志 */
 			private _log;
-			on<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			on<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_: T2,
 				this_?: any,
 				once_b_?: boolean
 			): typeof callback_ | null;
-			once<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			once<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_: T2,
 				this_?: any
 			): typeof callback_ | null;
-			off<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			off<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_?: T2,
 				this_?: any
@@ -2090,7 +2088,7 @@ declare namespace mk {
 			 * 等待事件回调返回
 			 */
 			request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null;
-			has<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			has<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_?: T2,
 				target_?: any
@@ -2412,7 +2410,7 @@ declare namespace mk {
 		 * @remarks
 		 * open 未注册模块时会使用此函数获取注册数据自动注册
 		 */
-		get_regis_data_f?: <T extends cc.Constructor<view_base>>(key: T) => ui_manage_.regis_data<T>;
+		get_regis_data_f?: <T extends cc_2.Constructor<view_base>>(key: T) => ui_manage_.regis_data<T>;
 		/** 日志 */
 		private _log;
 		/** 模块注册表 */
@@ -2447,7 +2445,7 @@ declare namespace mk {
 		 * @param config_ 模块配置
 		 * @returns
 		 */
-		regis<T extends cc.Constructor<view_base>>(
+		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
 			source_: _mk_ui_manage.regis_source_type<T>,
 			target_: release_.follow_release_object<release_.release_call_back_type> | null,
@@ -2461,7 +2459,7 @@ declare namespace mk {
 		 * @param key_ 模块键
 		 * @returns
 		 */
-		unregis<T extends cc.Constructor<view_base>>(key_: T): Promise<void>;
+		unregis<T extends cc_2.Constructor<view_base>>(key_: T): Promise<void>;
 		/** 获取所有模块 */
 		get(): ReadonlyArray<view_base>;
 		/**
@@ -2469,13 +2467,13 @@ declare namespace mk {
 		 * @param key_ 模块键
 		 * @param type_ 模块类型
 		 */
-		get<T extends cc.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
+		get<T extends cc_2.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
 		/**
 		 * 获取指定模块列表
 		 * @param key_ 模块键列表 [type]
 		 * @param type_ 模块类型
 		 */
-		get<T extends cc.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(
+		get<T extends cc_2.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(
 			key_: T[],
 			type_?: T2
 		): ReadonlyArray<T3>;
@@ -2485,15 +2483,15 @@ declare namespace mk {
 		 * @param config_ 打开配置
 		 * @returns
 		 */
-		open<T extends cc.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
+		open<T extends cc_2.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
 		/**
 		 * 关闭模块
 		 * @param args_ 节点/模块键/模块实例
 		 * @param config_ 关闭配置
 		 * @returns
 		 */
-		close<T extends cc.Constructor<view_base>, T2 extends view_base>(
-			args_: cc.Node | T | T2,
+		close<T extends cc_2.Constructor<view_base>, T2 extends view_base>(
+			args_: cc_2.Node | T | T2,
 			config_?: ui_manage_.close_config<T>
 		): Promise<boolean>;
 		private _event_restart;
@@ -2501,13 +2499,13 @@ declare namespace mk {
 
 	declare namespace _mk_ui_manage {
 		/** 模块类型 */
-		type module_type<T extends cc.Constructor<view_base>> = T["prototype"]["type_s"] | "default";
+		type module_type<T extends cc_2.Constructor<view_base>> = T["prototype"]["type_s"] | "default";
 		/** 注册资源类型 */
-		type regis_source_type<T extends cc.Constructor<view_base>> =
-			| cc.Prefab
+		type regis_source_type<T extends cc_2.Constructor<view_base>> =
+			| cc_2.Prefab
 			| string
-			| cc.Node
-			| (T extends cc.Constructor<view_base> ? Record<module_type<T>, cc.Prefab | string | cc.Node> : never);
+			| cc_2.Node
+			| (T extends cc_2.Constructor<view_base> ? Record<module_type<T>, cc_2.Prefab | string | cc_2.Node> : never);
 	}
 
 	declare namespace _mk_view_base {
@@ -2580,7 +2578,7 @@ declare namespace mk {
 
 	export declare const monitor: mk_monitor;
 
-	export declare function N(node_: cc.Node, force_b_?: boolean): node_extends;
+	export declare function N(node_: cc_2.Node, force_b_?: boolean): node_extends;
 
 	export declare namespace N {
 		/** 清理节点数据 */
@@ -2601,9 +2599,9 @@ declare namespace mk {
 	export { network };
 
 	declare class node_extends {
-		constructor(node_: cc.Node);
+		constructor(node_: cc_2.Node);
 		/** 节点扩展数据 */
-		static node_extends_map: Map<cc.Node, node_extends>;
+		static node_extends_map: Map<cc_2.Node, node_extends>;
 		/** 渲染顺序更新倒计时 */
 		static order_update_timer: any;
 		/** 全局配置 */
@@ -2612,16 +2610,16 @@ declare namespace mk {
 		private static _order_update_time_n;
 		/** 更新任务 */
 		private static _order_update_task_fs;
-		label: cc.Label;
-		sprite: cc.Sprite;
-		transform: cc.UITransform;
-		animation: cc.Animation;
-		edit_box: cc.EditBox;
-		rich_text: cc.RichText;
-		layout: cc.Layout;
-		progress_bar: cc.ProgressBar;
-		slider: cc.Slider;
-		toggle: cc.Toggle;
+		label: cc_2.Label;
+		sprite: cc_2.Sprite;
+		transform: cc_2.UITransform;
+		animation: cc_2.Animation;
+		edit_box: cc_2.EditBox;
+		rich_text: cc_2.RichText;
+		layout: cc_2.Layout;
+		progress_bar: cc_2.ProgressBar;
+		slider: cc_2.Slider;
+		toggle: cc_2.Toggle;
 		/** 节点渲染次序 */
 		get order_n(): number;
 		set order_n(value_n_: number);
@@ -2635,8 +2633,8 @@ declare namespace mk {
 		get opacity(): number;
 		set opacity(value_n_: number);
 		/** 锚点 */
-		get anchor(): Readonly<cc.Vec2>;
-		set anchor(value_v2_: cc.Vec2);
+		get anchor(): Readonly<cc_2.Vec2>;
+		set anchor(value_v2_: cc_2.Vec2);
 		/** 持有节点 */
 		private _node;
 		/** 节点渲染次序 */
@@ -2720,17 +2718,17 @@ declare namespace mk {
 	 *
 	 * - 多边形触摸屏蔽
 	 */
-	export declare class polygon_mask extends cc.Component {
+	export declare class polygon_mask extends cc_2.Component {
 		/** 遮罩组件 */
-		mask: cc.Mask | null;
+		mask: cc_2.Mask | null;
 		/** 屏蔽触摸 */
 		shield_touch_b: boolean;
 		/** 跟踪节点 */
-		get track_node(): cc.Node;
-		set track_node(value_: cc.Node);
+		get track_node(): cc_2.Node;
+		set track_node(value_: cc_2.Node);
 		/** 偏移坐标 */
-		get offset_v3(): cc.Vec3;
-		set offset_v3(value_v3_: cc.Vec3);
+		get offset_v3(): cc_2.Vec3;
+		set offset_v3(value_v3_: cc_2.Vec3);
 		/** 调式模式 */
 		get debug_b(): boolean;
 		set debug_b(value_b_: boolean);
@@ -2818,7 +2816,7 @@ declare namespace mk {
 		/** 释放回调类型 */
 		export type release_call_back_type = () => any | Promise<any>;
 		/** 释放参数类型 */
-		export type release_param_type = cc.Node | cc.Asset | release_object_type | release_call_back_type;
+		export type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
 		/** 跟随释放类型 */
 		export type follow_release_object<CT = release_param_type> = {
 			/**
@@ -2907,7 +2905,7 @@ declare namespace mk {
 
 	export declare namespace ui_manage_ {
 		/** 关闭ui配置 */
-		export class close_config<CT extends cc.Constructor<view_base>> {
+		export class close_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: close_config<CT>);
 			/** 类型 */
 			type?: _mk_ui_manage.module_type<CT>;
@@ -2923,17 +2921,17 @@ declare namespace mk {
 			destroy_children_b?: boolean;
 		}
 		/** 打开ui配置 */
-		export class open_config<CT extends cc.Constructor<view_base> & Function> {
+		export class open_config<CT extends cc_2.Constructor<view_base> & Function> {
 			constructor(init_?: open_config<CT>);
 			/** 初始化数据 */
 			init?: CT["prototype"]["init_data"];
 			/** 类型 */
 			type?: _mk_ui_manage.module_type<CT>;
 			/** 父节点 */
-			parent?: cc.Node;
+			parent?: cc_2.Node;
 		}
 		/** 模块注册配置 */
-		export class regis_config<CT extends cc.Constructor<view_base>> {
+		export class regis_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: Partial<regis_config<CT>>);
 			/**
 			 * 重复打开
@@ -2946,9 +2944,9 @@ declare namespace mk {
 			 * @defaultValue
 			 * Canvas 节点
 			 */
-			parent: cc.Node | undefined;
+			parent: cc_2.Node | undefined;
 			/** 加载配置 */
-			load_config?: asset_.get_config<cc.Prefab>;
+			load_config?: asset_.get_config<cc_2.Prefab>;
 			/**
 			 * 对象池数量不足时扩充数量
 			 * @defaultValue
@@ -2972,7 +2970,7 @@ declare namespace mk {
 		 * 模块注册数据
 		 * @noInheritDoc
 		 */
-		export class regis_data<CT extends cc.Constructor<view_base>> extends regis_config<CT> {
+		export class regis_data<CT extends cc_2.Constructor<view_base>> extends regis_config<CT> {
 			constructor(init_?: Partial<regis_data<CT>>);
 			/** 来源 */
 			source: _mk_ui_manage.regis_source_type<CT>;
