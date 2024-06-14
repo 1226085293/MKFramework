@@ -1,5 +1,6 @@
 //@ts-nocheck
 import global_config from "../../assets/@config/global_config";
+
 import * as cc from "cc";
 
 declare namespace mk {
