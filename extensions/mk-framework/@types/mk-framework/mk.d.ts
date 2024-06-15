@@ -1,3 +1,4 @@
+//@ts-nocheck
 import global_config from "../../assets/mk-framework/@config/global_config";
 import * as cc_2 from "cc";
 

@@ -59,6 +59,8 @@ export default async function run(): Promise<void> {
 
 	// 添加全局配置引用
 	dts_file_s = `import global_config from "../../assets/mk-framework/@config/global_config";\n` + dts_file_s;
+	// 禁止错误检查
+	dts_file_s = "//@ts-nocheck\n" + dts_file_s;
 	// @link 链接处理
 	dts_file_s = dts_file_s.replace(/@link mk_/g, "@link ");
 
