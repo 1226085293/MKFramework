@@ -17,24 +17,6 @@ namespace _mk_view_base {
 		type_s: string;
 	}
 
-	// /** 全局配置 */
-	// export interface global_config {
-	// 	/** 默认遮罩 */
-	// 	mask_data_tab: {
-	// 		/** 节点名 */
-	// 		node_name_s?: string;
-	// 		/** 预制体路径 */
-	// 		prefab_path_s: string;
-	// 	};
-	// 	/** 窗口动画 */
-	// 	readonly window_animation_tab: Readonly<{
-	// 		/** 打开动画 */
-	// 		open: Record<string, (value: cc.Node) => void | Promise<void>>;
-	// 		/** 关闭动画 */
-	// 		close: Record<string, (value: cc.Node) => void | Promise<void>>;
-	// 	}>;
-	// }
-
 	/** 动画配置 */
 	@ccclass("mk_view_base/animation_config")
 	export class animation_config {
@@ -111,8 +93,6 @@ namespace _mk_view_base {
  */
 @ccclass
 export class mk_view_base extends mk_life_cycle {
-	// /* --------------- static --------------- */
-	// private static _config = global_config.view.config;
 	/* --------------- 属性 --------------- */
 	@property({
 		displayName: "单独展示",
