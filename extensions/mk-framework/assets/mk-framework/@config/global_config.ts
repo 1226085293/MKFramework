@@ -58,6 +58,7 @@ namespace global_config {
 			引导,
 			警告,
 			加载,
+			错误,
 		}
 
 		/** 适配模式 */
