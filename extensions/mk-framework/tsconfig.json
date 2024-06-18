@@ -5,6 +5,10 @@
 		"outDir": "./dist",
 		"rootDir": "./source",
 		"types": ["node", "@cocos/creator-types/editor"],
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"sourceMap": false,
+		"inlineSourceMap": false,
+		"inlineSources": false,
+		"removeComments": false
 	}
 }
