@@ -2935,7 +2935,7 @@ declare namespace mk {
 		export class regis_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: Partial<regis_config<CT>>);
 			/**
-			 * 重复打开
+			 * 可重复打开状态
 			 * @defaultValue
 			 * false
 			 */

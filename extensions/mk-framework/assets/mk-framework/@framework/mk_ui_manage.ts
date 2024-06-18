@@ -370,15 +370,24 @@ export class mk_ui_manage extends mk_instance_base {
 		{
 			let task = this._ui_load_map.get(key_);
 
+			// 首次加载
 			if (!task) {
 				this._ui_load_map.set(key_, (task = new mk_status_task(false)));
 			}
-			// 重复加载
-			else if (!regis_data.repeat_b && !task.finish_b) {
-				return null;
-			}
-			// 加载中
+			// 再次加载
 			else {
+				if (
+					// 禁止重复加载
+					!regis_data.repeat_b &&
+					// 存在打开的模块
+					(this.get([key_]).length !== 0 ||
+						// 正在打开中
+						!task.finish_b)
+				) {
+					this._log.debug("模块重复加载");
+					return null;
+				}
+
 				task.finish(false);
 			}
 		}
@@ -576,6 +585,8 @@ export class mk_ui_manage extends mk_instance_base {
 				return;
 			}
 
+			this._log.debug("关闭模块", cc.js.getClassName(v));
+
 			// 更新单独展示
 			{
 				/** 模块列表下标 */
@@ -767,7 +778,7 @@ export namespace mk_ui_manage_ {
 		}
 
 		/**
-		 * 重复打开
+		 * 可重复打开状态
 		 * @defaultValue
 		 * false
 		 */

@@ -18,6 +18,7 @@ export class resources_module_ui_stack extends mk.view_base {
 
 		mk.ui_manage.regis(resources_module_ui_stack_demo, "db://assets/resources/module/module/ui_stack/ui/resources_module_ui_stack_demo", this, {
 			parent: this.nodes.layout,
+			repeat_b: true,
 		});
 	}
 
