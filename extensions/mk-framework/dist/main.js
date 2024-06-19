@@ -10,6 +10,7 @@ delete require.cache[__dirname + "\\help.js"];
 const build_dts_1 = __importDefault(require("./build_dts"));
 const help_1 = __importDefault(require("./help"));
 const install_1 = __importDefault(require("./install"));
+const local_version_1 = __importDefault(require("./local_version"));
 /**
  * @en Methods within the extension can be triggered by message
  * @zh 扩展内的方法，可以通过 message 触发
@@ -24,6 +25,9 @@ exports.methods = {
         console.log("安装开始...");
         await (0, install_1.default)();
         console.log("安装完成");
+    },
+    local_version() {
+        (0, local_version_1.default)();
     },
     async build() {
         console.log("构建 d.ts...");

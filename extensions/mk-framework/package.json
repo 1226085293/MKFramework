@@ -18,6 +18,11 @@
 					"install"
 				]
 			},
+			"local_version": {
+				"methods": [
+					"local_version"
+				]
+			},
 			"build": {
 				"methods": [
 					"build"
@@ -34,6 +39,11 @@
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",
 				"label": "i18n:mk-framework.安装框架",
 				"message": "install"
+			},
+			{
+				"path": "i18n:menu.extension/i18n:mk-framework.名字",
+				"label": "i18n:mk-framework.本地版本",
+				"message": "local_version"
 			},
 			{
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",

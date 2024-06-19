@@ -281,6 +281,23 @@ export default async function (): Promise<void> {
 				})
 			);
 		})
+		// 更新框架版本信息
+		.then(async () => {
+			console.log(Editor.I18n.t("mk-framework.更新框架版本信息"));
+			if (!project_package["mk-framework"]) {
+				project_package["mk-framework"] = {};
+			}
+			project_package["mk-framework"].version_s = version_s;
+
+			fs.writeFileSync(
+				path.join(Editor.Project.path, "package.json"),
+				await prettier.format(JSON.stringify(project_package), {
+					filepath: "*.json",
+					tabWidth: 4,
+					useTabs: true,
+				})
+			);
+		})
 		// 清理临时文件
 		.then(() => {
 			console.log(Editor.I18n.t("mk-framework.清理临时文件"));

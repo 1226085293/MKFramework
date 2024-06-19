@@ -4,6 +4,7 @@ delete require.cache[__dirname + "\\help.js"];
 import build_dts from "./build_dts";
 import help from "./help";
 import install from "./install";
+import local_version from "./local_version";
 
 /**
  * @en Methods within the extension can be triggered by message
@@ -19,6 +20,10 @@ export const methods: Record<string, (...any: any) => any> = {
 		console.log("安装开始...");
 		await install();
 		console.log("安装完成");
+	},
+
+	local_version() {
+		local_version();
 	},
 
 	async build() {
