@@ -46,11 +46,11 @@ async function default_1() {
     let version_s;
     Promise.resolve()
         .then(async () => {
-        console.log("安全检查");
+        console.log(Editor.I18n.t("mk-framework.安全检查"));
         // 覆盖安装确认
         if (fs_extra_1.default.existsSync(path_1.default.join(__dirname, "..", framework_path_s, "@framework"))) {
-            const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.confirm_install"), {
-                buttons: [Editor.I18n.t("mk-framework.confirm"), Editor.I18n.t("mk-framework.cancel")],
+            const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.确认安装"), {
+                buttons: [Editor.I18n.t("mk-framework.确认"), Editor.I18n.t("mk-framework.取消")],
             });
             if (result.response !== 0) {
                 return Promise.reject("取消安装");
@@ -59,7 +59,7 @@ async function default_1() {
         }
     })
         .then(async () => {
-        console.log("获取版本");
+        console.log(Editor.I18n.t("mk-framework.获取版本"));
         const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}/tags`;
         const html_s = (await axios_1.default.get(remote_url_s)).data;
         const tag_ss = html_s.match(/(?<=(data-ref="))([^"]*)(?=")/g);
@@ -71,10 +71,7 @@ async function default_1() {
         version_s = tag_ss[0];
     })
         .then(async () => {
-        console.log(`下载框架(${version_s})`);
-        // if (true) {
-        // 	return;
-        // }
+        console.log(Editor.I18n.t("mk-framework.下载框架") + `(${version_s})`);
         try {
             fs_extra_1.default.removeSync(download_path_s);
             fs_extra_1.default.emptyDirSync(download_path_s);
@@ -91,26 +88,26 @@ async function default_1() {
             ref: version_s,
         });
     })
-        // 3.8.0 及以上删除 userData.bundleConfigID
+        // 版本适配
         .then(() => {
         var _a;
-        console.log(`3.8.0 及以上删除 userData.bundleConfigID`);
-        if (!((_a = project_package.creator) === null || _a === void 0 ? void 0 : _a.version) || Number(project_package.creator.version.replace(/\./g, "")) < 380) {
-            return;
+        console.log(Editor.I18n.t("mk-framework.版本适配"));
+        // 3.8.0 及以上删除 userData.bundleConfigID
+        if (((_a = project_package.creator) === null || _a === void 0 ? void 0 : _a.version) && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
+            const file_ss = [
+                `extensions/${package_json.name}/${framework_path_s}/@config.meta`,
+                `extensions/${package_json.name}/${framework_path_s}/@framework.meta`,
+            ];
+            file_ss.forEach((v_s) => {
+                const data = fs_extra_1.default.readJSONSync(path_1.default.join(download_path_s, v_s));
+                delete data.userData.bundleConfigID;
+                fs_extra_1.default.writeJSONSync(path_1.default.join(download_path_s, v_s), data);
+            });
         }
-        const file_ss = [
-            `extensions/${package_json.name}/${framework_path_s}/@config.meta`,
-            `extensions/${package_json.name}/${framework_path_s}/@framework.meta`,
-        ];
-        file_ss.forEach((v_s) => {
-            const data = fs_extra_1.default.readJSONSync(path_1.default.join(download_path_s, v_s));
-            delete data.userData.bundleConfigID;
-            fs_extra_1.default.writeJSONSync(path_1.default.join(download_path_s, v_s), data);
-        });
     })
         // 注入框架
         .then(async () => {
-        console.log(`注入框架`);
+        console.log(Editor.I18n.t("mk-framework.注入框架"));
         // 拷贝框架文件
         {
             fs_extra_1.default.copySync(path_1.default.join(download_path_s, `extensions/${package_json.name}/assets`), path_1.default.join(install_path_s, ".."));
@@ -131,7 +128,7 @@ async function default_1() {
         // 注入声明文件
         .then(async () => {
         var _a;
-        console.log(`注入声明文件`);
+        console.log(Editor.I18n.t("mk-framework.注入声明文件"));
         /** 框架声明文件 */
         const framework_tsconfig = cjson_1.default.load(path_1.default.join(download_path_s, "tsconfig.json"));
         /** 声明文件路径 */
@@ -178,7 +175,7 @@ async function default_1() {
         // 添加导入映射
         .then(async () => {
         var _a;
-        console.log(`添加导入映射`);
+        console.log(Editor.I18n.t("mk-framework.添加导入映射"));
         const setting_path_s = path_1.default.join(Editor.Project.path, "settings/v2/packages/project.json");
         const setting_config_tab = !fs_extra_1.default.existsSync(setting_path_s) ? {} : fs_extra_1.default.readJSONSync(setting_path_s);
         const mk_import_map_tab = fs_extra_1.default.readJSONSync(path_1.default.join(download_path_s, "import-map.json"));
@@ -221,8 +218,8 @@ async function default_1() {
         }
     })
         // 屏蔽 vscode 框架文件提示
-        .then(() => {
-        console.log(`屏蔽 vscode 框架文件提示`);
+        .then(async () => {
+        console.log(Editor.I18n.t("mk-framework.屏蔽vscode框架文件提示"));
         const vscode_setting_path_s = path_1.default.join(Editor.Project.path, ".vscode/settings.json");
         let settings_json = {};
         // 项目 vscode settings 文件不存在则创建
@@ -236,11 +233,15 @@ async function default_1() {
         settings_json["typescript.preferences.autoImportFileExcludePatterns"] = [
             `./extensions/${package_json.name}/${framework_path_s}/@framework/**`,
         ];
-        fs_extra_1.default.writeJSONSync(vscode_setting_path_s, settings_json);
+        fs_extra_1.default.writeFileSync(vscode_setting_path_s, await prettier_1.default.format(JSON.stringify(settings_json), {
+            filepath: "*.json",
+            tabWidth: 4,
+            useTabs: true,
+        }));
     })
         // 清理临时文件
         .then(() => {
-        console.log("清理临时文件");
+        console.log(Editor.I18n.t("mk-framework.清理临时文件"));
         fs_extra_1.default.remove(download_path_s);
     })
         .catch((error) => {

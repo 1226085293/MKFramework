@@ -9,7 +9,7 @@
 		"build": "tsc",
 		"watch": "tsc -w"
 	},
-	"description": "i18n:mk-framework.description",
+	"description": "i18n:mk-framework.说明",
 	"main": "./dist/main.js",
 	"contributions": {
 		"messages": {
@@ -31,18 +31,18 @@
 		},
 		"menu": [
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.name",
-				"label": "i18n:mk-framework.install",
+				"path": "i18n:menu.extension/i18n:mk-framework.名字",
+				"label": "i18n:mk-framework.安装框架",
 				"message": "install"
 			},
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.name",
-				"label": "i18n:mk-framework.build",
+				"path": "i18n:menu.extension/i18n:mk-framework.名字",
+				"label": "i18n:mk-framework.构建dts",
 				"message": "build"
 			},
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.name",
-				"label": "i18n:mk-framework.help",
+				"path": "i18n:menu.extension/i18n:mk-framework.名字",
+				"label": "i18n:mk-framework.帮助",
 				"message": "help"
 			}
 		],
