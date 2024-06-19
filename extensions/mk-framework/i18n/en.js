@@ -23,4 +23,5 @@ module.exports = {
 	更新框架版本信息: "Update framework version information",
 	当前项目未安装框架: "The current project has no framework installed",
 	当前项目框架版本为: "The current project framework version is",
+	安装成功: "The installation is successful. Please restart the editor and use it."
 };

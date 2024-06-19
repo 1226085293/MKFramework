@@ -303,6 +303,10 @@ export default async function (): Promise<void> {
 			console.log(Editor.I18n.t("mk-framework.清理临时文件"));
 			fs.remove(download_path_s);
 		})
+		// 安装成功
+		.then(() => {
+			console.log(Editor.I18n.t("mk-framework.安装成功"));
+		})
 		.catch((error) => {
 			if (!error) {
 				return;
