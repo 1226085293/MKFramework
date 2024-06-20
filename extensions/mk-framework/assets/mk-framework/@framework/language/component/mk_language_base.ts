@@ -100,7 +100,7 @@ abstract class mk_language_base extends mk_life_cycle {
 
 	protected _use_layer_b = false;
 	/** 当前类型数据 */
-	protected _data?: mk_language_manage_.data_struct;
+	protected _data?: mk_language_manage_.type_data_struct;
 	/** 标记枚举数据 */
 	protected _mark_enum?: any;
 	/* ------------------------------- 抽象函数 ------------------------------- */

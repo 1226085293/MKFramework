@@ -56,7 +56,7 @@ abstract class mk_audio_base extends mk_instance_base {
 	 */
 	async add<T extends string | string[], T2 extends true | false = false>(
 		url_: T,
-		target_: mk_asset_.follow_release_object,
+		target_: mk_asset_.type_follow_release_object,
 		config_?: mk_audio_base_.add_config<T2>
 	): Promise<T2 extends true ? (mk_audio_base_.unit | null)[] : T extends string ? mk_audio_base_.unit | null : (mk_audio_base_.unit | null)[]> {
 		if (EDITOR) {

@@ -144,7 +144,7 @@ export class mk_asset extends mk_instance_base {
 	get<T extends cc.Asset>(
 		path_s_: string,
 		type_: cc.Constructor<T>,
-		target_: mk_asset_.follow_release_object | null,
+		target_: mk_asset_.type_follow_release_object | null,
 		config_?: mk_asset_.get_config<T>
 	): Promise<T | null> {
 		/** 获取配置 */
@@ -311,8 +311,8 @@ export class mk_asset extends mk_instance_base {
 	get_dir<T extends cc.Asset>(
 		path_s_: string,
 		type_: cc.Constructor<T>,
-		target_: mk_asset_.follow_release_object | null,
-		config_?: mk_asset_.get_dir_config<T>
+		target_: mk_asset_.type_follow_release_object | null,
+		config_?: mk_asset_.type_get_dir_config<T>
 	): Promise<T[] | null> {
 		/** 获取配置 */
 		const get_config = config_ ?? {};
@@ -568,7 +568,7 @@ export class mk_asset extends mk_instance_base {
 
 export namespace mk_asset_ {
 	/** 加载文件夹配置 */
-	export type get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
+	export type type_get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
 
 	/** 加载配置 */
 	export interface get_config<T extends cc.Asset = cc.Asset, T2 = T> {
@@ -593,7 +593,7 @@ export namespace mk_asset_ {
 	}
 
 	/** 跟随释放对象 */
-	export type follow_release_object = mk_release_.follow_release_object<cc.Asset>;
+	export type type_follow_release_object = mk_release_.type_follow_release_object<cc.Asset>;
 }
 
 export default mk_asset.instance();

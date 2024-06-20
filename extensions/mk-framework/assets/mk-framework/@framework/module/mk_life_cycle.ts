@@ -76,7 +76,7 @@ export namespace _mk_life_cycle {
  * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
  */
 @ccclass
-export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_object {
+export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_release_object {
 	constructor(...args: any[]) {
 		super(...args);
 		if (EDITOR) {
@@ -306,7 +306,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
-	follow_release<T = mk_release_.release_param_type & mk_audio_._unit>(object_: T): T {
+	follow_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
 		if (!object_) {
 			return object_;
 		}
@@ -329,7 +329,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.follow_release_
 		return object_;
 	}
 
-	cancel_release<T = mk_release_.release_param_type & mk_audio_._unit>(object_: T): T {
+	cancel_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
 		if (!object_) {
 			return object_;
 		}

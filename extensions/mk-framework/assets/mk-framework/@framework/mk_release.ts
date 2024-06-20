@@ -15,15 +15,15 @@ class mk_release {
 	/** 资源集合 */
 	private _asset_set = new Set<cc.Asset>();
 	/** 对象集合 */
-	private _object_set = new Set<mk_release_.release_object_type>();
+	private _object_set = new Set<mk_release_.type_release_object>();
 	/** 回调集合 */
-	private _callback_set = new Set<mk_release_.release_call_back_type>();
+	private _callback_set = new Set<mk_release_.type_release_call_back>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 添加释放对象
 	 * @param object_ 要跟随模块释放的对象或列表
 	 */
-	add<T extends mk_release_.release_param_type>(object_: T): T {
+	add<T extends mk_release_.type_release_param_type>(object_: T): T {
 		if (!object_) {
 			mk_log.error("添加释放对象错误", object_);
 
@@ -52,7 +52,7 @@ class mk_release {
 	 * 释放对象
 	 * @param object_ 指定对象
 	 */
-	async release(object_?: mk_release_.release_param_type): Promise<void> {
+	async release(object_?: mk_release_.type_release_param_type): Promise<void> {
 		if (object_ instanceof cc.Node) {
 			if (this._node_set.delete(object_) && object_.isValid) {
 				object_.removeFromParent();
@@ -103,14 +103,14 @@ class mk_release {
 
 export namespace mk_release_ {
 	/** 释放对象类型 */
-	export type release_object_type = { release(): any | Promise<any> };
+	export type type_release_object = { release(): any | Promise<any> };
 	/** 释放回调类型 */
-	export type release_call_back_type = () => any | Promise<any>;
+	export type type_release_call_back = () => any | Promise<any>;
 	/** 释放参数类型 */
-	export type release_param_type = cc.Node | cc.Asset | release_object_type | release_call_back_type;
+	export type type_release_param_type = cc.Node | cc.Asset | type_release_object | type_release_call_back;
 
 	/** 跟随释放类型 */
-	export type follow_release_object<CT = release_param_type> = {
+	export type type_follow_release_object<CT = type_release_param_type> = {
 		/**
 		 * 跟随释放
 		 * @param object_ 释放对象/释放对象数组

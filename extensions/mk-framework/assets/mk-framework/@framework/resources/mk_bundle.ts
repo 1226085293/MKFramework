@@ -549,7 +549,7 @@ export namespace mk_bundle_ {
 	 * @remarks
 	 * 注意生命周期函数 init、open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 	 */
-	export abstract class bundle_manage_base implements mk_release_.follow_release_object {
+	export abstract class bundle_manage_base implements mk_release_.type_follow_release_object {
 		constructor() {
 			// 添加至 bundle 数据
 			setTimeout(async () => {
@@ -658,7 +658,7 @@ export namespace mk_bundle_ {
 		}
 
 		/* ------------------------------- 功能 ------------------------------- */
-		follow_release<T = mk_release_.release_param_type>(object_: T): T {
+		follow_release<T = mk_release_.type_release_param_type>(object_: T): T {
 			if (!object_) {
 				return object_;
 			}
@@ -674,7 +674,7 @@ export namespace mk_bundle_ {
 			return object_;
 		}
 
-		cancel_release<T = mk_release_.release_param_type>(object_: T): T {
+		cancel_release<T = mk_release_.type_release_param_type>(object_: T): T {
 			if (!object_) {
 				return object_;
 			}

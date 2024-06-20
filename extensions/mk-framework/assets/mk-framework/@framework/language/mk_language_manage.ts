@@ -37,9 +37,9 @@ export class mk_language_manage extends mk_instance_base {
 	/** 事件 */
 	event = new mk_event_target<_mk_language_manage.event_protocol>();
 	/** 文本数据 */
-	label_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
+	label_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.type_data_struct> = Object.create(null);
 	/** 纹理数据 */
-	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.data_struct> = Object.create(null);
+	texture_data_tab: Record<_mk_language_manage.type_type, mk_language_manage_.type_data_struct> = Object.create(null);
 
 	/** 当前语言类型 */
 	get type_s(): keyof typeof global_config.language.type_tab {
@@ -101,7 +101,7 @@ export class mk_language_manage extends mk_instance_base {
 	async get_texture(
 		type_: _mk_language_manage.type_type,
 		mark_s_: string,
-		target_: mk_asset_.follow_release_object,
+		target_: mk_asset_.type_follow_release_object,
 		language_ = this._language_s
 	): Promise<cc.SpriteFrame | null> {
 		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
@@ -134,7 +134,7 @@ export class mk_language_manage extends mk_instance_base {
 	 * @param type_ 类型
 	 * @param data_ 数据
 	 */
-	add_label(type_: _mk_language_manage.type_type, data_: mk_language_manage_.data_struct): void {
+	add_label(type_: _mk_language_manage.type_type, data_: mk_language_manage_.type_data_struct): void {
 		this.label_data_tab[type_] = data_;
 
 		// 事件通知
@@ -146,7 +146,7 @@ export class mk_language_manage extends mk_instance_base {
 	 * @param type_ 类型
 	 * @param data_ 数据
 	 */
-	add_texture(type_: _mk_language_manage.type_type, data_: mk_language_manage_.data_struct): void {
+	add_texture(type_: _mk_language_manage.type_type, data_: mk_language_manage_.type_data_struct): void {
 		this.texture_data_tab[type_] = data_;
 
 		// 事件通知
@@ -168,7 +168,7 @@ export class mk_language_manage extends mk_instance_base {
 
 export namespace mk_language_manage_ {
 	/** 多语言数据结构 */
-	export type data_struct<T extends _mk_language_manage.type_type = any> = Record<
+	export type type_data_struct<T extends _mk_language_manage.type_type = any> = Record<
 		T,
 		{ [k in keyof typeof global_config.language.type_tab]: string }
 	>;
@@ -186,7 +186,7 @@ export namespace mk_language_manage_ {
 	}
 
 	/** 多语言数据 */
-	export abstract class base_data<CT extends data_struct> {
+	export abstract class base_data<CT extends type_data_struct> {
 		constructor(init_: CT) {
 			this.data = init_;
 		}
@@ -197,11 +197,11 @@ export namespace mk_language_manage_ {
 		});
 
 		/** 多语言数据 */
-		data: data_struct<Exclude<keyof CT, symbol>>;
+		data: type_data_struct<Exclude<keyof CT, symbol>>;
 	}
 
 	/** 多语言纹理数据 */
-	export class texture_data<CT extends data_struct> extends base_data<CT> {
+	export class texture_data<CT extends type_data_struct> extends base_data<CT> {
 		constructor(type_: string, init_: CT) {
 			super(init_);
 			mk_language_manage.instance().add_texture(type_, init_);
@@ -209,7 +209,7 @@ export namespace mk_language_manage_ {
 	}
 
 	/** 多语言文本数据 */
-	export class label_data<CT extends data_struct> extends base_data<CT> {
+	export class label_data<CT extends type_data_struct> extends base_data<CT> {
 		constructor(type_: string, init_: CT) {
 			super(init_);
 			mk_language_manage.instance().add_label(type_, init_);

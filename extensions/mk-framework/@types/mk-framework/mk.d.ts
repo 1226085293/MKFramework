@@ -7,7 +7,7 @@ declare namespace mk {
 
 	export declare namespace asset_ {
 		/** 加载文件夹配置 */
-		export type get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
+		export type type_get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
 		/** 加载配置 */
 		export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
 			/**
@@ -29,7 +29,7 @@ declare namespace mk {
 			remote_option?: _mk_asset.load_remote_option_type;
 		}
 		/** 跟随释放对象 */
-		export type follow_release_object = release_.follow_release_object<cc_2.Asset>;
+		export type type_follow_release_object = release_.type_follow_release_object<cc_2.Asset>;
 	}
 
 	/**
@@ -290,7 +290,7 @@ declare namespace mk {
 		 * @remarks
 		 * 注意生命周期函数 init、open、close 会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 		 */
-		export abstract class bundle_manage_base implements release_.follow_release_object {
+		export abstract class bundle_manage_base implements release_.type_follow_release_object {
 			constructor();
 			/** bundle 名 */
 			abstract name_s: string;
@@ -324,8 +324,8 @@ declare namespace mk {
 			 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
 			 */
 			close(): void | Promise<void>;
-			follow_release<T = release_.release_param_type>(object_: T): T;
-			cancel_release<T = release_.release_param_type>(object_: T): T;
+			follow_release<T = release_.type_release_param_type>(object_: T): T;
+			cancel_release<T = release_.type_release_param_type>(object_: T): T;
 		}
 	}
 
@@ -682,7 +682,7 @@ declare namespace mk {
 
 	export declare namespace language_ {
 		/** 多语言数据结构 */
-		export type data_struct<T extends _mk_language_manage.type_type = any> = Record<
+		export type type_data_struct<T extends _mk_language_manage.type_type = any> = Record<
 			T,
 			{
 				[k in keyof typeof global_config.language.type_tab]: string;
@@ -697,21 +697,21 @@ declare namespace mk {
 			args_ss?: string[];
 		}
 		/** 多语言数据 */
-		export abstract class base_data<CT extends data_struct> {
+		export abstract class base_data<CT extends type_data_struct> {
 			constructor(init_: CT);
 			/** 多语言键 */
 			key: {
 				[k in keyof CT]: k;
 			};
 			/** 多语言数据 */
-			data: data_struct<Exclude<keyof CT, symbol>>;
+			data: type_data_struct<Exclude<keyof CT, symbol>>;
 		}
 		/** 多语言纹理数据 */
-		export class texture_data<CT extends data_struct> extends base_data<CT> {
+		export class texture_data<CT extends type_data_struct> extends base_data<CT> {
 			constructor(type_: string, init_: CT);
 		}
 		/** 多语言文本数据 */
-		export class label_data<CT extends data_struct> extends base_data<CT> {
+		export class label_data<CT extends type_data_struct> extends base_data<CT> {
 			constructor(type_: string, init_: CT);
 		}
 	}
@@ -776,7 +776,7 @@ declare namespace mk {
 	 * @remarks
 	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 	 */
-	export declare class life_cycle extends layer implements asset_.follow_release_object {
+	export declare class life_cycle extends layer implements asset_.type_follow_release_object {
 		constructor(...args: any[]);
 		/** 初始化数据 */
 		init_data?: any;
@@ -875,8 +875,8 @@ declare namespace mk {
 		 * 在子模块 close 和 late_close 后执行
 		 */
 		protected late_close?(): void | Promise<void>;
-		follow_release<T = release_.release_param_type & audio_._unit>(object_: T): T;
-		cancel_release<T = release_.release_param_type & audio_._unit>(object_: T): T;
+		follow_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
+		cancel_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -1002,7 +1002,7 @@ declare namespace mk {
 		get<T extends cc_2.Asset>(
 			path_s_: string,
 			type_: cc_2.Constructor<T>,
-			target_: asset_.follow_release_object | null,
+			target_: asset_.type_follow_release_object | null,
 			config_?: asset_.get_config<T>
 		): Promise<T | null>;
 		/**
@@ -1016,8 +1016,8 @@ declare namespace mk {
 		get_dir<T extends cc_2.Asset>(
 			path_s_: string,
 			type_: cc_2.Constructor<T>,
-			target_: asset_.follow_release_object | null,
-			config_?: asset_.get_dir_config<T>
+			target_: asset_.type_follow_release_object | null,
+			config_?: asset_.type_get_dir_config<T>
 		): Promise<T[] | null>;
 		/**
 		 * 释放资源
@@ -1093,7 +1093,7 @@ declare namespace mk {
 		 */
 		add<T extends string | string[], T2 extends true | false = false>(
 			url_: T,
-			target_: asset_.follow_release_object,
+			target_: asset_.type_follow_release_object,
 			config_?: audio_.add_config<T2>
 		): Promise<T2 extends true ? (audio_.unit | null)[] : T extends string ? audio_.unit | null : (audio_.unit | null)[]>;
 		/**
@@ -1361,7 +1361,7 @@ declare namespace mk {
 		protected _mark_s: string;
 		protected _use_layer_b: boolean;
 		/** 当前类型数据 */
-		protected _data?: language_.data_struct;
+		protected _data?: language_.type_data_struct;
 		/** 标记枚举数据 */
 		protected _mark_enum?: any;
 		/** 更新内容 */
@@ -1442,9 +1442,9 @@ declare namespace mk {
 		/** 事件 */
 		event: event_target<_mk_language_manage.event_protocol>;
 		/** 文本数据 */
-		label_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
+		label_data_tab: Record<_mk_language_manage.type_type, language_.type_data_struct>;
 		/** 纹理数据 */
-		texture_data_tab: Record<_mk_language_manage.type_type, language_.data_struct>;
+		texture_data_tab: Record<_mk_language_manage.type_type, language_.type_data_struct>;
 		/** 当前语言类型 */
 		get type_s(): keyof typeof global_config.language.type_tab;
 		set type_s(value_: keyof typeof global_config.language.type_tab);
@@ -1473,7 +1473,7 @@ declare namespace mk {
 		get_texture(
 			type_: _mk_language_manage.type_type,
 			mark_s_: string,
-			target_: asset_.follow_release_object,
+			target_: asset_.type_follow_release_object,
 			language_?: "zh_cn" | "en_us"
 		): Promise<cc_2.SpriteFrame | null>;
 		/**
@@ -1481,13 +1481,13 @@ declare namespace mk {
 		 * @param type_ 类型
 		 * @param data_ 数据
 		 */
-		add_label(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
+		add_label(type_: _mk_language_manage.type_type, data_: language_.type_data_struct): void;
 		/**
 		 * 添加纹理数据
 		 * @param type_ 类型
 		 * @param data_ 数据
 		 */
-		add_texture(type_: _mk_language_manage.type_type, data_: language_.data_struct): void;
+		add_texture(type_: _mk_language_manage.type_type, data_: language_.type_data_struct): void;
 		private _set_type_s;
 	}
 
@@ -2448,8 +2448,8 @@ declare namespace mk {
 		 */
 		regis<T extends cc_2.Constructor<view_base>>(
 			key_: T,
-			source_: _mk_ui_manage.regis_source_type<T>,
-			target_: release_.follow_release_object<release_.release_call_back_type> | null,
+			source_: _mk_ui_manage.type_regis_source<T>,
+			target_: release_.type_follow_release_object<release_.type_release_call_back> | null,
 			config_?: Partial<ui_manage_.regis_config<T>>
 		): Promise<void>;
 		/**
@@ -2468,23 +2468,20 @@ declare namespace mk {
 		 * @param key_ 模块键
 		 * @param type_ 模块类型
 		 */
-		get<T extends cc_2.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
+		get<T extends ui_manage_.type_open_key, T2 = _mk_ui_manage.type_module<T>, T3 = T["prototype"]>(key_: T, type_?: T2): T3 | null;
 		/**
 		 * 获取指定模块列表
 		 * @param key_ 模块键列表 [type]
 		 * @param type_ 模块类型
 		 */
-		get<T extends cc_2.Constructor<view_base> & Function, T2 = _mk_ui_manage.module_type<T>, T3 = T["prototype"]>(
-			key_: T[],
-			type_?: T2
-		): ReadonlyArray<T3>;
+		get<T extends ui_manage_.type_open_key, T2 = _mk_ui_manage.type_module<T>, T3 = T["prototype"]>(key_: T[], type_?: T2): ReadonlyArray<T3>;
 		/**
 		 * 打开模块
 		 * @param key_ 模块键，必须经过 {@link regis} 接口注册过
 		 * @param config_ 打开配置
 		 * @returns
 		 */
-		open<T extends cc_2.Constructor<view_base> & Function, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
+		open<T extends ui_manage_.type_open_key, T2 = T["prototype"]>(key_: T, config_?: ui_manage_.open_config<T>): Promise<T2 | null>;
 		/**
 		 * 关闭模块
 		 * @param args_ 节点/模块键/模块实例
@@ -2500,13 +2497,13 @@ declare namespace mk {
 
 	declare namespace _mk_ui_manage {
 		/** 模块类型 */
-		type module_type<T extends cc_2.Constructor<view_base>> = T["prototype"]["type_s"] | "default";
+		type type_module<T extends cc_2.Constructor<view_base>> = T["prototype"]["type_s"] | "default";
 		/** 注册资源类型 */
-		type regis_source_type<T extends cc_2.Constructor<view_base>> =
+		type type_regis_source<T extends cc_2.Constructor<view_base>> =
 			| cc_2.Prefab
 			| string
 			| cc_2.Node
-			| (T extends cc_2.Constructor<view_base> ? Record<module_type<T>, cc_2.Prefab | string | cc_2.Node> : never);
+			| (T extends cc_2.Constructor<view_base> ? Record<type_module<T>, cc_2.Prefab | string | cc_2.Node> : never);
 	}
 
 	declare namespace _mk_view_base {
@@ -2799,27 +2796,27 @@ declare namespace mk {
 		 * 添加释放对象
 		 * @param object_ 要跟随模块释放的对象或列表
 		 */
-		add<T extends release_.release_param_type>(object_: T): T;
+		add<T extends release_.type_release_param_type>(object_: T): T;
 		/**
 		 * 释放对象
 		 * @param object_ 指定对象
 		 */
-		release(object_?: release_.release_param_type): Promise<void>;
+		release(object_?: release_.type_release_param_type): Promise<void>;
 		/** 释放所有对象 */
 		release_all(): Promise<void>;
 	}
 
 	export declare namespace release_ {
 		/** 释放对象类型 */
-		export type release_object_type = {
+		export type type_release_object = {
 			release(): any | Promise<any>;
 		};
 		/** 释放回调类型 */
-		export type release_call_back_type = () => any | Promise<any>;
+		export type type_release_call_back = () => any | Promise<any>;
 		/** 释放参数类型 */
-		export type release_param_type = cc_2.Node | cc_2.Asset | release_object_type | release_call_back_type;
+		export type type_release_param_type = cc_2.Node | cc_2.Asset | type_release_object | type_release_call_back;
 		/** 跟随释放类型 */
-		export type follow_release_object<CT = release_param_type> = {
+		export type type_follow_release_object<CT = type_release_param_type> = {
 			/**
 			 * 跟随释放
 			 * @param object_ 释放对象/释放对象数组
@@ -2905,11 +2902,13 @@ declare namespace mk {
 	export declare const ui_manage: mk_ui_manage;
 
 	export declare namespace ui_manage_ {
+		/** 模块打开键类型 */
+		export type type_open_key = cc_2.Constructor<view_base> & Function;
 		/** 关闭ui配置 */
 		export class close_config<CT extends cc_2.Constructor<view_base>> {
 			constructor(init_?: close_config<CT>);
 			/** 类型 */
-			type?: _mk_ui_manage.module_type<CT>;
+			type?: _mk_ui_manage.type_module<CT>;
 			/** 关闭全部指定类型的模块 */
 			all_b?: boolean;
 			/** 销毁节点 */
@@ -2922,12 +2921,12 @@ declare namespace mk {
 			destroy_children_b?: boolean;
 		}
 		/** 打开ui配置 */
-		export class open_config<CT extends cc_2.Constructor<view_base> & Function> {
+		export class open_config<CT extends ui_manage_.type_open_key> {
 			constructor(init_?: open_config<CT>);
 			/** 初始化数据 */
 			init?: CT["prototype"]["init_data"];
 			/** 类型 */
-			type?: _mk_ui_manage.module_type<CT>;
+			type?: _mk_ui_manage.type_module<CT>;
 			/** 父节点 */
 			parent?: cc_2.Node;
 		}
@@ -2974,9 +2973,9 @@ declare namespace mk {
 		export class regis_data<CT extends cc_2.Constructor<view_base>> extends regis_config<CT> {
 			constructor(init_?: Partial<regis_data<CT>>);
 			/** 来源 */
-			source: _mk_ui_manage.regis_source_type<CT>;
+			source: _mk_ui_manage.type_regis_source<CT>;
 			/** 跟随释放对象 */
-			target: release_.follow_release_object<release_.release_call_back_type>;
+			target: release_.type_follow_release_object<release_.type_release_call_back>;
 		}
 	}
 
