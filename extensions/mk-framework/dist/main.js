@@ -22,17 +22,17 @@ exports.methods = {
      * @param str The string to be printed
      */
     async install() {
-        console.log("安装开始...");
+        console.log(Editor.I18n.t("mk-framework.任务开始"));
         await (0, install_1.default)();
-        console.log("安装完成");
+        console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
     local_version() {
         (0, local_version_1.default)();
     },
     async build() {
-        console.log("构建 d.ts...");
+        console.log(Editor.I18n.t("mk-framework.任务开始"));
         await (0, build_dts_1.default)();
-        console.log("构建 d.ts 完成");
+        console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
     help() {
         (0, help_1.default)();

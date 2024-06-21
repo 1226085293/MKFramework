@@ -17,9 +17,9 @@ export const methods: Record<string, (...any: any) => any> = {
 	 * @param str The string to be printed
 	 */
 	async install() {
-		console.log("安装开始...");
+		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		await install();
-		console.log("安装完成");
+		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
 	local_version() {
@@ -27,9 +27,9 @@ export const methods: Record<string, (...any: any) => any> = {
 	},
 
 	async build() {
-		console.log("构建 d.ts...");
+		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		await build_dts();
-		console.log("构建 d.ts 完成");
+		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
 	help() {

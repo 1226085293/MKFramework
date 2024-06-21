@@ -10,7 +10,7 @@ module.exports = {
 	确认安装: "Are you sure you want to overwrite the old framework for installation?",
 	确认: "Confirm",
 	取消: "Cancel",
-	帮助内容: ["Example project: https://gitee.com/muzzik/MKFramework", "QQ group: 348096019", "WeChat: _muzzik"].join("\n"),
+	帮助内容: ["Example project: https://github.com/1226085293/MKFramework", "Email: 1226085293@qq.com"].join("\n"),
 	安全检查: "Safety check",
 	获取版本: "Get version",
 	下载框架: "Download framework",
@@ -23,5 +23,8 @@ module.exports = {
 	更新框架版本信息: "Update framework version information",
 	当前项目未安装框架: "The current project has no framework installed",
 	当前项目框架版本为: "The current project framework version is",
-	安装成功: "The installation is successful. Please restart the editor and use it."
+	任务开始: "The mission begins...",
+	任务结束: "Mission ended",
+	安装成功: "Installation is successful, please restart the editor before using",
+	安装失败: "Installation failed, please help: extensions/mk-framework/help",
 };

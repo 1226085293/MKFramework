@@ -44,7 +44,7 @@ async function default_1() {
     const project_package = cjson_1.default.load(path_1.default.join(Editor.Project.path, "package.json"));
     /** 安装版本 */
     let version_s;
-    Promise.resolve()
+    return (Promise.resolve()
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.安全检查"));
         // 覆盖安装确认
@@ -265,7 +265,8 @@ async function default_1() {
         if (!error) {
             return;
         }
+        console.error(Editor.I18n.t("mk-framework.安装失败"));
         console.error(error);
-    });
+    }));
 }
 exports.default = default_1;
