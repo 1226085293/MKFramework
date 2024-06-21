@@ -10,7 +10,7 @@ For the documentation, you can temporarily view it at https://1226085293.github.
 First close the editor, open the plugin directory `Project root directory\extensions\mk-framework` and execute the command in the current directory
 
 ```bash
-npm run install
+npm install
 ```
 
 Wait for execution to succeed
@@ -19,7 +19,7 @@ Wait for execution to succeed
 
 Top menu: `Extensions/mk-framework/Install framework`
 
-Wait for installation to succeed and you can use it. If you have any questions, please return to the repository
+Wait for installation to succeed and you can use it. If you have any questions, please ask them in the repository
 
 # # Update the framework
 
@@ -28,3 +28,12 @@ Top menu: `Extensions/mk-framework/Install framework`
 # # Customize the framework
 
 The framework supports you to customize the framework content. After modifying the framework code, you can use the `Extensions/mk-framework/Build d.ts` menu to update the content of the framework declaration file (mk.d.ts)
+
+# # Framework repository
+
+github: https://github.com/1226085293/MKFramework
+gitee: https://gitee.com/muzzik/MKFramework
+
+# # Contact the author
+
+Top menu: `Extensions/mk-framework/Help`

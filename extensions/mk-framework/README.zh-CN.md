@@ -10,7 +10,7 @@
 首先关闭编辑器，打开插件目录 `项目根目录\extensions\mk-framework` 后在当前目录执行命令
 
 ```bash
-npm run install
+npm install
 ```
 
 等待执行成功
@@ -19,7 +19,7 @@ npm run install
 
 顶部菜单：`扩展/mk-framework/安装框架`
 
-等待安装成功即可使用，有任何问题欢迎在仓库返回
+等待安装成功即可使用，有任何问题欢迎在仓库提出
 
 
 # # 更新框架
@@ -29,3 +29,12 @@ npm run install
 # # 自定义框架
 
 框架支持你自定义框架内容，修改框架代码后，你可以使用 `扩展/mk-framework/构建 d.ts` 菜单进行框架声明文件(mk.d.ts)的内容更新
+
+# # 框架仓库
+
+github: https://github.com/1226085293/MKFramework
+gitee: https://gitee.com/muzzik/MKFramework
+
+# # 联系作者
+
+顶部菜单：`扩展/mk-framework/帮助`
