@@ -27,7 +27,7 @@ export default async function (): Promise<void> {
 	/** 临时路径 */
 	const temp_path_s = Editor.Project.tmpDir;
 	/** 插件路径 */
-	const plugin_path_s = path.join(__dirname, "../../").replace(/\\/g, "/");
+	const plugin_path_s = path.join(__dirname, "../").replace(/\\/g, "/");
 	/** 远程路径 */
 	const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
 	/** 下载路径 */
@@ -143,7 +143,7 @@ export default async function (): Promise<void> {
 				/** 框架声明文件 */
 				const framework_tsconfig = cjson.load(path.join(download_path_s, "tsconfig.json"));
 				/** 声明文件路径 */
-				const declare_path_s = path.join(__dirname, "../@types/mk-framework/");
+				const declare_path_s = path.join(plugin_path_s.slice(plugin_path_s.indexOf("/extensions/")), "/@types/mk-framework/");
 				/** 修改 tsconfig */
 				let modify_tsconfig_b = false;
 
@@ -255,6 +255,7 @@ export default async function (): Promise<void> {
 			// 屏蔽 vscode 框架文件提示
 			.then(async () => {
 				console.log(Editor.I18n.t("mk-framework.屏蔽vscode框架文件提示"));
+				const old_settings_json = cjson.load(path.join(download_path_s, ".vscode/settings.json"));
 				const vscode_setting_path_s = path.join(Editor.Project.path, ".vscode/settings.json");
 				let settings_json: Record<string, any> = {};
 
@@ -267,9 +268,8 @@ export default async function (): Promise<void> {
 					settings_json = cjson.load(vscode_setting_path_s);
 				}
 
-				settings_json["typescript.preferences.autoImportFileExcludePatterns"] = [
-					`.${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/${framework_path_s}/@framework/**`,
-				];
+				settings_json["typescript.preferences.autoImportFileExcludePatterns"] =
+					old_settings_json["typescript.preferences.autoImportFileExcludePatterns"];
 
 				fs.writeFileSync(
 					vscode_setting_path_s,

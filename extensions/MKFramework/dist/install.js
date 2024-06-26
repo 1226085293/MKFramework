@@ -27,7 +27,7 @@ async function default_1() {
     /** 临时路径 */
     const temp_path_s = Editor.Project.tmpDir;
     /** 插件路径 */
-    const plugin_path_s = path_1.default.join(__dirname, "../../").replace(/\\/g, "/");
+    const plugin_path_s = path_1.default.join(__dirname, "../").replace(/\\/g, "/");
     /** 远程路径 */
     const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
     /** 下载路径 */
@@ -127,7 +127,7 @@ async function default_1() {
         /** 框架声明文件 */
         const framework_tsconfig = cjson_1.default.load(path_1.default.join(download_path_s, "tsconfig.json"));
         /** 声明文件路径 */
-        const declare_path_s = path_1.default.join(__dirname, "../@types/mk-framework/");
+        const declare_path_s = path_1.default.join(plugin_path_s.slice(plugin_path_s.indexOf("/extensions/")), "/@types/mk-framework/");
         /** 修改 tsconfig */
         let modify_tsconfig_b = false;
         // 拷贝 d.ts
@@ -215,6 +215,7 @@ async function default_1() {
         // 屏蔽 vscode 框架文件提示
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.屏蔽vscode框架文件提示"));
+        const old_settings_json = cjson_1.default.load(path_1.default.join(download_path_s, ".vscode/settings.json"));
         const vscode_setting_path_s = path_1.default.join(Editor.Project.path, ".vscode/settings.json");
         let settings_json = {};
         // 项目 vscode settings 文件不存在则创建
@@ -225,9 +226,8 @@ async function default_1() {
         else {
             settings_json = cjson_1.default.load(vscode_setting_path_s);
         }
-        settings_json["typescript.preferences.autoImportFileExcludePatterns"] = [
-            `.${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/${framework_path_s}/@framework/**`,
-        ];
+        settings_json["typescript.preferences.autoImportFileExcludePatterns"] =
+            old_settings_json["typescript.preferences.autoImportFileExcludePatterns"];
         fs_extra_1.default.writeFileSync(vscode_setting_path_s, await prettier_1.default.format(JSON.stringify(settings_json), {
             filepath: "*.json",
             tabWidth: 4,
