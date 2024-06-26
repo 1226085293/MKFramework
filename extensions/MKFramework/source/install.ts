@@ -28,6 +28,8 @@ export default async function (): Promise<void> {
 	const temp_path_s = Editor.Project.tmpDir;
 	/** 插件路径 */
 	const plugin_path_s = path.join(__dirname, "../").replace(/\\/g, "/");
+	/** 插件项目路径 */
+	const plugin_project_path_s = plugin_path_s.slice(plugin_path_s.indexOf("/extensions/")).slice(1);
 	/** 远程路径 */
 	const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
 	/** 下载路径 */
@@ -100,7 +102,10 @@ export default async function (): Promise<void> {
 				console.log(Editor.I18n.t("mk-framework.版本适配"));
 				// 3.8.0 及以上删除 userData.bundleConfigID
 				if (project_package.creator?.version && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
-					const file_ss = [`${plugin_path_s}/${framework_path_s}/@config.meta`, `${plugin_path_s}/${framework_path_s}/@framework.meta`];
+					const file_ss = [
+						`${plugin_project_path_s}/${framework_path_s}/@config.meta`,
+						`${plugin_project_path_s}/${framework_path_s}/@framework.meta`,
+					];
 
 					file_ss.forEach((v_s) => {
 						const data = fs.readJSONSync(path.join(download_path_s, v_s));
@@ -115,10 +120,7 @@ export default async function (): Promise<void> {
 				console.log(Editor.I18n.t("mk-framework.注入框架"));
 				// 拷贝框架文件
 				{
-					fs.copySync(
-						path.join(download_path_s, `${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/assets`),
-						path.join(install_path_s, "..")
-					);
+					fs.copySync(path.join(download_path_s, plugin_project_path_s, `assets`), path.join(install_path_s, ".."));
 
 					Editor.Message.send("asset-db", "refresh-asset", "db://mk-framework");
 				}
@@ -143,7 +145,7 @@ export default async function (): Promise<void> {
 				/** 框架声明文件 */
 				const framework_tsconfig = cjson.load(path.join(download_path_s, "tsconfig.json"));
 				/** 声明文件路径 */
-				const declare_path_s = path.join(plugin_path_s.slice(plugin_path_s.indexOf("/extensions/")), "/@types/mk-framework/");
+				const declare_path_s = path.join(plugin_project_path_s, "/@types/mk-framework/");
 				/** 修改 tsconfig */
 				let modify_tsconfig_b = false;
 
