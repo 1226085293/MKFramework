@@ -145,7 +145,7 @@ export default async function (): Promise<void> {
 				/** 框架声明文件 */
 				const framework_tsconfig = cjson.load(path.join(download_path_s, "tsconfig.json"));
 				/** 声明文件路径 */
-				const declare_path_s = `./extensions/${package_json.name}/@types/mk-framework/`;
+				const declare_path_s = path.join(__dirname, "../@types/mk-framework/");
 				/** 修改 tsconfig */
 				let modify_tsconfig_b = false;
 

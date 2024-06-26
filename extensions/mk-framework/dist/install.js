@@ -132,7 +132,7 @@ async function default_1() {
         /** 框架声明文件 */
         const framework_tsconfig = cjson_1.default.load(path_1.default.join(download_path_s, "tsconfig.json"));
         /** 声明文件路径 */
-        const declare_path_s = `./extensions/${package_json.name}/@types/mk-framework/`;
+        const declare_path_s = path_1.default.join(__dirname, "../@types/mk-framework/");
         /** 修改 tsconfig */
         let modify_tsconfig_b = false;
         // 拷贝 d.ts
