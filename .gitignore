@@ -23,7 +23,7 @@ node_modules/
 #//////////////////////////
 .idea/
 extensions/*
-!extensions/mk-framework
+!extensions/MKFramework
 tool/api-extractor/dist
 tool/api-extractor/docs
 tool/api-extractor/etc

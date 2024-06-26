@@ -16,12 +16,12 @@
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
 		"paths": {
-			"mk": ["./extensions/mk-framework/@types/mk-framework/mk.d.ts"],
+			"mk": ["./extensions/MKFramework/@types/mk-framework/mk.d.ts"],
 			"global_config": [
-			  "./extensions/mk-framework/assets/mk-framework/@config/global_config.ts"
+			  "./extensions/MKFramework/assets/mk-framework/@config/global_config.ts"
 			],
 			"global_event": [
-			  "./extensions/mk-framework/assets/mk-framework/@config/global_event.ts"
+			  "./extensions/MKFramework/assets/mk-framework/@config/global_event.ts"
 			]
 		}
 	}

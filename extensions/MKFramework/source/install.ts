@@ -18,8 +18,6 @@ import glob from "fast-glob";
 
 import isomorphic_git from "isomorphic-git";
 import http from "isomorphic-git/http/node";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const package_json = require("../package.json");
 
 export default async function (): Promise<void> {
 	/** 用户名 */
@@ -29,7 +27,7 @@ export default async function (): Promise<void> {
 	/** 临时路径 */
 	const temp_path_s = Editor.Project.tmpDir;
 	/** 插件路径 */
-	const plugin_path_s = path.join(__dirname, "../../");
+	const plugin_path_s = path.join(__dirname, "../../").replace(/\\/g, "/");
 	/** 远程路径 */
 	const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
 	/** 下载路径 */
@@ -102,10 +100,7 @@ export default async function (): Promise<void> {
 				console.log(Editor.I18n.t("mk-framework.版本适配"));
 				// 3.8.0 及以上删除 userData.bundleConfigID
 				if (project_package.creator?.version && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
-					const file_ss = [
-						`extensions/${package_json.name}/${framework_path_s}/@config.meta`,
-						`extensions/${package_json.name}/${framework_path_s}/@framework.meta`,
-					];
+					const file_ss = [`${plugin_path_s}/${framework_path_s}/@config.meta`, `${plugin_path_s}/${framework_path_s}/@framework.meta`];
 
 					file_ss.forEach((v_s) => {
 						const data = fs.readJSONSync(path.join(download_path_s, v_s));
@@ -120,7 +115,10 @@ export default async function (): Promise<void> {
 				console.log(Editor.I18n.t("mk-framework.注入框架"));
 				// 拷贝框架文件
 				{
-					fs.copySync(path.join(download_path_s, `extensions/${package_json.name}/assets`), path.join(install_path_s, ".."));
+					fs.copySync(
+						path.join(download_path_s, `${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/assets`),
+						path.join(install_path_s, "..")
+					);
 
 					Editor.Message.send("asset-db", "refresh-asset", "db://mk-framework");
 				}
@@ -270,7 +268,7 @@ export default async function (): Promise<void> {
 				}
 
 				settings_json["typescript.preferences.autoImportFileExcludePatterns"] = [
-					`./extensions/${package_json.name}/${framework_path_s}/@framework/**`,
+					`.${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/${framework_path_s}/@framework/**`,
 				];
 
 				fs.writeFileSync(

@@ -19,8 +19,6 @@ const fast_glob_1 = __importDefault(require("fast-glob"));
 });
 const isomorphic_git_1 = __importDefault(require("isomorphic-git"));
 const node_1 = __importDefault(require("isomorphic-git/http/node"));
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const package_json = require("../package.json");
 async function default_1() {
     /** 用户名 */
     const owner_s = "muzzik";
@@ -29,7 +27,7 @@ async function default_1() {
     /** 临时路径 */
     const temp_path_s = Editor.Project.tmpDir;
     /** 插件路径 */
-    const plugin_path_s = path_1.default.join(__dirname, "../../");
+    const plugin_path_s = path_1.default.join(__dirname, "../../").replace(/\\/g, "/");
     /** 远程路径 */
     const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
     /** 下载路径 */
@@ -94,10 +92,7 @@ async function default_1() {
         console.log(Editor.I18n.t("mk-framework.版本适配"));
         // 3.8.0 及以上删除 userData.bundleConfigID
         if (((_a = project_package.creator) === null || _a === void 0 ? void 0 : _a.version) && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
-            const file_ss = [
-                `extensions/${package_json.name}/${framework_path_s}/@config.meta`,
-                `extensions/${package_json.name}/${framework_path_s}/@framework.meta`,
-            ];
+            const file_ss = [`${plugin_path_s}/${framework_path_s}/@config.meta`, `${plugin_path_s}/${framework_path_s}/@framework.meta`];
             file_ss.forEach((v_s) => {
                 const data = fs_extra_1.default.readJSONSync(path_1.default.join(download_path_s, v_s));
                 delete data.userData.bundleConfigID;
@@ -110,7 +105,7 @@ async function default_1() {
         console.log(Editor.I18n.t("mk-framework.注入框架"));
         // 拷贝框架文件
         {
-            fs_extra_1.default.copySync(path_1.default.join(download_path_s, `extensions/${package_json.name}/assets`), path_1.default.join(install_path_s, ".."));
+            fs_extra_1.default.copySync(path_1.default.join(download_path_s, `${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/assets`), path_1.default.join(install_path_s, ".."));
             Editor.Message.send("asset-db", "refresh-asset", "db://mk-framework");
         }
         // 添加脚本模板
@@ -231,7 +226,7 @@ async function default_1() {
             settings_json = cjson_1.default.load(vscode_setting_path_s);
         }
         settings_json["typescript.preferences.autoImportFileExcludePatterns"] = [
-            `./extensions/${package_json.name}/${framework_path_s}/@framework/**`,
+            `.${plugin_path_s.slice(plugin_path_s.indexOf("/extensions/"))}/${framework_path_s}/@framework/**`,
         ];
         fs_extra_1.default.writeFileSync(vscode_setting_path_s, await prettier_1.default.format(JSON.stringify(settings_json), {
             filepath: "*.json",
