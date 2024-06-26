@@ -79,16 +79,22 @@ class mk_logger extends mk_instance_base {
 			} else if (cc.sys.isNative) {
 				let old_handler: any;
 
-				if (window["__errorHandler"]) {
-					old_handler = window["__errorHandler"];
-				}
-
-				window["__errorHandler"] = function (...args_as: any[]) {
-					upload_f(...args_as);
-					if (old_handler) {
-						old_handler(...args_as);
+				if (window["jsb"]) {
+					jsb["onError"]((...args_as: any[]) => {
+						upload_f(...args_as);
+					});
+				} else {
+					if (window["__errorHandler"]) {
+						old_handler = window["__errorHandler"];
 					}
-				};
+
+					window["__errorHandler"] = function (...args_as: any[]) {
+						upload_f(...args_as);
+						if (old_handler) {
+							old_handler(...args_as);
+						}
+					};
+				}
 			}
 		}
 	}
