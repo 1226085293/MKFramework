@@ -7,19 +7,19 @@ For the documentation, you can temporarily view it at https://1226085293.github.
 
 ## Step 1: Initialization
 
-First close the editor, open the plugin directory `Project root directory\extensions\mk-framework` and execute the command in the current directory
+First close the editor, open the plugin directory `Project root directory\extensions\MKFramework` and execute the command in the current directory
 
 ```bash
 npm install
 ```
 
-Wait for execution to succeed
+Wait for the execution to succeed and open the editor
 
 ## Step 2: Install the framework
 
 Top menu: `Extensions/mk-framework/Install framework`
 
-Wait for installation to succeed and you can use it. If you have any questions, please ask them in the repository
+Wait for the installation to succeed and restart the editor to use it. If you have any questions, please raise them in the repository
 
 # # Update the framework
 
