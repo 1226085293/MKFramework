@@ -9,7 +9,11 @@
     "bundleName": "tool",
     "isBundle": true,
     "bundleConfigID": "auto_cagccLCvVAlLJ3yBwnWXog",
-    "compressionType": {},
-    "isRemoteBundle": {}
+    "compressionType": {
+      "wechatgame": "subpackage"
+    },
+    "isRemoteBundle": {
+      "wechatgame": false
+    }
   }
 }

@@ -124,7 +124,7 @@ class event<CT> extends cc.EventTarget {
 const global_event = new event<global_event_protocol>();
 
 if (DEBUG) {
-	self["global_event"] = global_event;
+	window["global_event"] = global_event;
 }
 
 export default global_event;

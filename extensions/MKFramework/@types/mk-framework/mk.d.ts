@@ -1067,7 +1067,7 @@ declare namespace mk {
 	 * 音频基类
 	 * @noInheritDoc
 	 */
-	declare abstract class mk_audio_base extends instance_base {
+	declare abstract class mk_audio_base {
 		constructor();
 		/** 日志 */
 		protected abstract _log: logger;

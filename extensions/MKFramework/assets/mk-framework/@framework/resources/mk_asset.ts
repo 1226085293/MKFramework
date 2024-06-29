@@ -220,7 +220,14 @@ export class mk_asset extends mk_instance_base {
 			// 远程
 			if (remote_b) {
 				// eslint-disable-next-line @typescript-eslint/naming-convention
-				cc.assetManager.loadRemote(path_s_, { onFileProgress: get_config.progress_f, ...(get_config.remote_option ?? {}) }, completed_f);
+				cc.assetManager.loadRemote(
+					path_s_,
+					{
+						onFileProgress: get_config.progress_f,
+						...(get_config.remote_option ?? {}),
+					},
+					completed_f
+				);
 			}
 			// 编辑器
 			else if (EDITOR) {

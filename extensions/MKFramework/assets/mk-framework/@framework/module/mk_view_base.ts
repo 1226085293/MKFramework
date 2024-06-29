@@ -2,12 +2,12 @@ import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import mk_tool from "../@private/tool/mk_tool";
 import { mk_life_cycle, _mk_life_cycle } from "./mk_life_cycle";
-import dynamic_module from "../mk_dynamic_module";
+import mk_dynamic_module from "../mk_dynamic_module";
 import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
 import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
-const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
+const ui_manage = mk_dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
 namespace _mk_view_base {

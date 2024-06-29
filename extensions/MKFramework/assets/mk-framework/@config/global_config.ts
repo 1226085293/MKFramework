@@ -211,7 +211,7 @@ namespace global_config {
 }
 
 if (DEBUG) {
-	self["global_config"] = global_config;
+	window["global_config"] = global_config;
 }
 
 export default global_config;

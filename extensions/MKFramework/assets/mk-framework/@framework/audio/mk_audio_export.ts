@@ -5,7 +5,7 @@ export { default as audio } from "./mk_audio_base";
 export { mk_audio_base_ as mk_audio_ } from "./mk_audio_base";
 
 // 重定义 audio_，保持类型不变
-Object.assign(mk_audio_base_, self.wx ? mk_audio_wx_ : mk_audio_common_);
+Object.assign(mk_audio_base_, window.wx ? mk_audio_wx_ : mk_audio_common_);
 
 /**
  * 音频管理器
@@ -21,4 +21,4 @@ Object.assign(mk_audio_base_, self.wx ? mk_audio_wx_ : mk_audio_common_);
  *
  * - 通用版本超出播放数量限制后停止当前音频而不是之前的
  */
-export const mk_audio: mk_audio_base = self.wx ? audio_wx : audio_common;
+export const mk_audio: mk_audio_base = window.wx ? new audio_wx() : new audio_common();

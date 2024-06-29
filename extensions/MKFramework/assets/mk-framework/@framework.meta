@@ -9,7 +9,12 @@
     "bundleName": "framework",
     "isBundle": true,
     "bundleConfigID": "auto_96xxa0QS9BT7BEcM9qNNM3",
-    "compressionType": {},
-    "isRemoteBundle": {}
+    "compressionType": {
+      "wechatgame": "subpackage"
+    },
+    "isRemoteBundle": {
+      "wechatgame": false
+    },
+    "priority": 20
   }
 }

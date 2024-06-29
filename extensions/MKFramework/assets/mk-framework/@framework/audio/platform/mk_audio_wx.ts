@@ -9,6 +9,13 @@ const { ccclass } = cc._decorator;
  * @noInheritDoc
  */
 class mk_audio_wx extends mk_audio_base {
+	constructor() {
+		super();
+		mk_audio_wx._instance = this;
+	}
+	/* --------------- static --------------- */
+	/** @internal */
+	static _instance: mk_audio_wx;
 	/* --------------- protected --------------- */
 	/** 日志 */
 	protected _log = new mk_logger("audio_wx");
@@ -178,7 +185,7 @@ export namespace mk_audio_wx_ {
 			new_audio._loop_b = this._loop_b;
 			new_audio._init_b = this._init_b;
 			this.group_ns.forEach((v_n) => {
-				mk_audio_wx.instance().get_group(v_n).add_audio(new_audio);
+				mk_audio_wx._instance.get_group(v_n).add_audio(new_audio);
 			});
 
 			return new_audio;
@@ -218,7 +225,7 @@ export namespace mk_audio_wx_ {
 
 				// 更新真实音量
 				this.real_volume_n = this.group_ns.reduce(
-					(pre_n, curr_n) => pre_n * mk_audio_wx.instance().get_group(curr_n).volume_n,
+					(pre_n, curr_n) => pre_n * mk_audio_wx._instance.get_group(curr_n).volume_n,
 					this._volume_n
 				);
 
@@ -231,4 +238,4 @@ export namespace mk_audio_wx_ {
 	export const unit = _unit;
 }
 
-export default mk_audio_wx.instance();
+export default mk_audio_wx;

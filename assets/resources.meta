@@ -11,6 +11,8 @@
     "priority": 8,
     "bundleConfigID": "auto_9c5OxVe2xPW4dKkOvzzxYi",
     "compressionType": {},
-    "isRemoteBundle": {}
+    "isRemoteBundle": {
+      "wechatgame": false
+    }
   }
 }

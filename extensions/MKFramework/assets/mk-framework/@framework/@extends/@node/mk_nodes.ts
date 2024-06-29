@@ -15,7 +15,7 @@ class node_extends {
 				this._ui_opacity = v;
 			} else if (v instanceof cc.UITransform) {
 				this.transform = v;
-			} else if (v instanceof cc.Animation) {
+			} else if (cc.Animation && v instanceof cc.Animation) {
 				this.animation = v;
 			} else if (v instanceof cc.EditBox) {
 				this.edit_box = v;

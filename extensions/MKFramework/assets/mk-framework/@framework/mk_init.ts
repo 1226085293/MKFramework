@@ -14,9 +14,9 @@ if (!EDITOR) {
 	// 显示调试信息
 	cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
 		if (global_config.constant.show_debug_info_b) {
-			cc.profiler.showStats();
+			cc.profiler?.showStats();
 		} else {
-			cc.profiler.hideStats();
+			cc.profiler?.hideStats();
 		}
 	});
 
@@ -28,7 +28,7 @@ if (!EDITOR) {
 
 // 注册到全局
 if (DEBUG) {
-	self["mk"] = mk;
+	window["mk"] = mk;
 }
 
 let temp: any = null;

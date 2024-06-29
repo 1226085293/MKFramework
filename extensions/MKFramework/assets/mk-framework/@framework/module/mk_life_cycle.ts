@@ -1,16 +1,16 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import global_config from "../../@config/global_config";
-import dynamic_module from "../mk_dynamic_module";
+import mk_dynamic_module from "../mk_dynamic_module";
 import mk_logger from "../mk_logger";
-import monitor from "../mk_monitor";
+import mk_monitor from "../mk_monitor";
 import mk_status_task from "../task/mk_status_task";
 import mk_layer from "./mk_layer";
 import mk_tool from "../@private/tool/mk_tool";
 import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
 import mk_release, { mk_release_ } from "../mk_release";
 import { mk_asset_ } from "../resources/mk_asset";
-const ui_manage = dynamic_module.default(import("../mk_ui_manage"));
+const ui_manage = mk_dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
 export namespace _mk_life_cycle {
@@ -296,7 +296,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
-		monitor.clear(this);
+		mk_monitor.clear(this);
 		// 释放资源
 		this._release_manage.release_all();
 		// 重置数据

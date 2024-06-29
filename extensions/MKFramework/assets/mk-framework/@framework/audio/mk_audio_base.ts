@@ -14,9 +14,8 @@ const { ccclass, property } = cc._decorator;
  * 音频基类
  * @noInheritDoc
  */
-abstract class mk_audio_base extends mk_instance_base {
+abstract class mk_audio_base {
 	constructor() {
-		super();
 		global_event.on(global_event.key.restart, this._event_restart, this);
 	}
 
@@ -365,11 +364,14 @@ export namespace mk_audio_base_ {
 
 		/* --------------- 属性 --------------- */
 		/** 音频资源 */
-		@property({ displayName: "音频资源", type: cc.AudioClip })
+		@property({ displayName: "音频资源", type: cc.AudioClip ?? null })
 		clip: cc.AudioClip | null = null;
 
 		/** 音频类型 */
-		@property({ displayName: "音频类型", type: cc.Enum(global_config.audio.type) })
+		@property({
+			displayName: "音频类型",
+			type: cc.Enum(global_config.audio.type),
+		})
 		type = global_config.audio.type.effect;
 
 		/* --------------- public --------------- */
@@ -732,7 +734,9 @@ export namespace mk_audio_base_ {
 		}
 	}
 
-	export const unit = _unit as any as Omit<unit, keyof Function> & { new (init_?: Partial<unit>): Omit<unit, keyof Function> };
+	export const unit = _unit as any as Omit<unit, keyof Function> & {
+		new (init_?: Partial<unit>): Omit<unit, keyof Function>;
+	};
 }
 
 export default mk_audio_base;

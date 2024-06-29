@@ -18,9 +18,12 @@ const { ccclass } = cc._decorator;
 class mk_audio_common extends mk_audio_base {
 	constructor() {
 		super();
+		mk_audio_common._instance = this;
 		this._constructor();
 	}
-
+	/* --------------- static --------------- */
+	/** @internal */
+	static _instance: mk_audio_common;
 	/* --------------- protected --------------- */
 	/** 日志 */
 	protected _log = new mk_logger("audio_common");
@@ -367,7 +370,7 @@ export namespace mk_audio_common_ {
 			new_audio._loop_b = this._loop_b;
 			new_audio._init_b = this._init_b;
 			this.group_ns.forEach((v_n) => {
-				mk_audio_common.instance().get_group(v_n).add_audio(new_audio);
+				mk_audio_common._instance.get_group(v_n).add_audio(new_audio);
 			});
 
 			return new_audio;
@@ -398,7 +401,7 @@ export namespace mk_audio_common_ {
 
 			// 更新真实音量
 			this.real_volume_n = this.group_ns.reduce(
-				(pre_n, curr_n) => pre_n * mk_audio_common.instance().get_group(curr_n).volume_n,
+				(pre_n, curr_n) => pre_n * mk_audio_common._instance.get_group(curr_n).volume_n,
 				this._volume_n
 			);
 
@@ -458,4 +461,4 @@ export namespace mk_audio_common_ {
 	export const unit = _unit;
 }
 
-export default mk_audio_common.instance();
+export default mk_audio_common;

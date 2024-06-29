@@ -66,7 +66,7 @@ export class mk_http extends mk_instance_base {
 								data += String.fromCharCode(buf[k_n]);
 							}
 
-							result = "data:image/png;base64," + globalThis.btoa(data);
+							result = "data:image/png;base64," + window.btoa(data);
 							break;
 						}
 

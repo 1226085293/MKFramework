@@ -356,7 +356,7 @@ export class mk_bundle extends mk_instance_base {
 		/** bundle 脚本表 */
 		const bundle_script_tab: Record<string, any> = {};
 		/** js 系统 */
-		const system_js = self["System"];
+		const system_js = window["System"];
 		/** 脚本缓存表 */
 		const script_cache_tab: Record<string, any> = system_js[Reflect.ownKeys(system_js).find((v) => typeof v === "symbol")!];
 

@@ -9,7 +9,11 @@
     "isBundle": true,
     "bundleName": "decorator",
     "bundleConfigID": "auto_84uGKf/pZAibOdPqiVyqYV",
-    "compressionType": {},
-    "isRemoteBundle": {}
+    "compressionType": {
+      "wechatgame": "subpackage"
+    },
+    "isRemoteBundle": {
+      "wechatgame": false
+    }
   }
 }
