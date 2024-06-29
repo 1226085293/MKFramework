@@ -33,13 +33,12 @@ AI 助手（GPT4/需订阅）：[MKFrameworkAI-GPT4](https://poe.com/MKFramework
 ### 依赖环境
 - NodeJs
 
-### NPM 方式
-1. 打开终端
+### 插件方式
+- 打开 CocosDashboard 点击左侧商店
 
-1. 执行 `npm i -g @muzzik/mk-install`，等待安装完成
-1. 执行 `npx mk-install`
-1. 输入你的项目路径回车
-1. 输入 `install` 回车，等待安装完成
+- 搜索 **MK框架** 安装到项目
+
+- 根据商店的插件说明页面进行安装
 
 ## 😀 仓库说明
 
