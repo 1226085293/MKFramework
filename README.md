@@ -14,31 +14,13 @@
 
 ---
 
-## 📗 文档教程
-
-快速入门：https://1226085293.github.io/mk-framework/quick-start/
-
-功能模块：https://1226085293.github.io/mk-framework/module/
-
-案例教程：https://1226085293.github.io/mk-framework/tutorial/
-
-API 接口：https://1226085293.github.io/mk-framework/api/
-
-AI 助手（GPT3.5/免费）：[MKFrameworkAI](https://poe.com/MKFrameworkAI)
-
-AI 助手（GPT4/需订阅）：[MKFrameworkAI-GPT4](https://poe.com/MKFrameworkAI-GPT4)
-
 ## 🛠️ 安装框架
 
-### 依赖环境
-- NodeJs
+https://github.com/1226085293/MKFramework/wiki/%E5%AE%89%E8%A3%85%E6%A1%86%E6%9E%B6
 
-### 插件方式
-- 打开 CocosDashboard 点击左侧商店
+## 📗 文档教程
 
-- 搜索 **MK框架** 安装到项目
-
-- 根据商店的插件说明页面进行安装
+https://github.com/1226085293/MKFramework/wiki
 
 ## 😀 仓库说明
 
