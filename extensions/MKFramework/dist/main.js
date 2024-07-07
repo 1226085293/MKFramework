@@ -1,16 +1,36 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unload = exports.load = exports.methods = void 0;
+const run_check_1 = __importDefault(require("./run_check"));
 delete require.cache[__dirname + "\\build_dts.js"];
 delete require.cache[__dirname + "\\install.js"];
 delete require.cache[__dirname + "\\help.js"];
-const build_dts_1 = __importDefault(require("./build_dts"));
-const help_1 = __importDefault(require("./help"));
-const install_1 = __importDefault(require("./install"));
-const local_version_1 = __importDefault(require("./local_version"));
 /**
  * @en Methods within the extension can be triggered by message
  * @zh 扩展内的方法，可以通过 message 触发
@@ -23,19 +43,27 @@ exports.methods = {
      */
     async install() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
-        await (0, install_1.default)();
+        if ((0, run_check_1.default)()) {
+            (await Promise.resolve().then(() => __importStar(require("./install")))).default();
+        }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
-    local_version() {
-        (0, local_version_1.default)();
+    async local_version() {
+        if ((0, run_check_1.default)()) {
+            (await Promise.resolve().then(() => __importStar(require("./local_version")))).default();
+        }
     },
     async build() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
-        await (0, build_dts_1.default)();
+        if ((0, run_check_1.default)()) {
+            (await Promise.resolve().then(() => __importStar(require("./build_dts")))).default();
+        }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
-    help() {
-        (0, help_1.default)();
+    async help() {
+        if ((0, run_check_1.default)()) {
+            (await Promise.resolve().then(() => __importStar(require("./help")))).default();
+        }
     },
 };
 /**

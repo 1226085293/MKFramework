@@ -339,7 +339,7 @@ export class mk_polygon_mask extends cc.Component {
 
 	private _set_track_node(value_: cc.Node): void {
 		this._track_node = value_;
-		this._track_node.getWorldPosition(this._track_node_world_pos_v3);
+		this._track_node?.getWorldPosition(this._track_node_world_pos_v3);
 		this.update_mask();
 	}
 
