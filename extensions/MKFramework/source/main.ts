@@ -1,10 +1,8 @@
+import run_check from "./run_check";
+
 delete require.cache[__dirname + "\\build_dts.js"];
 delete require.cache[__dirname + "\\install.js"];
 delete require.cache[__dirname + "\\help.js"];
-import build_dts from "./build_dts";
-import help from "./help";
-import install from "./install";
-import local_version from "./local_version";
 
 /**
  * @en Methods within the extension can be triggered by message
@@ -18,22 +16,30 @@ export const methods: Record<string, (...any: any) => any> = {
 	 */
 	async install() {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
-		await install();
+		if (run_check()) {
+			(await import("./install")).default();
+		}
 		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
-	local_version() {
-		local_version();
+	async local_version() {
+		if (run_check()) {
+			(await import("./local_version")).default();
+		}
 	},
 
 	async build() {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
-		await build_dts();
+		if (run_check()) {
+			(await import("./build_dts")).default();
+		}
 		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
-	help() {
-		help();
+	async help() {
+		if (run_check()) {
+			(await import("./help")).default();
+		}
 	},
 };
 
