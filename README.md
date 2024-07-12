@@ -2,7 +2,7 @@
     <img src="./home/logo.png" alt="Image" />
 </div>
 
-# Cocos Creator 3.x 游戏开发框架 (Beta)
+# Cocos Creator 3.x 游戏开发框架
 
 ## 📣 功能简介
 
