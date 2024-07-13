@@ -167,11 +167,7 @@ export class mk_bundle extends mk_instance_base {
 				: args_;
 
 		/** bundle 信息 */
-		const bundle_info =
-			this.bundle_map.get(load_config.bundle_s!) ??
-			new mk_bundle_.bundle_info({
-				bundle_s: load_config.bundle_s,
-			});
+		const bundle_info = this.bundle_map.get(load_config.bundle_s!) ?? new mk_bundle_.bundle_info(load_config);
 
 		await this._engine_init_task.task;
 
@@ -179,6 +175,8 @@ export class mk_bundle extends mk_instance_base {
 		const bundle = cc.assetManager.getBundle(bundle_info.bundle_s);
 
 		if (bundle) {
+			load_config.progress_callback_f?.(1, 1);
+
 			return bundle;
 		}
 
@@ -200,6 +198,11 @@ export class mk_bundle extends mk_instance_base {
 						resolve_f(null);
 
 						return;
+					}
+
+					// 非远程 bundle 需要模拟进度回调
+					if (!bundle_info.origin_s) {
+						load_config.progress_callback_f?.(1, 1);
 					}
 
 					// 添加bundle信息
@@ -499,17 +502,12 @@ export namespace mk_bundle_ {
 	}
 
 	/** load 配置 */
-	export class load_config {
+	export class load_config extends bundle_info {
 		constructor(init_: load_config) {
+			super(init_);
 			Object.assign(this, init_);
 		}
 
-		/**
-		 * bundle名
-		 * @remarks
-		 * getBundle 时使用
-		 */
-		bundle_s!: string;
 		/** 加载回调 */
 		progress_callback_f?: (curr_n: number, total_n: number) => void;
 	}
