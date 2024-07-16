@@ -44,7 +44,7 @@ async function default_1() {
     const project_package = cjson_1.default.load(path_1.default.join(Editor.Project.path, "package.json"));
     /** 安装版本 */
     let version_s;
-    return (Promise.resolve()
+    await Promise.resolve()
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.安全检查"));
         // 覆盖安装确认
@@ -223,12 +223,10 @@ async function default_1() {
         const old_settings_json = cjson_1.default.load(path_1.default.join(download_path_s, ".vscode/settings.json"));
         const vscode_setting_path_s = path_1.default.join(Editor.Project.path, ".vscode/settings.json");
         let settings_json = {};
-        // 项目 vscode settings 文件不存在则创建
-        if (!fs_extra_1.default.existsSync(vscode_setting_path_s)) {
-            fs_extra_1.default.mkdirSync(path_1.default.join(Editor.Project.path, ".vscode"));
-        }
-        // 存在则读取
-        else {
+        // 保证项目 vscode settings 目录存在
+        fs_extra_1.default.ensureDirSync(path_1.default.join(Editor.Project.path, ".vscode"));
+        // 读取 settings 文件
+        if (fs_extra_1.default.existsSync(vscode_setting_path_s)) {
             settings_json = cjson_1.default.load(vscode_setting_path_s);
         }
         settings_json["typescript.preferences.autoImportFileExcludePatterns"] =
@@ -267,6 +265,6 @@ async function default_1() {
         }
         console.error(Editor.I18n.t("mk-framework.安装失败"));
         console.error(error);
-    }));
+    });
 }
 exports.default = default_1;

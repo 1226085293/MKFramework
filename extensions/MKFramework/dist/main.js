@@ -44,25 +44,25 @@ exports.methods = {
     async install() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
         if ((0, run_check_1.default)()) {
-            (await Promise.resolve().then(() => __importStar(require("./install")))).default();
+            await (await Promise.resolve().then(() => __importStar(require("./install")))).default();
         }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
     async local_version() {
         if ((0, run_check_1.default)()) {
-            (await Promise.resolve().then(() => __importStar(require("./local_version")))).default();
+            await (await Promise.resolve().then(() => __importStar(require("./local_version")))).default();
         }
     },
     async build() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
         if ((0, run_check_1.default)()) {
-            (await Promise.resolve().then(() => __importStar(require("./build_dts")))).default();
+            await (await Promise.resolve().then(() => __importStar(require("./build_dts")))).default();
         }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
     async help() {
         if ((0, run_check_1.default)()) {
-            (await Promise.resolve().then(() => __importStar(require("./help")))).default();
+            await (await Promise.resolve().then(() => __importStar(require("./help")))).default();
         }
     },
 };
