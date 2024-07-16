@@ -182,8 +182,6 @@ namespace global_config {
 			cache_row_n = 100;
 			/** 报错日志上传地址 */
 			error_upload_addr_s = "";
-			/** 输出定位(使用 console 接口) */
-			output_position_b = true;
 			/** 日志等级 */
 			level_n = level.debug_up;
 			/** 打印对象类型 */
