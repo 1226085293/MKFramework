@@ -340,7 +340,11 @@ export class mk_bundle extends mk_instance_base {
 		return false;
 	}
 
-	/** 重新加载 bundle */
+	/**
+	 * 重新加载 bundle
+	 * @param bundle_ bundle 信息
+	 * @returns
+	 */
 	async reload(bundle_: mk_bundle_.bundle_info & Required<Pick<mk_bundle_.bundle_info, "origin_s">>): Promise<cc.AssetManager.Bundle | null> {
 		if (PREVIEW) {
 			this._log.error("不支持预览模式重载 bundle");
