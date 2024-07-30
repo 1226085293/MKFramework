@@ -3,7 +3,7 @@
  * "warn" 或 1 - 开启规则，使用警告级别的错误：warn (不会导致程序退出),
  * "error" 或 2 - 开启规则，使用错误级别的错误：error (当被触发的时候，程序会退出)
  */
-{
+ {
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"requireConfigFile": false,
@@ -21,7 +21,6 @@
 		"self": true
 	},
 	"rules": {
-		"indent": [4,"tab"],
 		// 禁止全局变量
 		"no-restricted-globals": ["error", "Node"],
 		// 禁止导入
@@ -80,10 +79,6 @@
 		"@typescript-eslint/prefer-optional-chain": "error",
 		// 禁止使用联合或可选/剩余参数可以统一为一个的两个重载
 		"@typescript-eslint/unified-signatures": "error",
-		// 在显式类型转换上强制执行非空断言（测试无效）
-		"@typescript-eslint/non-nullable-type-assertion-style": "error",
-		// 强制使用 nullish 合并运算符而不是逻辑链（测试无效）
-		"@typescript-eslint/prefer-nullish-coalescing": "error",
 		// 一致的类型断言
 		"@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "as", "objectLiteralTypeAssertions": "never" }],
 		// 必须存在返回类型
@@ -95,7 +90,7 @@
 			}
 		],
 		// 类成员换行
-		"@typescript-eslint/lines-between-class-members": "error",
+		"@typescript-eslint/lines-between-class-members": ["error", { "exceptAfterSingleLine": true }],
 		// 换行规则
 		"@typescript-eslint/padding-line-between-statements": [
 			"error",
