@@ -77,13 +77,16 @@ export class mk_bundle extends mk_instance_base {
 		// 模块初始化事件
 		cc.director.once(
 			cc.Director.EVENT_BEFORE_SCENE_LAUNCH,
-			(scene: cc.Scene) => {
+			async (scene: cc.Scene) => {
 				if (!scene.name) {
 					this._log.warn("未选择启动场景");
 
 					return;
 				}
 
+				// init
+				await this.bundle_map.get("main")?.manage?.init?.();
+				// open
 				this.bundle_s = "main";
 				this._scene_s = scene.name;
 				this._init_task.finish(true);
@@ -216,7 +219,7 @@ export class mk_bundle extends mk_instance_base {
 	 * @param config_ 切换配置
 	 * @returns
 	 */
-	async load_scene(scene_s_: string, config_?: Partial<mk_bundle_.switch_scene_config>): Promise<boolean> {
+	async load_scene(scene_s_: string, config_: Partial<mk_bundle_.switch_scene_config>): Promise<boolean> {
 		if (!scene_s_) {
 			this._log.error("场景名错误", scene_s_);
 
@@ -305,7 +308,6 @@ export class mk_bundle extends mk_instance_base {
 					// 初始化
 					if (manage) {
 						await manage.init?.();
-						manage.valid_b = true;
 					}
 
 					// 运行场景
@@ -316,7 +318,7 @@ export class mk_bundle extends mk_instance_base {
 							this.pre_scene_s = this.scene_s;
 							this.scene_s = scene_s_;
 						} else if (manage) {
-							manage.valid_b = false;
+							manage.close();
 						}
 
 						config.unloaded_callback_f?.();
@@ -582,12 +584,12 @@ export namespace mk_bundle_ {
 		/* --------------- public --------------- */
 		/** bundle 名 */
 		abstract name_s: string;
-		/** 事件对象 */
-		abstract event: mk_event_target<any>;
 		/** 管理器有效状态 */
 		valid_b = false;
 		/** 节点池表 */
 		node_pool_tab!: Record<string, cc.NodePool>;
+		/** 事件对象 */
+		event?: mk_event_target<any>;
 		/** 网络对象 */
 		network?: mk_network_base;
 		/** 数据获取器 */
@@ -601,7 +603,18 @@ export namespace mk_bundle_ {
 		 * @remarks
 		 * 从其他 bundle 的场景切换到此 bundle 的场景之前调用
 		 */
-		init?(): void | Promise<void>;
+		init?(): void | Promise<void> {
+			if (
+				// 编辑器模式下只能运行 main bundle 的生命周期
+				(EDITOR && this.name_s !== "main") ||
+				// bundle 已经加载
+				this.valid_b
+			) {
+				throw "中断";
+			}
+
+			this.valid_b = true;
+		}
 
 		/**
 		 * 打开回调
@@ -609,16 +622,10 @@ export namespace mk_bundle_ {
 		 * 从其他 bundle 的场景切换到此 bundle 的场景时调用
 		 */
 		open(): void | Promise<void> {
+			// 编辑器模式下只能运行 main bundle 的生命周期
 			if (EDITOR && this.name_s !== "main") {
 				throw "中断";
 			}
-
-			if (this.valid_b) {
-				mk_log.error("bundle 已经加载");
-				throw "中断";
-			}
-
-			this.valid_b = true;
 		}
 
 		/**
@@ -635,7 +642,7 @@ export namespace mk_bundle_ {
 			this.valid_b = false;
 
 			// 清理事件
-			this.event.clear();
+			this.event?.clear();
 			// 清理网络事件
 			this.network?.event.clear();
 			// 清理数据

@@ -18,5 +18,5 @@
 	// 使用本地的 typescript 版本
 	"typescript.tsdk": "node_modules\\typescript\\lib",
 	// // 排除自动导入提示
-	"typescript.preferences.autoImportFileExcludePatterns": ["./extensions/MKFramework/assets/mk-framework/**"]
+	"typescript.preferences.autoImportFileExcludePatterns": ["./extensions/MKFramework/assets/mk-framework/@framework/**"]
 }
