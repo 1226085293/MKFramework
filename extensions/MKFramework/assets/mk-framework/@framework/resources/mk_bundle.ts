@@ -159,13 +159,7 @@ export class mk_bundle extends mk_instance_base {
 	 */
 	async load(args_: string | mk_bundle_.load_config): Promise<cc.AssetManager.Bundle | null> {
 		/** 加载配置 */
-		const load_config =
-			typeof args_ === "string"
-				? new mk_bundle_.load_config({
-						bundle_s: args_,
-				  })
-				: args_;
-
+		const load_config = typeof args_ === "string" ? new mk_bundle_.load_config({ bundle_s: args_ }) : args_;
 		/** bundle 信息 */
 		const bundle_info = this.bundle_map.get(load_config.bundle_s!) ?? new mk_bundle_.bundle_info(load_config);
 
@@ -345,7 +339,7 @@ export class mk_bundle extends mk_instance_base {
 	 * @param bundle_ bundle 信息
 	 * @returns
 	 */
-	async reload(bundle_: mk_bundle_.bundle_info & Required<Pick<mk_bundle_.bundle_info, "origin_s">>): Promise<cc.AssetManager.Bundle | null> {
+	async reload(bundle_: Required<mk_bundle_.bundle_info>): Promise<cc.AssetManager.Bundle | null> {
 		if (PREVIEW) {
 			this._log.error("不支持预览模式重载 bundle");
 
