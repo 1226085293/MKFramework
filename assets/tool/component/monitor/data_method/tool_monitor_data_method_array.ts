@@ -250,7 +250,6 @@ export namespace 默认 {
 			// 节点
 			else {
 				node = await this._node_pool.get();
-
 				this._init_data.root.addChild(node);
 			}
 
