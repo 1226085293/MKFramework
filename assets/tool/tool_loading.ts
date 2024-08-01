@@ -11,7 +11,7 @@ namespace _tool_loading {
 			Object.assign(this, init_);
 		}
 		module!: mk.view_base;
-		count_n = 1;
+		count_n = 0;
 	}
 }
 
@@ -22,7 +22,7 @@ namespace _tool_loading {
  */
 class tool_loading {
 	/** 模块表 */
-	private _module_map = new Map<mk.ui_manage_.module_key, _tool_loading.module_data>();
+	private _module_map = new Map<mk.ui_manage_.type_open_key, _tool_loading.module_data>();
 	/* ------------------------------- segmentation ------------------------------- */
 	/**
 	 * 打开一个 loading 模块
@@ -46,6 +46,7 @@ class tool_loading {
 			this._module_map.set(args_as_[0], data);
 		}
 
+		++data.count_n;
 		return data.module;
 	}
 
@@ -56,8 +57,8 @@ class tool_loading {
 	 * @returns
 	 */
 	async close(
-		key_: mk.ui_manage_.module_key,
-		config_?: mk.ui_manage_.close_config<mk.ui_manage_.module_key>
+		key_: mk.ui_manage_.type_open_key,
+		config_?: mk.ui_manage_.close_config<mk.ui_manage_.type_open_key>
 	): ReturnType<typeof mk.ui_manage.close> {
 		let data = this._module_map.get(key_);
 
@@ -69,6 +70,7 @@ class tool_loading {
 			return false;
 		}
 
+		this._module_map.delete(key_);
 		return mk.ui_manage.close(data.module, config_);
 	}
 }
