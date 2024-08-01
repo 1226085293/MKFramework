@@ -13,6 +13,7 @@ class mk_audio_wx extends mk_audio_base {
 		super();
 		mk_audio_wx._instance = this;
 	}
+
 	/* --------------- static --------------- */
 	/** @internal */
 	static _instance: mk_audio_wx;

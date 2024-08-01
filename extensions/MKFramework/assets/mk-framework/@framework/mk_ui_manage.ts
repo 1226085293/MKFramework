@@ -379,6 +379,7 @@ export class mk_ui_manage extends mk_instance_base {
 						!task.finish_b)
 				) {
 					this._log.debug("模块重复加载");
+
 					return null;
 				}
 

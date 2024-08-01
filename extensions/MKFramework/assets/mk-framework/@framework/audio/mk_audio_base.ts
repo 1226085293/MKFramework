@@ -1,4 +1,3 @@
-import mk_instance_base from "../mk_instance_base";
 import mk_asset, { mk_asset_ } from "../resources/mk_asset";
 import { EDITOR } from "cc/env";
 import mk_event_target from "../mk_event_target";

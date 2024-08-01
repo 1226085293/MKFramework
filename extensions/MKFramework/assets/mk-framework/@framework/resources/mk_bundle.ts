@@ -163,7 +163,7 @@ export class mk_bundle extends mk_instance_base {
 			typeof args_ === "string"
 				? new mk_bundle_.load_config({
 						bundle_s: args_,
-					})
+				  })
 				: args_;
 
 		/** bundle 信息 */
@@ -563,7 +563,7 @@ export namespace mk_bundle_ {
 				mk_bundle.instance().set({
 					bundle_s: this.name_s,
 					manage: this,
-				} as mk_bundle_.bundle_data);
+				} as any);
 			}, 0);
 
 			if (EDITOR) {

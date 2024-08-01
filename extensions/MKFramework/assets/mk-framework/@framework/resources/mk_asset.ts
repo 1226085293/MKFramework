@@ -223,6 +223,7 @@ export class mk_asset extends mk_instance_base {
 				cc.assetManager.loadRemote(
 					path_s_,
 					{
+						// eslint-disable-next-line @typescript-eslint/naming-convention
 						onFileProgress: get_config.progress_f,
 						...(get_config.remote_option ?? {}),
 					},
