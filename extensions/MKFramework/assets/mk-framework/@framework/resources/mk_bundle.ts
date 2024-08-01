@@ -80,6 +80,7 @@ export class mk_bundle extends mk_instance_base {
 			async (scene: cc.Scene) => {
 				if (!scene.name) {
 					this._log.warn("未选择启动场景");
+					this._init_task.finish(true);
 
 					return;
 				}
