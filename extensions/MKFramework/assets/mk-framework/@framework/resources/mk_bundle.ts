@@ -220,7 +220,7 @@ export class mk_bundle extends mk_instance_base {
 	 * @param config_ 切换配置
 	 * @returns
 	 */
-	async load_scene(scene_s_: string, config_: Partial<mk_bundle_.switch_scene_config>): Promise<boolean> {
+	async load_scene(scene_s_: string, config_: mk_bundle_.switch_scene_config): Promise<boolean> {
 		if (!scene_s_) {
 			this._log.error("场景名错误", scene_s_);
 

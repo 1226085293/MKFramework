@@ -7,6 +7,8 @@ namespace _mk_storage {
 	export const storage_path_s = cc.native?.fileUtils?.getWritablePath ? cc.native.fileUtils.getWritablePath() + "/storage_data" : "";
 }
 
+// ...优化，动态 ID 设置（包含数据迁移），数据存储延迟（防止短时间多次写入）
+
 /**
  * 存储器（类型安全）
  * @noInheritDoc

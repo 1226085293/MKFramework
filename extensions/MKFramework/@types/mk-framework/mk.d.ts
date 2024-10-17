@@ -1167,7 +1167,7 @@ declare namespace mk {
 		 * @param config_ 切换配置
 		 * @returns
 		 */
-		load_scene(scene_s_: string, config_: Partial<bundle_.switch_scene_config>): Promise<boolean>;
+		load_scene(scene_s_: string, config_: bundle_.switch_scene_config): Promise<boolean>;
 		/**
 		 * 重新加载 bundle
 		 * @param bundle_ bundle 信息
