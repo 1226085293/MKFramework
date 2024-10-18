@@ -1,5 +1,4 @@
 import * as cc from "cc";
-import { NATIVE } from "cc/env";
 import mk_codec_base from "./mk_codec_base";
 
 namespace _mk_storage {
@@ -12,41 +11,37 @@ namespace _mk_storage {
 /**
  * 存储器（类型安全）
  * @noInheritDoc
+ * @remarks
+ * 注意：在未设置 name_s(存储器名) 之前，存储数据将不会被存储在硬盘，而是在内存中
  */
 class mk_storage<CT extends Object> {
 	constructor(init_: mk_storage_.init_config<CT>) {
 		this._init_config = init_;
-
-		// 创建存储目录
-		if (NATIVE && !cc.native.fileUtils.isDirectoryExist(this._storage_path_s)) {
-			cc.native.fileUtils.createDirectory(this._storage_path_s);
-		}
 	}
 
 	/* --------------- public --------------- */
+
 	/** 存储数据键 */
 	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
 		get: (target, key) => key,
 	});
-
+	/** 存储器名 */
+	get name_s(): string {
+		return this._init_config.name_s ?? "";
+	}
+	set name_s(value_s_) {
+		this._set_name_s(value_s_);
+	}
 	/* --------------- private --------------- */
 	/** 初始化配置 */
 	private _init_config: mk_storage_.init_config<CT>;
 	/** 缓存数据 */
 	private _cache: CT = Object.create(null);
-	/** 当前存储路径 */
-	private get _storage_path_s(): string {
-		return _mk_storage.storage_path_s + "/" + this._init_config.name_s;
-	}
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 清空所有存储器数据 */
 	static clear(): void {
-		if (NATIVE) {
-			cc.native.fileUtils.removeDirectory(_mk_storage.storage_path_s);
-		} else {
-			cc.sys.localStorage.clear();
-		}
+		cc.sys.localStorage.clear();
 	}
 
 	/**
@@ -60,7 +55,7 @@ class mk_storage<CT extends Object> {
 
 		try {
 			/** 存储数据 */
-			let storage_data_s = JSON.stringify(data_);
+			const storage_data_s = JSON.stringify(data_);
 
 			// 与本地数据一致
 			if (this._cache[key_s] === storage_data_s) {
@@ -69,18 +64,8 @@ class mk_storage<CT extends Object> {
 
 			// 录入缓存
 			this._cache[key_s] = storage_data_s;
-
-			// 编码
-			if (this._init_config.codec) {
-				storage_data_s = this._init_config.codec.encode(storage_data_s);
-			}
-
-			// 写入数据
-			if (NATIVE) {
-				cc.native.fileUtils.writeStringToFile(storage_data_s, this._storage_path_s + "/" + key_s);
-			} else {
-				cc.sys.localStorage.setItem(key_s, storage_data_s);
-			}
+			// 写入本地
+			this._write(key_s, storage_data_s);
 		} catch (error) {
 			return false;
 		}
@@ -93,7 +78,7 @@ class mk_storage<CT extends Object> {
 	 * @param key_ 存储键
 	 * @returns
 	 */
-	get<T extends keyof CT, T2 extends CT[T]>(key_: T): T2 {
+	get<T extends keyof CT, T2 extends CT[T]>(key_: T): T2 | null {
 		const key_s = String(key_);
 
 		// 读取缓存数据
@@ -102,16 +87,7 @@ class mk_storage<CT extends Object> {
 		}
 
 		/** 存储数据 */
-		let storage_s!: string;
-
-		// 读取文件数据
-		{
-			if (NATIVE) {
-				storage_s = cc.native.fileUtils.getStringFromFile(this._storage_path_s + "/" + key_s);
-			} else {
-				storage_s = cc.sys.localStorage.getItem(key_s) ?? "";
-			}
-		}
+		let storage_s = !this._init_config.name_s ? null : cc.sys.localStorage.getItem(`${this._init_config.name_s}-${String(key_s)}`);
 
 		// 不存在则创建新数据
 		if (!storage_s) {
@@ -122,7 +98,7 @@ class mk_storage<CT extends Object> {
 
 		// 解码
 		if (this._init_config.codec) {
-			storage_s = this._init_config.codec.decode(storage_s);
+			storage_s = this._init_config.codec.decode(storage_s) as string;
 		}
 
 		return JSON.parse(storage_s);
@@ -135,34 +111,99 @@ class mk_storage<CT extends Object> {
 	del<T extends keyof CT>(key_: T): void {
 		const key_s = String(key_);
 
-		if (NATIVE) {
-			cc.native.fileUtils.removeFile(this._storage_path_s + "/" + key_s);
-		} else {
-			cc.sys.localStorage.removeItem(key_s);
+		this._cache[key_s] = undefined;
+
+		if (!this._init_config.name_s) {
+			return;
 		}
+
+		cc.sys.localStorage.removeItem(`${this._init_config.name_s}-${String(key_s)}`);
 	}
 
 	/** 清空当前存储器数据 */
 	clear(): void {
-		if (NATIVE) {
-			cc.native.fileUtils.removeDirectory(this._storage_path_s);
-		} else {
-			Object.keys(this._init_config.data).forEach((v_s) => {
-				cc.sys.localStorage.removeItem(v_s);
-			});
+		for (const k_s in this._cache) {
+			this._cache[k_s] = undefined!;
 		}
+
+		if (!this._init_config.name_s) {
+			return;
+		}
+
+		Object.keys(this._init_config.data).forEach((v_s) => {
+			cc.sys.localStorage.removeItem(`${this._init_config.name_s}-${String(v_s)}`);
+		});
+	}
+
+	/**
+	 * 写入数据到磁盘
+	 * @param key_s_ 数据键
+	 * @param data_s_ 写入数据
+	 * @returns
+	 */
+	private _write(key_s_: string, data_s_: string): void {
+		// 无存储器名不存储到本地
+		if (!this._init_config.name_s) {
+			return;
+		}
+
+		// 编码
+		if (this._init_config.codec) {
+			data_s_ = this._init_config.codec.encode(data_s_);
+		}
+
+		// 写入数据
+		cc.sys.localStorage.setItem(`${this._init_config.name_s}-${String(key_s_)}`, data_s_);
+	}
+	/* ------------------------------- get/set ------------------------------- */
+	private _set_name_s(value_s_: string): void {
+		// 迁移缓存到本地
+		if (!this._init_config.name_s) {
+			this._init_config.name_s = value_s_;
+
+			for (const k_s in this._cache) {
+				// 删除
+				if (this._cache[k_s] === undefined) {
+					this.del(k_s);
+				}
+				// 写入
+				else {
+					this._write(k_s, this._cache[k_s] as string);
+				}
+			}
+
+			return;
+		}
+
+		// ...迁移
+
+		this._init_config.name_s = value_s_;
 	}
 }
 
 export namespace mk_storage_ {
 	export interface init_config<CT extends Object> {
 		/** 存储器名 */
-		name_s: string;
+		name_s?: string;
 		/** 存储数据 */
 		data: CT;
 		/** 编解码器 */
 		codec?: mk_codec_base;
 	}
 }
+
+const a = new mk_storage({
+	name_s: "xx2",
+	data: {
+		test: 1,
+	},
+});
+
+console.log(a.get("test"));
+console.log(a.set("test", 2));
+console.log(a.get("test"));
+a.name_s = "xx";
+console.log(a.get("test"));
+console.log(a.set("test", 3));
 
 export default mk_storage;
