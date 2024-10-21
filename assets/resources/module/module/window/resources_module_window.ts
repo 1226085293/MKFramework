@@ -63,9 +63,6 @@ export class resources_module_window extends mk.view_base {
 			name_s: "loading",
 			click_f: () => {
 				tool.loading.open(resources_module_window_loading);
-				this.scheduleOnce(() => {
-					tool.loading.close(resources_module_window_loading);
-				}, 2);
 			},
 		});
 	}
