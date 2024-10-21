@@ -1,12 +1,6 @@
 import * as cc from "cc";
 import mk_codec_base from "./mk_codec_base";
-
-namespace _mk_storage {
-	/** 存储根路径 */
-	export const storage_path_s = cc.native?.fileUtils?.getWritablePath ? cc.native.fileUtils.getWritablePath() + "/storage_data" : "";
-}
-
-// ...优化，动态 ID 设置（包含数据迁移），数据存储延迟（防止短时间多次写入），全部使用 localStorage
+import mk_task_pipeline from "./task/mk_task_pipeline";
 
 /**
  * 存储器（类型安全）
@@ -17,6 +11,10 @@ namespace _mk_storage {
 class mk_storage<CT extends Object> {
 	constructor(init_: mk_storage_.init_config<CT>) {
 		this._init_config = init_;
+
+		if (typeof init_.write_interval_ms_n === "number") {
+			this._write_pipeline.interval_ms_n = init_.write_interval_ms_n;
+		}
 	}
 
 	/* --------------- public --------------- */
@@ -32,12 +30,21 @@ class mk_storage<CT extends Object> {
 	set name_s(value_s_) {
 		this._set_name_s(value_s_);
 	}
+
+	/** 写入间隔（毫秒） */
+	get write_interval_ms_n(): number {
+		return this._write_pipeline.interval_ms_n;
+	}
+	set write_interval_ms_n(value_n_: number) {
+		this._write_pipeline.interval_ms_n = value_n_;
+	}
 	/* --------------- private --------------- */
 	/** 初始化配置 */
 	private _init_config: mk_storage_.init_config<CT>;
 	/** 缓存数据 */
 	private _cache: CT = Object.create(null);
-
+	/** 写入任务 */
+	private _write_pipeline = new mk_task_pipeline();
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 清空所有存储器数据 */
 	static clear(): void {
@@ -90,7 +97,7 @@ class mk_storage<CT extends Object> {
 		let storage_s = !this._init_config.name_s ? null : cc.sys.localStorage.getItem(`${this._init_config.name_s}-${String(key_s)}`);
 
 		// 不存在则创建新数据
-		if (!storage_s) {
+		if (storage_s === null) {
 			this.set(key_, this._init_config.data[key_]);
 
 			return JSON.parse(this._cache[key_s]);
@@ -109,7 +116,7 @@ class mk_storage<CT extends Object> {
 	 * @param key_ 存储键
 	 */
 	del<T extends keyof CT>(key_: T): void {
-		const key_s = String(key_);
+		let key_s = String(key_);
 
 		this._cache[key_s] = undefined;
 
@@ -117,7 +124,12 @@ class mk_storage<CT extends Object> {
 			return;
 		}
 
-		cc.sys.localStorage.removeItem(`${this._init_config.name_s}-${String(key_s)}`);
+		// 更新 key
+		key_s = `${this._init_config.name_s}-${String(key_s)}`;
+		// 删除数据
+		this._write_pipeline.add(() => {
+			cc.sys.localStorage.removeItem(key_s);
+		});
 	}
 
 	/** 清空当前存储器数据 */
@@ -131,7 +143,11 @@ class mk_storage<CT extends Object> {
 		}
 
 		Object.keys(this._init_config.data).forEach((v_s) => {
-			cc.sys.localStorage.removeItem(`${this._init_config.name_s}-${String(v_s)}`);
+			const key_s = `${this._init_config.name_s}-${String(v_s)}`;
+
+			this._write_pipeline.add(() => {
+				cc.sys.localStorage.removeItem(key_s);
+			});
 		});
 	}
 
@@ -152,8 +168,13 @@ class mk_storage<CT extends Object> {
 			data_s_ = this._init_config.codec.encode(data_s_);
 		}
 
+		/** 存储 key */
+		const key_s = `${this._init_config.name_s}-${String(key_s_)}`;
+
 		// 写入数据
-		cc.sys.localStorage.setItem(`${this._init_config.name_s}-${String(key_s_)}`, data_s_);
+		this._write_pipeline.add(() => {
+			cc.sys.localStorage.setItem(key_s, data_s_);
+		});
 	}
 	/* ------------------------------- get/set ------------------------------- */
 	private _set_name_s(value_s_: string): void {
@@ -162,7 +183,7 @@ class mk_storage<CT extends Object> {
 			this._init_config.name_s = value_s_;
 
 			for (const k_s in this._cache) {
-				// 删除
+				// 已被删除
 				if (this._cache[k_s] === undefined) {
 					this.del(k_s);
 				}
@@ -174,10 +195,26 @@ class mk_storage<CT extends Object> {
 
 			return;
 		}
+		// 迁移本地到本地
+		else {
+			Object.keys(this._init_config.data).forEach((v_s) => {
+				const data_s = cc.sys.localStorage.getItem(`${this._init_config.name_s}-${String(v_s)}`);
 
-		// ...迁移
+				if (data_s === null) {
+					return;
+				}
 
-		this._init_config.name_s = value_s_;
+				const new_key_s = `${value_s_}-${String(v_s)}`;
+				const old_key_s = `${this._init_config.name_s}-${String(v_s)}`;
+
+				this._write_pipeline.add(() => {
+					cc.sys.localStorage.setItem(new_key_s, data_s);
+					cc.sys.localStorage.removeItem(old_key_s);
+				});
+			});
+
+			this._init_config.name_s = value_s_;
+		}
 	}
 }
 
@@ -189,21 +226,9 @@ export namespace mk_storage_ {
 		data: CT;
 		/** 编解码器 */
 		codec?: mk_codec_base;
+		/** 写入间隔（毫秒） */
+		write_interval_ms_n?: number;
 	}
 }
-
-const a = new mk_storage({
-	name_s: "xx2",
-	data: {
-		test: 1,
-	},
-});
-
-console.log(a.get("test"));
-console.log(a.set("test", 2));
-console.log(a.get("test"));
-a.name_s = "xx";
-console.log(a.get("test"));
-console.log(a.set("test", 3));
 
 export default mk_storage;
