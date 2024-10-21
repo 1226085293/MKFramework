@@ -22,6 +22,10 @@ https://github.com/1226085293/MKFramework/wiki/%E5%AE%89%E8%A3%85%E6%A1%86%E6%9E
 
 https://github.com/1226085293/MKFramework/wiki
 
+## 🧩 示例集合
+
+https://github.com/1226085293/MKDemo
+
 ## 😀 仓库说明
 
 > 本仓库为 MKFramework 的示例项目，如果对框架模块有疑惑可参考此项目代码使用，如果示例不存在请联系开发人员补充

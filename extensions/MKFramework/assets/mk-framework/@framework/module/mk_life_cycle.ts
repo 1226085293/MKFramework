@@ -1,6 +1,5 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
-import global_config from "../../@config/global_config";
 import mk_dynamic_module from "../mk_dynamic_module";
 import mk_logger from "../mk_logger";
 import mk_monitor from "../mk_monitor";
@@ -99,16 +98,16 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			"late_close",
 		] as (keyof mk_life_cycle)[]);
 
-		// 设置函数超时警告
-		mk_tool.func.timeout_warning<mk_life_cycle>(global_config.view.blocking_warning_time_ms_n, this, [
-			"_open",
-			"_close",
-			"create",
-			"init",
-			"open",
-			"close",
-			"late_close",
-		] as (keyof mk_life_cycle)[]);
+		// // 设置函数超时警告
+		// mk_tool.func.timeout_warning<mk_life_cycle>(global_config.view.blocking_warning_time_ms_n, this, [
+		// 	"_open",
+		// 	"_close",
+		// 	"create",
+		// 	"init",
+		// 	"open",
+		// 	"close",
+		// 	"late_close",
+		// ] as (keyof mk_life_cycle)[]);
 	}
 
 	/* --------------- public --------------- */

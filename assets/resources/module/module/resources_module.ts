@@ -5,8 +5,9 @@ import { resources_module_layer_control } from "./layer_control/resources_module
 import { resources_module_life_cycle } from "./life_cycle/resources_module_life_cycle";
 import { resources_module_show_alone } from "./show_alone/resources_module_show_alone";
 import { resources_module_ui_stack } from "./ui_stack/resources_module_ui_stack";
-import { resources_module_item } from "./item/resources_module_item";
 import { resources_module_mvc_control } from "./mvc/resources_module_mvc";
+import { resources_module_window } from "./window/resources_module_window";
+import { resources_module_item } from "./item/resources_module_item";
 
 const { ccclass, property } = _decorator;
 
@@ -41,6 +42,10 @@ export class resources_module extends mk.view_base {
 					control.update_test("test123");
 				},
 			},
+			{
+				desc_s: "弹窗",
+				view: resources_module_window,
+			},
 		] as typeof resources_module_item.prototype.init_data,
 	};
 
@@ -67,6 +72,7 @@ export class resources_module extends mk.view_base {
 		);
 
 		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", main_bundle);
+		mk.ui_manage.regis(resources_module_window, "db://assets/resources/module/module/window/resources_module_window.prefab", main_bundle);
 	}
 
 	// init(init_?: typeof this.init_data): void {}

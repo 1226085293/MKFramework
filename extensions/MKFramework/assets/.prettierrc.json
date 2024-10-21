@@ -1,0 +1,14 @@
+{
+	"printWidth": 150,
+	"tabWidth": 4,
+	"useTabs": true,
+	"semi": true,
+	"singleQuote": false,
+	"proseWrap": "preserve",
+	"arrowParens": "always",
+	"bracketSpacing": true,
+	"endOfLine": "lf",
+	"htmlWhitespaceSensitivity": "ignore",
+	"trailingComma": "es5",
+	"parser": "typescript"
+}

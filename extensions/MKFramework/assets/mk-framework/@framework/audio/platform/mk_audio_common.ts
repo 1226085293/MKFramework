@@ -21,6 +21,7 @@ class mk_audio_common extends mk_audio_base {
 		mk_audio_common._instance = this;
 		this._constructor();
 	}
+
 	/* --------------- static --------------- */
 	/** @internal */
 	static _instance: mk_audio_common;

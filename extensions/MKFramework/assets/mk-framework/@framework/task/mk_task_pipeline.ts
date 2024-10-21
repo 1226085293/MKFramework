@@ -27,6 +27,8 @@ class mk_task_pipeline {
 	/* --------------- public --------------- */
 	/** 事件 */
 	event = new mk_event_target<_mk_task_pipeline.event_protocol>();
+	/** 执行间隔（毫秒） */
+	interval_ms_n = 0;
 	/** 暂停状态 */
 	get pause_b(): boolean {
 		return this._pause_b;
@@ -80,15 +82,32 @@ class mk_task_pipeline {
 			const task = this._task_as.shift()!;
 			/** 任务返回 */
 			let task_result: any;
+			/** 当前时间 */
+			const current_time_ms_n = Date.now();
+			/** 完成时间 */
+			let finish_time_ms_n = current_time_ms_n;
 
 			// 完成任务
 			try {
-				task_result = await task.task_f();
+				task_result = task.task_f();
+
+				// Promise 类型等待返回，防止异步任务
+				if (task_result instanceof Promise) {
+					task_result = await task_result;
+				}
+
+				finish_time_ms_n = Date.now();
 			} catch (error) {
+				finish_time_ms_n = current_time_ms_n;
 				mk_log.error("任务执行失败，跳过", error, task.task_f);
 			}
 
 			task.task.finish(true, task_result);
+
+			// 等待指定时间
+			if (this.interval_ms_n && finish_time_ms_n - current_time_ms_n < this.interval_ms_n) {
+				await new Promise((resolve_f) => setTimeout(resolve_f, this.interval_ms_n - (finish_time_ms_n - current_time_ms_n)));
+			}
 
 			// 已经暂停
 			if (this._pause_b) {
