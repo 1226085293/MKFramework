@@ -1167,7 +1167,7 @@ declare namespace mk {
 		 * @param config_ 切换配置
 		 * @returns
 		 */
-		load_scene(scene_s_: string, config_: Partial<bundle_.switch_scene_config>): Promise<boolean>;
+		load_scene(scene_s_: string, config_: bundle_.switch_scene_config): Promise<boolean>;
 		/**
 		 * 重新加载 bundle
 		 * @param bundle_ bundle 信息
@@ -2339,11 +2339,13 @@ declare namespace mk {
 	declare namespace mk_storage_ {
 		interface init_config<CT extends Object> {
 			/** 存储器名 */
-			name_s: string;
+			name_s?: string;
 			/** 存储数据 */
 			data: CT;
 			/** 编解码器 */
 			codec?: codec_base;
+			/** 写入间隔（毫秒） */
+			write_interval_ms_n?: number;
 		}
 	}
 
@@ -2355,6 +2357,8 @@ declare namespace mk {
 	declare class mk_task_pipeline {
 		/** 事件 */
 		event: event_target<_mk_task_pipeline.event_protocol>;
+		/** 执行间隔（毫秒） */
+		interval_ms_n: number;
 		/** 暂停状态 */
 		get pause_b(): boolean;
 		set pause_b(value_b_: boolean);
@@ -2855,6 +2859,8 @@ declare namespace mk {
 	/**
 	 * 存储器（类型安全）
 	 * @noInheritDoc
+	 * @remarks
+	 * 注意：在未设置 name_s(存储器名) 之前，存储数据将不会被存储在硬盘，而是在内存中
 	 */
 	export declare class storage<CT extends Object> {
 		constructor(init_: mk_storage_.init_config<CT>);
@@ -2862,12 +2868,18 @@ declare namespace mk {
 		key: {
 			[k in keyof CT]: k;
 		};
+		/** 存储器名 */
+		get name_s(): string;
+		set name_s(value_s_: string);
+		/** 写入间隔（毫秒） */
+		get write_interval_ms_n(): number;
+		set write_interval_ms_n(value_n_: number);
 		/** 初始化配置 */
 		private _init_config;
 		/** 缓存数据 */
 		private _cache;
-		/** 当前存储路径 */
-		private get _storage_path_s();
+		/** 写入任务 */
+		private _write_pipeline;
 		/** 清空所有存储器数据 */
 		static clear(): void;
 		/**
@@ -2882,7 +2894,7 @@ declare namespace mk {
 		 * @param key_ 存储键
 		 * @returns
 		 */
-		get<T extends keyof CT, T2 extends CT[T]>(key_: T): T2;
+		get<T extends keyof CT, T2 extends CT[T]>(key_: T): T2 | null;
 		/**
 		 * 删除数据
 		 * @param key_ 存储键
@@ -2890,6 +2902,14 @@ declare namespace mk {
 		del<T extends keyof CT>(key_: T): void;
 		/** 清空当前存储器数据 */
 		clear(): void;
+		/**
+		 * 写入数据到磁盘
+		 * @param key_s_ 数据键
+		 * @param data_s_ 写入数据
+		 * @returns
+		 */
+		private _write;
+		private _set_name_s;
 	}
 
 	declare namespace task {
