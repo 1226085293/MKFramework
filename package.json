@@ -9,7 +9,7 @@
     "构建框架 d.ts": "npx ts-node ./extensions/MKFramework/source/build_dts.ts build",
     "构建框架文档": "cd ./tool/typedoc && npm install && npx ts-node ./script/build_doc.ts",
     "开启测试服务器": "cd ./tool/test/websocket-server && npm install && npx ts-node ./index.ts",
-    "更新远程分支": "git fetch & git remote prune origin"
+    "更新远程分支": "git fetch --prune & git remote prune origin"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.34.0",
