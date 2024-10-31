@@ -188,7 +188,7 @@ export class mk_monitor extends mk_instance_base {
 			}
 
 			this._on(parent, key_s as any, {
-				path_s: `${path_s ? "/" : ""}${key_s}`,
+				path_s: `${path_s ? path_s + "/" : ""}${key_s}`,
 				on_callback_f: on_callback_f_,
 				off_callback_f: off_callback_f,
 				target: target,
@@ -323,7 +323,7 @@ export class mk_monitor extends mk_instance_base {
 
 			task_as.push(
 				...this._off(parent, key_s, {
-					path_s_: `${path_s ? "/" : ""}${key_s}`,
+					path_s_: `${path_s ? path_s + "/" : ""}${key_s}`,
 					on_callback_f_: on_callback_f,
 					target_: target,
 				})
