@@ -77,6 +77,7 @@ export namespace _mk_life_cycle {
 @ccclass
 export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_release_object {
 	constructor(...args: any[]) {
+		// @ts-ignore
 		super(...args);
 		if (EDITOR) {
 			return;
