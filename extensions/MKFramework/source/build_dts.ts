@@ -22,6 +22,9 @@ export default async function run(): Promise<void> {
 	await new Promise<void>((resolve_f, reject_f) => {
 		child_process.exec(
 			`npx tsc -p ${path.join(plugin_path_s, "assets/tsconfig.json")}`,
+			{
+				cwd: plugin_path_s,
+			},
 			(error: child_process.ExecException | null, stdout: string, stderr: string) => {
 				if (error) {
 					console.error(stdout);
@@ -100,5 +103,6 @@ if (argv.slice(2)[0] === "build") {
 			path: cwd(),
 		},
 	};
+
 	run();
 }
