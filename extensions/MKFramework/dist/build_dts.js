@@ -22,7 +22,9 @@ async function run() {
     fs_extra_1.default.removeSync(dts_path_s);
     // 编译 ts
     await new Promise((resolve_f, reject_f) => {
-        child_process_1.default.exec(`npx tsc -p ${path_1.default.join(plugin_path_s, "assets/tsconfig.json")}`, (error, stdout, stderr) => {
+        child_process_1.default.exec(`npx tsc -p ${path_1.default.join(plugin_path_s, "assets/tsconfig.json")}`, {
+            cwd: plugin_path_s,
+        }, (error, stdout, stderr) => {
             if (error) {
                 console.error(stdout);
                 reject_f(stdout);
