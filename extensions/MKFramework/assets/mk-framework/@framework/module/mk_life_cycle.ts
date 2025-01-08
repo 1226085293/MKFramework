@@ -9,6 +9,7 @@ import mk_tool from "../@private/tool/mk_tool";
 import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
 import mk_release, { mk_release_ } from "../mk_release";
 import { mk_asset_ } from "../resources/mk_asset";
+import global_config from "../../@config/global_config";
 const ui_manage = mk_dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
@@ -99,16 +100,16 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			"late_close",
 		] as (keyof mk_life_cycle)[]);
 
-		// // 设置函数超时警告
-		// mk_tool.func.timeout_warning<mk_life_cycle>(global_config.view.blocking_warning_time_ms_n, this, [
-		// 	"_open",
-		// 	"_close",
-		// 	"create",
-		// 	"init",
-		// 	"open",
-		// 	"close",
-		// 	"late_close",
-		// ] as (keyof mk_life_cycle)[]);
+		// 设置函数超时警告
+		mk_tool.func.timeout_warning<mk_life_cycle>(global_config.view.blocking_warning_time_ms_n, this, [
+			"_open",
+			"_close",
+			"create",
+			"init",
+			"open",
+			"close",
+			"late_close",
+		] as (keyof mk_life_cycle)[]);
 	}
 
 	/* --------------- public --------------- */
