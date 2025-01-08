@@ -1,0 +1,32 @@
+{
+	"package_version": 2,
+	"version": "1.0.0",
+	"name": "quick-plugin-template",
+	"description": "i18n:quick-plugin-template.description",
+	"main": "./dist/main.js",
+	"author": "Cocos Creator",
+	"editor": ">=3.6.3",
+	"scripts": {
+		"build": "tsc -b",
+		"watch": "tsc -w"
+	},
+	"contributions": {
+		"scene": {
+			"script": "./dist/scene.js"
+		},
+		"assets": {
+			"menu": {
+				"methods": "./dist/assets_menu.js"
+			}
+		},
+		"messages": {},
+		"menu": [],
+		"inspector": {
+			"section": {
+				"node": {},
+				"asset": {}
+			}
+		}
+	},
+	"panels": {}
+}
