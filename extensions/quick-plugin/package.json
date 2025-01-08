@@ -1,0 +1,46 @@
+{
+	"package_version": 2,
+	"version": "1.0.0",
+	"name": "quick-plugin",
+	"description": "i18n:quick-plugin.description",
+	"main": "./dist/main.js",
+	"author": "Cocos Creator",
+	"editor": ">=3.6.1",
+	"scripts": {
+		"build": "tsc -b",
+		"watch": "tsc -w"
+	},
+	"contributions": {
+		"assets": {
+			"menu": {
+				"methods": "./dist/assets_menu.js"
+			}
+		},
+		"messages": {
+			"install_extension": {
+				"methods": [
+					"install_extension"
+				]
+			},
+			"log": {
+				"methods": [
+					"log"
+				]
+			}
+		},
+		"menu": [],
+		"asset-db": {
+			"mount": {
+				"path": "./plugin"
+			}
+		}
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^16.0.1"
+	},
+	"dependencies": {
+		"fs-extra": "^11.2.0",
+		"typescript": "^5.5.3"
+	}
+}

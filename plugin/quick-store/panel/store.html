@@ -1,0 +1,155 @@
+<div id="root" class="flex flex-col w-full h-full text-white font-sans text-xl">
+	<!-- <div @click="test">QuickPlugin {{ counter }}</div> -->
+	<!-- 导航栏 -->
+	<div class="w-full h-7 flex flex-row gap-1 m-1">
+		<!-- 类型选择 -->
+		<ui-select
+			:value="this.content_type"
+			@change="this.click_switch_type($event.target.value)"
+			class="w-16 text-xs mr-0"
+		>
+			<option value="0">插件</option>
+			<option value="1">源码</option>
+		</ui-select>
+		<!-- 搜索栏 -->
+		<ui-input
+			v-model="this.search_s"
+			class="flex-1 mr-2 bg-zinc-700 text-sm flex-row items-center justify-center"
+			@keyup.enter="this.on_search()"
+		>
+			<ui-icon slot="prefix" value="search"></ui-icon>
+			<button
+				class="w-6"
+				slot="suffix"
+				v-show="this.search_s"
+				@click="this.search_s = ''"
+			>
+				<ui-icon class="scale-75" value="error"></ui-icon>
+			</button>
+		</ui-input>
+	</div>
+	<div id="test" class="w-full h-8 flex flex-row p-1 pb-2 text-sm">
+		<button
+			class="flex-1"
+			@click="this.click_switch_sort(0)"
+			v-bind:tag-selected="this.sort_type === 0"
+		>
+			最受欢迎
+		</button>
+		<button
+			class="flex-1"
+			@click="this.click_switch_sort(1)"
+			v-bind:tag-selected="this.sort_type === 1"
+		>
+			新品榜单
+		</button>
+	</div>
+	<!-- 列表内容 -->
+	<div
+		class="pl-1 pr-1 flex flex-col w-full flex-1 gap-2 overflow-auto"
+		ref="list"
+		@scroll="on_list_scroll"
+	>
+		<!-- Item -->
+		<div
+			v-for="(value, key) in this.list_as"
+			class="rounded bg-zinc-700 w-full h-16 flex flex-row"
+			:class="{'h-auto': value.expanded_b, 'h-11': !value.expanded_b}"
+			@click="value.expanded_b = !value.expanded_b"
+		>
+			<!-- 插件信息 -->
+			<div class="h-full flex-1 flex flex-col p-1 overflow-hidden">
+				<button
+					class="w-max text-base hover:text-blue-500 hover:underline"
+					@click="this.click_item_name(key)"
+				>
+					{{ value.name_s }}
+				</button>
+				<div class="text-xs text-gray-200 flex-1 w-full">
+					{{ value.description_s }}
+				</div>
+			</div>
+			<!-- 插件操作 -->
+			<div class="w-18 h-full mt-1 mr-1 flex flex-col gap-1">
+				<!-- 喜欢次数 -->
+				<div class="min-w-16 w-18 pl-1 pr-1 flex flex-row text-sm items-center">
+					<div class="size-6 flex justify-center items-center">
+						<svg
+							t="1722672236946"
+							class="icon scale-75"
+							viewBox="0 0 1024 1024"
+							version="1.1"
+							xmlns="http://www.w3.org/2000/svg"
+							p-id="2566"
+							width="32"
+							height="32"
+						>
+							<path
+								d="M672 192a222.72 222.72 0 0 0-160 67.68A222.592 222.592 0 0 0 352 192c-123.52 0-224 101.184-224 225.6 0 52.256 18.144 103.2 52.928 145.536l285.952 293.984a62.528 62.528 0 0 0 90.208 0l287.808-296.032A227.136 227.136 0 0 0 896 417.6C896 293.184 795.52 192 672 192"
+								fill="#e8523e"
+								p-id="2567"
+							></path>
+						</svg>
+					</div>
+					<div>{{ value.like_n }}</div>
+				</div>
+				<!-- 下载 -->
+				<button
+					v-show="!value.download_b"
+					class="min-w-16 w-18 pl-1 pr-1 hover:bg-zinc-700 active:bg-zinc-500 rounded flex flex-row text-sm items-center"
+					@click="click_download(key)"
+				>
+					<div class="size-6 flex justify-center items-center">
+						<svg
+							t="1722672739563"
+							class="icon scale-50"
+							viewBox="0 0 1024 1024"
+							version="1.1"
+							xmlns="http://www.w3.org/2000/svg"
+							p-id="4354"
+							width="32"
+							height="32"
+						>
+							<path
+								d="M432 0h160c26.6 0 48 21.4 48 48v336h175.4c35.6 0 53.4 43 28.2 68.2L539.4 756.6c-15 15-39.6 15-54.6 0L180.2 452.2c-25.2-25.2-7.4-68.2 28.2-68.2H384V48c0-26.6 21.4-48 48-48z m592 752v224c0 26.6-21.4 48-48 48H48c-26.6 0-48-21.4-48-48V752c0-26.6 21.4-48 48-48h293.4l98 98c40.2 40.2 105 40.2 145.2 0l98-98H976c26.6 0 48 21.4 48 48z m-248 176c0-22-18-40-40-40s-40 18-40 40 18 40 40 40 40-18 40-40z m128 0c0-22-18-40-40-40s-40 18-40 40 18 40 40 40 40-18 40-40z"
+								p-id="4355"
+								fill="#0cf5d3"
+							></path>
+						</svg>
+					</div>
+					<div>下载</div>
+				</button>
+				<!-- 下载中 -->
+				<div
+					v-show="value.download_b"
+					class="min-w-16 w-18 pl-1 pr-1 flex flex-row text-sm items-center"
+				>
+					<div class="size-6 flex justify-center items-center">
+						<ui-loading class="scale-75"></ui-loading>
+					</div>
+					<div>下载中</div>
+				</div>
+			</div>
+		</div>
+		<!-- 加载中 -->
+		<div
+			class="flex mb-2 w-full h-4 text-sm justify-center"
+			v-show="this.loading_b"
+		>
+			<ui-loading></ui-loading>
+		</div>
+		<!-- 没有更多了 -->
+		<div
+			class="flex mb-2 w-full h-4 text-sm justify-center"
+			v-show="this.not_more_b"
+		>
+			没有更多了~
+		</div>
+	</div>
+</div>
+
+<style>
+	#root {
+		background: rgb(43, 43, 43);
+	}
+</style>

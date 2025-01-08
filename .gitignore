@@ -24,6 +24,7 @@ node_modules/
 .idea/
 extensions/*
 !extensions/MKFramework
+!extensions/quick-plugin
 tool/api-extractor/dist
 tool/api-extractor/docs
 tool/api-extractor/etc

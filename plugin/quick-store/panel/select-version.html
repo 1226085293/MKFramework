@@ -1,0 +1,16 @@
+<div class="flex flex-col justify-center items-center w-full h-full text-white">
+	<div class="mt-2 mb-2">请选择下载的 {{ this.extension_name_s }} 的版本</div>
+	<ui-select
+		class="w-48 h-6 mt-2 mb-2"
+		@change="this.on_select_version($event.target.value)"
+		placeholder="选择你的版本"
+		invalid
+	>
+		<option v-for="(value, key) in this.version_ss" :value="key">
+			{{ value }}
+		</option>
+	</ui-select>
+	<button @click="this.click_download()" class="mt-4 mb-4 common-button">
+		确认下载
+	</button>
+</div>
