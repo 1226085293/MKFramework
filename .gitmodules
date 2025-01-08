@@ -1,3 +1,0 @@
-[submodule "extensions_dev/@libs"]
-	path = extensions_dev/@libs
-	url = https://github.com/1226085293/nodejs-lib.git
