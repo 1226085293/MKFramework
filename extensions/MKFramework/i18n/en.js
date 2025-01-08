@@ -27,5 +27,5 @@ module.exports = {
 	任务结束: "Mission ended",
 	安装成功: "Installation is successful, please restart the editor before using",
 	安装失败: "Installation failed, please help: extensions/mk-framework/help",
-	未初始化: "Not initialized, please execute npm i in the plugin root directory {plugin_path_s}"
+	未初始化: "Not initialized, please execute npm i in the plugin root directory {plugin_path_s}",
 };
