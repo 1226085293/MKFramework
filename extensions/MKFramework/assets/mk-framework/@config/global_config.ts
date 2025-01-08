@@ -75,8 +75,8 @@ namespace global_config {
 		export const adaptation_type: adaptation_mode = adaptation_mode.adaptive;
 		/** 初始设计尺寸 */
 		export const original_design_size: Omit<Readonly<cc.Size>, "set"> = cc.size();
-		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错） */
-		export const blocking_warning_time_ms_n = DEBUG ? 5000 : 0;
+		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错，0 为关闭） */
+		export const blocking_warning_time_ms_n = 0;
 		/** 默认遮罩 */
 		export const mask_data_tab = {
 			node_name_s: "遮罩",
