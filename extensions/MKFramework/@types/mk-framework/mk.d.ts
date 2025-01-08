@@ -1,4 +1,5 @@
 //@ts-nocheck
+// 框架源码位于 项目根目录\extensions\MKFramework\assets\mk-framework 下，你也可以在资源管理器下方的 mk-framework 查看
 import global_config from "../../assets/mk-framework/@config/global_config";
 import * as cc_2 from "cc";
 
