@@ -131,35 +131,16 @@ class mk_audio_common extends mk_audio_base {
 			this._audio_unit_map.set(audio_.audio_source.uuid, audio_);
 		}
 
-		// 播放音频
-		if (audio_.use_play_b) {
-			// play 接口计数，若超出 maxAudioChannel 继续播放则会停止之前播放的音频，故退出
-			if (last_state === mk_audio_base_.state.stop && this._curr_play_n > cc.AudioSource.maxAudioChannel) {
-				this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
-				this.stop(audio_);
+		// 若超出 maxAudioChannel 继续播放则会停止之前播放的音频，故退出
+		if (last_state === mk_audio_base_.state.stop && this._curr_play_n > cc.AudioSource.maxAudioChannel) {
+			this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
+			this.stop(audio_);
 
-				return;
-			}
-
-			audio_.audio_source!.play();
-		} else {
-			audio_.audio_source!.playOneShot(audio_.clip!);
-			// 播放开始
-			this._node_audio_started(audio_);
-
-			const timer = setTimeout(() => {
-				// 删除倒计时
-				this._timer_set.delete(timer);
-				// 播放结束
-				this._node_audio_ended(audio_);
-				// loop
-				if (audio_.loop_b && audio_.state === mk_audio_base_.state.play) {
-					this.play(audio_);
-				}
-			}, audio_.total_time_s_n * 1000);
-
-			this._timer_set.add(timer);
+			return;
 		}
+
+		// 播放音频
+		audio_.audio_source!.play();
 
 		if (last_state === mk_audio_base_.state.stop) {
 			this._log.debug("当前播放数量", this._curr_play_n, "播放", audio_.clip!.name);
@@ -366,7 +347,6 @@ export namespace mk_audio_common_ {
 
 			new_audio.clip = this.clip;
 			new_audio.type = this.type;
-			new_audio.use_play_b = this.use_play_b;
 			new_audio._volume_n = this._volume_n;
 			new_audio._loop_b = this._loop_b;
 			new_audio._init_b = this._init_b;

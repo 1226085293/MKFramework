@@ -82,31 +82,17 @@ declare namespace mk {
 			/**
 			 * 音频组件
 			 * @remarks
-			 * common 使用
+			 * 通用音频系统使用
 			 */
 			readonly audio_source: cc_2.AudioSource | null;
 			/** 音频资源 */
 			clip: cc_2.AudioClip | null;
-			/**
-			 * 音量
-			 * @remarks
-			 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
-			 */
+			/** 音量 */
 			volume_n: number;
 			/** 循环 */
 			loop_b: boolean;
 			/** 当前时间（秒） */
 			curr_time_s_n: number;
-			/**
-			 * 使用 play 接口，默认使用 playOneShot
-			 * @remarks
-			 * common 使用
-			 *
-			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
-			 *
-			 * - playOneShot 接口不能暂停
-			 */
-			use_play_b?: boolean;
 			/** 等待播放开关 */
 			wait_play_b?: boolean;
 			/** 克隆 */
@@ -134,16 +120,6 @@ declare namespace mk {
 			volume_n: number;
 			/** 循环 */
 			loop_b: boolean;
-			/**
-			 * 使用 play 接口，默认使用 playOneShot
-			 * @remarks
-			 * common 使用
-			 *
-			 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
-			 *
-			 * - playOneShot 接口不能暂停
-			 */
-			use_play_b: boolean;
 		}
 		/** 事件协议 */
 		export interface event_protocol {
@@ -1096,6 +1072,8 @@ declare namespace mk {
 		 * @param audio_ 音频单元
 		 * @param config_ 播放配置
 		 * @returns
+		 * @remarks
+		 * 使用通用音频系统时，当播放数量超过 cc.AudioSource.maxAudioChannel 时会导致播放失败
 		 */
 		play(audio_: audio_.unit, config_?: Partial<audio_.play_config>): boolean;
 		/** 暂停所有音频 */
@@ -2771,6 +2749,11 @@ declare namespace mk {
 		private _update_mask;
 		/** 更新调试绘制 */
 		private _update_graphics;
+		/**
+		 * @en Test whether the point is in the polygon
+		 * @zh 测试一个点是否在一个多边形中
+		 */
+		private _point_in_polygon;
 		private _set_debug_b;
 		private _set_offset_v3;
 		private _set_track_node;
