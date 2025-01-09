@@ -126,6 +126,8 @@ abstract class mk_audio_base {
 	 * @param audio_ 音频单元
 	 * @param config_ 播放配置
 	 * @returns
+	 * @remarks
+	 * 使用通用音频系统时，当播放数量超过 cc.AudioSource.maxAudioChannel 时会导致播放失败
 	 */
 	play(audio_: mk_audio_base_.unit, config_?: Partial<mk_audio_base_.play_config>): boolean {
 		const audio = audio_ as mk_audio_base_._unit;
@@ -268,31 +270,17 @@ export namespace mk_audio_base_ {
 		/**
 		 * 音频组件
 		 * @remarks
-		 * common 使用
+		 * 通用音频系统使用
 		 */
 		readonly audio_source: cc.AudioSource | null;
 		/** 音频资源 */
 		clip: cc.AudioClip | null;
-		/**
-		 * 音量
-		 * @remarks
-		 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
-		 */
+		/** 音量 */
 		volume_n: number;
 		/** 循环 */
 		loop_b: boolean;
 		/** 当前时间（秒） */
 		curr_time_s_n: number;
-		/**
-		 * 使用 play 接口，默认使用 playOneShot
-		 * @remarks
-		 * common 使用
-		 *
-		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
-		 *
-		 * - playOneShot 接口不能暂停
-		 */
-		use_play_b?: boolean;
 		/** 等待播放开关 */
 		wait_play_b?: boolean;
 		/* ------------------------------- 功能 ------------------------------- */
@@ -323,16 +311,6 @@ export namespace mk_audio_base_ {
 		volume_n: number;
 		/** 循环 */
 		loop_b: boolean;
-		/**
-		 * 使用 play 接口，默认使用 playOneShot
-		 * @remarks
-		 * common 使用
-		 *
-		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
-		 *
-		 * - playOneShot 接口不能暂停
-		 */
-		use_play_b: boolean;
 	}
 
 	/** 事件协议 */
@@ -394,16 +372,6 @@ export namespace mk_audio_base_ {
 		wait_play_n = -1;
 		/** 真实音量 */
 		real_volume_n = 0;
-		/**
-		 * 使用 play 接口，默认使用 playOneShot
-		 * @remarks
-		 * common 使用
-		 *
-		 * - play 接口存在最大并发数限制 cc.AudioSource.maxAudioChannel
-		 *
-		 * - playOneShot 接口不能暂停
-		 */
-		use_play_b?: boolean;
 
 		/** 初始化状态 */
 		get init_b(): boolean {
@@ -414,12 +382,7 @@ export namespace mk_audio_base_ {
 			this._init_b = value_b_;
 		}
 
-		/**
-		 * 音量
-		 * @remarks
-		 *
-		 * - common：use_play_b 为 false 的情况下修改只能在下次 play 时生效
-		 */
+		/** 音量 */
 		get volume_n(): number {
 			return 0;
 		}
@@ -468,7 +431,7 @@ export namespace mk_audio_base_ {
 		/**
 		 * 音频组件
 		 * @remarks
-		 * common 使用
+		 * 通用音频系统使用
 		 */
 		get audio_source(): cc.AudioSource | null {
 			return null;

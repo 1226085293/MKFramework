@@ -106,6 +106,7 @@ export class mk_polygon_mask extends cc.Component {
 	/** 临时变量 */
 	private _temp_tab = {
 		v2: cc.v2(),
+		v3: cc.v3(),
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */
@@ -180,6 +181,11 @@ export class mk_polygon_mask extends cc.Component {
 			return;
 		}
 
+		// 跟踪节点失效
+		if (this._track_node && !this._track_node.isValid) {
+			this._track_node = null!;
+		}
+
 		// 屏蔽触摸
 		if (this.shield_touch_b) {
 			for (const v of this._input_event_as) {
@@ -200,6 +206,11 @@ export class mk_polygon_mask extends cc.Component {
 	}
 
 	protected update(dt_n_: number): void {
+		// 跟踪节点失效
+		if (this._track_node && !this._track_node.isValid) {
+			this._track_node = null!;
+		}
+
 		// 原生上的 worldPosition 数据已经转到 C++ 内，所以不能监听数据
 		if (!this._track_node?.worldPosition.equals(this._track_node_world_pos_v3)) {
 			this._track_node.getWorldPosition(this._track_node_world_pos_v3);
@@ -307,13 +318,43 @@ export class mk_polygon_mask extends cc.Component {
 			return;
 		}
 
+		const ui_transform = this._graphics.getComponent(cc.UITransform);
+
 		this._graphics.clear();
 		this._current_polygon_local_point_v2s.forEach((v_v2) => {
-			this._graphics!.circle(v_v2.x, v_v2.y, 5);
+			ui_transform!.convertToNodeSpaceAR(this._temp_tab.v3.set(v_v2.x, v_v2.y), this._temp_tab.v3);
+
+			this._graphics!.circle(this._temp_tab.v3.x, this._temp_tab.v3.y, 5);
 			this._graphics!.stroke();
 		});
 	}
 
+	/**
+	 * @en Test whether the point is in the polygon
+	 * @zh 测试一个点是否在一个多边形中
+	 */
+	private _point_in_polygon(point_v2s_: Readonly<cc.Vec2>, polygon_v2s_: readonly cc.Vec2[]): boolean {
+		let inside = false;
+		const x = point_v2s_.x;
+		const y = point_v2s_.y;
+		// use some raycasting to test hits
+		// https://github.com/substack/point-in-polygon/blob/master/index.js
+		const length = polygon_v2s_.length;
+
+		for (let k_n = 0, k2_n = length - 1; k_n < length; k2_n = k_n++) {
+			const x_n = polygon_v2s_[k_n].x;
+			const y_n = polygon_v2s_[k_n].y;
+			const x2_n = polygon_v2s_[k2_n].x;
+			const y2_n = polygon_v2s_[k2_n].y;
+			const intersect_b = y_n > y !== y2_n > y && x < ((x2_n - x_n) * (y - y_n)) / (y2_n - y_n) + x_n;
+
+			if (intersect_b) {
+				inside = !inside;
+			}
+		}
+
+		return inside;
+	}
 	/* ------------------------------- get/set ------------------------------- */
 	private _set_debug_b(value_b_: boolean): void {
 		this._debug_b = value_b_;
@@ -342,11 +383,10 @@ export class mk_polygon_mask extends cc.Component {
 		this._track_node?.getWorldPosition(this._track_node_world_pos_v3);
 		this.update_mask();
 	}
-
 	/* ------------------------------- 节点事件 ------------------------------- */
 	private _event_node_input(event_: cc.EventTouch | cc.EventMouse): void {
 		/** 碰撞状态 */
-		let collision_b = cc.Intersection2D.pointInPolygon(event_.getUILocation(this._temp_tab.v2), this._current_polygon_world_point_v2s);
+		let collision_b = this._point_in_polygon(event_.getUILocation(this._temp_tab.v2), this._current_polygon_world_point_v2s);
 
 		// 更新碰撞状态
 		collision_b = !this.mask || this.mask.inverted ? collision_b : !collision_b;
