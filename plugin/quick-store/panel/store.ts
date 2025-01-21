@@ -275,7 +275,7 @@ export let methods = {
 		/** 文件名 */
 		let file_name_s =
 			content_s.match(
-				new RegExp(`(?<=(${download_url_s}\\">))([^]+?)(?=\.zip)`, "g")
+				new RegExp(`(?<=(${download_url_s}\\">))([^]+?)(?=\\.zip)`, "g")
 			)?.[0] ?? "";
 
 		if (file_name_s === "") {
