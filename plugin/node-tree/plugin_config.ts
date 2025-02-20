@@ -1,0 +1,10 @@
+import path from "path";
+
+class plugin_config {
+	/** 插件名 */
+	static readonly plugin_name_s = path.basename(path.dirname(__dirname));
+	/** 代码风格 */
+	static readonly code_style_s: "驼峰" | "蛇形" = "蛇形";
+}
+
+export default plugin_config;

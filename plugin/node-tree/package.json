@@ -1,0 +1,20 @@
+{
+	"version": "1.0.0",
+	"scripts": {
+		"watch": "tsc --watch"
+	},
+	"author": "muzzik",
+	"license": "ISC",
+	"title": "节点树扩展",
+	"description": "节点树展示用户脚本 class 名",
+	"devDependencies": {
+		"@types/node": "^20.14.12",
+		"tailwindcss": "^3.4.6"
+	},
+	"dependencies": {
+		"chokidar": "^3.6.0",
+		"pinyin-pro": "^3.23.1",
+		"varname": "^6.2.1",
+		"vue": "^3.4.33"
+	}
+}
