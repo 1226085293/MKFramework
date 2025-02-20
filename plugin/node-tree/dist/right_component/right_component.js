@@ -38,11 +38,10 @@ class right_component {
     /** 菜单触发器（渲染进程） */
     menu = [
         {
-            trigger_ss: ["node/关闭脚本名展示"],
+            trigger_ss: ["node/关闭脚本展示"],
             priority_n: 999,
             run_f: (node) => {
-                return (node.depth === 0 &&
-                    lib_node_tree_1.default.has(lib_node_tree_1.lib_node_tree_.extension_type.tail_right, "class-name"));
+                return node.depth === 0 && lib_node_tree_1.default.has(lib_node_tree_1.lib_node_tree_.extension_type.tail_right, "class-name");
             },
             callback_f: () => {
                 lib_node_tree_1.default.style_tab["class-name-style"] = "";
@@ -50,11 +49,10 @@ class right_component {
             },
         },
         {
-            trigger_ss: ["node/开启脚本名展示"],
+            trigger_ss: ["node/开启脚本展示"],
             priority_n: 999,
             run_f: (node) => {
-                return (node.depth === 0 &&
-                    !lib_node_tree_1.default.has(lib_node_tree_1.lib_node_tree_.extension_type.tail_right, "class-name"));
+                return node.depth === 0 && !lib_node_tree_1.default.has(lib_node_tree_1.lib_node_tree_.extension_type.tail_right, "class-name");
             },
             callback_f: () => {
                 lib_node_tree_1.default.add(lib_node_tree_1.lib_node_tree_.extension_type.tail_right, "class-name", (data) => {
