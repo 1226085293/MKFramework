@@ -16,6 +16,9 @@
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
 		"paths": {
+			"db://assets/*": [
+			  "./assets/*"
+			],
 			"mk": ["./extensions/MKFramework/@types/mk-framework/mk.d.ts"],
 			"global_config": [
 			  "./extensions/MKFramework/assets/mk-framework/@config/global_config.ts"

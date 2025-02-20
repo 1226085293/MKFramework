@@ -67,13 +67,19 @@ class plugin_data {
         {
             // 编译插件
             try {
+                const ts_config_path_s = path_1.default.join(this.user_plugin_path_s, "tsconfig.json");
+                const ts_config_json = fs_extra_1.default.readJSONSync(ts_config_path_s);
                 const package_json = fs_extra_1.default.readJSONSync(path_1.default.join(this.user_plugin_path_s, "package.json"));
+                const dist_path_s = ts_config_json.compilerOptions.outDir[0] === "."
+                    ? path_1.default.join(this.user_plugin_path_s, ts_config_json.compilerOptions.outDir)
+                    : ts_config_json.compilerOptions.outDir;
                 // 检查是否安装了依赖
-                if (Object.keys(package_json.dependencies).length > 0 && !fs_extra_1.default.existsSync(path_1.default.join(this.user_plugin_path_s, "node_modules"))) {
+                if (Object.keys(package_json.dependencies).length > 0 &&
+                    !fs_extra_1.default.existsSync(path_1.default.join(this.user_plugin_path_s, "node_modules"))) {
                     plugin_tool_1.default.error(`插件依赖未安装，请在 ${this.user_plugin_path_s} 目录下执行 npm i`);
                     return false;
                 }
-                fs_extra_1.default.removeSync(path_1.default.join(this.user_plugin_path_s, "dist"));
+                fs_extra_1.default.removeSync(dist_path_s);
                 // 自定义构建
                 if ((_a = package_json.scripts) === null || _a === void 0 ? void 0 : _a.build) {
                     child_process_1.default.execSync(`npm run build`, {
@@ -82,11 +88,9 @@ class plugin_data {
                 }
                 // tsc 构建
                 else {
-                    const ts_config_path_s = path_1.default.join(this.user_plugin_path_s, "tsconfig.json");
-                    const dist_dir_s = path_1.default.join(this.user_plugin_path_s, "dist"); // 输出目录
                     // 确保 dist 目录存在
-                    if (!fs_extra_1.default.existsSync(dist_dir_s)) {
-                        fs_extra_1.default.mkdirSync(dist_dir_s, { recursive: true });
+                    if (!fs_extra_1.default.existsSync(dist_path_s)) {
+                        fs_extra_1.default.mkdirSync(dist_path_s, { recursive: true });
                     }
                     // 读取 tsconfig.json
                     const config_file = typescript_1.default.readConfigFile(ts_config_path_s, typescript_1.default.sys.readFile);
@@ -101,12 +105,16 @@ class plugin_data {
                     // 发出编译命令
                     const emit_result = program.emit();
                     // 检查是否有编译错误
-                    const all_diagnostics_as = typescript_1.default.getPreEmitDiagnostics(program).concat(emit_result.diagnostics);
+                    const all_diagnostics_as = typescript_1.default
+                        .getPreEmitDiagnostics(program)
+                        .concat(emit_result.diagnostics);
                     if (all_diagnostics_as.length > 0) {
                         all_diagnostics_as.forEach((diag) => {
                             const message_s = typescript_1.default.flattenDiagnosticMessageText(diag.messageText, "\n");
                             const file = diag.file;
-                            const location_s = file ? `${file.fileName} (${diag.start})` : "Unknown file";
+                            const location_s = file
+                                ? `${file.fileName} (${diag.start})`
+                                : "Unknown file";
                             plugin_tool_1.default.error(`${location_s}: ${message_s}`);
                         });
                         plugin_tool_1.default.error("构建失败");
@@ -117,6 +125,39 @@ class plugin_data {
             catch (e) {
                 plugin_tool_1.default.error("编译插件错误", e);
                 return false;
+            }
+            // 删除 import cc
+            {
+                // 构建目标目录路径
+                const target_dir_path_s = path_1.default.join(this.user_plugin_path_s, "dist");
+                // 异步递归处理目录中的文件
+                async function process_directory(dir_path_s) {
+                    const file_as = await fs_extra_1.default.promises.readdir(dir_path_s, {
+                        withFileTypes: true,
+                    });
+                    for (const file of file_as) {
+                        const file_path_s = path_1.default.join(dir_path_s, file.name);
+                        if (file.isDirectory()) {
+                            // 如果是目录，递归处理
+                            await process_directory(file_path_s);
+                        }
+                        else if (file.isFile() && file.name.endsWith(".js")) {
+                            // 如果是 .js 文件，处理文件内容
+                            await process_js_file(file_path_s);
+                        }
+                    }
+                }
+                // 处理单个 JS 文件
+                async function process_js_file(file_path_s) {
+                    const file_content_s = await fs_extra_1.default.promises.readFile(file_path_s, "utf-8");
+                    const updated_content_s = file_content_s.replace(/const cc = __importStar\(require\("cc"\)\);/g, "");
+                    if (updated_content_s !== file_content_s) {
+                        // 只有在内容发生变化时才写入文件
+                        await fs_extra_1.default.promises.writeFile(file_path_s, updated_content_s, "utf-8");
+                    }
+                }
+                // 开始处理目标目录
+                await process_directory(target_dir_path_s);
             }
             // 清理模块缓存
             const find_path_s = this.user_plugin_path_s.replaceAll(path_1.default.sep, "\\");
@@ -191,7 +232,9 @@ class plugin_data {
         }
         // 获取脚本内容
         {
-            const super_menu_path_s = path_1.default.join(__dirname, "super_menu.js").replaceAll(path_1.default.sep, "\\\\");
+            const super_menu_path_s = path_1.default
+                .join(__dirname, "super_menu.js")
+                .replaceAll(path_1.default.sep, "\\\\");
             this._code_tab["/** {场景脚本加载} */"] =
                 this._code_tab["/** {场景脚本卸载} */"] =
                     this._code_tab["/** {主进程加载} */"] =
@@ -199,9 +242,9 @@ class plugin_data {
                             this._code_tab["/** {菜单} */"] =
                                 this._get_module_script("plugin");
             this._code_tab["/** {菜单} */"] += `
-				delete require.cache["${super_menu_path_s}"];
-				let super_menu = require("${super_menu_path_s}").default;
-				super_menu.event.targetOff("${this.name_s}");`;
+delete require.cache["${super_menu_path_s}"];
+let super_menu = require("${super_menu_path_s}").default;
+super_menu.event.targetOff("${this.name_s}");`;
             this._code_tab["/** {主进程卸载} */"] += `delete require.cache["${path_1.default
                 .join(this.editor_plugin_path_s, "dist/main.js")
                 .replaceAll(path_1.default.sep, "\\\\")}"];`;
@@ -270,7 +313,9 @@ class plugin_data {
             if (v_s === this.name_s) {
                 return true;
             }
-            if (user_plugin_name_s !== "" ? v_s === this._get_user_plugin_name() : v_s.endsWith(` - ${this.name_s}`)) {
+            if (user_plugin_name_s !== ""
+                ? v_s === this._get_user_plugin_name()
+                : v_s.endsWith(` - ${this.name_s}`)) {
                 return true;
             }
             return false;
@@ -289,7 +334,11 @@ class plugin_data {
     }
     /** 获取用户插件名 */
     _get_user_plugin_name() {
-        return !this.user_package_json ? "" : !this.user_package_json.title ? this.name_s : `${this.user_package_json.title} - ${this.name_s}`;
+        return !this.user_package_json
+            ? ""
+            : !this.user_package_json.title
+                ? this.name_s
+                : `${this.user_package_json.title} - ${this.name_s}`;
     }
     /** 获取插件真实文件名 */
     _get_real_plugin_name(name_s_) {
@@ -299,18 +348,18 @@ class plugin_data {
     /** 获取模块代码 */
     _get_module_script(name_s_) {
         return `
-		Object.keys(require.cache).forEach((v_s) => {
-			if (v_s.includes("${this.user_plugin_path_s.replaceAll(path_1.default.sep, "\\\\")}")) {
-				delete require.cache[v_s];
-			}
-		});
-		let ${name_s_} = require("${this._main_js_path_s.replaceAll(path_1.default.sep, "\\\\")}");
-		for (let k_s in global) {
-			if (!(k_s in ${name_s_}.m_global) && Object.getOwnPropertyDescriptor(plugin.m_global, k_s)?.writable) {
-				${name_s_}.m_global[k_s] = global[k_s];
-			}
-		};
-			`;
+Object.keys(require.cache).forEach((v_s) => {
+	if (v_s.includes("${this.user_plugin_path_s.replaceAll(path_1.default.sep, "\\\\")}")) {
+		delete require.cache[v_s];
+	}
+});
+let ${name_s_} = require("${this._main_js_path_s.replaceAll(path_1.default.sep, "\\\\")}");
+for (let k_s in global) {
+	if (!(k_s in ${name_s_}.m_global) && Object.getOwnPropertyDescriptor(plugin.m_global, k_s)?.writable) {
+		${name_s_}.m_global[k_s] = global[k_s];
+	}
+};
+`;
     }
     /** 更新菜单数据 */
     _update_menu_data() {
@@ -321,8 +370,8 @@ class plugin_data {
                 // 资源加载菜单
                 if (v2_s === "load") {
                     this._code_tab["/** {菜单} */"] += `
-						plugin.menu[${k_n}].callback_f();
-					`;
+plugin.menu[${k_n}].callback_f();
+`;
                     return;
                 }
                 const index_n = v2_s.indexOf("/");
@@ -348,18 +397,20 @@ class plugin_data {
                         };
                         // 回调
                         this._code_tab["/** {主进程事件} */"] += `
-						"${event_s}"() {
-							${this._get_module_script("plugin")}
-							plugin.menu[${k_n}].callback_f();
-						},
-						`;
+"${event_s}"() {
+	${this._get_module_script("plugin")}
+	plugin.menu[${k_n}].callback_f();
+},
+`;
                         break;
                     }
                     // 底部菜单
                     case "footer": {
                         const label_ss = path_s.split("/");
                         const direction_s = label_ss.splice(0, 1)[0];
-                        let parent_div = globalThis.document.querySelector("#footer").querySelector(`.${direction_s}`);
+                        let parent_div = globalThis.document
+                            .querySelector("#footer")
+                            .querySelector(`.${direction_s}`);
                         if (!parent_div) {
                             break;
                         }
@@ -384,20 +435,20 @@ class plugin_data {
                     // 其他菜单
                     default: {
                         this._code_tab["/** {菜单} */"] += `
-						super_menu.event.on(super_menu.type.${type_s}, ()=> {
-							let exits_b = Editor.Package.getPackages({
-								path: "${this.editor_plugin_path_s.replaceAll(path_1.default.sep, "\\\\")}",
-							}).length !== 0;
+super_menu.event.on(super_menu.type.${type_s}, ()=> {
+	let exits_b = Editor.Package.getPackages({
+		path: "${this.editor_plugin_path_s.replaceAll(path_1.default.sep, "\\\\")}",
+	}).length !== 0;
 
-							if (!exits_b) {
-								return;
-							}
+	if (!exits_b) {
+		return;
+	}
 
-							super_menu.update(super_menu.type.${type_s}, "${path_s}", {
-								...plugin.menu[${k_n}]
-							});
-						}, "${this.name_s}");
-						`;
+	super_menu.update(super_menu.type.${type_s}, "${path_s}", {
+		...plugin.menu[${k_n}]
+	});
+}, "${this.name_s}");
+`;
                         break;
                     }
                 }
@@ -425,11 +476,11 @@ class plugin_data {
                         };
                         // 回调
                         this._code_tab["/** {主进程事件} */"] += `
-							"${v2_s}"() {
-							${this._get_module_script("plugin")}
-								plugin.event[${k_n}].callback_f(...arguments);
-							},
-						`;
+"${v2_s}"() {
+${this._get_module_script("plugin")}
+	plugin.event[${k_n}].callback_f(...arguments);
+},
+`;
                     }
                 }
             });
@@ -451,11 +502,11 @@ class plugin_data {
                     }
                     default: {
                         this._code_tab["/** {场景脚本事件} */"] += `
-							"${v2_s}"() {
-							${this._get_module_script("plugin")}
-								plugin.scene[${k_n}].callback_f(...arguments);
-							},
-						`;
+"${v2_s}"() {
+${this._get_module_script("plugin")}
+	return plugin.scene[${k_n}].callback_f(...arguments);
+},
+`;
                     }
                 }
             });
@@ -479,8 +530,13 @@ class plugin_data {
     }
     /** 清空底部菜单 */
     _clear_bottom_menu() {
-        const left = globalThis.document.querySelector("#footer").querySelector(`.left`);
-        const right = globalThis.document.querySelector("#footer").querySelector(`.right`).querySelector(`span`);
+        const left = globalThis.document
+            .querySelector("#footer")
+            .querySelector(`.left`);
+        const right = globalThis.document
+            .querySelector("#footer")
+            .querySelector(`.right`)
+            .querySelector(`span`);
         [left, right].forEach((v) => {
             const remove_as = [];
             for (let k2_n = 0, len2_n = v.childElementCount; k2_n < len2_n; ++k2_n) {

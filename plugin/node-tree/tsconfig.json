@@ -1,0 +1,15 @@
+{
+	"exclude": ["node_modules", "dist"],
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "CommonJS",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"outDir": "dist",
+		"moduleResolution": "node",
+		"typeRoots": ["../../temp/declarations"]
+	}
+}
