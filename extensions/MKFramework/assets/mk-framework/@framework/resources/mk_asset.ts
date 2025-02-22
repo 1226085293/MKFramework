@@ -159,7 +159,7 @@ export class mk_asset extends mk_instance_base {
 				path_s_ = path_s_.slice(12);
 
 				// 补齐 bundle
-				if (!EDITOR) {
+				if (!EDITOR && path_s_.includes("/")) {
 					const dir_s = path_s_.slice(0, path_s_.indexOf("/"));
 
 					path_s_ = path_s_.slice(dir_s.length + 1);
