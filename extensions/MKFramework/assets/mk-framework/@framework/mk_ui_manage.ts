@@ -75,7 +75,7 @@ export class mk_ui_manage extends mk_instance_base {
 	private _ui_hidden_set = new Set<mk_view_base>();
 	/** 当前展示模块列表 */
 	private _ui_show_as: mk_view_base[] = [];
-	/** 当前模块列表表 */
+	/** 当前模块表 */
 	private _ui_map = new Map<any, mk_view_base[]>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
@@ -95,20 +95,20 @@ export class mk_ui_manage extends mk_instance_base {
 		/** 模块注册任务 */
 		const ui_regis_task = this._ui_regis_task_map.get(key_);
 
-		// 跟随对象释放
-		target_?.follow_release(async () => {
-			await this.unregis(key_);
-		});
-
 		// 等待模块注册
 		if (ui_regis_task) {
-			await ui_regis_task.task;
+			return ui_regis_task.task;
 		}
 
 		// 如果已经注册
 		if (this._ui_regis_map.has(key_)) {
-			await this.unregis(key_);
+			return;
 		}
+
+		// 跟随对象释放
+		target_?.follow_release(async () => {
+			await this.unregis(key_);
+		});
 
 		/** 注册任务 */
 		const regis_task = new mk_status_task(false);
@@ -181,40 +181,41 @@ export class mk_ui_manage extends mk_instance_base {
 				continue;
 			}
 
+			/** 对象池 */
+			const obj_pool = new mk_obj_pool<cc.Node>({
+				create_f: async () => {
+					// 不存在预制体开始加载
+					if (!source && typeof v === "string") {
+						source = (await mk_asset.get(v, cc.Prefab, null, regis_data.load_config))!;
+					}
+
+					if (!source?.isValid) {
+						this._log.error(`${k_s} 类型资源失效`, v);
+
+						return null;
+					}
+
+					return cc.instantiate(source as any);
+				},
+				clear_f: async (obj_as) => {
+					obj_as.forEach((v) => {
+						v.destroy();
+					});
+				},
+				destroy_f: () => {
+					// 动态加载的资源手动销毁
+					if (typeof v === "string" && source?.isValid) {
+						(source as cc.Prefab).decRef();
+					}
+				},
+				max_hold_n: regis_data.pool_max_hold_n,
+				min_hold_n: regis_data.pool_min_hold_n,
+				init_fill_n: regis_data.pool_init_fill_n,
+			});
+
 			// 初始化对象池
-			obj_pool_map.set(
-				k_s,
-				new mk_obj_pool<cc.Node>({
-					create_f: async () => {
-						// 不存在预制体开始加载
-						if (!source && typeof v === "string") {
-							source = (await mk_asset.get(v, cc.Prefab, null, regis_data.load_config))!;
-						}
-
-						if (!source?.isValid) {
-							this._log.error(`${k_s} 类型资源失效`, v);
-
-							return null;
-						}
-
-						return cc.instantiate(source as any);
-					},
-					clear_f: async (obj_as) => {
-						obj_as.forEach((v) => {
-							v.destroy();
-						});
-					},
-					destroy_f: () => {
-						// 动态加载的资源手动销毁
-						if (typeof v === "string" && source?.isValid) {
-							(source as cc.Prefab).decRef();
-						}
-					},
-					max_hold_n: regis_data.pool_max_hold_n,
-					init_fill_n: regis_data.pool_init_fill_n,
-					fill_n: regis_data.pool_fill_n,
-				})
-			);
+			await obj_pool.init_task.task;
+			obj_pool_map.set(k_s, obj_pool);
 		}
 
 		// 如果全部类型资源都失效
@@ -250,9 +251,18 @@ export class mk_ui_manage extends mk_instance_base {
 			return;
 		}
 
+		// 清理当前 UI
+		await this.close(key_, {
+			all_b: true,
+			destroy_b: true,
+		});
+
+		// 清理当前模块表
+		this._ui_map.delete(key_);
+		// 清理模块加载表
+		this._ui_load_map.delete(key_);
 		// 清理注册表
 		this._ui_regis_map.delete(key_);
-
 		// 清理节点池
 		{
 			const pool = this._ui_pool_map.get(key_);
@@ -352,13 +362,7 @@ export class mk_ui_manage extends mk_instance_base {
 		config_ = new mk_ui_manage_.open_config(config_);
 
 		/** 父节点 */
-		const parent = config_.parent ?? regis_data.parent;
-
-		if (!parent?.isValid) {
-			this._log.error("无效父节点");
-
-			return null;
-		}
+		const parent = config_.parent !== undefined ? config_.parent : regis_data.parent;
 
 		// 检测重复加载
 		{
@@ -391,7 +395,7 @@ export class mk_ui_manage extends mk_instance_base {
 		/** 退出回调 */
 		const exit_callback_f = (state_b: boolean): T2 => {
 			// 更新加载状态
-			this._ui_load_map.get(key_)!.finish(true);
+			this._ui_load_map.get(key_)?.finish(true);
 
 			return view_comp as any;
 		};
@@ -439,10 +443,37 @@ export class mk_ui_manage extends mk_instance_base {
 			view_comp = comp;
 		}
 
+		// 启动模块
+		{
+			// 模块配置
+			view_comp.config = {
+				static_b: false,
+				type_s: config_.type as string,
+			};
+
+			// 加入父节点
+			if (parent) {
+				parent.addChild(view_comp.node);
+			}
+
+			// 生命周期
+			await view_comp._open({
+				init: config_.init,
+				first_b: true,
+			});
+		}
+
+		// 模块已被关闭
+		if (!view_comp.valid_b) {
+			this._log.warn(`模块 ${cc.js.getClassName(view_comp)} 在 open 内被关闭`);
+
+			return exit_callback_f(true);
+		}
+
 		// 更新单独展示
 		if (view_comp.show_alone_b) {
 			this._ui_show_as.slice(this._ui_hidden_length_n, this._ui_show_as.length).forEach((v) => {
-				if (v.node.active) {
+				if (v.valid_b && v.node.active) {
 					this._ui_hidden_set.add(v);
 					v.node.active = false;
 				}
@@ -461,24 +492,6 @@ export class mk_ui_manage extends mk_instance_base {
 			}
 
 			ui_as.push(view_comp);
-		}
-
-		// 启动模块
-		{
-			// 模块配置
-			view_comp.config = {
-				static_b: false,
-				type_s: config_.type as any,
-			};
-
-			// 加入父节点
-			parent.addChild(view_comp.node);
-
-			// 生命周期
-			await view_comp._open({
-				init: config_.init,
-				first_b: true,
-			});
 		}
 
 		return exit_callback_f(true);
@@ -579,8 +592,6 @@ export class mk_ui_manage extends mk_instance_base {
 			if (v.static_b) {
 				return;
 			}
-
-			this._log.debug("关闭模块", cc.js.getClassName(v));
 
 			// 更新单独展示
 			{
@@ -758,7 +769,7 @@ export namespace mk_ui_manage_ {
 		/** 类型 */
 		type?: _mk_ui_manage.type_module<CT> = "default";
 		/** 父节点 */
-		parent?: cc.Node;
+		parent?: cc.Node | null;
 	}
 
 	/** 模块注册配置 */
@@ -770,8 +781,8 @@ export namespace mk_ui_manage_ {
 
 			Object.assign(this, init_);
 
-			if (this.pool_fill_n === undefined) {
-				this.pool_fill_n = this.repeat_b ? 8 : 1;
+			if (this.pool_min_hold_n === undefined) {
+				this.pool_min_hold_n = this.repeat_b ? 8 : 1;
 			}
 		}
 
@@ -786,7 +797,7 @@ export namespace mk_ui_manage_ {
 		 * @defaultValue
 		 * Canvas 节点
 		 */
-		parent = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
+		parent: cc.Scene | cc.Node | undefined = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
 		/** 加载配置 */
 		load_config?: mk_asset_.get_config<cc.Prefab>;
 		/**
@@ -794,7 +805,7 @@ export namespace mk_ui_manage_ {
 		 * @defaultValue
 		 * this.repeat_b ? 8 : 1
 		 */
-		pool_fill_n!: number;
+		pool_min_hold_n!: number;
 		/**
 		 * 对象池最大保留数量
 		 * @defaultValue
