@@ -20,6 +20,27 @@ class mk_release {
 	private _callback_set = new Set<mk_release_.type_release_call_back>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
+	 * 释放对象
+	 * @param object_ 指定对象
+	 */
+	static async release(object_?: mk_release_.type_release_param_type): Promise<void> {
+		if (object_ instanceof cc.Node) {
+			if (object_.isValid) {
+				object_.removeFromParent();
+				object_.destroy();
+			}
+		} else if (object_ instanceof cc.Asset) {
+			if (object_.isValid) {
+				object_.decRef();
+			}
+		} else if (typeof object_ === "function") {
+			await object_();
+		} else if (object_) {
+			await object_!.release();
+		}
+	}
+
+	/**
 	 * 添加释放对象
 	 * @param object_ 要跟随模块释放的对象或列表
 	 */
