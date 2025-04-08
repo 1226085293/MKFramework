@@ -41,6 +41,14 @@ class mk_logger extends mk_instance_base {
 			return;
 		}
 
+		// 替换日志函数
+		if (mk_logger._config.log_object_type === global_config.log.log_object_type.console) {
+			this.debug = this._log_func_tab[mk_logger._config.log_object_type].debug;
+			this.log = this._log_func_tab[mk_logger._config.log_object_type].log;
+			this.warn = this._log_func_tab[mk_logger._config.log_object_type].warn;
+			this.error = this._log_func_tab[mk_logger._config.log_object_type].error;
+		}
+
 		// 错误监听
 		if (!mk_logger._init_b) {
 			mk_logger._init_b = true;
@@ -118,11 +126,11 @@ class mk_logger extends mk_instance_base {
 	/** 日志函数表 */
 	private _log_func_tab = {
 		[global_config.log.log_object_type.mk]: {
-			target: this,
-			debug: this.debug,
-			log: this.log,
-			warn: this.warn,
-			error: this.error,
+			target: console,
+			debug: console.debug,
+			log: console.log,
+			warn: console.warn,
+			error: console.error,
 		},
 		[global_config.log.log_object_type.console]: {
 			target: console,
@@ -314,11 +322,12 @@ class mk_logger extends mk_instance_base {
 
 		/** 日志头 */
 		const head_s = this._get_log_head(level_);
+		const logger = this._log_func_tab[mk_logger._config.log_object_type];
 
 		// 更新缓存
 		mk_logger._add_log_cache(level_, head_s, ...args_as_);
 		// 打印日志
-		this._log_func_tab[mk_logger._config.log_object_type][global_config.log.level[level_]](head_s, ...args_as_);
+		logger[global_config.log.level[level_]].call(logger.target, head_s, ...args_as_);
 	}
 }
 
