@@ -68,8 +68,6 @@ namespace _mk_network_base {
 				return super.on(type_, callback_, this_, once_b_);
 			}
 
-			this._log.error("消息 id 解析错误");
-
 			return null;
 		}
 
@@ -99,8 +97,6 @@ namespace _mk_network_base {
 			} else {
 				super.off(type_, callback_, this_);
 			}
-
-			this._log.error("消息 id 解析错误");
 		}
 
 		/**
@@ -155,7 +151,7 @@ namespace _mk_network_base {
 		/**
 		 * 请求
 		 * @param data_ 发送数据
-		 * @param timeout_ms_n_ 超时时间
+		 * @param timeout_ms_n_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 wait_timeout_ms_n
 		 * @returns
 		 * @remarks
 		 * 等待事件回调返回
@@ -181,8 +177,6 @@ namespace _mk_network_base {
 			} else {
 				return super.hasEventListener(type_ as any, callback_, target_);
 			}
-
-			this._log.error("消息 id 解析错误");
 
 			return false;
 		}
@@ -695,7 +689,7 @@ export namespace mk_network_base_ {
 		 * @returns 消息号
 		 */
 		parse_message_id_f(data: any): string | number {
-			return data?.[global_config.network.proto_head_key_tab.__id];
+			return undefined!;
 		}
 
 		/**
@@ -704,9 +698,7 @@ export namespace mk_network_base_ {
 		 * @returns 消息序列号
 		 */
 		parse_message_sequence_f(data: any): string | number | undefined {
-			if (global_config.network.proto_head_key_tab.__sequence !== undefined) {
-				return data?.[global_config.network.proto_head_key_tab.__sequence];
-			}
+			return;
 		}
 	}
 
