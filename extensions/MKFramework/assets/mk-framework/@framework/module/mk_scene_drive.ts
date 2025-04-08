@@ -56,6 +56,11 @@ class mk_scene_drive extends mk_life_cycle {
 
 	/* ------------------------------- 框架事件 ------------------------------- */
 	private async _event_before_scene_switch(): Promise<void> {
+		// 常驻节点
+		if (cc.director.isPersistRootNode(this.node)) {
+			return;
+		}
+
 		await this._close({
 			first_b: true,
 		});
@@ -69,10 +74,19 @@ if (!EDITOR) {
 	cc.director.on(
 		cc.Director.EVENT_AFTER_SCENE_LAUNCH,
 		() => {
-			cc.director.getScene()?.children.forEach((v) => {
-				if (!v.getComponent(mk_scene_drive)) {
-					v.addComponent(mk_scene_drive);
-				}
+			const scene = cc.director.getScene()!;
+
+			const update_child_comp_f = (): void => {
+				scene.children.forEach((v) => {
+					if (!v.getComponent(mk_scene_drive)) {
+						v.addComponent(mk_scene_drive);
+					}
+				});
+			};
+
+			update_child_comp_f();
+			scene.on(cc.Node.EventType.CHILD_ADDED, () => {
+				update_child_comp_f();
 			});
 		},
 		mk_scene_drive
