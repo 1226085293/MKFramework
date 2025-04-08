@@ -512,7 +512,7 @@ export class mk_monitor extends mk_instance_base {
 
 					// 数据相同
 					if (!can_update_b && value === new_value && typeof value !== "object" && typeof value !== "function") {
-						this._log.debug("更新值，数据相同跳过", key_, new_value, value_);
+						// this._log.debug("更新值，数据相同跳过", key_, new_value, value_);
 
 						return;
 					}
@@ -543,7 +543,8 @@ export class mk_monitor extends mk_instance_base {
 					// 更新后的值和更新前一致则还原
 					if (typeof value !== "object" && typeof value !== "function" && value === value_before_update) {
 						// 清理定时器
-						clearTimeout(update_timer);
+						// clearTimeout(update_timer);
+						// cc.director.off(cc.Director.EVENT_END_FRAME, update_timer, this);
 						update_timer = null;
 
 						// 更新 set 计数
@@ -569,7 +570,7 @@ export class mk_monitor extends mk_instance_base {
 				value_before_update = old_value;
 
 				// 下一帧回调
-				update_timer = setTimeout(() => {
+				const update_f = (): void => {
 					update_timer = null;
 
 					if (!bind_data?.monitor_as) {
@@ -616,7 +617,11 @@ export class mk_monitor extends mk_instance_base {
 							bind_data!.task!.finish(true);
 						}
 					});
-				}, 0);
+				};
+
+				update_f();
+				// cc.director.once(cc.Director.EVENT_END_FRAME, (update_timer = update_f), this);
+				// update_timer = setTimeout(update_f, 0);
 			},
 		});
 
