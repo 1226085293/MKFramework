@@ -297,11 +297,11 @@ export class mk_ui_manage extends mk_instance_base {
 	): mk_view_base[] | T3 | T3[] | null {
 		// 获取所有模块
 		if (!key_) {
-			return this._ui_show_as;
+			return this._ui_show_as.filter((v) => v.valid_b);
 		}
 		// 获取 指定模块 | 指定模块列表
 		else {
-			let ui_as = this._ui_map.get(Array.isArray(key_) ? key_[0] : key_);
+			let ui_as = this._ui_map.get(Array.isArray(key_) ? key_[0] : key_)?.filter((v) => v.valid_b);
 
 			// 筛选类型
 			if (type_ && ui_as) {
@@ -443,6 +443,30 @@ export class mk_ui_manage extends mk_instance_base {
 			view_comp = comp;
 		}
 
+		// 更新单独展示
+		if (view_comp.show_alone_b) {
+			this._ui_show_as.slice(this._ui_hidden_length_n, this._ui_show_as.length).forEach((v) => {
+				if (v.valid_b && v.node.active) {
+					this._ui_hidden_set.add(v);
+					v.node.active = false;
+				}
+			});
+
+			this._ui_hidden_length_n = this._ui_show_as.length;
+		}
+
+		// 更新管理器数据
+		{
+			this._ui_show_as.push(view_comp);
+			let ui_as = this._ui_map.get(key_);
+
+			if (!ui_as) {
+				this._ui_map.set(key_, (ui_as = []));
+			}
+
+			ui_as.push(view_comp);
+		}
+
 		// 启动模块
 		{
 			// 模块配置
@@ -467,31 +491,7 @@ export class mk_ui_manage extends mk_instance_base {
 		if (!view_comp.valid_b) {
 			this._log.warn(`模块 ${cc.js.getClassName(view_comp)} 在 open 内被关闭`);
 
-			return exit_callback_f(true);
-		}
-
-		// 更新单独展示
-		if (view_comp.show_alone_b) {
-			this._ui_show_as.slice(this._ui_hidden_length_n, this._ui_show_as.length).forEach((v) => {
-				if (v.valid_b && v.node.active) {
-					this._ui_hidden_set.add(v);
-					v.node.active = false;
-				}
-			});
-
-			this._ui_hidden_length_n = this._ui_show_as.length;
-		}
-
-		// 更新管理器数据
-		{
-			this._ui_show_as.push(view_comp);
-			let ui_as = this._ui_map.get(key_);
-
-			if (!ui_as) {
-				this._ui_map.set(key_, (ui_as = []));
-			}
-
-			ui_as.push(view_comp);
+			return exit_callback_f(false);
 		}
 
 		return exit_callback_f(true);
