@@ -9,7 +9,6 @@ export function check_type(data_: any): boolean {
 	return Array.isArray(data_);
 }
 
-// 注意：在任务列表未完成时重置数据再解绑会报错，需解决
 export namespace 默认 {
 	/** 初始化数据 */
 	class array_init_config {
@@ -47,7 +46,12 @@ export namespace 默认 {
 
 			// 模块
 			if (this._item_view_type) {
-				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, cc.director.getScene()!.getComponentInChildren(mk.life_cycle)!, {
+				const target = cc.director
+					.getScene()!
+					.children.find((v) => v.active && v.getComponent(mk.scene_drive))!
+					.getComponent(mk.scene_drive);
+
+				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, target, {
 					repeat_b: true,
 					pool_init_fill_n: 8,
 					parent: this._init_data.root,
