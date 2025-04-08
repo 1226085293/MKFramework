@@ -110,7 +110,7 @@ class node_extends {
 	private _node: cc.Node;
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	private _order_n = 0;
+	private _order_n = NaN;
 	/** 节点渲染次序更新时间 */
 	private _order_timestamp_n = 0;
 	/** 透明度组件 */
