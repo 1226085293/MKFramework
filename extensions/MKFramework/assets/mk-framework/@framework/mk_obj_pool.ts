@@ -1,4 +1,5 @@
 import { mk_log } from "./mk_logger";
+import mk_task from "./task/mk_task";
 
 namespace _mk_obj_pool {
 	/** 配置 */
@@ -20,10 +21,11 @@ namespace _mk_obj_pool {
 		/** 销毁回调 */
 		destroy_f?: () => void | Promise<void>;
 		/**
-		 * 剩余对象池数量不足时扩充数量
-		 * @defaultValue 32
+		 * 最小保留数量
+		 * @remarks
+		 * 池内对象小于此数量时扩充
 		 */
-		fill_n? = 32;
+		min_hold_n? = 1;
 		/**
 		 * 最大保留数量
 		 * @remarks
@@ -39,6 +41,7 @@ namespace _mk_obj_pool {
 		 */
 		init_fill_n? = 0;
 	}
+
 	/** 同步模块 */
 	export namespace sync {
 		/** 配置 */
@@ -60,10 +63,11 @@ namespace _mk_obj_pool {
 			/** 销毁回调 */
 			destroy_f?: () => void;
 			/**
-			 * 剩余对象池数量不足时扩充数量
-			 * @defaultValue 32
+			 * 最小保留数量
+			 * @remarks
+			 * 池内对象小于此数量时扩充
 			 */
-			fill_n? = 32;
+			min_hold_n? = 1;
 			/**
 			 * 最大保留数量
 			 * @remarks
@@ -85,13 +89,19 @@ namespace _mk_obj_pool {
 /** 异步对象池 */
 class mk_obj_pool<CT> {
 	constructor(init_: _mk_obj_pool.config<CT>) {
-		this._init_data = new _mk_obj_pool.config(init_);
-		if (this._init_data.init_fill_n! > 0) {
-			this._add(this._init_data.init_fill_n);
+		this.config = new _mk_obj_pool.config(init_);
+		if (this.config.init_fill_n! > 0) {
+			this._add(this.config.init_fill_n).then(() => {
+				this.init_task.finish(true);
+			});
 		}
 	}
 
 	/* --------------- public --------------- */
+	/** 初始化数据 */
+	config!: _mk_obj_pool.config<CT>;
+	/** 初始化任务 */
+	init_task = new mk_task.status(false);
 	/** 有效状态 */
 	get valid_b(): boolean {
 		return this._valid_b;
@@ -102,8 +112,6 @@ class mk_obj_pool<CT> {
 	private _valid_b = true;
 	/** 对象存储列表 */
 	private _obj_as: CT[] = [];
-	/** 初始化数据 */
-	private _init_data!: _mk_obj_pool.config<CT>;
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 导入对象
@@ -121,16 +129,37 @@ class mk_obj_pool<CT> {
 			return;
 		}
 
-		this._obj_as.push(this._init_data.reset_f ? await this._init_data.reset_f(obj_, false) : obj_);
+		this._obj_as.push(this.config.reset_f ? await this.config.reset_f(obj_, false) : obj_);
 		// 检查保留数量
-		if (this._init_data.max_hold_n !== -1 && this._obj_as.length > this._init_data.max_hold_n!) {
-			this._del(0, this._obj_as.length - this._init_data.max_hold_n!);
+		if (this.config.max_hold_n !== -1 && this._obj_as.length > this.config.max_hold_n!) {
+			this._del(0, this._obj_as.length - this.config.max_hold_n!);
 		}
 
 		// 失效直接销毁
 		if (!this._valid_b) {
 			await this.clear();
 		}
+	}
+
+	/** 同步获取对象 */
+	get_sync(): CT | null {
+		if (!this._valid_b) {
+			mk_log.error("对象池失效");
+
+			return null!;
+		}
+
+		// 扩充
+		if (this._obj_as.length - 1 < this.config.min_hold_n!) {
+			this._add(this.config.min_hold_n! - this._obj_as.length + 1);
+		}
+
+		// 检查容量
+		if (!this._obj_as.length) {
+			return null!;
+		}
+
+		return this._obj_as.pop()!;
 	}
 
 	/** 获取对象 */
@@ -141,9 +170,9 @@ class mk_obj_pool<CT> {
 			return null!;
 		}
 
-		// 检查容量
-		if (!this._obj_as.length) {
-			await this._add();
+		// 扩充
+		if (this._obj_as.length - 1 < this.config.min_hold_n!) {
+			await this._add(this.config.min_hold_n! - this._obj_as.length + 1);
 		}
 
 		if (!this._valid_b) {
@@ -161,7 +190,7 @@ class mk_obj_pool<CT> {
 		const obj_as = this._obj_as.splice(0, this._obj_as.length);
 
 		if (obj_as.length) {
-			await this._init_data.clear_f?.(obj_as);
+			await this.config.clear_f?.(obj_as);
 		}
 	}
 
@@ -173,18 +202,18 @@ class mk_obj_pool<CT> {
 	async destroy(): Promise<void> {
 		this._valid_b = false;
 		await this.clear();
-		await this._init_data.destroy_f?.();
+		await this.config.destroy_f?.();
 	}
 
 	/** 添加对象 */
-	private async _add(fill_n_ = this._init_data.fill_n!): Promise<void> {
-		if (this._init_data.reset_f) {
+	private async _add(fill_n_ = this.config.min_hold_n! - this._obj_as.length): Promise<void> {
+		if (this.config.reset_f) {
 			for (let k_n = 0; k_n < fill_n_; ++k_n) {
-				this._obj_as.push(await this._init_data.reset_f(await this._init_data.create_f(), true));
+				this._obj_as.push(await this.config.reset_f(await this.config.create_f(), true));
 			}
 		} else {
 			for (let k_n = 0; k_n < fill_n_; ++k_n) {
-				this._obj_as.push(await this._init_data.create_f());
+				this._obj_as.push(await this.config.create_f());
 			}
 		}
 	}
@@ -194,7 +223,7 @@ class mk_obj_pool<CT> {
 		const obj_as = this._obj_as.splice(start_n_, end_n_ - start_n_);
 
 		if (obj_as.length) {
-			this._init_data.clear_f?.(obj_as);
+			this.config.clear_f?.(obj_as);
 		}
 	}
 }
@@ -203,13 +232,15 @@ namespace mk_obj_pool {
 	/** 同步对象池 */
 	export class sync<CT> {
 		constructor(init_?: _mk_obj_pool.sync.config<CT>) {
-			this._init_data = new _mk_obj_pool.sync.config(init_);
-			if (this._init_data.init_fill_n! > 0) {
-				this._add(this._init_data.init_fill_n);
+			this.config = new _mk_obj_pool.sync.config(init_);
+			if (this.config.init_fill_n! > 0) {
+				this._add(this.config.init_fill_n);
 			}
 		}
 
 		/* --------------- public --------------- */
+		/** 初始化数据 */
+		config!: _mk_obj_pool.sync.config<CT>;
 		/** 有效状态 */
 		get valid_b(): boolean {
 			return this._valid_b;
@@ -220,8 +251,6 @@ namespace mk_obj_pool {
 		private _valid_b = true;
 		/** 对象存储列表 */
 		private _obj_as: CT[] = [];
-		/** 初始化数据 */
-		private _init_data!: _mk_obj_pool.sync.config<CT>;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 导入对象 */
 		put(obj_: CT): void {
@@ -235,10 +264,10 @@ namespace mk_obj_pool {
 				return;
 			}
 
-			this._obj_as.push(this._init_data.reset_f ? this._init_data.reset_f(obj_, false) : obj_);
+			this._obj_as.push(this.config.reset_f ? this.config.reset_f(obj_, false) : obj_);
 			// 检查保留数量
-			if (this._init_data.max_hold_n !== -1 && this._obj_as.length > this._init_data.max_hold_n!) {
-				this._del(0, this._obj_as.length - this._init_data.max_hold_n!);
+			if (this.config.max_hold_n !== -1 && this._obj_as.length > this.config.max_hold_n!) {
+				this._del(0, this._obj_as.length - this.config.max_hold_n!);
 			}
 		}
 
@@ -250,9 +279,14 @@ namespace mk_obj_pool {
 				return null!;
 			}
 
+			// 扩充
+			if (this._obj_as.length - 1 < this.config.min_hold_n!) {
+				this._add(this.config.min_hold_n! - this._obj_as.length + 1);
+			}
+
 			// 检查容量
 			if (!this._obj_as.length) {
-				this._add();
+				this._add(1);
 			}
 
 			return this._obj_as.pop()!;
@@ -263,7 +297,7 @@ namespace mk_obj_pool {
 			const obj_as = this._obj_as.splice(0, this._obj_as.length);
 
 			if (obj_as.length) {
-				this._init_data.clear_f?.(obj_as);
+				this.config.clear_f?.(obj_as);
 			}
 		}
 
@@ -275,18 +309,18 @@ namespace mk_obj_pool {
 		destroy(): void {
 			this._valid_b = false;
 			this.clear();
-			this._init_data.destroy_f?.();
+			this.config.destroy_f?.();
 		}
 
 		/** 添加对象 */
-		private _add(fill_n_ = this._init_data.fill_n!): void {
-			if (this._init_data.reset_f) {
+		private _add(fill_n_ = this.config.min_hold_n! - this._obj_as.length): void {
+			if (this.config.reset_f) {
 				for (let k_n = 0; k_n < fill_n_; ++k_n) {
-					this._obj_as.push(this._init_data.reset_f(this._init_data.create_f(), true));
+					this._obj_as.push(this.config.reset_f(this.config.create_f(), true));
 				}
 			} else {
 				for (let k_n = 0; k_n < fill_n_; ++k_n) {
-					this._obj_as.push(this._init_data.create_f());
+					this._obj_as.push(this.config.create_f());
 				}
 			}
 		}
@@ -296,7 +330,7 @@ namespace mk_obj_pool {
 			const obj_as = this._obj_as.splice(start_n_, end_n_ - start_n_);
 
 			if (obj_as.length) {
-				this._init_data.clear_f?.(obj_as);
+				this.config.clear_f?.(obj_as);
 			}
 		}
 	}
