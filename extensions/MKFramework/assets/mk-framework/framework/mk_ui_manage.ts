@@ -93,7 +93,7 @@ export class mk_ui_manage extends mk_instance_base {
 		config_?: Partial<mk_ui_manage_.regis_config<T>>
 	): Promise<void> {
 		/** 模块注册任务 */
-		const ui_regis_task = this._ui_regis_task_map.get(key_);
+		let ui_regis_task = this._ui_regis_task_map.get(key_);
 
 		// 等待模块注册
 		if (ui_regis_task) {
@@ -110,17 +110,15 @@ export class mk_ui_manage extends mk_instance_base {
 			await this.unregis(key_);
 		});
 
-		/** 注册任务 */
-		const regis_task = new mk_status_task(false);
-
 		/** 注册数据 */
 		const regis_data = new mk_ui_manage_.regis_data<T>({
 			...config_,
 			source: source_,
 		});
 
+		ui_regis_task = new mk_status_task(false);
 		// 添加注册任务
-		this._ui_regis_task_map.set(key_, regis_task);
+		this._ui_regis_task_map.set(key_, ui_regis_task);
 		// 更新注册配置
 		this._ui_regis_map.set(key_, regis_data);
 
@@ -136,7 +134,7 @@ export class mk_ui_manage extends mk_instance_base {
 			// 删除注册任务
 			this._ui_regis_task_map.delete(key_);
 			// 完成注册任务
-			regis_task!.finish(true);
+			ui_regis_task!.finish(true);
 		};
 
 		/** 来源表 */
