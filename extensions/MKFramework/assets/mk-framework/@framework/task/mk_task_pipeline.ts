@@ -74,6 +74,20 @@ class mk_task_pipeline {
 		return task.task;
 	}
 
+	/**
+	 * 清空任务
+	 * @param finish_b_ 完成所清空的任务
+	 */
+	clear(finish_b_: boolean): void {
+		const task_as = this._task_as.splice(0, this._task_as.length);
+
+		if (finish_b_) {
+			task_as.forEach((v) => {
+				v.task.finish(true);
+			});
+		}
+	}
+
 	/** 执行任务 */
 	private async _run(): Promise<void> {
 		this._run_b = true;
