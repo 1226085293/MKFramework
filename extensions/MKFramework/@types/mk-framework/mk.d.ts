@@ -1,6 +1,6 @@
 //@ts-nocheck
 // 框架源码位于 项目根目录\extensions\MKFramework\assets\mk-framework 下，你也可以在资源管理器下方的 mk-framework 查看
-import global_config from "../../assets/mk-framework/@config/global_config";
+import global_config from "../../assets/mk-framework/config/global_config";
 import * as cc_2 from "cc";
 
 declare namespace mk {
@@ -663,7 +663,7 @@ declare namespace mk {
 		export class label_config {
 			constructor(init_?: Partial<label_config>);
 			/** 语言类型 */
-			language: "zh_cn" | "en_us";
+			language: keyof typeof global_config.language.type_tab;
 			/** 参数 */
 			args_ss?: string[];
 		}
@@ -782,9 +782,11 @@ declare namespace mk {
 		set config(config_: _mk_life_cycle.create_config);
 		/** 静态模块 */
 		protected _static_b: boolean;
-		/** load任务 */
-		protected _load_task: mk_status_task<void>;
-		/** open任务 */
+		/** onLoad 任务 */
+		protected _onload_task: mk_status_task<void>;
+		/** create 任务 */
+		protected _create_task: mk_status_task<any>;
+		/** open 任务 */
 		protected _open_task: mk_status_task<void>;
 		/** 运行状态 */
 		protected _state: _mk_life_cycle.run_state;
@@ -810,7 +812,7 @@ declare namespace mk {
 		 *
 		 * - 动态模块：addChild 后调用
 		 */
-		protected create?(): void | Promise<void>;
+		protected create?(): void;
 		/**
 		 * 初始化
 		 * @param data_ 初始化数据
@@ -821,7 +823,7 @@ declare namespace mk {
 		 *
 		 * - 动态模块：onLoad 后，open 前调用
 		 */
-		init(data_?: any): void | Promise<void>;
+		init(data_?: any): void;
 		/**
 		 * 打开
 		 * @protected
@@ -830,7 +832,7 @@ declare namespace mk {
 		 *
 		 * open 顺序: 子 -> 父
 		 */
-		protected open?(): void | Promise<void>;
+		protected open?(): void;
 		/**
 		 * 关闭
 		 * @remarks
@@ -838,14 +840,20 @@ declare namespace mk {
 		 *
 		 *  close 顺序: 父 -> 子
 		 */
-		close?(): void | Promise<void>;
+		close?(): void;
 		/**
 		 * 关闭后
 		 * @protected
 		 * @remarks
 		 * 在子模块 close 和 late_close 后执行
 		 */
-		protected late_close?(): void | Promise<void>;
+		protected late_close?(): void;
+		/**
+		 * 添加组件，和 addComponent 功能一致但 addComponent 没有生命周期函数驱动
+		 * @param comp_ 组件类型
+		 * @returns
+		 */
+		add_component(comp_: cc_2.Constructor<life_cycle>): Promise<void>;
 		follow_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
 		cancel_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
 		/* Excluded from this release type: _open */
@@ -1451,7 +1459,7 @@ declare namespace mk {
 			type_: _mk_language_manage.type_type,
 			mark_s_: string,
 			target_: asset_.type_follow_release_object,
-			language_?: "zh_cn" | "en_us"
+			language_?: keyof typeof global_config.language.type_tab
 		): Promise<cc_2.SpriteFrame | null>;
 		/**
 		 * 添加文本数据
@@ -1488,7 +1496,7 @@ declare namespace mk {
 	 */
 	declare class mk_language_node extends life_cycle {
 		/** 语言 */
-		language_s: "zh_cn" | "en_us";
+		language_s: keyof typeof global_config.language.type_tab;
 		/** 语言 */
 		get language(): number;
 		set language(value_n_: number);
@@ -1518,7 +1526,7 @@ declare namespace mk {
 			get language(): number;
 			set language(value_n_: number);
 			/** 语言 */
-			language_s: "zh_cn" | "en_us";
+			language_s: keyof typeof global_config.language.type_tab;
 			/** 节点 */
 			node: cc_2.Node;
 		}
@@ -2060,7 +2068,7 @@ declare namespace mk {
 			/**
 			 * 请求
 			 * @param data_ 发送数据
-			 * @param timeout_ms_n_ 超时时间
+			 * @param timeout_ms_n_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 wait_timeout_ms_n
 			 * @returns
 			 * @remarks
 			 * 等待事件回调返回
@@ -2201,10 +2209,11 @@ declare namespace mk {
 			/** 销毁回调 */
 			destroy_f?: () => void | Promise<void>;
 			/**
-			 * 剩余对象池数量不足时扩充数量
-			 * @defaultValue 32
+			 * 最小保留数量
+			 * @remarks
+			 * 池内对象小于此数量时扩充
 			 */
-			fill_n?: number | undefined;
+			min_hold_n?: number | undefined;
 			/**
 			 * 最大保留数量
 			 * @remarks
@@ -2238,10 +2247,11 @@ declare namespace mk {
 				/** 销毁回调 */
 				destroy_f?: () => void;
 				/**
-				 * 剩余对象池数量不足时扩充数量
-				 * @defaultValue 32
+				 * 最小保留数量
+				 * @remarks
+				 * 池内对象小于此数量时扩充
 				 */
-				fill_n?: number | undefined;
+				min_hold_n?: number | undefined;
 				/**
 				 * 最大保留数量
 				 * @remarks
@@ -2353,6 +2363,11 @@ declare namespace mk {
 		 * @returns 当前任务 Promise
 		 */
 		add(task_f_: Function): Promise<void>;
+		/**
+		 * 清空任务
+		 * @param finish_b_ 完成所清空的任务
+		 */
+		clear(finish_b_: boolean): void;
 		/** 执行任务 */
 		private _run;
 	}
@@ -2417,7 +2432,7 @@ declare namespace mk {
 		private _ui_hidden_set;
 		/** 当前展示模块列表 */
 		private _ui_show_as;
-		/** 当前模块列表表 */
+		/** 当前模块表 */
 		private _ui_map;
 		/**
 		 * 注册模块
@@ -2618,6 +2633,8 @@ declare namespace mk {
 		private _node;
 		/** 节点渲染次序 */
 		private _order_n;
+		/** 节点渲染次序更新时间 */
+		private _order_timestamp_n;
 		/** 透明度组件 */
 		private _ui_opacity;
 		private _event_node_parent_changed;
@@ -2627,20 +2644,24 @@ declare namespace mk {
 	/** 异步对象池 */
 	export declare class obj_pool<CT> {
 		constructor(init_: _mk_obj_pool.config<CT>);
+		/** 初始化数据 */
+		config: _mk_obj_pool.config<CT>;
+		/** 初始化任务 */
+		init_task: task.status<void>;
 		/** 有效状态 */
 		get valid_b(): boolean;
 		/** 有效状态 */
 		private _valid_b;
 		/** 对象存储列表 */
 		private _obj_as;
-		/** 初始化数据 */
-		private _init_data;
 		/**
 		 * 导入对象
 		 * @param obj_ 添加对象
 		 * @returns
 		 */
 		put(obj_: any): Promise<void>;
+		/** 同步获取对象 */
+		get_sync(): CT | null;
 		/** 获取对象 */
 		get(): Promise<CT>;
 		/** 清空数据 */
@@ -2661,14 +2682,14 @@ declare namespace mk {
 		/** 同步对象池 */
 		export class sync<CT> {
 			constructor(init_?: _mk_obj_pool.sync.config<CT>);
+			/** 初始化数据 */
+			config: _mk_obj_pool.sync.config<CT>;
 			/** 有效状态 */
 			get valid_b(): boolean;
 			/** 有效状态 */
 			private _valid_b;
 			/** 对象存储列表 */
 			private _obj_as;
-			/** 初始化数据 */
-			private _init_data;
 			/** 导入对象 */
 			put(obj_: CT): void;
 			/** 获取对象 */
@@ -2778,6 +2799,11 @@ declare namespace mk {
 		private _object_set;
 		/** 回调集合 */
 		private _callback_set;
+		/**
+		 * 释放对象
+		 * @param object_ 指定对象
+		 */
+		static release(object_?: release_.type_release_param_type): Promise<void>;
 		/**
 		 * 添加释放对象
 		 * @param object_ 要跟随模块释放的对象或列表
@@ -2930,7 +2956,7 @@ declare namespace mk {
 			/** 类型 */
 			type?: _mk_ui_manage.type_module<CT>;
 			/** 父节点 */
-			parent?: cc_2.Node;
+			parent?: cc_2.Node | null;
 		}
 		/** 模块注册配置 */
 		export class regis_config<CT extends cc_2.Constructor<view_base>> {
@@ -2946,7 +2972,7 @@ declare namespace mk {
 			 * @defaultValue
 			 * Canvas 节点
 			 */
-			parent: cc_2.Node | undefined;
+			parent: cc_2.Scene | cc_2.Node | undefined;
 			/** 加载配置 */
 			load_config?: asset_.get_config<cc_2.Prefab>;
 			/**
@@ -2954,7 +2980,7 @@ declare namespace mk {
 			 * @defaultValue
 			 * this.repeat_b ? 8 : 1
 			 */
-			pool_fill_n: number;
+			pool_min_hold_n: number;
 			/**
 			 * 对象池最大保留数量
 			 * @defaultValue

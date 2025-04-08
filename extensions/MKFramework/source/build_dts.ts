@@ -63,7 +63,7 @@ export default async function run(): Promise<void> {
 	}
 
 	// 添加全局配置引用
-	dts_file_s = `import global_config from "../../assets/mk-framework/@config/global_config";\n` + dts_file_s;
+	dts_file_s = `import global_config from "../../assets/mk-framework/config/global_config";\n` + dts_file_s;
 	// 增加提示语
 	dts_file_s =
 		`// 框架源码位于 ${path.normalize(

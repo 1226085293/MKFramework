@@ -1,6 +1,6 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
-import global_config from "../../../@config/global_config";
+import global_config from "../../../config/global_config";
 import language_manage from "../mk_language_manage";
 import mk_tool from "../../@private/tool/mk_tool";
 import mk_life_cycle from "../../module/mk_life_cycle";

@@ -1,5 +1,5 @@
 import { EDITOR } from "cc/env";
-import global_config from "../../../@config/global_config";
+import global_config from "../../../config/global_config";
 import language from "../mk_language_manage";
 import mk_asset from "../../resources/mk_asset";
 import * as cc from "cc";

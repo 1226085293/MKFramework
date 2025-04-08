@@ -1,11 +1,11 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
-import global_event from "../../@config/global_event";
+import global_event from "../../config/global_event";
 import mk_instance_base from "../mk_instance_base";
 import mk_logger from "../mk_logger";
 import mk_bundle from "./mk_bundle";
 import mk_game from "../mk_game";
-import global_config from "../../@config/global_config";
+import global_config from "../../config/global_config";
 import { mk_release_ } from "../mk_release";
 
 namespace _mk_asset {

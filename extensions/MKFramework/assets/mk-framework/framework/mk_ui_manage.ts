@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import global_event from "../@config/global_event";
+import global_event from "../config/global_event";
 import mk_instance_base from "./mk_instance_base";
 import mk_logger from "./mk_logger";
 import mk_view_base from "./module/mk_view_base";

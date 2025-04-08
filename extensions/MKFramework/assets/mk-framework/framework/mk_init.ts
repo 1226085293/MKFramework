@@ -1,8 +1,8 @@
 import * as mk from "./mk_export";
-import global_config from "../@config/global_config";
+import global_config from "../config/global_config";
 import * as cc from "cc";
 import { DEBUG, EDITOR } from "cc/env";
-import global_event from "../@config/global_event";
+import global_event from "../config/global_event";
 
 // 初始化逻辑
 if (!EDITOR) {

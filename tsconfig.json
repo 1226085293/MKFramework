@@ -21,10 +21,10 @@
 			],
 			"mk": ["./extensions/MKFramework/@types/mk-framework/mk.d.ts"],
 			"global_config": [
-			  "./extensions/MKFramework/assets/mk-framework/@config/global_config.ts"
+			  "./extensions/MKFramework/assets/mk-framework/config/global_config.ts"
 			],
 			"global_event": [
-			  "./extensions/MKFramework/assets/mk-framework/@config/global_event.ts"
+			  "./extensions/MKFramework/assets/mk-framework/config/global_event.ts"
 			]
 		}
 	}

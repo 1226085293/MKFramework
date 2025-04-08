@@ -57,7 +57,7 @@ async function run() {
                 "\n}\n export default mk;";
     }
     // 添加全局配置引用
-    dts_file_s = `import global_config from "../../assets/mk-framework/@config/global_config";\n` + dts_file_s;
+    dts_file_s = `import global_config from "../../assets/mk-framework/config/global_config";\n` + dts_file_s;
     // 增加提示语
     dts_file_s =
         `// 框架源码位于 ${path_1.default.normalize("项目根目录/" + plugin_path_s.slice(plugin_path_s.indexOf("extensions")) + "assets/mk-framework")} 下，你也可以在资源管理器下方的 mk-framework 查看\n` + dts_file_s;

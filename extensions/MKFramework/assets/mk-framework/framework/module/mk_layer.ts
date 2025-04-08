@@ -1,6 +1,6 @@
 import { EDITOR } from "cc/env";
 import * as cc from "cc";
-import global_config from "../../@config/global_config";
+import global_config from "../../config/global_config";
 import MKN from "../@extends/@node/mk_nodes";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, executeInEditMode } = cc._decorator;

@@ -6,7 +6,7 @@ import mk_dynamic_module from "../mk_dynamic_module";
 import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
 import mk_game from "../mk_game";
-import global_config from "../../@config/global_config";
+import global_config from "../../config/global_config";
 import mk_bundle from "../resources/mk_bundle";
 const ui_manage = mk_dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;

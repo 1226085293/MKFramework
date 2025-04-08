@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import global_event from "../../../@config/global_event";
+import global_event from "../../../config/global_event";
 import { mk_log } from "../../mk_logger";
 import { EDITOR } from "cc/env";
 

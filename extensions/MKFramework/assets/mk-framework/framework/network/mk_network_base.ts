@@ -1,6 +1,6 @@
 import * as cc from "cc";
-import global_config from "../../@config/global_config";
-import global_event from "../../@config/global_event";
+import global_config from "../../config/global_config";
+import global_event from "../../config/global_event";
 import mk_codec_base from "../mk_codec_base";
 import mk_event_target from "../mk_event_target";
 import mk_instance_base from "../mk_instance_base";

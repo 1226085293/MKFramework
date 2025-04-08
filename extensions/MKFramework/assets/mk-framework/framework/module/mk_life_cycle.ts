@@ -9,7 +9,7 @@ import mk_tool from "../@private/tool/mk_tool";
 import { mk_audio, mk_audio_ } from "../audio/mk_audio_export";
 import mk_release, { mk_release_ } from "../mk_release";
 import { mk_asset_ } from "../resources/mk_asset";
-import global_config from "../../@config/global_config";
+import global_config from "../../config/global_config";
 const ui_manage = mk_dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 

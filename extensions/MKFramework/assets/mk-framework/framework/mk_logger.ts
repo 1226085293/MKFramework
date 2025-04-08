@@ -2,7 +2,7 @@ import { EDITOR } from "cc/env";
 import * as cc from "cc";
 import mk_instance_base from "./mk_instance_base";
 import mk_http from "./network/mk_http";
-import global_config from "../@config/global_config";
+import global_config from "../config/global_config";
 // import mk_config from "./mk_config";
 
 namespace _mk_logger {

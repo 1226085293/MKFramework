@@ -2,7 +2,7 @@ import * as cc from "cc";
 import { mk_life_cycle } from "./mk_life_cycle";
 import { EDITOR } from "cc/env";
 import bundle from "../resources/mk_bundle";
-import global_event from "../../@config/global_event";
+import global_event from "../../config/global_event";
 import mk_status_task from "../task/mk_status_task";
 
 const { ccclass, property } = cc._decorator;
