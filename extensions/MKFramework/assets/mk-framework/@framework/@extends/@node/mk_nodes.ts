@@ -111,6 +111,8 @@ class node_extends {
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _order_n = 0;
+	/** 节点渲染次序更新时间 */
+	private _order_timestamp_n = 0;
 	/** 透明度组件 */
 	private _ui_opacity!: cc.UIOpacity;
 	/* ------------------------------- 节点事件 ------------------------------- */
@@ -148,6 +150,7 @@ class node_extends {
 
 		// 更新渲染顺序
 		this._order_n = value_n_;
+		this._order_timestamp_n = Date.now();
 
 		const parent = MKN(this._node.parent!);
 
@@ -167,7 +170,18 @@ class node_extends {
 			}
 
 			/** 同级节点 */
-			const node_as = [...parent._node.children].sort((va, vb) => (MKN(va, false)?._order_n ?? 0) - (MKN(vb, false)?._order_n ?? 0));
+			const node_as = [...parent._node.children].sort((va, vb) => {
+				const va_info = MKN(va, false);
+				const vb_info = MKN(vb, false);
+				const va_order = va_info?._order_n ?? 0;
+				const vb_order = vb_info?._order_n ?? 0;
+
+				if (va_order === vb_order) {
+					return (va_info?._order_timestamp_n ?? 0) - (vb_info?._order_timestamp_n ?? 0);
+				} else {
+					return va_order - vb_order;
+				}
+			});
 
 			// 更新渲染顺序
 			node_as.forEach((v, k_n) => {
