@@ -159,9 +159,11 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	/* --------------- protected --------------- */
 	/** 静态模块 */
 	protected _static_b = true;
-	/** load任务 */
-	protected _load_task = new mk_status_task(false);
-	/** open任务 */
+	/** onLoad 任务 */
+	protected _onload_task = new mk_status_task(false);
+	/** create 任务 */
+	protected _create_task = new mk_status_task<any>(false);
+	/** open 任务 */
 	protected _open_task = new mk_status_task(false);
 	/** 运行状态 */
 	protected _state = _mk_life_cycle.run_state.close;
@@ -187,7 +189,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	private _log2!: mk_logger;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
-		this._load_task.finish(true);
+		this._onload_task.finish(true);
 
 		/** 参数表 */
 		const attr_tab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
@@ -214,10 +216,9 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			// 状态更新
 			this._state = _mk_life_cycle.run_state.wait_open;
 			// 生命周期
-			this.create?.();
+			this._create_task.finish(true, this.create?.());
 		}
 	}
-
 	/* ------------------------------- 自定义生命周期 ------------------------------- */
 	/**
 	 * 创建
@@ -230,7 +231,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * - 动态模块：addChild 后调用
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	protected create?(): void | Promise<void>;
+	protected create?(): void;
 
 	/**
 	 * 初始化
@@ -243,10 +244,10 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * - 动态模块：onLoad 后，open 前调用
 	 */
 	// @ts-ignore
-	init(data_?: any): void | Promise<void>;
+	init(data_?: any): void;
 	async init(data_?: any): Promise<void> {
-		if (!this._load_task.finish_b) {
-			await this._load_task.task;
+		if (!this._onload_task.finish_b) {
+			await this._onload_task.task;
 		}
 
 		this.init_data = data_;
@@ -261,10 +262,10 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * open 顺序: 子 -> 父
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	protected open?(): void | Promise<void>;
+	protected open?(): void;
 	protected async open?(): Promise<void> {
-		if (!this._load_task.finish_b) {
-			await this._load_task.task;
+		if (!this._onload_task.finish_b) {
+			await this._onload_task.task;
 		}
 	}
 
@@ -275,7 +276,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 *
 	 *  close 顺序: 父 -> 子
 	 */
-	close?(): void | Promise<void>;
+	close?(): void;
 
 	/**
 	 * 关闭后
@@ -284,7 +285,9 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * 在子模块 close 和 late_close 后执行
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	protected late_close?(): void | Promise<void> {
+	protected late_close?(): void;
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	protected async late_close?(): Promise<void> {
 		// 清理事件
 		this.event_target_as.splice(0, this.event_target_as.length).forEach((v) => {
 			if (v.targetOff) {
@@ -297,9 +300,16 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
-		mk_monitor.clear(this);
+		{
+			const task = mk_monitor.clear(this);
+
+			if (task) {
+				await task;
+			}
+		}
+
 		// 释放资源
-		this._release_manage.release_all();
+		await this._release_manage.release_all();
 		// 重置数据
 		if (this.data && this._reset_data_b) {
 			mk_tool.object.reset(this.data, true);
@@ -307,24 +317,52 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
+	/**
+	 * 添加组件，和 addComponent 功能一致但 addComponent 没有生命周期函数驱动
+	 * @param comp_ 组件类型
+	 * @returns
+	 */
+	async add_component(comp_: cc.Constructor<mk_life_cycle>): Promise<void> {
+		const comp = this.addComponent(comp_)!;
+
+		if (!comp) {
+			return;
+		}
+
+		// 递归 open
+		comp._open({ first_b: true });
+	}
+
 	follow_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
 		if (!object_) {
+			return object_;
+		}
+
+		if (!this.node.active) {
+			this._log.warn("节点已隐藏，资源可能不会跟随释放");
+
 			return object_;
 		}
 
 		// 添加释放对象
 		if (object_ instanceof mk_audio_._unit) {
 			if (object_.clip) {
-				this._release_manage.add(object_.clip);
+				// 如果模块已经关闭则直接释放
+				if (this._state === _mk_life_cycle.run_state.close) {
+					this._log.debug("在模块关闭后跟随释放资源会被立即释放");
+					mk_release.release(object_.clip);
+				} else {
+					this._release_manage.add(object_.clip);
+				}
 			}
 		} else {
-			this._release_manage.add(object_ as any);
-		}
-
-		// 如果模块已经关闭则直接释放
-		if (this._state === _mk_life_cycle.run_state.close) {
-			this._log.debug("在模块关闭后跟随释放资源会被立即释放");
-			this._release_manage.release_all();
+			// 如果模块已经关闭则直接释放
+			if (this._state === _mk_life_cycle.run_state.close) {
+				this._log.debug("在模块关闭后跟随释放资源会被立即释放");
+				mk_release.release(object_ as any);
+			} else {
+				this._release_manage.add(object_ as any);
+			}
 		}
 
 		return object_;
@@ -362,9 +400,11 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		// 状态更新
 		this._state = _mk_life_cycle.run_state.opening;
 
-		// 动态模块 create
-		if (!this.static_b && this.create) {
-			await this.create();
+		// create
+		if (this.static_b) {
+			await this._create_task.task;
+		} else if (this.create) {
+			this._create_task.finish(true, await this.create());
 		}
 
 		// 参数安检
@@ -373,25 +413,25 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		}
 
 		// 生命周期
-		if (config_) {
-			if (config_.first_b) {
+		if (this.valid_b && config_) {
+			if (this.valid_b && config_.first_b) {
 				await this._recursive_open({
 					target: this.node,
 					active_b: this.node.active,
 				});
 			}
 
-			if (config_.init !== undefined) {
+			if (this.valid_b && config_.init !== undefined) {
 				await this.init(config_.init);
 			}
 
-			if (this.open) {
+			if (this.valid_b && this.open) {
 				await this.open();
 			}
 		}
 
 		// 状态更新
-		{
+		if (this.valid_b) {
 			this._state = _mk_life_cycle.run_state.open;
 			this._open_task.finish(true);
 		}
@@ -463,12 +503,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		}
 
 		// 重置状态
-		this._open_task.finish(false);
+		this._open_task?.finish(false);
 	}
 
 	/** 递归 open */
 	private async _recursive_open(config_: _mk_life_cycle.recursive_open_config): Promise<void> {
-		if (!config_.target) {
+		if (!config_.target?.isValid) {
 			return;
 		}
 
@@ -479,6 +519,10 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 				target: v,
 				active_b: config_.active_b && active_b,
 			});
+		}
+
+		if (!config_.target?.isValid) {
+			return;
 		}
 
 		/** 配置数据 */
