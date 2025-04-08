@@ -71,12 +71,12 @@ export class mk_language_manage extends mk_instance_base {
 	 */
 	get_label(type_: _mk_language_manage.type_type, mark_s_: string, config_?: Partial<mk_language_manage_.label_config>): string {
 		const config = new mk_language_manage_.label_config(config_);
-		let result_s: string = this.label_data_tab[type_]?.[mark_s_]?.[global_config.language.type[config.language]];
+		let result_s: string = this.label_data_tab[type_]?.[mark_s_]?.[global_config.language.types[config.language]];
 
 		// 不存在配置
 		if (!result_s) {
 			if (mark_s_) {
-				this._log.warn(`${type_}.${mark_s_}.${global_config.language.type[config.language]}下的文本未配置！`);
+				this._log.warn(`${type_}.${mark_s_}.${global_config.language.types[config.language]}下的文本未配置！`);
 			}
 
 			return mark_s_;
@@ -102,12 +102,12 @@ export class mk_language_manage extends mk_instance_base {
 		type_: _mk_language_manage.type_type,
 		mark_s_: string,
 		target_: mk_asset_.type_follow_release_object,
-		language_ = this._language_s
+		language_: keyof typeof global_config.language.type_tab = this._language_s
 	): Promise<cc.SpriteFrame | null> {
-		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.type[language_]];
+		const path_s: string = this.texture_data_tab[type_]?.[mark_s_]?.[global_config.language.types[language_]];
 
 		if (!path_s) {
-			this._log.error(`${type_}.${mark_s_}.${global_config.language.type[language_]}下的纹理未配置！`);
+			this._log.error(`${type_}.${mark_s_}.${global_config.language.types[language_]}下的纹理未配置！`);
 
 			return null;
 		}
@@ -154,7 +154,7 @@ export class mk_language_manage extends mk_instance_base {
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
-	private _set_type_s(value_: keyof typeof global_config.language.type): void {
+	private _set_type_s(value_: keyof typeof global_config.language.types): void {
 		if (this._language_s === value_) {
 			return;
 		}
@@ -180,7 +180,7 @@ export namespace mk_language_manage_ {
 		}
 
 		/** 语言类型 */
-		language = mk_language_manage.instance().type_s;
+		language: keyof typeof global_config.language.type_tab = mk_language_manage.instance().type_s;
 		/** 参数 */
 		args_ss?: string[];
 	}

@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import { DEBUG, PREVIEW } from "cc/env";
+import { DEBUG } from "cc/env";
 
 /**
  * 全局配置
@@ -75,7 +75,9 @@ namespace global_config {
 		export const adaptation_type: adaptation_mode = adaptation_mode.adaptive;
 		/** 初始设计尺寸 */
 		export const original_design_size: Omit<Readonly<cc.Size>, "set"> = cc.size();
-		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时报错，0 为关闭） */
+		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时警告，0 为关闭）
+		 * @remarks 此方法可用来排除生命周期阻塞位置，但如果节点 active 为 false 也将阻塞生命周期执行
+		 */
 		export const blocking_warning_time_ms_n = 0;
 		/** 默认遮罩 */
 		export const mask_data_tab = {
@@ -129,7 +131,7 @@ namespace global_config {
 		export const type_tab: Record<keyof typeof private_type_tab, type_data> = private_type_tab;
 
 		/** 语种 */
-		export const type: { [k in keyof typeof type_tab]: k } = new Proxy(
+		export const types: { [k in keyof typeof type_tab]: k } = new Proxy(
 			{},
 			{
 				get(target, key) {
@@ -139,7 +141,7 @@ namespace global_config {
 		) as any;
 
 		/** 默认语言 */
-		export const default_type_s: keyof typeof type_tab = type.zh_cn;
+		export const default_type_s: keyof typeof type_tab = types.zh_cn;
 		/** 参数标识前缀 */
 		export const args_head_s = "{";
 		/** 参数标识后缀 */
@@ -183,7 +185,7 @@ namespace global_config {
 			/** 报错日志上传地址 */
 			error_upload_addr_s = "";
 			/** 日志等级 */
-			level_n = PREVIEW ? level.debug_up : DEBUG ? level.log_up : level.error;
+			level_n = DEBUG ? level.log_up : level.error;
 			/** 打印对象类型 */
 			log_object_type = log_object_type.console;
 			/** 错误处理函数 */
@@ -194,11 +196,12 @@ namespace global_config {
 	/** 网络 */
 	export namespace network {
 		/** 消息头 */
+		// eslint-disable-next-line @typescript-eslint/no-empty-interface
 		export interface proto_head {
-			/** 消息 id */
-			__id: number;
-			/** 消息序列号 */
-			__sequence?: number;
+			// /** 消息 id */
+			// __id: number;
+			// /** 消息序列号 */
+			// __sequence?: number;
 		}
 
 		/** 消息头键 */

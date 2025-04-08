@@ -28,12 +28,12 @@ namespace _mk_language_node {
 		}
 
 		set language(value_n_) {
-			this.language_s = global_config.language.type[value_n_];
+			this.language_s = global_config.language.types[value_n_];
 		}
 
 		/** 语言 */
 		@property({ visible: false })
-		language_s = global_config.language.default_type_s;
+		language_s: keyof typeof global_config.language.type_tab = global_config.language.default_type_s;
 
 		/** 节点 */
 		@property({ displayName: "节点", type: cc.Node })
@@ -50,7 +50,7 @@ class mk_language_node extends mk_life_cycle {
 	/* --------------- 属性 --------------- */
 	/** 语言 */
 	@property({ visible: false })
-	language_s = global_config.language.default_type_s;
+	language_s: keyof typeof global_config.language.type_tab = global_config.language.default_type_s;
 
 	/** 语言 */
 	@property({
@@ -109,7 +109,7 @@ class mk_language_node extends mk_life_cycle {
 	/* --------------- public --------------- */
 	/** 当前语言节点 */
 	get current_node(): cc.Node | null {
-		return this.node_as.find((v) => v.language_s === global_config.language.type[language_manage.type_s])?.node ?? null!;
+		return this.node_as.find((v) => v.language_s === global_config.language.types[language_manage.type_s])?.node ?? null!;
 	}
 
 	/* --------------- protected --------------- */

@@ -81,7 +81,7 @@ class mk_language_texture extends mk_language_base {
 			return;
 		}
 
-		const path_s = language.texture_data_tab[this._type_s]?.[this._mark_s]?.[global_config.language.type[language.type_s]];
+		const path_s = language.texture_data_tab[this._type_s]?.[this._mark_s]?.[global_config.language.types[language.type_s]];
 
 		if (!path_s) {
 			return;
