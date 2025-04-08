@@ -224,13 +224,13 @@ export class tool_monitor_trigger extends mk.life_cycle {
 	} | null = null;
 
 	/* ------------------------------- 生命周期 ------------------------------- */
-	open(): void | Promise<void> {
-		this.monitor(this._data_target, this._data_key_s);
+	async open(): Promise<void | Promise<void>> {
+		await this.monitor(this._data_target, this._data_key_s);
 	}
 
-	close(): void | Promise<void> {
+	async close(): Promise<void> {
 		if (this._monitor_data) {
-			mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
+			await mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
 		}
 	}
 
@@ -255,6 +255,9 @@ export class tool_monitor_trigger extends mk.life_cycle {
 		// 清理事件
 		if (this._monitor_data) {
 			await mk.monitor.off(this._monitor_data.data, this._monitor_data.key_s, this._monitor_data.data);
+			if (!this.valid_b) {
+				return;
+			}
 			this._monitor_data = null;
 		}
 
@@ -298,7 +301,11 @@ export class tool_monitor_trigger extends mk.life_cycle {
 		}
 
 		// 监听数据
-		event.on(this._data_parent, data_key_s, this.node, this.event.event_param_as[0]);
+		await event.on(this._data_parent, data_key_s, this.node, this.event.event_param_as[0]);
+
+		if (!this.valid_b) {
+			return;
+		}
 
 		// 更新监听数据
 		this._monitor_data = {
