@@ -88,7 +88,7 @@ class mk_status_task<CT = void> {
 		});
 
 		// 超时定时器
-		if (this._init_config?.timeout_ms_n !== undefined) {
+		if (this._init_config?.timeout_ms_n !== undefined && this._init_config.timeout_ms_n > 0) {
 			this._timeout_timer = setTimeout(() => {
 				this._timeout_timer = null;
 				this.finish(true, this._init_config!.timeout_return!);
