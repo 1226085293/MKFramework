@@ -494,7 +494,8 @@ export class mk_asset extends mk_instance_base {
 		const loaded_asset = this._asset_manage_map.get(asset_.nativeUrl || asset_._uuid) as T;
 
 		// 如果资源已经加载，则返回的资源是一个新资源，此时引用计数和前一个对象不一致，需要替换
-		if (loaded_asset) {
+		// 如果资源无效，则加载的资源绕过了框架释放，例如使用 bundle.releaseAll
+		if (loaded_asset?.isValid) {
 			// 引用计数更新
 			loaded_asset.addRef();
 
