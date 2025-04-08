@@ -7,6 +7,7 @@ import type { mk_ui_manage_ } from "../mk_ui_manage";
 import mk_asset from "../resources/mk_asset";
 import mk_game from "../mk_game";
 import global_config from "../../@config/global_config";
+import mk_bundle from "../resources/mk_bundle";
 const ui_manage = mk_dynamic_module.default(import("../mk_ui_manage"));
 const { ccclass, property } = cc._decorator;
 
@@ -161,9 +162,7 @@ export class mk_view_base extends mk_life_cycle {
 			this._static_b = config_.static_b;
 		}
 
-		if (config_.type_s) {
-			this.type_s = config_.type_s;
-		}
+		this.type_s = config_.type_s ?? "default";
 	}
 
 	/* --------------- protected --------------- */
@@ -201,12 +200,15 @@ export class mk_view_base extends mk_life_cycle {
 		const close_animation_f = mk_view_base._config.window_animation_tab?.close?.[this.animation_config?.close_animation_s];
 
 		// 关闭动画
-		if (!mk_game.restarting_b && close_animation_f) {
+		if (
+			// 非重启中
+			!mk_game.restarting_b &&
+			// 非切换场景
+			!mk_bundle.switch_scene_b &&
+			close_animation_f
+		) {
 			await close_animation_f(this.node);
 		}
-
-		// 重置数据
-		this.type_s = "default";
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
