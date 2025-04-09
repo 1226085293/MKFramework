@@ -162,7 +162,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	/** onLoad 任务 */
 	protected _onload_task = new mk_status_task(false);
 	/** create 任务 */
-	protected _create_task = new mk_status_task<any>(false);
+	protected _create_task = new mk_status_task(false);
 	/** open 任务 */
 	protected _open_task = new mk_status_task(false);
 	/** 运行状态 */
@@ -188,7 +188,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	/** 日志 */
 	private _log2!: mk_logger;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected onLoad(): void {
+	protected async onLoad(): Promise<void> {
 		this._onload_task.finish(true);
 
 		/** 参数表 */
@@ -216,7 +216,11 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			// 状态更新
 			this._state = _mk_life_cycle.run_state.wait_open;
 			// 生命周期
-			this._create_task.finish(true, this.create?.());
+			if (this.create) {
+				await this.create();
+			}
+
+			this._create_task.finish(true);
 		}
 	}
 	/* ------------------------------- 自定义生命周期 ------------------------------- */
@@ -239,7 +243,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * @remarks
 	 * 所有依赖 init_data 初始化的逻辑都应在此进行
 	 *
-	 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块，会等待模块 onLoad
+	 * - 静态模块：onLoad 后调用，外部自行调用，常用于更新 item 或者静态模块
 	 *
 	 * - 动态模块：onLoad 后，open 前调用
 	 */
@@ -403,8 +407,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		// create
 		if (this.static_b) {
 			await this._create_task.task;
-		} else if (this.create) {
-			this._create_task.finish(true, await this.create());
+		} else {
+			if (this.create) {
+				await this.create();
+			}
+
+			this._create_task.finish(true);
 		}
 
 		// 参数安检

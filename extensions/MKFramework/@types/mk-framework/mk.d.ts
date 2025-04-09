@@ -785,7 +785,7 @@ declare namespace mk {
 		/** onLoad 任务 */
 		protected _onload_task: mk_status_task<void>;
 		/** create 任务 */
-		protected _create_task: mk_status_task<any>;
+		protected _create_task: mk_status_task<void>;
 		/** open 任务 */
 		protected _open_task: mk_status_task<void>;
 		/** 运行状态 */
@@ -801,7 +801,7 @@ declare namespace mk {
 		protected get _log(): logger;
 		/** 日志 */
 		private _log2;
-		protected onLoad(): void;
+		protected onLoad(): Promise<void>;
 		/**
 		 * 创建
 		 * @param config_ 创建配置
@@ -819,7 +819,7 @@ declare namespace mk {
 		 * @remarks
 		 * 所有依赖 init_data 初始化的逻辑都应在此进行
 		 *
-		 * - 静态模块：外部自行调用，常用于更新 item 或者静态模块，会等待模块 onLoad
+		 * - 静态模块：onLoad 后调用，外部自行调用，常用于更新 item 或者静态模块
 		 *
 		 * - 动态模块：onLoad 后，open 前调用
 		 */
