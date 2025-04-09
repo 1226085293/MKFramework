@@ -66,6 +66,8 @@ export namespace _mk_life_cycle {
 		first_b?: boolean;
 		/** 销毁动态子节点 */
 		destroy_children_b?: boolean;
+		/** 强制关闭（无需等待模块 open 完成） */
+		force_b?: boolean;
 	}
 }
 
@@ -245,7 +247,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 *
 	 * - 静态模块：onLoad 后调用，外部自行调用，常用于更新 item 或者静态模块
 	 *
-	 * - 动态模块：onLoad 后，open 前调用
+	 * - 动态模块：onLoad 后，open 前且存在初始化数据时被调用
 	 */
 	// @ts-ignore
 	init(data_?: any): void;
@@ -415,34 +417,48 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			this._create_task.finish(true);
 		}
 
-		// 参数安检
-		if (!config_) {
-			config_ = Object.create(null);
+		// 已销毁或已关闭
+		if (!this.isValid || this._state !== _mk_life_cycle.run_state.opening) {
+			return;
 		}
 
+		/** 配置 */
+		const config = config_ ?? Object.create(null);
+
 		// 生命周期
-		if (this.valid_b && config_) {
-			if (this.valid_b && config_.first_b) {
-				await this._recursive_open({
-					target: this.node,
-					active_b: this.node.active,
-				});
-			}
+		if (config.first_b) {
+			await this._recursive_open({
+				target: this.node,
+				active_b: this.node.active,
+			});
 
-			if (this.valid_b && config_.init !== undefined) {
-				await this.init(config_.init);
+			// 已销毁或已关闭
+			if (!this.isValid || this._state !== _mk_life_cycle.run_state.opening) {
+				return;
 			}
+		}
 
-			if (this.valid_b && this.open) {
-				await this.open();
+		if (config.init !== undefined) {
+			await this.init(config.init);
+
+			// 已销毁或已关闭
+			if (!this.isValid || this._state !== _mk_life_cycle.run_state.opening) {
+				return;
+			}
+		}
+
+		if (this.open) {
+			await this.open();
+
+			// 已销毁或已关闭
+			if (!this.isValid || this._state !== _mk_life_cycle.run_state.opening) {
+				return;
 			}
 		}
 
 		// 状态更新
-		if (this.valid_b) {
-			this._state = _mk_life_cycle.run_state.open;
-			this._open_task.finish(true);
-		}
+		this._state = _mk_life_cycle.run_state.open;
+		this._open_task.finish(true);
 	}
 
 	/**
@@ -457,19 +473,18 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			return;
 		}
 
-		if (!this._open_task.finish_b) {
+		/** 配置参数 */
+		const config = config_ ?? (Object.create(null) as _mk_life_cycle.close_config);
+
+		// 等待模块 open 完成
+		if (!config.force_b && !this._open_task.finish_b) {
 			await this._open_task.task;
 		}
 
-		// 节点安检
-		if (!this.node) {
-			this._log.error("节点已销毁, close 执行失败", this.uuid);
-
+		// 已销毁
+		if (!this.isValid) {
 			return;
 		}
-
-		/** 配置参数 */
-		const config = config_ ?? (Object.create(null) as _mk_life_cycle.close_config);
 
 		// 状态更新
 		this._state = _mk_life_cycle.run_state.closing;
@@ -478,6 +493,11 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		{
 			if (this.close) {
 				await this.close();
+
+				// 已销毁
+				if (!this.isValid) {
+					return;
+				}
 			}
 
 			if (config.first_b) {
@@ -486,10 +506,20 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 					active_b: this.node.active,
 					destroy_children_b: config.destroy_children_b,
 				});
+
+				// 已销毁
+				if (!this.isValid) {
+					return;
+				}
 			}
 
 			if (this.late_close) {
 				await this.late_close();
+
+				// 已销毁
+				if (!this.isValid) {
+					return;
+				}
 			}
 		}
 

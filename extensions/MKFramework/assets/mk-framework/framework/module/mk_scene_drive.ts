@@ -63,6 +63,7 @@ class mk_scene_drive extends mk_life_cycle {
 
 		await this._close({
 			first_b: true,
+			force_b: true,
 		});
 
 		this._close_task.finish(true);
