@@ -546,7 +546,7 @@ export namespace mk_audio_base_ {
 			this._stop_b = false;
 
 			this.audio_unit_as.forEach((v) => {
-				if (!mk_tool.byte.get_bit(v.state, contains_state_n_)) {
+				if (!(v.state & contains_state_n_)) {
 					return;
 				}
 

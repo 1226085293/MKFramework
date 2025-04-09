@@ -186,7 +186,7 @@ export class mk_view_base extends mk_life_cycle {
 	close(config_?: Omit<mk_ui_manage_.close_config<any>, "type" | "all_b">): void | Promise<void>;
 	async close(config_?: Omit<mk_ui_manage_.close_config<any>, "type" | "all_b">): Promise<void> {
 		// 不在关闭中或者已经关闭代表外部调用
-		if (!mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.closing | _mk_life_cycle.run_state.close)) {
+		if (!(this._state & (_mk_life_cycle.run_state.closing | _mk_life_cycle.run_state.close))) {
 			await ui_manage.close(this, config_);
 			throw "中断";
 		}

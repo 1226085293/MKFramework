@@ -29,9 +29,6 @@ class mk_scene_drive extends mk_life_cycle {
 				global_event.on(global_event.key.restart, this._event_restart, this);
 				global_event.on(global_event.key.wait_close_scene, this._event_wait_close_scene, this);
 			}
-
-			// 框架事件
-			bundle.event.on(bundle.event.key.before_scene_switch, this._event_before_scene_switch, this);
 		}
 	}
 
@@ -39,7 +36,20 @@ class mk_scene_drive extends mk_life_cycle {
 		global_event.targetOff(this);
 		bundle.event.targetOff(this);
 	}
+	/* ------------------------------- segmentation ------------------------------- */
+	async event_before_scene_switch(): Promise<void> {
+		// 常驻节点
+		if (cc.director.isPersistRootNode(this.node)) {
+			return;
+		}
 
+		await this._close({
+			first_b: true,
+			force_b: true,
+		});
+
+		this._close_task.finish(true);
+	}
 	/* ------------------------------- 全局事件 ------------------------------- */
 	private async _event_restart(): Promise<void> {
 		await this._close({
@@ -52,21 +62,6 @@ class mk_scene_drive extends mk_life_cycle {
 
 	private async _event_wait_close_scene(): Promise<void> {
 		await this._close_task.task;
-	}
-
-	/* ------------------------------- 框架事件 ------------------------------- */
-	private async _event_before_scene_switch(): Promise<void> {
-		// 常驻节点
-		if (cc.director.isPersistRootNode(this.node)) {
-			return;
-		}
-
-		await this._close({
-			first_b: true,
-			force_b: true,
-		});
-
-		this._close_task.finish(true);
 	}
 }
 
@@ -91,6 +86,20 @@ if (!EDITOR) {
 			});
 		},
 		mk_scene_drive
+	);
+
+	bundle.event.on(
+		bundle.event.key.before_scene_switch,
+		() => {
+			const scene = cc.director.getScene()!;
+
+			scene.children.forEach(async (v) => {
+				const scene_drive = v.getComponent(mk_scene_drive) ?? v.addComponent(mk_scene_drive);
+
+				scene_drive.event_before_scene_switch();
+			});
+		},
+		this
 	);
 }
 

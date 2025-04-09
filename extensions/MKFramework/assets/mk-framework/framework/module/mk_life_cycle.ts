@@ -42,8 +42,8 @@ export namespace _mk_life_cycle {
 		target: cc.Node;
 		/** 激活状态 */
 		active_b: boolean;
-		/** 销毁动态子节点 */
-		destroy_children_b?: boolean;
+		/** 父模块配置 */
+		parent_config: close_config;
 	}
 
 	/** create 配置 */
@@ -139,10 +139,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	get valid_b(): boolean {
 		return (
 			this.isValid &&
-			mk_tool.byte.get_bit(
-				this._state,
-				_mk_life_cycle.run_state.wait_open | _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open
-			) !== 0
+			(this._state & (_mk_life_cycle.run_state.wait_open | _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) !== 0
 		);
 	}
 
@@ -399,7 +396,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 */
 	async _open(config_?: _mk_life_cycle.open_config): Promise<void> {
 		// 状态安检
-		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) {
+		if (this._state & (_mk_life_cycle.run_state.opening | _mk_life_cycle.run_state.open)) {
 			return;
 		}
 
@@ -469,7 +466,12 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 */
 	async _close(config_?: _mk_life_cycle.close_config): Promise<void> {
 		// 状态安检
-		if (mk_tool.byte.get_bit(this._state, _mk_life_cycle.run_state.closing | _mk_life_cycle.run_state.close)) {
+		if (
+			// 允许隐藏的模块执行 close
+			this._onload_task.finish_b &&
+			// 不在 close 中
+			this._state & (_mk_life_cycle.run_state.closing | _mk_life_cycle.run_state.close)
+		) {
 			return;
 		}
 
@@ -504,7 +506,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 				await this._recursive_close({
 					target: this.node,
 					active_b: this.node.active,
-					destroy_children_b: config.destroy_children_b,
+					parent_config: config,
 				});
 
 				// 已销毁
@@ -588,7 +590,8 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 
 		/** 配置数据 */
 		const close_config: _mk_life_cycle.close_config = {
-			destroy_children_b: config_.destroy_children_b,
+			...config_.parent_config,
+			first_b: false,
 		};
 
 		/** 上级激活状态 */
@@ -612,7 +615,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			await this._recursive_close({
 				target: v,
 				active_b: config_.active_b && active_b,
-				destroy_children_b: config_.destroy_children_b,
+				parent_config: close_config,
 			});
 		}
 	}
