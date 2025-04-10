@@ -186,7 +186,10 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log2!: mk_logger;
+	/** 初始化计数（防止 onLoad 前多次初始化调用多次 init） */
+	private _wait_init_n = 0;
 	/* ------------------------------- 生命周期 ------------------------------- */
+	protected onLoad(): void;
 	protected async onLoad(): Promise<void> {
 		this._onload_task.finish(true);
 
@@ -249,8 +252,13 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	// @ts-ignore
 	init(data_?: any): void;
 	async init(data_?: any): Promise<void> {
+		this._wait_init_n++;
 		if (!this._onload_task.finish_b) {
 			await this._onload_task.task;
+		}
+
+		if (--this._wait_init_n !== 0) {
+			throw "中断";
 		}
 
 		this.init_data = data_;
@@ -320,20 +328,10 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
-	/**
-	 * 添加组件，和 addComponent 功能一致但 addComponent 没有生命周期函数驱动
-	 * @param comp_ 组件类型
-	 * @returns
-	 */
-	async add_component(comp_: cc.Constructor<mk_life_cycle>): Promise<void> {
-		const comp = this.addComponent(comp_)!;
-
-		if (!comp) {
-			return;
-		}
-
+	/** 驱动生命周期运行（用于动态添加的组件） */
+	async drive(): Promise<void> {
 		// 递归 open
-		comp._open({ first_b: true });
+		this._open({ first_b: true });
 	}
 
 	follow_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
