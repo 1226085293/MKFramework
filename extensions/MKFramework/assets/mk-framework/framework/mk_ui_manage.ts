@@ -360,7 +360,12 @@ export class mk_ui_manage extends mk_instance_base {
 		config_ = new mk_ui_manage_.open_config(config_);
 
 		/** 父节点 */
-		const parent = config_.parent !== undefined ? config_.parent : regis_data.parent;
+		let parent = config_.parent !== undefined ? config_.parent : regis_data.parent;
+
+		if (parent && !parent.isValid) {
+			parent = null;
+			this._log.warn("父节点无效", key_, parent);
+		}
 
 		// 检测重复加载
 		{
@@ -474,15 +479,21 @@ export class mk_ui_manage extends mk_instance_base {
 			};
 
 			// 加入父节点
-			if (parent) {
+			if (parent?.isValid) {
 				parent.addChild(view_comp.node);
 			}
 
 			// 生命周期
-			await view_comp._open({
-				init: config_.init,
-				first_b: true,
-			});
+			{
+				const open_task = view_comp._open({
+					init: config_.init,
+					first_b: true,
+				});
+
+				if (parent?.isValid) {
+					await open_task;
+				}
+			}
 		}
 
 		// 模块已被关闭
