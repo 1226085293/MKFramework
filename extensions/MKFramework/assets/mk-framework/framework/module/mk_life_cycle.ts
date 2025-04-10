@@ -331,7 +331,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	/** 驱动生命周期运行（用于动态添加的组件） */
 	async drive(): Promise<void> {
 		// 递归 open
-		this._open({ first_b: true });
+		return this._open({ first_b: true });
 	}
 
 	follow_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
