@@ -801,7 +801,9 @@ declare namespace mk {
 		protected get _log(): logger;
 		/** 日志 */
 		private _log2;
-		protected onLoad(): Promise<void>;
+		/** 初始化计数（防止 onLoad 前多次初始化调用多次 init） */
+		private _wait_init_n;
+		protected onLoad(): void;
 		/**
 		 * 创建
 		 * @param config_ 创建配置
@@ -821,7 +823,7 @@ declare namespace mk {
 		 *
 		 * - 静态模块：onLoad 后调用，外部自行调用，常用于更新 item 或者静态模块
 		 *
-		 * - 动态模块：onLoad 后，open 前调用
+		 * - 动态模块：onLoad 后，open 前且存在初始化数据时被调用
 		 */
 		init(data_?: any): void;
 		/**
@@ -848,12 +850,8 @@ declare namespace mk {
 		 * 在子模块 close 和 late_close 后执行
 		 */
 		protected late_close?(): void;
-		/**
-		 * 添加组件，和 addComponent 功能一致但 addComponent 没有生命周期函数驱动
-		 * @param comp_ 组件类型
-		 * @returns
-		 */
-		add_component(comp_: cc_2.Constructor<life_cycle>): Promise<void>;
+		/** 驱动生命周期运行（用于动态添加的组件） */
+		drive(): Promise<void>;
 		follow_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
 		cancel_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
 		/* Excluded from this release type: _open */
@@ -1589,8 +1587,8 @@ declare namespace mk {
 			target: cc_2.Node;
 			/** 激活状态 */
 			active_b: boolean;
-			/** 销毁动态子节点 */
-			destroy_children_b?: boolean;
+			/** 父模块配置 */
+			parent_config: close_config;
 		}
 		/** create 配置 */
 		interface create_config {
@@ -1610,6 +1608,8 @@ declare namespace mk {
 			first_b?: boolean;
 			/** 销毁动态子节点 */
 			destroy_children_b?: boolean;
+			/** 强制关闭（无需等待模块 open 完成） */
+			force_b?: boolean;
 		}
 	}
 
@@ -2852,9 +2852,9 @@ declare namespace mk {
 		private _close_task;
 		onLoad(): Promise<void>;
 		onDestroy(): void;
+		event_before_scene_switch(): Promise<void>;
 		private _event_restart;
 		private _event_wait_close_scene;
-		private _event_before_scene_switch;
 	}
 
 	/**
