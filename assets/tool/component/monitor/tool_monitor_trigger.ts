@@ -385,11 +385,6 @@ export class tool_monitor_trigger extends mk.life_cycle {
 	}
 
 	private _set_data_key_s(value_s_: string): void {
-		if (this._call_time_tab["data_key_s"] && Date.now() - this._call_time_tab["data_key_s"] < 500) {
-			return;
-		}
-
-		this._call_time_tab["data_key_s"] = Date.now();
 		this._data_key_s = value_s_;
 		if (!this._user_comp) {
 			return;
