@@ -3,6 +3,7 @@ import global_config from "../config/global_config";
 import * as cc from "cc";
 import { DEBUG, EDITOR } from "cc/env";
 import global_event from "../config/global_event";
+import * as env from "cc/env";
 
 // 初始化逻辑
 if (!EDITOR) {
@@ -21,9 +22,20 @@ if (!EDITOR) {
 	});
 
 	// 屏幕大小改变事件分发
-	cc.view.setResizeCallback(() => {
-		global_event.emit(global_event.key.resize);
-	});
+	if ((cc.view as any).setResizeCallback) {
+		(cc.view as any).setResizeCallback(() => {
+			global_event.emit(global_event.key.resize);
+		});
+	} else {
+		(cc.screen as any).on("window-resize", () => {
+			global_event.emit(global_event.key.resize);
+		});
+	}
+} else {
+	// 编辑器预览模式
+	if (window["cc"].GAME_VIEW) {
+		(env as any).EDITOR = false;
+	}
 }
 
 // 注册到全局

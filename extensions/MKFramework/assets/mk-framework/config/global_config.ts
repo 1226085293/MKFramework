@@ -43,7 +43,7 @@ namespace global_config {
 		});
 
 		export const config = new (class {
-			/** 缓存生命时长 */
+			/** 缓存生命时长（毫秒，资源未使用时经过多久释放） */
 			cache_lifetime_ms_n = 1000;
 		})();
 	}

@@ -46,10 +46,7 @@ export namespace 默认 {
 
 			// 模块
 			if (this._item_view_type) {
-				const target = cc.director
-					.getScene()!
-					.children.find((v) => v.active && v.getComponent(mk.scene_drive))!
-					.getComponent(mk.scene_drive);
+				const target = cc.director.getScene()!.getComponentInChildren(mk.scene_drive)!;
 
 				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, target, {
 					repeat_b: true,
@@ -148,7 +145,7 @@ export namespace 默认 {
 				for (let k_n = backup_as.length; k_n--; ) {
 					const node = await this._create_item(backup_as[k_n]);
 
-					node.setSiblingIndex(0);
+					node?.setSiblingIndex(0);
 				}
 			});
 
@@ -201,7 +198,7 @@ export namespace 默认 {
 					for (let k_n = 0; k_n < backup_as.length; ++k_n) {
 						const node = await this._create_item(backup_as[k_n]);
 
-						node.setSiblingIndex(start_n_ + k_n);
+						node?.setSiblingIndex(start_n_ + k_n);
 					}
 				}
 			});
@@ -242,19 +239,25 @@ export namespace 默认 {
 		}
 
 		/** 创建新项目 */
-		private async _create_item(init_data_?: any): Promise<cc.Node> {
+		private async _create_item(init_data_?: any): Promise<cc.Node | null> {
 			let node!: cc.Node;
 
 			// 模块
 			if (this._item_view_type) {
 				const view_comp = await mk.ui_manage.open(this._item_view_type, { init: init_data_ });
 
-				node = view_comp.node;
+				node = view_comp?.node;
 			}
 			// 节点
 			else {
 				node = await this._node_pool.get();
-				this._init_data.root.addChild(node);
+				if (node) {
+					this._init_data.root.addChild(node);
+				}
+			}
+
+			if (!node) {
+				return null;
 			}
 
 			// 回调函数

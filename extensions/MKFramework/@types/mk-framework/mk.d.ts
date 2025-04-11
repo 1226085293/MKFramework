@@ -703,6 +703,7 @@ declare namespace mk {
 			layer_spacing_n: number;
 			layer_refresh_interval_ms_n: number;
 			window_animation_tab: Readonly<{
+				/** 初始化编辑器 */
 				open: Record<string, (value: cc_2.Node) => void | Promise<void>>;
 				close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
 			}>;
