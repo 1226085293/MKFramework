@@ -1,0 +1,35 @@
+package common;
+syntax = "proto3";
+
+// C: 客户端消息
+// S: 服务器返回消息
+// B: 服务器推送消息
+
+// C/S 消息共用一个消息号，推送消息单独一个消息号
+
+enum MessageID {
+    /** 测试消息 */
+    Test = 0;
+}
+
+message Package {
+    /** 消息号 */
+    int32 id = 1;
+    /** 消息序列号 */
+    int32 sequence = 2;
+    /** 消息体 */
+    bytes data = 3;
+}
+
+
+message TestC {
+    int32 data = 1;
+}
+
+message TestS {
+    int32 data = 1;
+}
+
+message Test2B {
+    string data = 1;
+}

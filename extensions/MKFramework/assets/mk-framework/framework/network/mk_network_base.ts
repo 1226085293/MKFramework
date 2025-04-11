@@ -275,10 +275,14 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 	protected abstract _reset_socket(): void;
 
 	/** 连接 */
-	connect(addr_s_: string): void {
+	connect(addr_s_: string): Promise<void> {
 		this._state = mk_network_base_.status.connecting;
 		this._addr_s = addr_s_;
 		this._reset_socket();
+
+		return new Promise<void>((resolve_f) => {
+			this.event.once(this.event.key.open, resolve_f);
+		});
 	}
 
 	/** 断开 */

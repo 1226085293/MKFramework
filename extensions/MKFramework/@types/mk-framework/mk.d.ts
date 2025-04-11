@@ -1959,7 +1959,7 @@ declare namespace mk {
 		/** 重置 socket */
 		protected abstract _reset_socket(): void;
 		/** 连接 */
-		connect(addr_s_: string): void;
+		connect(addr_s_: string): Promise<void>;
 		/** 断开 */
 		close(): void;
 		/* Excluded from this release type: _send */

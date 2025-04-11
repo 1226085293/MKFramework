@@ -25,9 +25,9 @@ class codec_proto_static_common extends mk.codec_base {
 	/** 依赖数据 */
 	private _dependent!: {
 		/** 封装包 */
-		Package: protobufjs.Type;
+		package: { create: any; encode: any; decode: any };
 		/** 消息 ID */
-		MessageID: protobufjs.Enum;
+		message_id_tab: Record<string | number, string | number>;
 	};
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
@@ -49,13 +49,15 @@ class codec_proto_static_common extends mk.codec_base {
 		}
 
 		/** 消息数据 */
-		const data = this._dependent.Package.encode(
-			this._dependent.Package.create({
-				id: message_id_n,
-				sequence: data_["__sequence_n"] ?? this.sequence_n++,
-				data: message.encode(data_).finish(),
-			})
-		).finish();
+		const data = this._dependent.package
+			.encode(
+				this._dependent.package.create({
+					id: message_id_n,
+					sequence: data_["__sequence_n"] ?? this.sequence_n++,
+					data: message.encode(data_).finish(),
+				})
+			)
+			.finish();
 
 		return this._config.encryption_f?.(data) ?? data;
 	}
@@ -64,7 +66,7 @@ class codec_proto_static_common extends mk.codec_base {
 	decode(data_: ArrayBuffer): global_config.network.proto_head | null {
 		/** 消息体 */
 		const data_uint8_as = new Uint8Array(data_);
-		const message = this._dependent.Package.decode(data_uint8_as) as unknown as { id: number; sequence: number; data: Uint8Array };
+		const message = this._dependent.package.decode(data_uint8_as) as unknown as { id: number; sequence: number; data: Uint8Array };
 		const message_class = this._server_id_message_map.get(message.id);
 
 		if (!message_class) {
@@ -100,9 +102,9 @@ class codec_proto_static_common extends mk.codec_base {
 			message_name_s = message_name_s.slice(0, -1);
 		}
 
-		const message_id_n = this._dependent.MessageID[message_name_s];
+		const message_id_n = this._dependent.message_id_tab[message_name_s];
 
-		return message_id_n;
+		return message_id_n as number;
 	}
 
 	/** 注册消息 */
