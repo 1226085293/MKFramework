@@ -2,6 +2,7 @@ import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
 import global_event from "global_event";
+import tool_node from "../../../tool_node";
 
 const { ccclass, property } = cc._decorator;
 
@@ -38,6 +39,8 @@ export namespace 默认 {
 		private _node_pool!: mk.obj_pool<cc.Node>;
 		/** 任务管线 */
 		private _task_pipeline = new mk.task.pipeline();
+		/** 注册目标 */
+		private _ui_regis_target: mk.life_cycle = null!;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 初始化 */
 		async init(init_: array_init_config): Promise<void> {
@@ -46,9 +49,11 @@ export namespace 默认 {
 
 			// 模块
 			if (this._item_view_type) {
-				const target = cc.director.getScene()!.getComponentInChildren(mk.scene_drive)!;
+				this._ui_regis_target = tool_node
+					.traverse_parent(this._init_data.root.parent, (node) => node.getComponent(mk.life_cycle) !== null)!
+					.getComponent(mk.life_cycle)!;
 
-				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, target, {
+				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, this._ui_regis_target, {
 					repeat_b: true,
 					pool_init_fill_n: 8,
 					parent: this._init_data.root,
@@ -244,9 +249,11 @@ export namespace 默认 {
 
 			// 模块
 			if (this._item_view_type) {
-				const view_comp = await mk.ui_manage.open(this._item_view_type, { init: init_data_ });
+				if (this._ui_regis_target.valid_b) {
+					const view_comp = await mk.ui_manage.open(this._item_view_type, { init: init_data_ });
 
-				node = view_comp?.node;
+					node = view_comp?.node;
+				}
 			}
 			// 节点
 			else {
