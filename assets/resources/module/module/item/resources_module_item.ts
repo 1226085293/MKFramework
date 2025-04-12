@@ -13,7 +13,7 @@ export class resources_module_item extends mk.view_base {
 		/** 描述 */
 		desc_s: "",
 		/** 视图 */
-		view: null as cc.Constructor<mk.view_base> | null,
+		view: null as cc.Constructor<mk.view_base> | Function | null,
 	};
 
 	/* --------------- protected --------------- */
@@ -29,7 +29,9 @@ export class resources_module_item extends mk.view_base {
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	button_click(): void {
-		if (this.data.view) {
+		if (this.data.view instanceof Function) {
+			(this.data.view as Function)();
+		} else if (this.data.view) {
 			mk.ui_manage.open(this.data.view);
 		}
 	}
