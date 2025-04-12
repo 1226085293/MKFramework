@@ -18,7 +18,7 @@ class mk_scene_drive extends mk_life_cycle {
 	/* --------------- private --------------- */
 	private _close_task = new mk_status_task(false);
 	/* ------------------------------- 生命周期 ------------------------------- */
-	async onLoad() {
+	protected async onLoad() {
 		// 递归 open
 		this._open({ first_b: true });
 
@@ -32,7 +32,7 @@ class mk_scene_drive extends mk_life_cycle {
 		}
 	}
 
-	onDestroy() {
+	protected onDestroy() {
 		global_event.targetOff(this);
 		bundle.event.targetOff(this);
 	}

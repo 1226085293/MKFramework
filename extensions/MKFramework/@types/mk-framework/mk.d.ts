@@ -2851,8 +2851,8 @@ declare namespace mk {
 	 */
 	export declare class scene_drive extends life_cycle {
 		private _close_task;
-		onLoad(): Promise<void>;
-		onDestroy(): void;
+		protected onLoad(): Promise<void>;
+		protected onDestroy(): void;
 		event_before_scene_switch(): Promise<void>;
 		private _event_restart;
 		private _event_wait_close_scene;
