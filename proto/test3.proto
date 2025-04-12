@@ -1,6 +1,0 @@
-package test.child;
-syntax = "proto3";
-
-message test3 {
-    string data = 1;
-}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /*eslint-disable*/
 import $protobuf from "protobufjs/minimal.js";
 
@@ -6,9 +5,9 @@ import $protobuf from "protobufjs/minimal.js";
 const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
 
 // Exported root namespace
-const $root: typeof import("./common.d") = {};
+const $root = {};
 
-export const common: typeof $root.common = $root.common = (() => {
+export const common = $root.common = (() => {
 
     /**
      * Namespace common.
@@ -22,10 +21,12 @@ export const common: typeof $root.common = $root.common = (() => {
      * @name common.MessageID
      * @enum {number}
      * @property {number} Test=0 测试消息
+     * @property {number} Test2=1 Test2 value
      */
     common.MessageID = (function() {
         const valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "Test"] = 0;
+        values[valuesById[1] = "Test2"] = 1;
         return values;
     })();
 

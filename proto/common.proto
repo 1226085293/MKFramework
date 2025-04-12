@@ -10,6 +10,7 @@ syntax = "proto3";
 enum MessageID {
     /** 测试消息 */
     Test = 0;
+    Test2 = 1;
 }
 
 message Package {
