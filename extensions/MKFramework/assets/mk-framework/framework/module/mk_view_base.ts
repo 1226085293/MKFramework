@@ -109,6 +109,7 @@ export class mk_view_base extends mk_life_cycle {
 	})
 	animation_config: _mk_view_base.animation_config = null!;
 
+	/** @internal */
 	@property({
 		displayName: "添加遮罩",
 		tooltip: "添加遮罩到根节点下",
@@ -122,6 +123,7 @@ export class mk_view_base extends mk_life_cycle {
 		this._set_auto_mask_b(value_b_);
 	}
 
+	/** @internal */
 	@property({
 		displayName: "0 边距 widget",
 		tooltip: "在节点上添加 0 边距 widget",
@@ -135,6 +137,7 @@ export class mk_view_base extends mk_life_cycle {
 		this._set_auto_widget_b(value_b_);
 	}
 
+	/** @internal */
 	@property({
 		displayName: "BlockInputEvents",
 		tooltip: "在节点上添加 BlockInputEvents 组件",
@@ -264,60 +267,70 @@ export class mk_view_base extends mk_life_cycle {
 
 	/* ------------------------------- get/set ------------------------------- */
 	private _get_auto_mask_b(): boolean {
-		if (!this.node.children.length) {
-			return false;
+		if (EDITOR) {
+			if (!this.node.children.length) {
+				return false;
+			}
+
+			return Boolean(this.node.children[0].name === global_config.view.mask_data_tab.node_name_s);
 		}
 
-		return Boolean(this.node.children[0].name === global_config.view.mask_data_tab.node_name_s);
+		return false;
 	}
 
 	private async _set_auto_mask_b(value_b_: boolean): Promise<void> {
-		// 添加遮罩
-		if (value_b_) {
-			if (!global_config.view.mask_data_tab.prefab_path_s) {
-				return;
+		if (EDITOR) {
+			// 添加遮罩
+			if (value_b_) {
+				if (!global_config.view.mask_data_tab.prefab_path_s) {
+					return;
+				}
+
+				const prefab = await mk_asset.get(global_config.view.mask_data_tab.prefab_path_s, cc.Prefab, this);
+
+				if (!prefab) {
+					return;
+				}
+
+				const node = cc.instantiate(prefab);
+
+				// 设置节点名
+				if (global_config.view.mask_data_tab.node_name_s) {
+					node.name = global_config.view.mask_data_tab.node_name_s;
+				}
+
+				// 添加到父节点
+				this.node.addChild(node);
+				// 更新层级
+				node.setSiblingIndex(0);
 			}
-
-			const prefab = await mk_asset.get(global_config.view.mask_data_tab.prefab_path_s, cc.Prefab, this);
-
-			if (!prefab) {
-				return;
+			// 销毁遮罩
+			else if (this._get_auto_mask_b()) {
+				this.node.children[0].destroy();
 			}
-
-			const node = cc.instantiate(prefab);
-
-			// 设置节点名
-			if (global_config.view.mask_data_tab.node_name_s) {
-				node.name = global_config.view.mask_data_tab.node_name_s;
-			}
-
-			// 添加到父节点
-			this.node.addChild(node);
-			// 更新层级
-			node.setSiblingIndex(0);
-		}
-		// 销毁遮罩
-		else if (this._get_auto_mask_b()) {
-			this.node.children[0].destroy();
 		}
 	}
 
 	private _set_auto_widget_b(value_b_: boolean): void {
-		if (value_b_) {
-			const widget = this.addComponent(cc.Widget)!;
+		if (EDITOR) {
+			if (value_b_) {
+				const widget = this.addComponent(cc.Widget)!;
 
-			widget.isAlignTop = widget.isAlignBottom = widget.isAlignLeft = widget.isAlignRight = true;
-			widget.top = widget.bottom = widget.left = widget.right = 0;
-		} else {
-			this.getComponent(cc.Widget)?.destroy();
+				widget.isAlignTop = widget.isAlignBottom = widget.isAlignLeft = widget.isAlignRight = true;
+				widget.top = widget.bottom = widget.left = widget.right = 0;
+			} else {
+				this.getComponent(cc.Widget)?.destroy();
+			}
 		}
 	}
 
 	private _set_auto_block_input_b(value_b_: boolean): void {
-		if (value_b_) {
-			this.addComponent(cc.BlockInputEvents);
-		} else {
-			this.getComponent(cc.BlockInputEvents)?.destroy();
+		if (EDITOR) {
+			if (value_b_) {
+				this.addComponent(cc.BlockInputEvents);
+			} else {
+				this.getComponent(cc.BlockInputEvents)?.destroy();
+			}
 		}
 	}
 }

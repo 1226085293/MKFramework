@@ -123,13 +123,6 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
 	 */
 	data?: any;
-	/**
-	 * 事件对象列表
-	 * @readonly
-	 * @remarks
-	 * 模块关闭后自动清理事件
-	 */
-	event_target_as: { targetOff(target: any): any }[] | { target_off(target: any): any }[] = [];
 
 	/**
 	 * 有效状态
@@ -299,15 +292,6 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	protected late_close?(): void;
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async late_close?(): Promise<void> {
-		// 清理事件
-		this.event_target_as.splice(0, this.event_target_as.length).forEach((v) => {
-			if (v.targetOff) {
-				v.targetOff(this);
-			} else {
-				v.target_off(this);
-			}
-		});
-
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
@@ -369,21 +353,21 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 		return object_;
 	}
 
-	cancel_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
+	cancel_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): void {
 		if (!object_) {
-			return object_;
+			return;
 		}
 
-		// 添加释放对象
+		// 删除释放对象
 		if (object_ instanceof mk_audio_._unit) {
 			if (object_.clip) {
-				this._release_manage.release(object_.clip);
+				this._release_manage.delete(object_.clip);
 			}
 		} else {
-			this._release_manage.release(object_ as any);
+			this._release_manage.delete(object_ as any);
 		}
 
-		return object_;
+		return;
 	}
 
 	/**

@@ -2,7 +2,7 @@ import tool from "db://assets/tool/tool";
 import mk from "mk";
 
 type RecursiveReadonly<T> = {
-	readonly [P in keyof T]: RecursiveReadonly<T[P]>;
+	readonly [P in keyof T]: T[P] extends Function ? T[P] : RecursiveReadonly<T[P]>;
 };
 
 type NonFunctionKeys<T> = {
@@ -10,39 +10,122 @@ type NonFunctionKeys<T> = {
 	[P in keyof T]: T[P] extends Function | void ? never : P;
 }[keyof T];
 
-class mvc_control_base {
-	constructor() {
-		this.open?.();
-		tool.func.run_parent_func(this, ["open", "close"]);
-	}
-
-	protected _view?: mvc_view_base;
-	// @ts-ignore
-	protected _model?: mvc_model_base;
-
-	protected open?(): void;
-	close(): void {
-		mk.monitor.clear(this);
-		if (this._view) {
-			mk.ui_manage.close(this._view);
-		}
-	}
-}
+type RecursiveReadonlyAndNonFunctionKeys<T> = RecursiveReadonly<Pick<T, NonFunctionKeys<T>>>;
 
 class mvc_model_base {
 	constructor() {
-		this.open?.();
 		tool.func.run_parent_func(this, ["open", "close"]);
 	}
+	/* ------------------------------- segmentation ------------------------------- */
 	open?(): void;
-	close(): void {
-		mk.monitor.clear(this);
+	close(): void;
+	async close(): Promise<void> {
+		// 取消数据监听事件
+		{
+			const task = mk.monitor.clear(this);
+
+			if (task) {
+				await task;
+			}
+		}
+
+		// 重置数据
 		tool.object.reset(this, true);
 	}
 }
 
-class mvc_view_base extends mk.view_base {
-	// @ts-ignore
-	protected _model?: RecursiveReadonly<Pick<mvc_model_base, NonFunctionKeys<mvc_model_base>>>;
+class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends mk.view_base {
 	protected _event = new mk.event_target();
+	protected _model!: RecursiveReadonlyAndNonFunctionKeys<CT>;
 }
+
+abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 extends mvc_view_base<CT> = mvc_view_base<CT>> {
+	constructor() {
+		tool.func.run_parent_func(this, ["open", "close"]);
+		this.open?.();
+	}
+	/* --------------- protected --------------- */
+	protected _model!: CT;
+	protected _view!: CT2;
+	/* --------------- public --------------- */
+	get model(): RecursiveReadonly<Omit<CT, "open" | "close">> {
+		return this._model as any;
+	}
+	/* ------------------------------- segmentation ------------------------------- */
+	close(external_call_b?: boolean): void;
+	async close(external_call_b = true): Promise<void> {
+		if (external_call_b) {
+			await this.close(false);
+			await this._last_close();
+
+			return;
+		}
+
+		// 取消数据监听事件
+		{
+			const task = mk.monitor.clear(this);
+
+			if (task) {
+				await task;
+			}
+		}
+
+		// 关闭视图模块
+		if (this._view) {
+			await mk.ui_manage.close(this._view);
+		}
+	}
+
+	protected open?(): void;
+	protected async open?(): Promise<void> {
+		if (this._model?.open) {
+			await this._model.open?.();
+		}
+	}
+
+	private async _last_close(): Promise<void> {
+		await this._model.close();
+	}
+}
+
+class m extends mvc_model_base {
+	a = 0;
+	b = {
+		c: {
+			d: 1,
+		},
+	};
+
+	open(): void {
+		console.log("model-open");
+	}
+
+	close(): void {
+		console.log("model-close");
+	}
+}
+
+class v extends mvc_view_base<m> {
+	protected open(): void | Promise<void> {
+		const a = this._model.b.c;
+
+		console.log("view-open");
+	}
+
+	close(): void {
+		console.log("view-close");
+	}
+}
+class c extends mvc_control_base<m, v> {
+	protected _model = new m();
+
+	protected open(): void {
+		console.log("control-open");
+	}
+
+	close(): void {
+		console.log("control-close");
+	}
+}
+
+new c();

@@ -70,6 +70,31 @@ class mk_release {
 	}
 
 	/**
+	 * 删除释放对象
+	 * @param object_ 删除跟随模块释放的对象或列表
+	 */
+	delete<T extends mk_release_.type_release_param_type>(object_: T): void {
+		if (!object_) {
+			mk_log.error("删除释放对象错误", object_);
+
+			return;
+		}
+
+		// 添加引用数据
+		if (object_ instanceof cc.Node) {
+			this._node_set.delete(object_);
+		} else if (object_ instanceof cc.Asset) {
+			this._asset_set.delete(object_);
+		} else if (typeof object_ === "function") {
+			this._callback_set.delete(object_);
+		} else {
+			this._object_set.delete(object_);
+		}
+
+		return;
+	}
+
+	/**
 	 * 释放对象
 	 * @param object_ 指定对象
 	 */
@@ -142,7 +167,7 @@ export namespace mk_release_ {
 		 * 取消释放
 		 * @param object_ 取消释放对象/取消释放对象数组
 		 */
-		cancel_release<T extends CT>(object_: T): T;
+		cancel_release<T extends CT>(object_: T): void;
 	};
 }
 

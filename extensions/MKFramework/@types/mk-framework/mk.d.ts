@@ -296,7 +296,7 @@ declare namespace mk {
 			 */
 			close(): void | Promise<void>;
 			follow_release<T = release_.type_release_param_type>(object_: T): T;
-			cancel_release<T = release_.type_release_param_type>(object_: T): T;
+			cancel_release<T = release_.type_release_param_type>(object_: T): void;
 		}
 	}
 
@@ -759,19 +759,6 @@ declare namespace mk {
 		 */
 		data?: any;
 		/**
-		 * 事件对象列表
-		 * @readonly
-		 * @remarks
-		 * 模块关闭后自动清理事件
-		 */
-		event_target_as:
-			| {
-					targetOff(target: any): any;
-			  }[]
-			| {
-					target_off(target: any): any;
-			  }[];
-		/**
 		 * 有效状态
 		 * @remarks
 		 * 表示模块未在(关闭/关闭中)状态
@@ -854,7 +841,7 @@ declare namespace mk {
 		/** 驱动生命周期运行（用于动态添加的组件） */
 		drive(): Promise<void>;
 		follow_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
-		cancel_release<T = release_.type_release_param_type & audio_._unit>(object_: T): T;
+		cancel_release<T = release_.type_release_param_type & audio_._unit>(object_: T): void;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */
@@ -2811,6 +2798,11 @@ declare namespace mk {
 		 */
 		add<T extends release_.type_release_param_type>(object_: T): T;
 		/**
+		 * 删除释放对象
+		 * @param object_ 删除跟随模块释放的对象或列表
+		 */
+		delete<T extends release_.type_release_param_type>(object_: T): void;
+		/**
 		 * 释放对象
 		 * @param object_ 指定对象
 		 */
@@ -2839,7 +2831,7 @@ declare namespace mk {
 			 * 取消释放
 			 * @param object_ 取消释放对象/取消释放对象数组
 			 */
-			cancel_release<T extends CT>(object_: T): T;
+			cancel_release<T extends CT>(object_: T): void;
 		};
 	}
 
@@ -3022,12 +3014,12 @@ declare namespace mk {
 	export declare class view_base extends life_cycle {
 		show_alone_b: boolean;
 		animation_config: _mk_view_base.animation_config;
-		get auto_mask_b(): boolean;
-		set auto_mask_b(value_b_: boolean);
-		get auto_widget_b(): boolean;
-		set auto_widget_b(value_b_: boolean);
-		get auto_block_input_b(): boolean;
-		set auto_block_input_b(value_b_: boolean);
+		/* Excluded from this release type: auto_mask_b */
+		/* Excluded from this release type: auto_mask_b */
+		/* Excluded from this release type: auto_widget_b */
+		/* Excluded from this release type: auto_widget_b */
+		/* Excluded from this release type: auto_block_input_b */
+		/* Excluded from this release type: auto_block_input_b */
 		/**
 		 * 模块类型
 		 * @readonly

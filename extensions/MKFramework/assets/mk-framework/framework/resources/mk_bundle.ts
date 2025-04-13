@@ -685,15 +685,15 @@ export namespace mk_bundle_ {
 			return object_;
 		}
 
-		cancel_release<T = mk_release_.type_release_param_type>(object_: T): T {
+		cancel_release<T = mk_release_.type_release_param_type>(object_: T): void {
 			if (!object_) {
-				return object_;
+				return;
 			}
 
 			// 添加释放对象
-			this._release_manage.release(object_ as any);
+			this._release_manage.delete(object_ as any);
 
-			return object_;
+			return;
 		}
 	}
 }
