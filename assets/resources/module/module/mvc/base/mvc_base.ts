@@ -42,23 +42,36 @@ class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends mk.view_
 abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 extends mvc_view_base<CT> = mvc_view_base<CT>> {
 	constructor() {
 		tool.func.run_parent_func(this, ["open", "close"]);
-		this.open?.();
+		// 等待初始化属性完成
+		setTimeout(async () => {
+			await this._close_task.task;
+			if (this.open) {
+				await this.open();
+			}
+
+			this._open_task.finish(true);
+		}, 0);
 	}
-	/* --------------- protected --------------- */
-	protected _model!: CT;
-	protected _view!: CT2;
 	/* --------------- public --------------- */
 	get model(): RecursiveReadonly<Omit<CT, "open" | "close">> {
 		return this._model as any;
 	}
+	/* --------------- protected --------------- */
+	protected _model!: CT;
+	protected _view!: CT2;
+	/* --------------- private --------------- */
+	private _open_task = new mk.task.status(false);
+	private _close_task = new mk.task.status(true);
 	/* ------------------------------- segmentation ------------------------------- */
 	close(external_call_b?: boolean): void;
 	async close(external_call_b = true): Promise<void> {
+		await this._open_task.task;
+		this._close_task.finish(false);
 		if (external_call_b) {
 			await this.close(false);
 			await this._last_close();
 
-			return;
+			throw "中断";
 		}
 
 		// 取消数据监听事件
@@ -85,6 +98,8 @@ abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 
 
 	private async _last_close(): Promise<void> {
 		await this._model.close();
+		this._open_task.finish(false);
+		this._close_task.finish(true);
 	}
 }
 
@@ -128,4 +143,6 @@ class c extends mvc_control_base<m, v> {
 	}
 }
 
-new c();
+const cc = new c();
+
+cc.close();

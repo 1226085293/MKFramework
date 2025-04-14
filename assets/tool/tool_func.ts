@@ -1,4 +1,5 @@
 import * as cc from "cc";
+import mk from "mk";
 
 /** 函数扩展 */
 class tool_func {
@@ -65,9 +66,11 @@ class tool_func {
 						}
 					}
 				} catch (error) {
-					if (error && error !== "中断") {
-						console.error(error);
+					if (error === "中断") {
+						return;
 					}
+
+					mk.error(error);
 				}
 
 				return result;
