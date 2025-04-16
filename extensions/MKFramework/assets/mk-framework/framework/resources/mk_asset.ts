@@ -193,6 +193,10 @@ export class mk_asset extends mk_instance_base {
 		}
 
 		return new Promise<T | null>(async (resolve_f) => {
+			if (!path_s_) {
+				return null;
+			}
+
 			/** 完成回调 */
 			const completed_f = (error: Error | null, asset: T): void => {
 				if (error) {
@@ -362,6 +366,10 @@ export class mk_asset extends mk_instance_base {
 		return new Promise<T[] | null>(async (resolve_f) => {
 			/** 文件夹资源列表 */
 			const dir_asset_as: T[] = [];
+
+			if (!path_s_) {
+				return dir_asset_as;
+			}
 
 			/** 完成回调 */
 			const completed_f = (error: Error | null): void => {
