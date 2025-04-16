@@ -2560,6 +2560,50 @@ declare namespace mk {
 
 	export declare const monitor: mk_monitor;
 
+	export declare abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 extends mvc_view_base<CT> = mvc_view_base<CT>> {
+		constructor();
+		get model(): _mvc_control_base.recursive_readonly<Omit<CT, "open" | "close">>;
+		protected _model: CT;
+		protected _view: CT2;
+		private _open_task;
+		private _close_task;
+		close(external_call_b?: boolean): void;
+		protected open?(): void;
+		private _last_close;
+	}
+
+	declare namespace _mvc_control_base {
+		/** 递归只读 */
+		type recursive_readonly<T> = {
+			readonly [P in keyof T]: T[P] extends Function ? T[P] : recursive_readonly<T[P]>;
+		};
+	}
+
+	export declare abstract class mvc_model_base {
+		constructor();
+		open?(): void;
+		close(): void;
+	}
+
+	export declare abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends view_base {
+		protected _event: event_target<unknown>;
+		protected _model: _mvc_view_base.recursive_readonly_and_non_function_keys<CT>;
+	}
+
+	declare namespace _mvc_view_base {
+		/** 递归只读 */
+		type recursive_readonly<T> = {
+			readonly [P in keyof T]: T[P] extends Function ? T[P] : recursive_readonly<T[P]>;
+		};
+		/** 排除函数属性的对象键 */
+		type non_function_keys<T> = {
+			[P in keyof T]: T[P] extends Function | void ? never : P;
+		}[keyof T];
+		type recursive_readonly_and_non_function_keys<T> = recursive_readonly<Pick<T, non_function_keys<T>>>;
+		{
+		}
+	}
+
 	export declare function N(node_: cc_2.Node, force_b_?: boolean): node_extends;
 
 	export declare namespace N {

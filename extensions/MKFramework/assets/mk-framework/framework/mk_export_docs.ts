@@ -1,5 +1,8 @@
 import { mk_log } from "./mk_logger";
 
+export { default as mvc_model_base } from "./module/mvc/mvc_model_base";
+export { default as mvc_view_base } from "./module/mvc/mvc_view_base";
+export { default as mvc_control_base } from "./module/mvc/mvc_control_base";
 export { default as task } from "./task/mk_task";
 export { audio, mk_audio_ as audio_ } from "./audio/mk_audio_export";
 export { default as language, language_manage, language_manage_ as language_ } from "./language/mk_language";
