@@ -20,5 +20,22 @@
 	// 使用本地的 typescript 版本
 	"typescript.tsdk": "node_modules\\typescript\\lib",
 	// 排除自动导入提示
-	"typescript.preferences.autoImportFileExcludePatterns": ["./extensions/MKFramework/assets/mk-framework/framework/**"]
+	"typescript.preferences.autoImportFileExcludePatterns": ["./extensions/MKFramework/assets/mk-framework/framework/**"],
+	// 默认行尾字符
+	"files.eol": "\n",
+	// 控制编辑器在键入一行后是否自动格式化该行
+	"editor.formatOnType": true,
+	// 定义一个默认格式化程序, 该格式化程序优先于所有其他格式化程序设置。必须是提供格式化程序的扩展的标识符
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	// 保存时格式化
+	"editor.formatOnSave": true,
+	// 在保存时运行的代码操作类型
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit"
+	},
+	/* ------------------------------- eslint ------------------------------- */
+	"eslint.validate": ["javascript", "typescript"],
+	/* ------------------------------- prettier ------------------------------- */
+	"prettier.useEditorConfig": false,
+	"prettier.useTabs": true,
 }
