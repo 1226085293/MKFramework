@@ -202,8 +202,6 @@ export class mk_asset extends mk_instance_base {
 
 			/** 完成回调 */
 			const completed_f = async (error: Error | null, asset: T): Promise<void> => {
-				error = new Error("test");
-
 				if (error) {
 					this._log.error(`get ${path_s_} 错误`, error);
 				} else {
