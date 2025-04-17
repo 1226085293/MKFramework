@@ -8,9 +8,12 @@ declare namespace mk {
 
 	export declare namespace asset_ {
 		/** 加载文件夹配置 */
-		export type type_get_dir_config<T extends cc_2.Asset> = get_config<T, T[]>;
+		export interface get_dir_config<T extends cc_2.Asset> extends Omit<get_config<T>, "completed_f"> {
+			/** 完成回调 */
+			completed_f?: (error: Error[] | null, asset: (T | null)[]) => void;
+		}
 		/** 加载配置 */
-		export interface get_config<T extends cc_2.Asset = cc_2.Asset, T2 = T> {
+		export interface get_config<T extends cc_2.Asset = cc_2.Asset> {
 			/**
 			 * bundle 名
 			 * @defaultValue
@@ -25,9 +28,14 @@ declare namespace mk {
 				total_n: number
 			) => void;
 			/** 完成回调 */
-			completed_f?: (error: Error | null, asset: T2) => void;
+			completed_f?: (error: Error | null, asset: T) => void;
 			/** 远程配置，存在配置则为远程资源 */
 			remote_option?: _mk_asset.load_remote_option_type;
+			/**
+			 * 失败重试次数
+			 * @default global_config.asset.config.retry_count_on_load_failure_n
+			 */
+			retry_n?: number;
 		}
 		/** 跟随释放对象 */
 		export type type_follow_release_object = release_.type_follow_release_object<cc_2.Asset>;
@@ -703,7 +711,6 @@ declare namespace mk {
 			layer_spacing_n: number;
 			layer_refresh_interval_ms_n: number;
 			window_animation_tab: Readonly<{
-				/** 初始化编辑器 */
 				open: Record<string, (value: cc_2.Node) => void | Promise<void>>;
 				close: Record<string, (value: cc_2.Node) => void | Promise<void>>;
 			}>;
@@ -982,7 +989,7 @@ declare namespace mk {
 			path_s_: string,
 			type_: cc_2.Constructor<T>,
 			target_: asset_.type_follow_release_object | null,
-			config_?: asset_.type_get_dir_config<T>
+			config_?: asset_.get_dir_config<T>
 		): Promise<T[] | null>;
 		/**
 		 * 释放资源

@@ -152,6 +152,9 @@ export class mk_asset extends mk_instance_base {
 		/** 远程资源 */
 		const remote_b = Boolean(get_config.remote_option);
 
+		// 参数补齐
+		get_config.retry_n = get_config.retry_n ?? global_config.asset.config.retry_count_on_load_failure_n;
+
 		// 参数转换
 		{
 			// 去除无用信息
@@ -198,17 +201,34 @@ export class mk_asset extends mk_instance_base {
 			}
 
 			/** 完成回调 */
-			const completed_f = (error: Error | null, asset: T): void => {
+			const completed_f = async (error: Error | null, asset: T): Promise<void> => {
+				error = new Error("test");
+
 				if (error) {
 					this._log.error(`get ${path_s_} 错误`, error);
 				} else {
 					this._log.debug(`get ${path_s_} 完成`);
 				}
 
-				if (error || EDITOR) {
+				if (EDITOR) {
 					get_config.completed_f?.(error, asset);
 					resolve_f(asset);
 
+					return;
+				}
+
+				if (error) {
+					// 加载失败
+					if (get_config.retry_n! <= 0) {
+						get_config.completed_f?.(error, asset);
+						resolve_f(asset);
+					}
+					// 重试
+					else {
+						this._log.warn(`重新加载 get ${path_s_} 错误，剩余重试次数 ${get_config.retry_n}`);
+						get_config.retry_n!--;
+						resolve_f(await this.get(path_s_, type_, target_, get_config));
+					}
 					return;
 				}
 
@@ -324,12 +344,15 @@ export class mk_asset extends mk_instance_base {
 		path_s_: string,
 		type_: cc.Constructor<T>,
 		target_: mk_asset_.type_follow_release_object | null,
-		config_?: mk_asset_.type_get_dir_config<T>
+		config_?: mk_asset_.get_dir_config<T>
 	): Promise<T[] | null> {
 		/** 获取配置 */
 		const get_config = config_ ?? {};
 		/** 资源配置 */
 		let asset_config: _mk_asset.load_any_request_type;
+
+		// 参数补齐
+		get_config.retry_n = get_config.retry_n ?? global_config.asset.config.retry_count_on_load_failure_n;
 
 		// 参数转换
 		{
@@ -372,24 +395,14 @@ export class mk_asset extends mk_instance_base {
 			}
 
 			/** 完成回调 */
-			const completed_f = (error: Error | null): void => {
-				if (error) {
-					this._log.error(`get_dir ${path_s_} 错误`, error);
-
-					// 执行回调
-					get_config.completed_f?.(error, []);
-					resolve_f(null);
-				} else {
-					this._log.debug(`get_dir ${path_s_} 完成`);
-				}
-
+			const completed_f = (error_as: Error[] | null): void => {
 				// 资源初始化
 				dir_asset_as.forEach((v, k_n) => {
 					dir_asset_as[k_n] = this._asset_init(v);
 				});
 
 				// 执行回调
-				get_config.completed_f?.(error, dir_asset_as);
+				get_config.completed_f?.(error_as, dir_asset_as);
 
 				// 跟随释放
 				if (target_?.follow_release) {
@@ -404,7 +417,7 @@ export class mk_asset extends mk_instance_base {
 			// 编辑器
 			if (EDITOR) {
 				this._log.error("不支持获取编辑器文件夹资源");
-				get_config.completed_f?.(new Error("不支持获取编辑器文件夹资源"), null!);
+				get_config.completed_f?.([new Error("不支持获取编辑器文件夹资源")], null!);
 				resolve_f(null);
 			}
 			// 本地
@@ -414,7 +427,7 @@ export class mk_asset extends mk_instance_base {
 
 				if (!bundle_asset) {
 					this._log.error("未获取到 bundle 信息");
-					get_config.completed_f?.(new Error("未获取到 bundle 信息，" + asset_config.bundle), null!);
+					get_config.completed_f?.([new Error("未获取到 bundle 信息，" + asset_config.bundle)], null!);
 					resolve_f(null);
 
 					return;
@@ -422,6 +435,8 @@ export class mk_asset extends mk_instance_base {
 
 				/** 资源信息列表 */
 				const asset_info_as = bundle_asset.getDirWithPath(path_s_, type_);
+				/** 错误列表 */
+				const error_as: Error[] = [];
 
 				// 加载资源
 				for (const [k_n, v] of asset_info_as.entries()) {
@@ -433,30 +448,40 @@ export class mk_asset extends mk_instance_base {
 					}
 					// 加载资源
 					else {
-						/** 成功状态 */
-						const success_b = await new Promise<boolean>((resolve_f) => {
-							bundle_asset.load(v.path, type_, (error, asset): void => {
-								if (error) {
-									completed_f(error);
+						const load_f = (retry_n = get_config.retry_n!) => {
+							return new Promise<boolean>((resolve_f) => {
+								bundle_asset.load(v.path, type_, async (error, asset): Promise<void> => {
+									if (error) {
+										this._log.error(`get ${v.path} 错误`, error);
+										// 加载失败
+										if (retry_n === 0) {
+											error_as.push(error);
+											resolve_f(false);
+										}
+										// 重试
+										else {
+											this._log.warn(`重新加载 get ${v.path} 错误，剩余重试次数 ${retry_n}`);
+											resolve_f(await load_f(retry_n - 1));
+										}
 
-									return;
-								}
+										return;
+									}
 
-								dir_asset_as.push(asset);
-								resolve_f(!error);
+									dir_asset_as.push(asset);
+									resolve_f(true);
+								});
 							});
-						});
+						};
 
-						if (!success_b) {
-							return;
-						}
+						// 加载资源
+						await load_f();
 					}
 
 					// 模拟回调
 					get_config.progress_f?.(k_n + 1, asset_info_as.length);
 				}
 
-				completed_f(null);
+				completed_f(!error_as.length ? null : error_as);
 			}
 		});
 	}
@@ -585,10 +610,13 @@ export class mk_asset extends mk_instance_base {
 
 export namespace mk_asset_ {
 	/** 加载文件夹配置 */
-	export type type_get_dir_config<T extends cc.Asset> = get_config<T, T[]>;
+	export interface get_dir_config<T extends cc.Asset> extends Omit<get_config<T>, "completed_f"> {
+		/** 完成回调 */
+		completed_f?: (error: Error[] | null, asset: (T | null)[]) => void;
+	}
 
 	/** 加载配置 */
-	export interface get_config<T extends cc.Asset = cc.Asset, T2 = T> {
+	export interface get_config<T extends cc.Asset = cc.Asset> {
 		/**
 		 * bundle 名
 		 * @defaultValue
@@ -604,9 +632,14 @@ export namespace mk_asset_ {
 		) => void;
 
 		/** 完成回调 */
-		completed_f?: (error: Error | null, asset: T2) => void;
+		completed_f?: (error: Error | null, asset: T) => void;
 		/** 远程配置，存在配置则为远程资源 */
 		remote_option?: _mk_asset.load_remote_option_type;
+		/**
+		 * 失败重试次数
+		 * @default global_config.asset.config.retry_count_on_load_failure_n
+		 */
+		retry_n?: number;
 	}
 
 	/** 跟随释放对象 */
