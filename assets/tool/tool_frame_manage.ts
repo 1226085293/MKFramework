@@ -261,6 +261,17 @@ class tool_frame_manage implements cc.ISchedulable {
 	 */
 	private _replace_math(replace_b_: boolean): void {
 		// box2d：asin, atan2, cos, exp, pow, sin, sqrt, random
+
+		const math_tab: Record<string, Function> = {
+			// asin,
+			// atan2,
+			// cos,
+			// exp,
+			// pow,
+			// sin,
+			// sqrt,
+		};
+
 		if (replace_b_) {
 			this._original_data_tab["random"] = Math.random;
 			Math.random = () => {
@@ -269,39 +280,27 @@ class tool_frame_manage implements cc.ISchedulable {
 				return x_n - Math.floor(x_n);
 			};
 
-			// (
-			// 	[
-			// 		["asin", asin],
-			// 		["atan2", atan2],
-			// 		["cos", cos],
-			// 		["exp", exp],
-			// 		["pow", pow],
-			// 		["sin", sin],
-			// 		["sqrt", sqrt],
-			// 	] as any[]
-			// ).forEach((v_as) => {
-			// 	const func_name_s = v_as[0];
-			// 	const new_value_f = v_as[1];
+			for (const k_s in math_tab) {
+				const new_value_f = math_tab[k_s];
 
-			// 	if (this._original_data_tab[func_name_s]) {
-			// 		return;
-			// 	}
+				if (this._original_data_tab[k_s]) {
+					return;
+				}
 
-			// 	this._original_data_tab[func_name_s] = Math[func_name_s];
+				this._original_data_tab[k_s] = Math[k_s];
 
-			// 	if (new_value_f) {
-			// 		Math[func_name_s] = new_value_f;
-			// 	}
-			// });
+				if (new_value_f) {
+					Math[k_s] = new_value_f;
+				}
+			}
 		} else {
 			Math.random = this._original_data_tab["random"];
 			delete this._original_data_tab["random"];
 
-			// const replace_function_ss = ["asin", "atan2", "cos", "exp", "pow", "sin", "sqrt", "random"] as (keyof Math)[];
-			// replace_function_ss.forEach((v_s) => {
-			// 	Math[v_s as any] = this._original_data_tab[v_s];
-			// 	delete this._original_data_tab[v_s];
-			// });
+			for (const k_s in math_tab) {
+				Math[k_s] = this._original_data_tab[k_s];
+				delete this._original_data_tab[k_s];
+			}
 		}
 	}
 }
