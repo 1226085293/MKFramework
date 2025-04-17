@@ -33,7 +33,7 @@ declare namespace mk {
 			remote_option?: _mk_asset.load_remote_option_type;
 			/**
 			 * 失败重试次数
-			 * @default global_config.asset.config.retry_count_on_load_failure_n
+			 * @defaultValue global_config.asset.config.retry_count_on_load_failure_n
 			 */
 			retry_n?: number;
 		}
