@@ -5,7 +5,6 @@ import { resources_module_life_cycle } from "./life_cycle/resources_module_life_
 import { resources_module_show_alone } from "./show_alone/resources_module_show_alone";
 import { resources_module_ui_stack } from "./ui_stack/resources_module_ui_stack";
 import { resources_module_window } from "./window/resources_module_window";
-import { resources_module_mvc_control } from "./mvc/resources_module_mvc";
 
 const { ccclass, property } = _decorator;
 
@@ -36,14 +35,14 @@ export class resources_module extends mk.view_base {
 				desc_s: "弹窗",
 				view: resources_module_window,
 			},
-			{
-				desc_s: "MVC",
-				view: () => {
-					const mvc = new resources_module_mvc_control();
+			// {
+			// 	desc_s: "MVC",
+			// 	view: () => {
+			// 		const mvc = new resources_module_mvc_control();
 
-					mvc.update_test("123");
-				},
-			},
+			// 		mvc.update_test("123");
+			// 	},
+			// },
 		],
 	};
 
