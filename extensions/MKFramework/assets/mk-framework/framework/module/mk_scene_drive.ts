@@ -61,6 +61,11 @@ class mk_scene_drive extends mk_life_cycle {
 	}
 
 	private async _event_wait_close_scene(): Promise<void> {
+		// 常驻节点
+		if (cc.director.isPersistRootNode(this.node)) {
+			return;
+		}
+
 		await this._close_task.task;
 	}
 }

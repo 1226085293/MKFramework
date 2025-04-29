@@ -360,7 +360,8 @@ export class mk_ui_manage extends mk_instance_base {
 		config_ = new mk_ui_manage_.open_config(config_);
 
 		/** 父节点 */
-		let parent = config_.parent !== undefined ? config_.parent : regis_data.parent;
+		let parent_data = config_.parent !== undefined ? config_.parent : regis_data.parent;
+		let parent = parent_data instanceof Function ? parent_data() : parent_data;
 
 		if (parent && !parent.isValid) {
 			parent = null;
@@ -396,11 +397,11 @@ export class mk_ui_manage extends mk_instance_base {
 
 		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 		/** 退出回调 */
-		const exit_callback_f = (state_b: boolean): T2 => {
+		const exit_callback_f = (state_b: boolean): T2 | null => {
 			// 更新加载状态
 			this._ui_load_map.get(key_)?.finish(true);
 
-			return view_comp as any;
+			return state_b ? (view_comp as any) : null;
 		};
 
 		/** 注册任务 */
@@ -438,6 +439,13 @@ export class mk_ui_manage extends mk_instance_base {
 
 			if (!comp) {
 				this._log.error("节点未挂载视图组件");
+				node.destroy();
+
+				return exit_callback_f(false);
+			}
+
+			if (!this._ui_regis_map.has(key_)) {
+				this._log.warn("已取消注册");
 				node.destroy();
 
 				return exit_callback_f(false);
@@ -501,6 +509,17 @@ export class mk_ui_manage extends mk_instance_base {
 			this._log.warn(`模块 ${cc.js.getClassName(view_comp)} 在 open 内被关闭`);
 
 			return exit_callback_f(false);
+		}
+
+		// 模块已取消注册
+		if (!this._ui_regis_map.has(key_)) {
+			this._log.warn("已取消注册");
+			exit_callback_f(false);
+			await this.close(view_comp, {
+				all_b: true,
+				destroy_b: true,
+			});
+			return null;
 		}
 
 		return exit_callback_f(true);
@@ -681,6 +700,11 @@ export class mk_ui_manage extends mk_instance_base {
 				continue;
 			}
 
+			if (cc.director.isPersistRootNode(v.node)) {
+				this._log.warn("关闭常驻节点", v);
+				cc.director.removePersistRootNode(v.node);
+			}
+
 			await v._close?.({
 				first_b: true,
 				destroy_children_b: config.destroy_children_b,
@@ -806,7 +830,9 @@ export namespace mk_ui_manage_ {
 		 * @defaultValue
 		 * Canvas 节点
 		 */
-		parent: cc.Scene | cc.Node | undefined = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
+		parent: cc.Scene | cc.Node | (() => cc.Node | null) | undefined = (): cc.Node | null => {
+			return cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node ?? null;
+		};
 		/** 加载配置 */
 		load_config?: mk_asset_.get_config<cc.Prefab>;
 		/**

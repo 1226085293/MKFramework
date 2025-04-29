@@ -766,6 +766,19 @@ declare namespace mk {
 		 */
 		data?: any;
 		/**
+		 * 事件对象列表
+		 * @readonly
+		 * @remarks
+		 * 模块关闭后自动清理事件
+		 */
+		event_target_as:
+			| {
+					targetOff(target: any): any;
+			  }[]
+			| {
+					target_off(target: any): any;
+			  }[];
+		/**
 		 * 有效状态
 		 * @remarks
 		 * 表示模块未在(关闭/关闭中)状态
@@ -3016,7 +3029,7 @@ declare namespace mk {
 			 * @defaultValue
 			 * Canvas 节点
 			 */
-			parent: cc_2.Scene | cc_2.Node | undefined;
+			parent: cc_2.Scene | cc_2.Node | (() => cc_2.Node | null) | undefined;
 			/** 加载配置 */
 			load_config?: asset_.get_config<cc_2.Prefab>;
 			/**
