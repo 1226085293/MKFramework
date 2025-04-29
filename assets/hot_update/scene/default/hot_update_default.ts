@@ -10,8 +10,10 @@ export class hot_update_default extends mk.view_base {
 	data = new (class {
 		/** 远程地址 */
 		remote_url_s = "http://localhost:8080";
-		/** bundle 版本 */
-		bundle_version_s = "";
+		/** main bundle 版本 */
+		config_version_s = "";
+		/** main bundle 版本 */
+		main_version_s = "";
 	})();
 
 	/* ------------------------------- 生命周期 ------------------------------- */
@@ -31,13 +33,13 @@ export class hot_update_default extends mk.view_base {
 		await mk.bundle.reload({
 			bundle_s: global_config.asset.bundle.config,
 			origin_s: this.data.remote_url_s + "/" + global_config.asset.bundle.config,
-			version_s: this.data.bundle_version_s,
+			version_s: this.data.config_version_s,
 		});
 
 		await mk.bundle.reload({
 			bundle_s: global_config.asset.bundle.main,
 			origin_s: this.data.remote_url_s + "/" + global_config.asset.bundle.main,
-			version_s: this.data.bundle_version_s,
+			version_s: this.data.main_version_s,
 		});
 
 		this._log.log("热更完成");

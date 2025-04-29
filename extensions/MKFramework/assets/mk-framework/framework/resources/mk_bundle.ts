@@ -388,9 +388,14 @@ export class mk_bundle extends mk_instance_base {
 			bundle_script_tab[name_s] = parent;
 		});
 
+		const bundle_root = bundle_script_tab[bundle_.bundle_s]?.d[0];
+
 		// 清理脚本缓存
 		{
-			const bundle_root = bundle_script_tab[bundle_.bundle_s]?.d[0];
+			if (script_cache_tab[`virtual:///prerequisite-imports/${bundle_.bundle_s}`]) {
+				system_js.delete(script_cache_tab[`virtual:///prerequisite-imports/${bundle_.bundle_s}`].id);
+				delete script_cache_tab[`virtual:///prerequisite-imports/${bundle_.bundle_s}`];
+			}
 
 			if (bundle_root) {
 				bundle_root.d.forEach((v: { id: string }) => {
@@ -404,9 +409,25 @@ export class mk_bundle extends mk_instance_base {
 
 		// 清理 ccclass
 		{
+			// 清理导出的 ccclass
+			if (bundle_root) {
+				bundle_root.d.forEach((v: { id: string; C: any }) => {
+					if (!v.C) {
+						return;
+					}
+
+					for (let k2_s in v.C) {
+						if (cc.js.isChildClassOf(v.C[k2_s], cc.Component)) {
+							cc.js.unregisterClass(v.C[k2_s]);
+						}
+					}
+				});
+			}
+
+			// 清理名称匹配的 ccclass
 			const reg = new RegExp(`${bundle_.bundle_s}(_|/)`);
 
-			Object.keys(cc.js._nameToClass)
+			Object.keys((cc.js as any)._nameToClass ?? (cc.js as any)._registeredClassNames)
 				.filter((v_s) => v_s.match(reg) !== null)
 				.forEach((v_s) => {
 					cc.js.unregisterClass(cc.js.getClassByName(v_s));
@@ -644,6 +665,10 @@ export namespace mk_bundle_ {
 		close(): void | Promise<void> {
 			if (!this.valid_b) {
 				mk_log.error("bundle 已经卸载");
+				throw "中断";
+			}
+
+			if (this.name_s === "main") {
 				throw "中断";
 			}
 
