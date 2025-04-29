@@ -724,3 +724,5 @@ export namespace mk_bundle_ {
 }
 
 export default mk_bundle.instance();
+
+// ...需要在 main bundle reload 时执行 main_bundle_manage.close
