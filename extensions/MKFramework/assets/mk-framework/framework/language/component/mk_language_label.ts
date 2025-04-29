@@ -78,12 +78,14 @@ class mk_language_label extends mk_language_base {
 	protected _reset_data(): void {
 		// 更新类型数据
 		this._data = language.label_data_tab[this._type_s];
-		// 更新标记枚举
-		this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
-		// 默认标记
-		this.mark_s = this._mark_enum[0];
-		// 清理数据
-		this._args_ss = [];
+		if (EDITOR) {
+			// 更新标记枚举
+			this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
+			// 默认标记
+			this.mark_s = this._mark_enum[0];
+			// 清理数据
+			this._args_ss = [];
+		}
 		// 方向适配
 		this._direction_adaptation();
 		// 更新内容
@@ -94,7 +96,9 @@ class mk_language_label extends mk_language_base {
 
 	protected _update_content(): void {
 		if (this._label) {
-			this._label.string = language.get_label(this._type_s, this._mark_s, { args_ss: this._args_ss }) ?? "";
+			const mark_s = this._mark_s.slice(this._mark_s[0] === "\u200B" ? 1 : 0);
+
+			this._label.string = language.get_label(this._type_s, mark_s, { args_ss: this._args_ss }) ?? "";
 		}
 	}
 

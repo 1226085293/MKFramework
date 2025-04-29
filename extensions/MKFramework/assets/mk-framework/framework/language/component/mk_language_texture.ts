@@ -57,10 +57,12 @@ class mk_language_texture extends mk_language_base {
 	protected _reset_data(): void {
 		// 更新类型数据
 		this._data = language.texture_data_tab[this._type_s];
-		// 更新标记枚举
-		this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
-		// 默认标记
-		this.mark_s = this._mark_enum[0];
+		if (EDITOR) {
+			// 更新标记枚举
+			this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
+			// 默认标记
+			this.mark_s = this._mark_enum[0];
+		}
 		// 更新内容
 		this._update_content();
 
@@ -81,7 +83,8 @@ class mk_language_texture extends mk_language_base {
 			return;
 		}
 
-		const path_s = language.texture_data_tab[this._type_s]?.[this._mark_s]?.[global_config.language.types[language.type_s]];
+		const mark_s = this._mark_s.slice(this._mark_s[0] === "\u200B" ? 1 : 0);
+		const path_s = language.texture_data_tab[this._type_s]?.[mark_s]?.[global_config.language.types[language.type_s]];
 
 		if (!path_s) {
 			return;

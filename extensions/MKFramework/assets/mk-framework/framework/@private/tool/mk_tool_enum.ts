@@ -12,6 +12,10 @@ class mk_tool_enum extends mk_instance_base {
 
 		if (typeof value_ === "object") {
 			Object.keys(value_).forEach((v_s, k_n) => {
+				if (!isNaN(Number(v_s))) {
+					v_s = `\u200B${v_s}`;
+				}
+
 				result[k_n] = v_s;
 				result[v_s] = k_n;
 			});
