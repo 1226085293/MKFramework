@@ -123,6 +123,13 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
 	 */
 	data?: any;
+	/**
+	 * 事件对象列表
+	 * @readonly
+	 * @remarks
+	 * 模块关闭后自动清理事件
+	 */
+	event_target_as: { targetOff(target: any): any }[] | { target_off(target: any): any }[] = [];
 
 	/**
 	 * 有效状态
@@ -294,6 +301,15 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	protected late_close?(): void;
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async late_close?(): Promise<void> {
+		// 清理事件
+		this.event_target_as.splice(0, this.event_target_as.length).forEach((v) => {
+			if (v.targetOff) {
+				v.targetOff(this);
+			} else if (v.target_off) {
+				v.target_off(this);
+			}
+		});
+
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
 		// 取消数据监听事件
@@ -325,7 +341,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			return object_;
 		}
 
-		if (!this.node.active) {
+		if (this.node && !this.node.active) {
 			this._log.warn("节点已隐藏，资源可能不会跟随释放");
 
 			return object_;
