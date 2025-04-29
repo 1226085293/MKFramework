@@ -349,7 +349,7 @@ export class mk_bundle extends mk_instance_base {
 	 * @param bundle_ bundle 信息
 	 * @returns
 	 */
-	async reload(bundle_: mk_bundle_.reload_bundle_info): Promise<cc.AssetManager.Bundle | null> {
+	async reload(bundle_: ConstructorParameters<typeof mk_bundle_.reload_bundle_info>[0]): Promise<cc.AssetManager.Bundle | null> {
 		if (PREVIEW) {
 			this._log.error("不支持预览模式重载 bundle");
 
@@ -516,18 +516,6 @@ export namespace mk_bundle_ {
 		origin_s?: string;
 	}
 
-	/** 重载 bundle 信息 */
-	export class reload_bundle_info implements bundle_info {
-		constructor(init_: reload_bundle_info) {
-			Object.assign(this, init_);
-		}
-		bundle_s!: string;
-		version_s!: string;
-		origin_s!: string;
-		/** 匹配 ccclass 名称正则表达式 */
-		ccclass_regexp?: RegExp;
-	}
-
 	/**
 	 * bundle 数据
 	 * @noInheritDoc
@@ -551,6 +539,16 @@ export namespace mk_bundle_ {
 
 		/** 加载回调 */
 		progress_callback_f?: (curr_n: number, total_n: number) => void;
+	}
+
+	/** 重载 bundle 信息 */
+	export class reload_bundle_info extends load_config {
+		constructor(init_: Omit<reload_bundle_info, "version_s" | "origin_s"> & Required<Pick<reload_bundle_info, "version_s" | "origin_s">>) {
+			super(init_);
+			Object.assign(this, init_);
+		}
+		/** 匹配 ccclass 名称正则表达式 */
+		ccclass_regexp?: RegExp;
 	}
 
 	/** switch_scene 配置 */

@@ -223,15 +223,6 @@ declare namespace mk {
 			 */
 			origin_s?: string;
 		}
-		/** 重载 bundle 信息 */
-		export class reload_bundle_info implements bundle_info {
-			constructor(init_: reload_bundle_info);
-			bundle_s: string;
-			version_s: string;
-			origin_s: string;
-			/** 匹配 ccclass 名称正则表达式 */
-			ccclass_regexp?: RegExp;
-		}
 		/**
 		 * bundle 数据
 		 * @noInheritDoc
@@ -246,6 +237,12 @@ declare namespace mk {
 			constructor(init_: load_config);
 			/** 加载回调 */
 			progress_callback_f?: (curr_n: number, total_n: number) => void;
+		}
+		/** 重载 bundle 信息 */
+		export class reload_bundle_info extends load_config {
+			constructor(init_: Omit<reload_bundle_info, "version_s" | "origin_s"> & Required<Pick<reload_bundle_info, "version_s" | "origin_s">>);
+			/** 匹配 ccclass 名称正则表达式 */
+			ccclass_regexp?: RegExp;
 		}
 		/** switch_scene 配置 */
 		export class switch_scene_config {
@@ -1175,7 +1172,7 @@ declare namespace mk {
 		 * @param bundle_ bundle 信息
 		 * @returns
 		 */
-		reload(bundle_: bundle_.reload_bundle_info): Promise<cc_2.AssetManager.Bundle | null>;
+		reload(bundle_: ConstructorParameters<typeof bundle_.reload_bundle_info>[0]): Promise<cc_2.AssetManager.Bundle | null>;
 		private _set_bundle_s;
 		private _set_scene_s;
 	}
