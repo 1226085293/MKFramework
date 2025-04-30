@@ -73,9 +73,7 @@ class event<CT> extends cc.EventTarget {
 		return super.hasEventListener(type_ as any, callback_ as any, target_);
 	}
 
-	clear(): void {
-		return super["clear"]();
-	}
+	declare clear: () => void;
 
 	/** 请求（等待返回） */
 	// @ts-ignore

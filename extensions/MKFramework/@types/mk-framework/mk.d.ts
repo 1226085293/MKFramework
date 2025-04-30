@@ -414,7 +414,7 @@ declare namespace mk {
 		 */
 		has<T extends keyof CT, T2 extends (...event_: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
 		/** 清空所有事件 */
-		clear(): void;
+		clear: () => void;
 		/**
 		 * 请求事件
 		 * @param type_ 事件类型

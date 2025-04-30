@@ -40,38 +40,22 @@ export default class mk_adaptation_canvas extends cc.Component {
 
 		/** 真实尺寸 */
 		const frame_size = cc.screen.windowSize;
+		const { adaptation_type, adaptation_mode, original_design_size } = global_config.view;
 
-		switch (global_config.view.adaptation_type) {
-			// 自适应
-			case global_config.view.adaptation_mode.adaptive: {
-				/** 设计尺寸 */
-				const design_size = global_config.view.original_design_size;
-				/** 真实尺寸比设计尺寸高 */
-				const higher_b = frame_size.height / frame_size.width > design_size.height / design_size.width;
-
-				if (higher_b) {
-					cc.view.setDesignResolutionSize(
-						design_size.width,
-						frame_size.height * (design_size.width / frame_size.width),
-						cc.ResolutionPolicy.FIXED_WIDTH
-					);
-				} else {
-					cc.view.setDesignResolutionSize(
-						frame_size.width * (design_size.height / frame_size.height),
-						design_size.height,
-						cc.ResolutionPolicy.FIXED_HEIGHT
-					);
-				}
-
-				break;
-			}
-
-			// 固定尺寸
-			case global_config.view.adaptation_mode.fixed_size: {
-				cc.view.setDesignResolutionSize(frame_size.width, frame_size.height, cc.ResolutionPolicy.UNKNOWN);
-				break;
-			}
+		// 固定尺寸
+		if (adaptation_type === adaptation_mode.fixed_size) {
+			return cc.view.setDesignResolutionSize(frame_size.width, frame_size.height, cc.ResolutionPolicy.UNKNOWN);
 		}
+
+		/** 真实尺寸比设计尺寸高 */
+		const higher_b = frame_size.height / frame_size.width > original_design_size.height / original_design_size.width;
+
+		// 自适应模式
+		cc.view.setDesignResolutionSize(
+			higher_b ? original_design_size.width : frame_size.width * (original_design_size.height / frame_size.height),
+			higher_b ? frame_size.height * (original_design_size.width / frame_size.width) : original_design_size.height,
+			higher_b ? cc.ResolutionPolicy.FIXED_WIDTH : cc.ResolutionPolicy.FIXED_HEIGHT
+		);
 	}
 }
 
@@ -80,10 +64,8 @@ if (!EDITOR && global_config.view.adaptation_type !== global_config.view.adaptat
 	cc.director.on(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
 		const canvas_node = cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node;
 
-		if (!canvas_node || canvas_node.getComponent(mk_adaptation_canvas)) {
-			return;
+		if (canvas_node && !canvas_node.getComponent(mk_adaptation_canvas)) {
+			canvas_node.addComponent(mk_adaptation_canvas);
 		}
-
-		canvas_node.addComponent(mk_adaptation_canvas);
 	});
 }

@@ -116,9 +116,7 @@ class mk_event_target<CT> extends cc.EventTarget {
 	}
 
 	/** 清空所有事件 */
-	clear(): void {
-		return super["clear"]();
-	}
+	declare clear: () => void;
 
 	/**
 	 * 请求事件
