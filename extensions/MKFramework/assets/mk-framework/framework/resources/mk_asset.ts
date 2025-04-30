@@ -106,7 +106,7 @@ export class mk_asset extends mk_instance_base {
 					);
 
 					// 缓存生命时长为 0 立即释放
-					if (!global_config.asset.config.cache_lifetime_ms_n) {
+					if (global_config.asset.config.cache_lifetime_ms_n === 0) {
 						self._auto_release_asset();
 					}
 				}
@@ -116,7 +116,9 @@ export class mk_asset extends mk_instance_base {
 		}
 
 		// 定时自动释放资源
-		this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset._config.cache_lifetime_ms_n);
+		if (mk_asset._config.cache_lifetime_ms_n !== 0) {
+			this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset._config.cache_lifetime_ms_n);
+		}
 
 		// 事件监听
 		setTimeout(() => {
