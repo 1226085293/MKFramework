@@ -96,7 +96,7 @@ export class mk_asset extends mk_instance_base {
 					return result;
 				}
 
-				// 加载后默认引用加 2 防止资源自动释放
+				// 引用为 1 时自动释放
 				if (this.refCount === 1) {
 					self._asset_release_map.set(
 						this.nativeUrl || this._uuid,
@@ -104,6 +104,11 @@ export class mk_asset extends mk_instance_base {
 							asset: this,
 						})
 					);
+
+					// 缓存生命时长为 0 立即释放
+					if (!global_config.asset.config.cache_lifetime_ms_n) {
+						self._auto_release_asset();
+					}
 				}
 
 				return result;
