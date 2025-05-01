@@ -360,7 +360,7 @@ export class mk_ui_manage extends mk_instance_base {
 		config_ = new mk_ui_manage_.open_config(config_);
 
 		/** 父节点 */
-		let parent_data = config_.parent !== undefined ? config_.parent : regis_data.parent;
+		const parent_data = config_.parent !== undefined ? config_.parent : regis_data.parent;
 		let parent = parent_data instanceof Function ? parent_data() : parent_data;
 
 		if (parent && !parent.isValid) {
@@ -519,6 +519,7 @@ export class mk_ui_manage extends mk_instance_base {
 				all_b: true,
 				destroy_b: true,
 			});
+
 			return null;
 		}
 

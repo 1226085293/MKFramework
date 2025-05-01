@@ -219,6 +219,7 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 			if (this._state !== _mk_life_cycle.run_state.opening) {
 				this._state = _mk_life_cycle.run_state.wait_open;
 			}
+
 			// 生命周期
 			if (this.create) {
 				await this.create();

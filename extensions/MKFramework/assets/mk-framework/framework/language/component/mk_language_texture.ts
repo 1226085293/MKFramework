@@ -63,6 +63,7 @@ class mk_language_texture extends mk_language_base {
 			// 默认标记
 			this.mark_s = this._mark_enum[0];
 		}
+
 		// 更新内容
 		this._update_content();
 

@@ -7,6 +7,7 @@ abstract class vl_view_base extends mk_view_base {
 	// eslint-disable-next-line prettier/prettier
 	event = new mk_event_target<(typeof this)["event_protocol"]>();
 	/* ------------------------------- segmentation ------------------------------- */
+	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected late_close(): void {
 		this.event.clear();
 	}

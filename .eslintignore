@@ -3,5 +3,6 @@ build/
 *.d.ts
 tool/
 plugin/
-extensions/
+extensions/*
+!extensions/MKFramework
 extensions_dev/

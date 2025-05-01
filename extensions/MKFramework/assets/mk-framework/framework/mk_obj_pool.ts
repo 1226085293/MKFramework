@@ -123,6 +123,7 @@ class mk_obj_pool<CT> {
 			mk_log.warn("对象池失效");
 
 			this.config.clear_f?.([obj_]);
+
 			return;
 		}
 
@@ -259,6 +260,7 @@ namespace mk_obj_pool {
 				mk_log.warn("对象池失效");
 
 				this.config.clear_f?.([obj_]);
+
 				return;
 			}
 

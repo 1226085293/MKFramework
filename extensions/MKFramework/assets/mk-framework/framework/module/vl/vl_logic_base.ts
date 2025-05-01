@@ -1,5 +1,4 @@
 import mk_tool from "../../@private/tool/mk_tool";
-import mk_event_target from "../../mk_event_target";
 import mk_monitor from "../../mk_monitor";
 import mk_ui_manage from "../../mk_ui_manage";
 import mk_status_task from "../../task/mk_status_task";

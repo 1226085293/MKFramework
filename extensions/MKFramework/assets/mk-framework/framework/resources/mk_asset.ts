@@ -234,6 +234,7 @@ export class mk_asset extends mk_instance_base {
 						get_config.retry_n!--;
 						resolve_f(await this.get(path_s_, type_, target_, get_config));
 					}
+
 					return;
 				}
 
@@ -453,7 +454,7 @@ export class mk_asset extends mk_instance_base {
 					}
 					// 加载资源
 					else {
-						const load_f = (retry_n = get_config.retry_n!) => {
+						const load_f = (retry_n = get_config.retry_n!): Promise<boolean> => {
 							return new Promise<boolean>((resolve_f) => {
 								bundle_asset.load(v.path, type_, async (error, asset): Promise<void> => {
 									if (error) {

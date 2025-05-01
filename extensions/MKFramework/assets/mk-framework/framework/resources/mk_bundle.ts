@@ -411,12 +411,13 @@ export class mk_bundle extends mk_instance_base {
 		{
 			// 清理导出的 ccclass
 			if (bundle_root) {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
 				bundle_root.d.forEach((v: { id: string; C: any }) => {
 					if (!v.C) {
 						return;
 					}
 
-					for (let k2_s in v.C) {
+					for (const k2_s in v.C) {
 						if (cc.js.isChildClassOf(v.C[k2_s], cc.Component)) {
 							cc.js.unregisterClass(v.C[k2_s]);
 						}

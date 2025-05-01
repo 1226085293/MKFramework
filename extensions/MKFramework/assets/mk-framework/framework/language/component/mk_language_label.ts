@@ -86,6 +86,7 @@ class mk_language_label extends mk_language_base {
 			// 清理数据
 			this._args_ss = [];
 		}
+
 		// 方向适配
 		this._direction_adaptation();
 		// 更新内容

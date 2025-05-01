@@ -74,6 +74,7 @@ abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 
 		if (this._model?.close) {
 			await this._model.close();
 		}
+
 		this._open_task.finish(false);
 		this._close_task.finish(true);
 	}
