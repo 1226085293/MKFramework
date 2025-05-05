@@ -48,6 +48,16 @@ abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 
 			throw "中断";
 		}
 
+		// 关闭 model
+		if (this._model?.close) {
+			await this._model.close();
+		}
+
+		// 关闭 view
+		if (this._view) {
+			await mk_ui_manage.close(this._view);
+		}
+
 		// 取消数据监听事件
 		{
 			const task = mk_monitor.clear(this);
@@ -56,25 +66,11 @@ abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 
 				await task;
 			}
 		}
-
-		// 关闭视图模块
-		if (this._view) {
-			await mk_ui_manage.close(this._view);
-		}
 	}
 
 	protected open?(): void;
-	protected async open?(): Promise<void> {
-		if (this._model?.open) {
-			await this._model.open?.();
-		}
-	}
 
 	private async _last_close(): Promise<void> {
-		if (this._model?.close) {
-			await this._model.close();
-		}
-
 		this._open_task.finish(false);
 		this._close_task.finish(true);
 	}

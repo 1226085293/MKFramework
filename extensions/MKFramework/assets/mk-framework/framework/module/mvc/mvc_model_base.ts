@@ -5,7 +5,25 @@ abstract class mvc_model_base {
 	constructor() {
 		mk_tool.func.run_parent_func(this, ["open", "close"]);
 	}
+	/**
+	 * 重置 data
+	 * @remarks
+	 * close 后重置 this.data，data 必须为 class 类型
+	 */
+	protected _reset_data_b = true;
 	/* ------------------------------- segmentation ------------------------------- */
+	/** 单例方法 */
+	static async new<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T>> {
+		const self = this as any;
+		const model = new self(...args_as_) as mvc_model_base;
+
+		if (model.open) {
+			await model.open?.();
+		}
+
+		return model as any;
+	}
+
 	open?(): void;
 	close(): void;
 	async close(): Promise<void> {
@@ -19,7 +37,9 @@ abstract class mvc_model_base {
 		}
 
 		// 重置数据
-		mk_tool.object.reset(this, true);
+		if (this._reset_data_b) {
+			mk_tool.object.reset(this, true);
+		}
 	}
 }
 

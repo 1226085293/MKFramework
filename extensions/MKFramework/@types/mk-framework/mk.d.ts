@@ -2607,13 +2607,22 @@ declare namespace mk {
 
 	export declare abstract class mvc_model_base {
 		constructor();
+		/**
+		 * 重置 data
+		 * @remarks
+		 * close 后重置 this.data，data 必须为 class 类型
+		 */
+		protected _reset_data_b: boolean;
+		/** 单例方法 */
+		static new<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T>>;
 		open?(): void;
 		close(): void;
 	}
 
 	export declare abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends view_base {
-		protected _event: event_target<unknown>;
 		protected _model: _mvc_view_base.recursive_readonly_and_non_function_keys<CT>;
+		/** 单例方法 */
+		static new?<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T> | null>;
 	}
 
 	declare namespace _mvc_view_base {
@@ -2625,6 +2634,7 @@ declare namespace mk {
 		type non_function_keys<T> = {
 			[P in keyof T]: T[P] extends Function | void ? never : P;
 		}[keyof T];
+		/** 递归只读且无函数 */
 		type recursive_readonly_and_non_function_keys<T> = recursive_readonly<Pick<T, non_function_keys<T>>>;
 		{
 		}
