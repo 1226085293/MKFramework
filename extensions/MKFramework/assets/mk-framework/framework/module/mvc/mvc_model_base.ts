@@ -12,7 +12,6 @@ abstract class mvc_model_base {
 	 */
 	protected _reset_data_b = true;
 	/* ------------------------------- segmentation ------------------------------- */
-	/** 单例方法 */
 	static async new<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T>> {
 		const self = this as any;
 		const model = new self(...args_as_) as mvc_model_base;

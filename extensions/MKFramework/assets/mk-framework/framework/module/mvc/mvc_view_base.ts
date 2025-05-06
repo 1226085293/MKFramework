@@ -23,7 +23,6 @@ namespace _mvc_view_base {
 abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends mk_view_base {
 	protected _model!: _mvc_view_base.recursive_readonly_and_non_function_keys<CT>;
 	/* ------------------------------- segmentation ------------------------------- */
-	/** 单例方法 */
 	static async new?<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T> | null>;
 }
 
