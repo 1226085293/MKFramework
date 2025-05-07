@@ -5,6 +5,7 @@ abstract class mvc_model_base {
 	constructor() {
 		mk_tool.func.run_parent_func(this, ["open", "close"]);
 	}
+	protected _view_interface?: {};
 	/**
 	 * 重置 data
 	 * @remarks
