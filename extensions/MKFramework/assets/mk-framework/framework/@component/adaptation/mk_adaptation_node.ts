@@ -321,14 +321,13 @@ export default class mk_adaptation_node extends cc.Component {
 		}
 	}
 
-	/** 自适应 */
-	private _auto_adaption(design_size_: cc.Size, frame_size_: cc.Size): void {
+	/** 缩放 */
+	private _scale(design_size_: cc.Size, frame_size_: cc.Size): void {
 		const scale_v2 = cc.v2(design_size_.width / frame_size_.width, design_size_.height / frame_size_.height);
 
-		if (scale_v2.x < scale_v2.y) {
-			scale_v2.y = scale_v2.x;
-		} else {
-			scale_v2.x = scale_v2.y;
+		if (this.limit_max_scale_b) {
+			scale_v2.x = Math.min(scale_v2.x, this.max_scale_v3.x);
+			scale_v2.y = Math.min(scale_v2.y, this.max_scale_v3.y);
 		}
 
 		if (this.limit_min_scale_b) {
@@ -390,7 +389,7 @@ export default class mk_adaptation_node extends cc.Component {
 
 			switch (this.type) {
 				case _mk_adaptation_node.type.缩放:
-					this._auto_adaption(design_size, frame_size);
+					this._scale(design_size, frame_size);
 					break;
 				case _mk_adaptation_node.type.自适应_展示完:
 					this._adaptive_show_all(design_size, frame_size);
