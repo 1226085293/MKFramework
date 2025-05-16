@@ -2588,11 +2588,12 @@ declare namespace mk {
 
 	export declare abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 extends mvc_view_base<CT> = mvc_view_base<CT>> {
 		constructor();
-		get model(): _mvc_control_base.recursive_readonly<Omit<CT, "open" | "close">>;
+		get model(): _mvc_control_base.type_recursive_readonly<Omit<CT, "open" | "close">>;
 		protected _model: CT;
-		protected _view: CT2;
+		protected _view: _mvc_control_base.type_view<CT2>;
 		private _open_task;
 		private _close_task;
+		/**  */
 		close(external_call_b?: boolean): void;
 		protected open?(): void;
 		private _last_close;
@@ -2600,9 +2601,17 @@ declare namespace mk {
 
 	declare namespace _mvc_control_base {
 		/** 递归只读 */
-		type recursive_readonly<T> = {
-			readonly [P in keyof T]: T[P] extends Function ? T[P] : recursive_readonly<T[P]>;
+		type type_recursive_readonly<T> = {
+			readonly [P in keyof T]: T[P] extends Function ? T[P] : type_recursive_readonly<T[P]>;
 		};
+		/** 函数属性的键 */
+		type type_function_keys<T> = {
+			[P in keyof T]: T[P] extends Function | void ? P : P extends "event" ? P : never;
+		}[keyof T];
+		/** 视图类型（防止直接操作视图对象属性） */
+		type type_view<T> = Omit<Pick<T, type_function_keys<T>>, Exclude<keyof mvc_view_base, "event">>;
+		{
+		}
 	}
 
 	export declare abstract class mvc_model_base {
@@ -2613,14 +2622,19 @@ declare namespace mk {
 		 * close 后重置 this.data，data 必须为 class 类型
 		 */
 		protected _reset_data_b: boolean;
+		/** 创建模型实例 */
 		static new<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T>>;
 		open?(): void;
 		close(): void;
 	}
 
 	export declare abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends view_base {
+		/** 视图事件 */
+		event: event_target<any>;
+		/** 数据访问器 */
 		protected _model: _mvc_view_base.recursive_readonly_and_non_function_keys<CT>;
-		static new?<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T> | null>;
+		/** 视图构造函数，由继承类型实现并被 control 访问 */
+		static new?<T extends new (...args_as: any[]) => any>(this: T): Promise<InstanceType<T> | null>;
 	}
 
 	declare namespace _mvc_view_base {

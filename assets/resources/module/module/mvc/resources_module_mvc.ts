@@ -6,7 +6,7 @@ class c extends mk.mvc_control_base<m, v> {
 	protected async open(): Promise<void> {
 		this._model = await m.new();
 		this._view = (await v.new())!;
-		this._view.node.once("close", () => {
+		this._view.event.once("close", () => {
 			this.close();
 		});
 
@@ -50,7 +50,7 @@ export class v extends mk.mvc_view_base<m> {
 
 	close(): void {
 		console.log("mvc_view_base-close");
-		this.node.emit("close");
+		this.event.emit("close");
 	}
 }
 

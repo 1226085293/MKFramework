@@ -1,6 +1,7 @@
 import * as cc from "cc";
 import mk_view_base from "../mk_view_base";
 import mvc_model_base from "./mvc_model_base";
+import mk_event_target from "../../mk_event_target";
 const { ccclass, property } = cc._decorator;
 
 namespace _mvc_view_base {
@@ -21,9 +22,13 @@ namespace _mvc_view_base {
 
 @ccclass
 abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends mk_view_base {
+	/** 视图事件 */
+	event = new mk_event_target<any>();
+	/** 数据访问器 */
 	protected _model!: _mvc_view_base.recursive_readonly_and_non_function_keys<CT>;
 	/* ------------------------------- segmentation ------------------------------- */
-	static async new?<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T> | null>;
+	/** 视图构造函数，由继承类型实现并被 control 访问 */
+	static async new?<T extends new (...args_as: any[]) => any>(this: T): Promise<InstanceType<T> | null>;
 }
 
 export default mvc_view_base;

@@ -3,9 +3,9 @@ import mk_monitor from "../../mk_monitor";
 
 abstract class mvc_model_base {
 	constructor() {
+		// 父类自启函数
 		mk_tool.func.run_parent_func(this, ["open", "close"]);
 	}
-	protected _view_interface?: {};
 	/**
 	 * 重置 data
 	 * @remarks
@@ -13,6 +13,7 @@ abstract class mvc_model_base {
 	 */
 	protected _reset_data_b = true;
 	/* ------------------------------- segmentation ------------------------------- */
+	/** 创建模型实例 */
 	static async new<T extends new (...args_as: any[]) => any>(this: T, ...args_as_: ConstructorParameters<T>): Promise<InstanceType<T>> {
 		const self = this as any;
 		const model = new self(...args_as_) as mvc_model_base;
