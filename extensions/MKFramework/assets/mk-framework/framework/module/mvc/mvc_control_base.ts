@@ -32,10 +32,6 @@ abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 
 				await this.open();
 			}
 
-			if (this._view) {
-				this._view;
-			}
-
 			this._open_task.finish(true);
 		}, 0);
 	}
