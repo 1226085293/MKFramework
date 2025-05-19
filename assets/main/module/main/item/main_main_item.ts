@@ -24,7 +24,7 @@ export class main_main_item extends mk.view_base {
 	init(init_?: typeof this.init_data): void {
 		// 不存在多语言则删除组件
 		if (!mk.language_manage.label_data_tab[cc.js.getClassName(main_main)]?.[this.init_data.label_s]) {
-			this.nodes.label.getComponent(mk.language.label)?.destroy();
+			this.nodes.label.getComponent(mk.language.label)!.destroy();
 		}
 
 		Object.assign(this.data, this.init_data);

@@ -1291,7 +1291,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 120,
+      "width": 76.68,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -1326,7 +1326,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "文本消息",
+    "_string": "网络1",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
@@ -2172,7 +2172,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 178.42,
+      "width": 76.68,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -2207,7 +2207,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "protobuf 消息",
+    "_string": "网络2",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,

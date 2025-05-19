@@ -2,6 +2,7 @@ import * as cc from "cc";
 import { tool_monitor_trigger_event } from "../tool_monitor_trigger_event";
 import mk from "mk";
 import global_event from "global_event";
+import tool_node from "../../../tool_node";
 
 const { ccclass, property } = cc._decorator;
 
@@ -9,7 +10,6 @@ export function check_type(data_: any): boolean {
 	return Array.isArray(data_);
 }
 
-// 注意：在任务列表未完成时重置数据再解绑会报错，需解决
 export namespace 默认 {
 	/** 初始化数据 */
 	class array_init_config {
@@ -39,6 +39,8 @@ export namespace 默认 {
 		private _node_pool!: mk.obj_pool<cc.Node>;
 		/** 任务管线 */
 		private _task_pipeline = new mk.task.pipeline();
+		/** 注册目标 */
+		private _ui_regis_target: mk.life_cycle = null!;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 初始化 */
 		async init(init_: array_init_config): Promise<void> {
@@ -47,7 +49,11 @@ export namespace 默认 {
 
 			// 模块
 			if (this._item_view_type) {
-				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, cc.director.getScene()!.getComponentInChildren(mk.life_cycle)!, {
+				this._ui_regis_target = tool_node
+					.traverse_parent(this._init_data.root.parent, (node) => node.getComponent(mk.life_cycle) !== null)!
+					.getComponent(mk.life_cycle)!;
+
+				await mk.ui_manage.regis(this._item_view_type, this._init_data.item, this._ui_regis_target, {
 					repeat_b: true,
 					pool_init_fill_n: 8,
 					parent: this._init_data.root,
@@ -144,7 +150,7 @@ export namespace 默认 {
 				for (let k_n = backup_as.length; k_n--; ) {
 					const node = await this._create_item(backup_as[k_n]);
 
-					node.setSiblingIndex(0);
+					node?.setSiblingIndex(0);
 				}
 			});
 
@@ -197,7 +203,7 @@ export namespace 默认 {
 					for (let k_n = 0; k_n < backup_as.length; ++k_n) {
 						const node = await this._create_item(backup_as[k_n]);
 
-						node.setSiblingIndex(start_n_ + k_n);
+						node?.setSiblingIndex(start_n_ + k_n);
 					}
 				}
 			});
@@ -238,19 +244,27 @@ export namespace 默认 {
 		}
 
 		/** 创建新项目 */
-		private async _create_item(init_data_?: any): Promise<cc.Node> {
+		private async _create_item(init_data_?: any): Promise<cc.Node | null> {
 			let node!: cc.Node;
 
 			// 模块
 			if (this._item_view_type) {
-				const view_comp = await mk.ui_manage.open(this._item_view_type, { init: init_data_ });
+				if (this._ui_regis_target.valid_b) {
+					const view_comp = await mk.ui_manage.open(this._item_view_type, { init: init_data_ });
 
-				node = view_comp.node;
+					node = view_comp?.node;
+				}
 			}
 			// 节点
 			else {
 				node = await this._node_pool.get();
-				this._init_data.root.addChild(node);
+				if (node) {
+					this._init_data.root.addChild(node);
+				}
+			}
+
+			if (!node) {
+				return null;
 			}
 
 			// 回调函数

@@ -27,10 +27,10 @@
 		"@typescript-eslint/no-restricted-imports": ["error",
 			{
 				"patterns": [
-					// 禁止使用 @framework 内的模块
+					// 禁止使用 framework 内的模块
 					{
-						"group": ["@framework"],
-						"message": "请使用 mk.xxx，而不是直接导入 @framework"
+						"group": ["framework"],
+						"message": "请使用 mk.xxx，而不是直接导入 framework"
 					}
 				],
 				// 禁止使用 NodeJs 模块

@@ -1,7 +1,5 @@
 {
-	/* Base configuration. Do not edit this field. */
 	"include": ["../../../temp/declarations/", "../@types/mk-framework/", "./"],
-	/* Add your custom configuration here. */
 	"compilerOptions": {
 		"target": "es6",
 		"lib": ["ES2015", "ES2017", "ES2020", "ES2022", "DOM"],

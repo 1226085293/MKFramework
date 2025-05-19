@@ -50,7 +50,7 @@ export default async function (): Promise<void> {
 			console.log(Editor.I18n.t("mk-framework.安全检查"));
 
 			// 覆盖安装确认
-			if (fs.existsSync(path.join(__dirname, "..", framework_path_s, "@framework"))) {
+			if (fs.existsSync(path.join(__dirname, "..", framework_path_s))) {
 				const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.确认安装"), {
 					buttons: [Editor.I18n.t("mk-framework.确认"), Editor.I18n.t("mk-framework.取消")],
 				});
@@ -102,8 +102,8 @@ export default async function (): Promise<void> {
 			// 3.8.0 及以上删除 userData.bundleConfigID
 			if (project_package.creator?.version && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
 				const file_ss = [
-					`${plugin_project_path_s}/${framework_path_s}/@config.meta`,
-					`${plugin_project_path_s}/${framework_path_s}/@framework.meta`,
+					`${plugin_project_path_s}/${framework_path_s}/config.meta`,
+					`${plugin_project_path_s}/${framework_path_s}/framework.meta`,
 				];
 
 				file_ss.forEach((v_s) => {
@@ -286,6 +286,7 @@ export default async function (): Promise<void> {
 			if (!project_package["mk-framework"]) {
 				project_package["mk-framework"] = {};
 			}
+
 			project_package["mk-framework"].version_s = version_s;
 
 			fs.writeFileSync(

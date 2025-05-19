@@ -1,11 +1,11 @@
 import { _decorator } from "cc";
 import mk from "mk";
-import main_bundle from "../../../main/bundle/main_bundle";
 import { resources_module_layer_control } from "./layer_control/resources_module_layer_control";
 import { resources_module_life_cycle } from "./life_cycle/resources_module_life_cycle";
 import { resources_module_show_alone } from "./show_alone/resources_module_show_alone";
 import { resources_module_ui_stack } from "./ui_stack/resources_module_ui_stack";
 import { resources_module_window } from "./window/resources_module_window";
+import resources_module_mvc from "./mvc/resources_module_mvc";
 
 const { ccclass, property } = _decorator;
 
@@ -36,37 +36,31 @@ export class resources_module extends mk.view_base {
 				desc_s: "弹窗",
 				view: resources_module_window,
 			},
+			{
+				desc_s: "MVC",
+				view: () => {
+					const mvc = new resources_module_mvc();
+				},
+			},
 		],
 	};
 
 	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
 	/* ------------------------------- 生命周期 ------------------------------- */
-	onLoad() {
-		mk.ui_manage.regis(
-			resources_module_life_cycle,
-			"db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab",
-			main_bundle
-		);
-
-		mk.ui_manage.regis(
-			resources_module_show_alone,
-			"db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab",
-			main_bundle
-		);
-
+	// init(init_?: typeof this.init_data): void {}
+	open(): void {
+		mk.ui_manage.regis(resources_module_life_cycle, "db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab", this);
+		mk.ui_manage.regis(resources_module_show_alone, "db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab", this);
 		mk.ui_manage.regis(
 			resources_module_layer_control,
 			"db://assets/resources/module/module/layer_control/resources_module_layer_control.prefab",
-			main_bundle
+			this
 		);
 
-		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", main_bundle);
-		mk.ui_manage.regis(resources_module_window, "db://assets/resources/module/module/window/resources_module_window.prefab", main_bundle);
+		mk.ui_manage.regis(resources_module_ui_stack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", this);
+		mk.ui_manage.regis(resources_module_window, "db://assets/resources/module/module/window/resources_module_window.prefab", this);
 	}
-
-	// init(init_?: typeof this.init_data): void {}
-	// async open(): Promise<void> {}
 
 	// close(): void {}
 

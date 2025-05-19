@@ -4,19 +4,3 @@ syntax = "proto3";
 message test_c {
     string data = 1;
 }
-
-message test22_c {
-    message MessageName {
-        string test4 = 1;
-    }
-    string data3 = 1;
-    int64 data4 = 2;
-}
-
-message test22442_c {
-    message MessageName {
-        string test4 = 1;
-    }
-    string data3 = 1;
-    int64 data4 = 2;
-}

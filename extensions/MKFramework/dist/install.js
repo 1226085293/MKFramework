@@ -48,7 +48,7 @@ async function default_1() {
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.安全检查"));
         // 覆盖安装确认
-        if (fs_extra_1.default.existsSync(path_1.default.join(__dirname, "..", framework_path_s, "@framework"))) {
+        if (fs_extra_1.default.existsSync(path_1.default.join(__dirname, "..", framework_path_s))) {
             const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.确认安装"), {
                 buttons: [Editor.I18n.t("mk-framework.确认"), Editor.I18n.t("mk-framework.取消")],
             });
@@ -95,8 +95,8 @@ async function default_1() {
         // 3.8.0 及以上删除 userData.bundleConfigID
         if (((_a = project_package.creator) === null || _a === void 0 ? void 0 : _a.version) && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
             const file_ss = [
-                `${plugin_project_path_s}/${framework_path_s}/@config.meta`,
-                `${plugin_project_path_s}/${framework_path_s}/@framework.meta`,
+                `${plugin_project_path_s}/${framework_path_s}/config.meta`,
+                `${plugin_project_path_s}/${framework_path_s}/framework.meta`,
             ];
             file_ss.forEach((v_s) => {
                 const data = fs_extra_1.default.readJSONSync(path_1.default.join(download_path_s, v_s));

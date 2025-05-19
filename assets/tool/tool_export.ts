@@ -8,3 +8,4 @@ export { default as string } from "./tool_string";
 export { default as codec } from "./codec/tool_codec";
 export { default as math } from "./tool_math";
 export { default as loading } from "./tool_loading";
+export { default as frame_manage } from "./tool_frame_manage";
