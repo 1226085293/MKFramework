@@ -107,7 +107,7 @@ export class resources_network extends mk.view_base {
 			this._ws2.connect("ws://127.0.0.1:8849").then(() => {
 				this.data.chat2_ss.push("网络 2 连接成功！");
 
-				// 请求指定消息（等待返回、需在消息体添加消息ID和消息序号）
+				// 请求指定消息（等待返回）
 				this.data.chat2_ss.push("网络 2 发送消息 123");
 				this._ws2.message
 					.request(
