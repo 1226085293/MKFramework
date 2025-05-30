@@ -1,0 +1,118 @@
+<div
+	class="flex flex-col items-center w-full h-full text-white pt-4 pb-4 pl-4 pr-4"
+>
+	<!-- 输入路径 -->
+	<div class="w-full h-8 flex flex-row pl-2 pr-2 mt-3 mb-3">
+		<div class="flex items-center justify-center text-sm">输入路径：</div>
+		<div class="grid flex-1 relative">
+			<div
+				type="text"
+				class="custom-scroll overflow-x-auto overflow-y-hidden whitespace-nowrap p-2 w-auto h-full text-gray-400 flex border-2 border-zinc-700 bg-black items-center"
+				@click="this.click_input_path_box()"
+				placeholder="Select an option"
+			>
+				{{ this.input_path_s || "请选择输入路径" }}
+			</div>
+			<div
+				class="p-0 absolute top-full w-full h-auto max-h-32 z-10 overflow-y-auto border-2 border-zinc-800 rounded"
+				v-show="this.input_path_suggestion_b"
+			>
+				<div
+					class="flex flex-row w-full cursor-pointer p-2 bg-zinc-800 hover:bg-zinc-600 justify-between"
+					v-for="(value, key) in this.input_path_suggestion_ss"
+					@click="this.click_input_path_suggestion(key)"
+				>
+					<div class="float-start">{{ value }}</div>
+					<button
+						class="float-end"
+						@click.stop="this.click_remove_input_path_suggestion(key)"
+					>
+						<ui-icon value="del"></ui-icon>
+					</button>
+				</div>
+			</div>
+		</div>
+		<ui-button
+			class="ml-3 flex justify-center items-center"
+			type="default"
+			@click="this.click_select_input_path()"
+		>
+			<ui-icon value="directory"></ui-icon>
+			选择
+		</ui-button>
+	</div>
+	<!-- 输出路径 -->
+	<div class="w-full h-8 flex flex-row pl-2 pr-2 mt-3 mb-3">
+		<div class="flex items-center justify-center text-sm">输出路径：</div>
+		<div class="grid flex-1 relative">
+			<div
+				type="text"
+				class="custom-scroll overflow-x-auto overflow-y-hidden whitespace-nowrap p-2 w-auto h-full text-gray-400 flex border-2 border-zinc-700 bg-black items-center"
+				@click="this.click_output_path_box()"
+				placeholder="Select an option"
+			>
+				{{ this.output_path_s || "请选择输出路径" }}
+			</div>
+			<div
+				class="p-0 absolute top-full w-full h-auto max-h-32 z-10 overflow-y-auto border-2 border-zinc-800 rounded"
+				v-show="this.output_path_suggestion_b"
+			>
+				<div
+					class="flex flex-row w-full cursor-pointer p-2 bg-zinc-800 hover:bg-zinc-600 justify-between"
+					v-for="(value, key) in this.output_path_suggestion_ss"
+					@click="this.click_output_path_suggestion(key)"
+				>
+					<div class="float-start">{{ value }}</div>
+					<button
+						class="float-end"
+						@click.stop="this.click_remove_output_path_suggestion(key)"
+					>
+						<ui-icon value="del"></ui-icon>
+					</button>
+				</div>
+			</div>
+		</div>
+		<ui-button
+			class="ml-3 flex justify-center items-center"
+			type="default"
+			@click="this.click_select_output_path()"
+		>
+			<ui-icon value="directory"></ui-icon>
+			选择
+		</ui-button>
+	</div>
+	<!-- 更新进度 -->
+	<ui-progress
+		v-show="this.update_progress_n !== -1"
+		:value="this.update_progress_n"
+		percent
+	></ui-progress>
+	<!-- 更新配置按钮 -->
+	<ui-button
+		class="m-2 h-8 flex justify-center items-center"
+		type="default"
+		v-show="this.update_progress_n === -1"
+		@click="this.click_update_config()"
+	>
+		<ui-icon value="json"></ui-icon>
+		更新配置</ui-button
+	>
+	<!-- 更新中... -->
+	<ui-button
+		class="m-2 h-8 flex justify-center items-center"
+		loading
+		v-show="this.update_progress_n !== -1"
+	>
+		更新中...
+	</ui-button>
+</div>
+
+<style>
+	.custom-scroll::-webkit-scrollbar {
+		height: 5px; /* 横向滚动条的高度 */
+	}
+	.custom-scroll::-webkit-scrollbar-thumb {
+		background: #888; /* 滑块颜色 */
+		border-radius: 10px; /* 滑块圆角 */
+	}
+</style>
