@@ -12,11 +12,13 @@
 		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^20.14.11",
 		"tailwindcss": "^3.4.6",
-		"typescript": "^5.5.4"
+		"typescript": "^5.5.4",
+		"@types/prettier": "^2.6.4"
 	},
 	"dependencies": {
 		"chokidar": "^3.6.0",
 		"fs-extra": "^11.3.0",
+		"prettier": "^2.7.1",
 		"vue": "^3.4.33",
 		"xlsx": "^0.18.5"
 	}

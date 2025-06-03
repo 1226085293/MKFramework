@@ -6,6 +6,8 @@ import { InspectorInfo, PanelInfo, Self } from "../types";
 import electron, { BrowserWindow } from "electron";
 import tool from "../tool";
 import xlsx from "xlsx";
+import xlsx_to_ts from "../convert/xlsx_to_ts";
+import xlsx_to_json from "../convert/xlsx_to_json";
 
 // export const info: InspectorInfo = {
 // 	type_s: "asset",
@@ -39,7 +41,7 @@ export let data = {
 
 export let methods = {
 	/** 点击更新配置 */
-	async click_update_config(): Promise<void> {
+	async click_export_config(type_s_: "ts" | "json"): Promise<void> {
 		if (!data.input_path_s || !fs.existsSync(data.input_path_s)) {
 			Editor.Dialog.error("输入路径错误");
 			return;
@@ -55,14 +57,14 @@ export let methods = {
 
 		/** xlsx 文件 */
 		let xlsx_file_ss = fs.readdirSync(data.input_path_s).filter((v_s) => !v_s.startsWith("~$") && v_s.endsWith(".xlsx"));
-		/** 输出文件表 */
-		let output_file_tab: Record<string, Record<string, any>> = {};
-		/** 输出文件注释 */
-		let output_file_attractor_desc_tab: Record<string, string[]> = {};
-		/** 输出文件属性名 */
-		let output_file_attractor_name_tab: Record<string, string[]> = {};
+		/** 输出数据表 */
+		let output_data_tab: Record<string, Record<string, any>> = {};
+		/** 输出注释 */
+		let output_attractor_desc_tab: Record<string, string[]> = {};
+		/** 输出属性名 */
+		let output_attractor_name_tab: Record<string, string[]> = {};
 		/** 输出文件类型 */
-		let output_file_attractor_type_tab: Record<string, string[]> = {};
+		let output_attractor_type_tab: Record<string, string[]> = {};
 		/** 输出文件名对应路径表 */
 		let output_file_to_path_tab: Record<string, string> = {};
 		/** 输出目录 db 路径 */
@@ -210,12 +212,12 @@ export let methods = {
 
 					try {
 						output_file_to_path_tab[v2_s] = path_s;
-						output_file_attractor_desc_tab[v2_s] = attractor_desc_ss;
-						output_file_attractor_name_tab[v2_s] = attractor_name_ss;
-						output_file_attractor_type_tab[v2_s] = attractor_type_ss;
-						output_file_tab[v2_s] = output;
+						output_attractor_desc_tab[v2_s] = attractor_desc_ss;
+						output_attractor_name_tab[v2_s] = attractor_name_ss;
+						output_attractor_type_tab[v2_s] = attractor_type_ss;
+						output_data_tab[v2_s] = output;
 					} catch (e) {
-						delete output_file_tab[v2_s];
+						delete output_data_tab[v2_s];
 						console.error("解析错误", `${v_s}-${v2_s}`, e);
 					}
 				});
@@ -226,71 +228,24 @@ export let methods = {
 
 		// 生成文件
 		{
-			let file_ss = Object.keys(output_file_tab);
+			let file_ss = Object.keys(output_data_tab);
 			let finish_n = 0;
 
-			file_ss.forEach((v_s) => {
+			for (let v_s of file_ss) {
 				let file_name_s = `${get_config_name_f(v_s)}`;
-				let path_s = path.join(data.output_path_s, `${file_name_s}.ts`);
-				let properties_s = "";
-				let type_s = "";
+				let input_path_s = output_file_to_path_tab[v_s];
+				let output_path_s = path.join(data.output_path_s, `${file_name_s}.${type_s_}`);
+				let file_s = (type_s_ === "ts" ? xlsx_to_ts : xlsx_to_json)(
+					output_data_tab[v_s],
+					output_attractor_desc_tab[v_s],
+					output_attractor_name_tab[v_s],
+					output_attractor_type_tab[v_s],
+					output_path_s,
+					input_path_s,
+					v_s
+				);
 
-				let config = output_file_tab[v_s];
-				let attractor_desc_ss = output_file_attractor_desc_tab[v_s];
-				let attractor_name_ss = output_file_attractor_name_tab[v_s];
-				let attractor_type_ss = output_file_attractor_type_tab[v_s];
-
-				type_s = `Record<number, {${attractor_name_ss
-					.map((v2_s, k2_n) => `\n	/** ${attractor_desc_ss[k2_n]} */\n	${v2_s}: ${attractor_type_ss[k2_n]}`)
-					.join(";")}\n}>`;
-
-				for (let v2_s in config) {
-					properties_s += `\n		[${v2_s}]: ${JSON.stringify(config[v2_s])},`;
-				}
-				properties_s = properties_s.slice(1);
-
-				let template_s = `/* eslint-disable */
-
-export type type_${file_name_s}<T = ${type_s}> = {
-	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_${file_name_s}<T[P]>;
-};
-
-/** ${path.basename(output_file_to_path_tab[v_s], path.extname(output_file_to_path_tab[v_s]))} */
-export const ${file_name_s}: type_${file_name_s} = new Proxy(
-	{
-${properties_s}
-	},
-	{
-		get(target, key): any {
-			if (!freeze_tab[key]) {
-				freeze_tab[key] = true;
-				deep_freeze(target[key]);
-			}
-
-			return target[key];
-		},
-		set() {
-			return false;
-		},
-	}
-);
-
-const freeze_tab: Record<PropertyKey, boolean> = {};
-function deep_freeze<T extends object>(object_: T): T {
-	const prop_name_ss = Object.getOwnPropertyNames(object_);
-
-	prop_name_ss.forEach((v_s) => {
-		const value = object_[v_s as keyof T];
-
-		if (value && typeof value === "object") {
-			deep_freeze(value);
-		}
-	});
-
-	return Object.freeze(object_);
-}`;
-
-				fs.writeFile(path_s, template_s, (...args) => {
+				fs.writeFile(output_path_s, file_s, (...args) => {
 					++finish_n;
 					// 更新进度
 					data.update_progress_n += (finish_n / file_ss.length) * 20;
@@ -302,7 +257,11 @@ function deep_freeze<T extends object>(object_: T): T {
 						}, 300);
 					}
 				});
-			});
+			}
+
+			if (!file_ss.length) {
+				data.update_progress_n = -1;
+			}
 		}
 
 		Editor.Message.send("asset-db", "refresh-asset", output_db_path_s);

@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 const child_process = require("child_process")
 
 // 防止编辑器加载错误
@@ -11,4 +11,5 @@ if (fs.existsSync(path_s)) {
 }
 
 
+fs.removeSync("./dist");
 child_process.execSync("tsc & npx tailwindcss -i ./tailwind.css -o ./dist/tailwind.css");

@@ -1,21 +1,26 @@
 /* eslint-disable */
 
-export type type_texture_config<T = Record<number, {
-	/** ID */
-	id_n: number;
-	/** 中文 */
-	zh_cn: string;
-	/** 英语 */
-	en_us: string
-}>> = {
-	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_texture_config<T[P]>;
+export type type_texture_config<
+	T = Record<
+		number,
+		{
+			/** ID */
+			id_n: number;
+			/** 中文 */
+			zh_cn: string;
+			/** 英语 */
+			en_us: string;
+		}
+	>
+> = {
+	readonly [P in keyof T]: T[P] extends Function
+		? T[P]
+		: type_texture_config<T[P]>;
 };
 
-/** 全局多语言 */
+/** 全局多语言/c_texture */
 export const texture_config: type_texture_config = new Proxy(
-	{
-
-	},
+	{},
 	{
 		get(target, key): any {
 			if (!freeze_tab[key]) {
