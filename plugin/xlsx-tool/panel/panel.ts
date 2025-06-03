@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 import config from "../config";
 import { createApp, App } from "vue";
@@ -65,6 +65,18 @@ export let methods = {
 		let output_file_attractor_type_tab: Record<string, string[]> = {};
 		/** 输出文件名对应路径表 */
 		let output_file_to_path_tab: Record<string, string> = {};
+		/** 输出目录 db 路径 */
+		let output_db_path_s = data.output_path_s.replace(path.join(Editor.Project.path, path.sep), "db://").replaceAll("\\", "/");
+		/** 配置表名正则 */
+		let config_name_reg = /^c_/;
+		/** 获取配置文件名 */
+		let get_config_name_f = (value_s: string): string => {
+			return `${value_s.slice(2)}_config`;
+		};
+
+		// 清空输出目录
+		fs.emptyDirSync(data.output_path_s);
+		Editor.Message.send("asset-db", "refresh-asset", output_db_path_s);
 
 		// 读取配置文件
 		{
@@ -139,8 +151,8 @@ export let methods = {
 				let workbook = xlsx.readFile(path_s);
 
 				workbook.SheetNames.forEach((v2_s) => {
-					// 指定开头表名
-					if (!v2_s || !v2_s.startsWith("t_")) {
+					// 识别配置表
+					if (!v2_s || !config_name_reg.test(v2_s)) {
 						return;
 					}
 
@@ -218,7 +230,8 @@ export let methods = {
 			let finish_n = 0;
 
 			file_ss.forEach((v_s) => {
-				let path_s = path.join(data.output_path_s, `${v_s}.ts`);
+				let file_name_s = `${get_config_name_f(v_s)}`;
+				let path_s = path.join(data.output_path_s, `${file_name_s}.ts`);
 				let properties_s = "";
 				let type_s = "";
 
@@ -232,19 +245,50 @@ export let methods = {
 					.join(";")}\n}>`;
 
 				for (let v2_s in config) {
-					properties_s += `\n	[${v2_s}]: ${JSON.stringify(config[v2_s])},`;
+					properties_s += `\n		[${v2_s}]: ${JSON.stringify(config[v2_s])},`;
 				}
 				properties_s = properties_s.slice(1);
 
 				let template_s = `/* eslint-disable */
-/** ${path.basename(output_file_to_path_tab[v_s], path.extname(output_file_to_path_tab[v_s]))} */
-export const ${v_s}: type_config = {
-${properties_s}
+
+export type type_${file_name_s}<T = ${type_s}> = {
+	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_${file_name_s}<T[P]>;
 };
 
-export type type_config<T = ${type_s}> = {
-	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_config<T[P]>;
-};`;
+/** ${path.basename(output_file_to_path_tab[v_s], path.extname(output_file_to_path_tab[v_s]))} */
+export const ${file_name_s}: type_${file_name_s} = new Proxy(
+	{
+${properties_s}
+	},
+	{
+		get(target, key): any {
+			if (!freeze_tab[key]) {
+				freeze_tab[key] = true;
+				deep_freeze(target[key]);
+			}
+
+			return target[key];
+		},
+		set() {
+			return false;
+		},
+	}
+);
+
+const freeze_tab: Record<PropertyKey, boolean> = {};
+function deep_freeze<T extends object>(object_: T): T {
+	const prop_name_ss = Object.getOwnPropertyNames(object_);
+
+	prop_name_ss.forEach((v_s) => {
+		const value = object_[v_s as keyof T];
+
+		if (value && typeof value === "object") {
+			deep_freeze(value);
+		}
+	});
+
+	return Object.freeze(object_);
+}`;
 
 				fs.writeFile(path_s, template_s, (...args) => {
 					++finish_n;
@@ -261,11 +305,7 @@ export type type_config<T = ${type_s}> = {
 			});
 		}
 
-		if (data.output_path_s.startsWith(path.resolve(Editor.Project.path))) {
-			let db_path_s = data.output_path_s.replace(path.join(Editor.Project.path, path.sep), "db://").replaceAll("\\", "/");
-			Editor.Message.send("asset-db", "refresh-asset", db_path_s);
-		}
-
+		Editor.Message.send("asset-db", "refresh-asset", output_db_path_s);
 		console.log("完成");
 	},
 

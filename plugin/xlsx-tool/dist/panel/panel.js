@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.panel = exports.methods = exports.data = exports.self = exports.info = void 0;
-const fs_1 = __importDefault(require("fs"));
+const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("../config"));
 const vue_1 = require("vue");
@@ -40,18 +40,18 @@ exports.data = {
 exports.methods = {
     /** 点击更新配置 */
     async click_update_config() {
-        if (!exports.data.input_path_s || !fs_1.default.existsSync(exports.data.input_path_s)) {
+        if (!exports.data.input_path_s || !fs_extra_1.default.existsSync(exports.data.input_path_s)) {
             Editor.Dialog.error("输入路径错误");
             return;
         }
-        if (!exports.data.output_path_s || !fs_1.default.existsSync(exports.data.output_path_s)) {
+        if (!exports.data.output_path_s || !fs_extra_1.default.existsSync(exports.data.output_path_s)) {
             Editor.Dialog.error("输出路径错误");
             return;
         }
         // 更新进度
         exports.data.update_progress_n = 0;
         /** xlsx 文件 */
-        let xlsx_file_ss = fs_1.default.readdirSync(exports.data.input_path_s).filter((v_s) => !v_s.startsWith("~$") && v_s.endsWith(".xlsx"));
+        let xlsx_file_ss = fs_extra_1.default.readdirSync(exports.data.input_path_s).filter((v_s) => !v_s.startsWith("~$") && v_s.endsWith(".xlsx"));
         /** 输出文件表 */
         let output_file_tab = {};
         /** 输出文件注释 */
@@ -62,6 +62,17 @@ exports.methods = {
         let output_file_attractor_type_tab = {};
         /** 输出文件名对应路径表 */
         let output_file_to_path_tab = {};
+        /** 输出目录 db 路径 */
+        let output_db_path_s = exports.data.output_path_s.replace(path_1.default.join(Editor.Project.path, path_1.default.sep), "db://").replaceAll("\\", "/");
+        /** 配置表名正则 */
+        let config_name_reg = /^c_/;
+        /** 获取配置文件名 */
+        let get_config_name_f = (value_s) => {
+            return `${value_s.slice(2)}_config`;
+        };
+        // 清空输出目录
+        fs_extra_1.default.emptyDirSync(exports.data.output_path_s);
+        Editor.Message.send("asset-db", "refresh-asset", output_db_path_s);
         // 读取配置文件
         {
             let read_data_f = (type_s, value_s) => {
@@ -136,8 +147,8 @@ exports.methods = {
                 let path_s = path_1.default.join(exports.data.input_path_s, v_s);
                 let workbook = xlsx_1.default.readFile(path_s);
                 workbook.SheetNames.forEach((v2_s) => {
-                    // 指定开头表名
-                    if (!v2_s || !v2_s.startsWith("t_")) {
+                    // 识别配置表
+                    if (!v2_s || !config_name_reg.test(v2_s)) {
                         return;
                     }
                     let sheet = workbook.Sheets[v2_s];
@@ -202,7 +213,8 @@ exports.methods = {
             let file_ss = Object.keys(output_file_tab);
             let finish_n = 0;
             file_ss.forEach((v_s) => {
-                let path_s = path_1.default.join(exports.data.output_path_s, `${v_s}.ts`);
+                let file_name_s = `${get_config_name_f(v_s)}`;
+                let path_s = path_1.default.join(exports.data.output_path_s, `${file_name_s}.ts`);
                 let properties_s = "";
                 let type_s = "";
                 let config = output_file_tab[v_s];
@@ -213,19 +225,50 @@ exports.methods = {
                     .map((v2_s, k2_n) => `\n	/** ${attractor_desc_ss[k2_n]} */\n	${v2_s}: ${attractor_type_ss[k2_n]}`)
                     .join(";")}\n}>`;
                 for (let v2_s in config) {
-                    properties_s += `\n	[${v2_s}]: ${JSON.stringify(config[v2_s])},`;
+                    properties_s += `\n		[${v2_s}]: ${JSON.stringify(config[v2_s])},`;
                 }
                 properties_s = properties_s.slice(1);
                 let template_s = `/* eslint-disable */
-/** ${path_1.default.basename(output_file_to_path_tab[v_s], path_1.default.extname(output_file_to_path_tab[v_s]))} */
-export const ${v_s}: type_config = {
-${properties_s}
+
+export type type_${file_name_s}<T = ${type_s}> = {
+	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_${file_name_s}<T[P]>;
 };
 
-export type type_config<T = ${type_s}> = {
-	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_config<T[P]>;
-};`;
-                fs_1.default.writeFile(path_s, template_s, (...args) => {
+/** ${path_1.default.basename(output_file_to_path_tab[v_s], path_1.default.extname(output_file_to_path_tab[v_s]))} */
+export const ${file_name_s}: type_${file_name_s} = new Proxy(
+	{
+${properties_s}
+	},
+	{
+		get(target, key): any {
+			if (!freeze_tab[key]) {
+				freeze_tab[key] = true;
+				deep_freeze(target[key]);
+			}
+
+			return target[key];
+		},
+		set() {
+			return false;
+		},
+	}
+);
+
+const freeze_tab: Record<PropertyKey, boolean> = {};
+function deep_freeze<T extends object>(object_: T): T {
+	const prop_name_ss = Object.getOwnPropertyNames(object_);
+
+	prop_name_ss.forEach((v_s) => {
+		const value = object_[v_s as keyof T];
+
+		if (value && typeof value === "object") {
+			deep_freeze(value);
+		}
+	});
+
+	return Object.freeze(object_);
+}`;
+                fs_extra_1.default.writeFile(path_s, template_s, (...args) => {
                     ++finish_n;
                     // 更新进度
                     exports.data.update_progress_n += (finish_n / file_ss.length) * 20;
@@ -238,10 +281,7 @@ export type type_config<T = ${type_s}> = {
                 });
             });
         }
-        if (exports.data.output_path_s.startsWith(path_1.default.resolve(Editor.Project.path))) {
-            let db_path_s = exports.data.output_path_s.replace(path_1.default.join(Editor.Project.path, path_1.default.sep), "db://").replaceAll("\\", "/");
-            Editor.Message.send("asset-db", "refresh-asset", db_path_s);
-        }
+        Editor.Message.send("asset-db", "refresh-asset", output_db_path_s);
         console.log("完成");
     },
     /** 点击输入路径框 */
