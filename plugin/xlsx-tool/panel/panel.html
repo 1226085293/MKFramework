@@ -87,16 +87,28 @@
 		:value="this.update_progress_n"
 		percent
 	></ui-progress>
-	<!-- 更新配置按钮 -->
-	<ui-button
-		class="m-2 h-8 flex justify-center items-center"
-		type="default"
-		v-show="this.update_progress_n === -1"
-		@click="this.click_update_config()"
-	>
-		<ui-icon value="json"></ui-icon>
-		更新配置</ui-button
-	>
+	<div class="flex w-auto">
+		<!-- 导出 TS 按钮 -->
+		<ui-button
+			class="m-2 h-8 flex justify-center items-center"
+			type="default"
+			v-show="this.update_progress_n === -1"
+			@click="this.click_export_config('ts')"
+		>
+			<ui-icon value="json"></ui-icon>
+			导出 TS</ui-button
+		>
+		<!-- 导出 JSON 按钮 -->
+		<ui-button
+			class="m-2 h-8 flex justify-center items-center"
+			type="default"
+			v-show="this.update_progress_n === -1"
+			@click="this.click_export_config('json')"
+		>
+			<ui-icon value="json"></ui-icon>
+			导出 JSON</ui-button
+		>
+	</div>
 	<!-- 更新中... -->
 	<ui-button
 		class="m-2 h-8 flex justify-center items-center"

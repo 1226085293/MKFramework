@@ -11,6 +11,8 @@ const vue_1 = require("vue");
 const electron_1 = __importDefault(require("electron"));
 const tool_1 = __importDefault(require("../tool"));
 const xlsx_1 = __importDefault(require("xlsx"));
+const xlsx_to_ts_1 = __importDefault(require("../convert/xlsx_to_ts"));
+const xlsx_to_json_1 = __importDefault(require("../convert/xlsx_to_json"));
 // export const info: InspectorInfo = {
 // 	type_s: "asset",
 // 	target_s: "effect",
@@ -39,7 +41,7 @@ exports.data = {
 };
 exports.methods = {
     /** 点击更新配置 */
-    async click_update_config() {
+    async click_export_config(type_s_) {
         if (!exports.data.input_path_s || !fs_extra_1.default.existsSync(exports.data.input_path_s)) {
             Editor.Dialog.error("输入路径错误");
             return;
@@ -52,14 +54,14 @@ exports.methods = {
         exports.data.update_progress_n = 0;
         /** xlsx 文件 */
         let xlsx_file_ss = fs_extra_1.default.readdirSync(exports.data.input_path_s).filter((v_s) => !v_s.startsWith("~$") && v_s.endsWith(".xlsx"));
-        /** 输出文件表 */
-        let output_file_tab = {};
-        /** 输出文件注释 */
-        let output_file_attractor_desc_tab = {};
-        /** 输出文件属性名 */
-        let output_file_attractor_name_tab = {};
+        /** 输出数据表 */
+        let output_data_tab = {};
+        /** 输出注释 */
+        let output_attractor_desc_tab = {};
+        /** 输出属性名 */
+        let output_attractor_name_tab = {};
         /** 输出文件类型 */
-        let output_file_attractor_type_tab = {};
+        let output_attractor_type_tab = {};
         /** 输出文件名对应路径表 */
         let output_file_to_path_tab = {};
         /** 输出目录 db 路径 */
@@ -194,13 +196,13 @@ exports.methods = {
                     });
                     try {
                         output_file_to_path_tab[v2_s] = path_s;
-                        output_file_attractor_desc_tab[v2_s] = attractor_desc_ss;
-                        output_file_attractor_name_tab[v2_s] = attractor_name_ss;
-                        output_file_attractor_type_tab[v2_s] = attractor_type_ss;
-                        output_file_tab[v2_s] = output;
+                        output_attractor_desc_tab[v2_s] = attractor_desc_ss;
+                        output_attractor_name_tab[v2_s] = attractor_name_ss;
+                        output_attractor_type_tab[v2_s] = attractor_type_ss;
+                        output_data_tab[v2_s] = output;
                     }
                     catch (e) {
-                        delete output_file_tab[v2_s];
+                        delete output_data_tab[v2_s];
                         console.error("解析错误", `${v_s}-${v2_s}`, e);
                     }
                 });
@@ -210,65 +212,14 @@ exports.methods = {
         }
         // 生成文件
         {
-            let file_ss = Object.keys(output_file_tab);
+            let file_ss = Object.keys(output_data_tab);
             let finish_n = 0;
-            file_ss.forEach((v_s) => {
+            for (let v_s of file_ss) {
                 let file_name_s = `${get_config_name_f(v_s)}`;
-                let path_s = path_1.default.join(exports.data.output_path_s, `${file_name_s}.ts`);
-                let properties_s = "";
-                let type_s = "";
-                let config = output_file_tab[v_s];
-                let attractor_desc_ss = output_file_attractor_desc_tab[v_s];
-                let attractor_name_ss = output_file_attractor_name_tab[v_s];
-                let attractor_type_ss = output_file_attractor_type_tab[v_s];
-                type_s = `Record<number, {${attractor_name_ss
-                    .map((v2_s, k2_n) => `\n	/** ${attractor_desc_ss[k2_n]} */\n	${v2_s}: ${attractor_type_ss[k2_n]}`)
-                    .join(";")}\n}>`;
-                for (let v2_s in config) {
-                    properties_s += `\n		[${v2_s}]: ${JSON.stringify(config[v2_s])},`;
-                }
-                properties_s = properties_s.slice(1);
-                let template_s = `/* eslint-disable */
-
-export type type_${file_name_s}<T = ${type_s}> = {
-	readonly [P in keyof T]: T[P] extends Function ? T[P] : type_${file_name_s}<T[P]>;
-};
-
-/** ${path_1.default.basename(output_file_to_path_tab[v_s], path_1.default.extname(output_file_to_path_tab[v_s]))} */
-export const ${file_name_s}: type_${file_name_s} = new Proxy(
-	{
-${properties_s}
-	},
-	{
-		get(target, key): any {
-			if (!freeze_tab[key]) {
-				freeze_tab[key] = true;
-				deep_freeze(target[key]);
-			}
-
-			return target[key];
-		},
-		set() {
-			return false;
-		},
-	}
-);
-
-const freeze_tab: Record<PropertyKey, boolean> = {};
-function deep_freeze<T extends object>(object_: T): T {
-	const prop_name_ss = Object.getOwnPropertyNames(object_);
-
-	prop_name_ss.forEach((v_s) => {
-		const value = object_[v_s as keyof T];
-
-		if (value && typeof value === "object") {
-			deep_freeze(value);
-		}
-	});
-
-	return Object.freeze(object_);
-}`;
-                fs_extra_1.default.writeFile(path_s, template_s, (...args) => {
+                let input_path_s = output_file_to_path_tab[v_s];
+                let output_path_s = path_1.default.join(exports.data.output_path_s, `${file_name_s}.${type_s_}`);
+                let file_s = (type_s_ === "ts" ? xlsx_to_ts_1.default : xlsx_to_json_1.default)(output_data_tab[v_s], output_attractor_desc_tab[v_s], output_attractor_name_tab[v_s], output_attractor_type_tab[v_s], output_path_s, input_path_s, v_s);
+                fs_extra_1.default.writeFile(output_path_s, file_s, (...args) => {
                     ++finish_n;
                     // 更新进度
                     exports.data.update_progress_n += (finish_n / file_ss.length) * 20;
@@ -279,7 +230,10 @@ function deep_freeze<T extends object>(object_: T): T {
                         }, 300);
                     }
                 });
-            });
+            }
+            if (!file_ss.length) {
+                exports.data.update_progress_n = -1;
+            }
         }
         Editor.Message.send("asset-db", "refresh-asset", output_db_path_s);
         console.log("完成");
