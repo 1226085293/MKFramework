@@ -47,8 +47,9 @@ async function default_1() {
     await Promise.resolve()
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.安全检查"));
+        let path_s = path_1.default.join(__dirname, "..", framework_path_s);
         // 覆盖安装确认
-        if (fs_extra_1.default.existsSync(path_1.default.join(__dirname, "..", framework_path_s))) {
+        if (fs_extra_1.default.existsSync(path_s) && fs_extra_1.default.readdirSync(path_s).length !== 0) {
             const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.确认安装"), {
                 buttons: [Editor.I18n.t("mk-framework.确认"), Editor.I18n.t("mk-framework.取消")],
             });
@@ -174,7 +175,7 @@ async function default_1() {
     })
         // 添加导入映射
         .then(async () => {
-        var _a;
+        var _a, _b, _c;
         console.log(Editor.I18n.t("mk-framework.添加导入映射"));
         const setting_path_s = path_1.default.join(Editor.Project.path, "settings/v2/packages/project.json");
         const setting_config_tab = !fs_extra_1.default.existsSync(setting_path_s) ? {} : fs_extra_1.default.readJSONSync(setting_path_s);
@@ -187,8 +188,9 @@ async function default_1() {
         let import_map_path_s = ((_a = setting_config_tab.script.importMap) !== null && _a !== void 0 ? _a : "").replace("project:/", Editor.Project.path);
         // 已存在导入映射
         if (fs_extra_1.default.existsSync(import_map_path_s) && fs_extra_1.default.statSync(import_map_path_s).isFile()) {
-            const import_map_tab = fs_extra_1.default.readJSONSync(import_map_path_s);
+            const import_map_tab = (_b = fs_extra_1.default.readJSONSync(import_map_path_s)) !== null && _b !== void 0 ? _b : {};
             // 更新导入映射
+            import_map_tab.imports = (_c = import_map_tab.imports) !== null && _c !== void 0 ? _c : {};
             Object.assign(import_map_tab.imports, mk_import_map_tab.imports);
             // 写入导入映射
             fs_extra_1.default.writeFileSync(import_map_path_s, await prettier_1.default.format(JSON.stringify(import_map_tab), {
