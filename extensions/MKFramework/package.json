@@ -1,6 +1,6 @@
 {
 	"$schema": "./@types/schema/package/index.json",
-	"package_version": 2,
+	"package_version": 4,
 	"name": "mk-framework",
 	"version": "1.0.4",
 	"author": "_muzzik",
@@ -66,7 +66,6 @@
 	"panels": {},
 	"devDependencies": {
 		"@cocos/creator-types": "^3.8.2",
-		"@types/axios": "^0.14.0",
 		"@types/cjson": "^0.5.3",
 		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^18.17.1",
