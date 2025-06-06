@@ -20,9 +20,9 @@ class node_reference {
 			trigger_ss: ["asset-db:asset-change"],
 			callback_f: (uuid_s_: string, data_: { name: string }) => {
 				// console.log("资源变更", ...args_as);
-				if (data_.name.endsWith(".scene") || data_.name.endsWith(".prefab")) {
-					tool.call_scene_script("update_script");
-				}
+				// if (data_.name.endsWith(".scene") || data_.name.endsWith(".prefab")) {
+				// 	tool.call_scene_script("update_script");
+				// }
 			},
 		},
 	];
@@ -35,12 +35,23 @@ class node_reference {
 			run_f: (node: { path: string; components: any[]; uuid: string }) => {
 				return reference_data.target?.uuid === node.uuid;
 			},
-			callback_f: () => {
-				reference_data.target = null;
+			callback_f: async () => {
 				lib_node_tree.del(
 					lib_node_tree_.extension_type.tail_left,
 					"node-reference-name"
 				);
+
+				/** 挂载脚本 */
+				let script_path_s: string = await tool.call_scene_script(
+					"get_component_path",
+					reference_data.target!.path,
+					reference_data.target!.components.findIndex(
+						(v) => !v.type.startsWith("cc.")
+					)
+				);
+				await reference_data.encode(script_path_s);
+
+				reference_data.target = null;
 			},
 		},
 		{
@@ -63,7 +74,7 @@ class node_reference {
 						(v) => !v.type.startsWith("cc.")
 					)
 				);
-				reference_data.decode(script_path_s);
+				await reference_data.decode(script_path_s);
 
 				lib_node_tree.add(
 					lib_node_tree_.extension_type.tail_left,
@@ -131,8 +142,7 @@ class node_reference {
 
 							// 更新脚本
 							if (!(!old_variable_s && !variable_s)) {
-								await reference_data.update();
-								reference_data.encode(script_path_s);
+								await reference_data.encode(script_path_s);
 							}
 						});
 						return class_name_div;
@@ -281,12 +291,27 @@ class node_reference {
 						path: v_ss[4],
 						components: [],
 					};
-					if (!reference_data.decode(v_ss[1])) {
+					if (!(await reference_data.decode(v_ss[1]))) {
 						continue;
 					}
-					await reference_data.update();
-					reference_data.encode(v_ss[1]);
+					await reference_data.encode(v_ss[1]);
 				}
+			},
+		},
+		// 获取 uuid 通过路径
+		{
+			trigger_ss: ["get_uuid_by_path"],
+			callback_f: async (path_ss_: string[]) => {
+				let root_node: cc.Scene | cc.Node | null = cc.director.getScene();
+
+				if (!root_node) {
+					return [];
+				}
+
+				if (cc.director.getScene()?.name === "New Node") {
+					root_node = cc.director.getScene()!.children[0];
+				}
+				return path_ss_.map((v_s) => root_node.getChildByPath(v_s)?.uuid ?? "");
 			},
 		},
 	];

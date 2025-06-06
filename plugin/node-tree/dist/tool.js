@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const electron_1 = __importDefault(require("electron"));
-const config_1 = __importDefault(require("./config"));
+const plugin_config_1 = __importDefault(require("./plugin_config"));
 const fs_1 = __importDefault(require("fs"));
 /** 插件工具集 */
 class tool {
@@ -21,7 +21,7 @@ class tool {
         this.call_main_script("log", "error", ...args_as_);
     }
     call_main_script(method_s_, ...args_as_) {
-        return Editor.Message.request(config_1.default.plugin_name_s, method_s_, ...args_as_);
+        return Editor.Message.request(plugin_config_1.default.plugin_name_s, method_s_, ...args_as_);
     }
     /**
      * 发送场景事件
@@ -30,7 +30,7 @@ class tool {
      */
     call_scene_script(method_s_, ...args_as_) {
         return Editor.Message.request("scene", "execute-scene-script", {
-            name: config_1.default.plugin_name_s,
+            name: plugin_config_1.default.plugin_name_s,
             method: method_s_,
             args: args_as_,
         });
@@ -42,7 +42,7 @@ class tool {
      * @returns
      */
     async open_panel(panel_s_, ...args_as_) {
-        let panel_name_s = `${config_1.default.plugin_name_s}.${panel_s_}`;
+        let panel_name_s = `${plugin_config_1.default.plugin_name_s}.${panel_s_}`;
         if (await Editor.Panel.has(panel_name_s)) {
             Editor.Panel.focus(panel_name_s);
             return this._panel_tab[panel_name_s];
@@ -52,7 +52,7 @@ class tool {
             console.warn = function () { };
             const browser_window = electron_1.default.BrowserWindow ?? electron_1.default.remote.BrowserWindow;
             const window_id_ns = browser_window.getAllWindows().map((v) => v.id);
-            await Editor.Panel.open(`${config_1.default.plugin_name_s}.${panel_s_}`, ...(args_as_ ?? []));
+            await Editor.Panel.open(`${plugin_config_1.default.plugin_name_s}.${panel_s_}`, ...(args_as_ ?? []));
             setTimeout(() => {
                 console.warn = old_warn_f;
             }, 500);
@@ -75,7 +75,7 @@ class tool {
      * @returns
      */
     close_panel(panel_s_) {
-        let panel_name_s = `${config_1.default.plugin_name_s}.${panel_s_}`;
+        let panel_name_s = `${plugin_config_1.default.plugin_name_s}.${panel_s_}`;
         return Editor.Panel.close(panel_name_s);
     }
     /**
@@ -93,12 +93,12 @@ class tool {
      * @returns
      */
     get_panel_content(dir_path_s_) {
-        let file_s = fs_1.default.readFileSync(path_1.default.join(config_1.default.plugin_path_s, `panel/${path_1.default.basename(dir_path_s_, ".js")}.html`), "utf-8");
+        let file_s = fs_1.default.readFileSync(path_1.default.join(plugin_config_1.default.plugin_path_s, `panel/${path_1.default.basename(dir_path_s_, ".js")}.html`), "utf-8");
         return {
             html_s: file_s.match(/<div([\s\S]*)?<\/div>/g)[0],
             style_s: [
                 file_s.match(/(?<=<style>)([^]*)(?=<\/style>)/g)?.[0] ?? "",
-                fs_1.default.readFileSync(path_1.default.join(config_1.default.plugin_path_s, `dist/tailwind.css`), "utf-8"),
+                fs_1.default.readFileSync(path_1.default.join(plugin_config_1.default.plugin_path_s, `dist/tailwind.css`), "utf-8"),
             ].join("\n"),
         };
     }

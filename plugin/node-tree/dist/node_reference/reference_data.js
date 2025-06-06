@@ -15,23 +15,13 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -83,7 +73,7 @@ class reference_data {
             script_db_path_s,
         };
     }
-    decode(target_script_path_s_) {
+    async decode(target_script_path_s_) {
         target_script_path_s_ = target_script_path_s_.replaceAll("\\", "/");
         let { dir_path_s, file_name_s, class_name_s, script_path_s } = this.parse(target_script_path_s_);
         if (!fs.existsSync(script_path_s)) {
@@ -99,30 +89,46 @@ class reference_data {
         start_index_n += 8;
         let json_s = script_s.slice(start_index_n, script_s.indexOf("\n", start_index_n));
         try {
-            this.node_reference_tab = JSON.parse(json_s);
+            let encode_data_tab = JSON.parse(json_s);
+            let encode_data_key_ss = Object.keys(encode_data_tab);
+            let uuid_ss = (await tool_1.default.call_scene_script("get_uuid_by_path", encode_data_key_ss));
+            let node_reference_tab = {};
+            uuid_ss.forEach((v_s, k_n) => {
+                if (!v_s) {
+                    return;
+                }
+                node_reference_tab[v_s] = encode_data_tab[encode_data_key_ss[k_n]];
+            });
+            this.node_reference_tab = node_reference_tab;
         }
         catch (e) {
             this.node_reference_tab = {};
         }
         return true;
     }
-    encode(target_script_path_s_) {
+    async encode(target_script_path_s_) {
         target_script_path_s_ = target_script_path_s_.replaceAll("\\", "/");
-        let { dir_path_s, file_name_s, class_name_s, script_path_s, script_db_path_s } = this.parse(target_script_path_s_);
+        let { dir_path_s, file_name_s, class_name_s, script_path_s, script_db_path_s, } = this.parse(target_script_path_s_);
         let host_script_s = fs.readFileSync(target_script_path_s_, "utf-8");
         let import_s = `import ${class_name_s} from "./${class_name_s}";`;
         let member_s = `nodes = new ${class_name_s}(this);`;
-        let varname_f = plugin_config_1.default.code_style_s === "驼峰" ? varname.camelback : varname.underscore;
+        let varname_f = plugin_config_1.default.code_style_s === "驼峰"
+            ? varname.camelback
+            : varname.underscore;
         // 如果成员为空则删除
-        if (!Object.keys(this.node_reference_tab).length && fs.existsSync(script_path_s)) {
+        if (!Object.keys(this.node_reference_tab).length &&
+            fs.existsSync(script_path_s)) {
             Editor.Message.send("asset-db", "delete-asset", script_db_path_s);
             Editor.Message.send("asset-db", "create-asset", this._convert_to_db_path(target_script_path_s_), host_script_s
                 .replace(new RegExp(`${import_s}((\r\n)|(\n))`), "")
-                .replace(new RegExp(`((\r\n)|(\n))\t${member_s.replace("(", "\\(").replace(")", "\\)")}`), ""), {
+                .replace(new RegExp(`((\r\n)|(\n))\t${member_s
+                .replace("(", "\\(")
+                .replace(")", "\\)")}`), ""), {
                 overwrite: true,
             });
             return;
         }
+        await this.update();
         let script_s = `/* eslint-disable */
 import { js, Node, Component引擎组件导入 } from "cc";
 自定义组件导入
@@ -140,7 +146,7 @@ export default class 类名 {
 
 成员
 }
-// data:${JSON.stringify(this.node_reference_tab)}
+// data:编码数据
 `;
         /** 组件表 */
         let component_tab = {};
@@ -148,45 +154,52 @@ export default class 类名 {
         let component_member_tail_s = plugin_config_1.default.code_style_s === "驼峰" ? "Comps" : "_comps";
         // 类名
         script_s = script_s.replaceAll("类名", class_name_s);
-        // 成员
+        // 构造、成员、编码数据
         {
-            let member_s = ``;
-            for (let k_s in this.node_reference_tab) {
-                let node_data = this.node_reference_tab[k_s];
-                let content_s = `	declare ${node_data.name_s}: Node;`;
-                let content2_s = `	declare ${node_data.name_s}${component_member_tail_s}: {\n		${node_data.component_sss
-                    .map((v2_ss) => {
-                    let component_name_s = v2_ss[0].replace("cc.", "");
-                    component_tab[v2_ss[0]] = v2_ss[1];
-                    return `${varname_f(component_name_s)}: ${component_name_s};`;
-                })
-                    .join("\n		")}\n	};`;
-                if (node_data.component_sss.length) {
-                    member_s += `\n${content_s}\n${content2_s}`;
-                }
-                else {
-                    member_s += `\n${content_s}`;
-                }
-            }
-            script_s = script_s.replaceAll("成员", member_s.slice(1));
-        }
-        // 构造
-        {
+            /** 构造 */
             let constructor_s = ``;
+            /** 成员 */
+            let member_s = ``;
+            /** 编码数据 */
+            let encode_data_tab = {};
             for (let k_s in this.node_reference_tab) {
                 let node_data = this.node_reference_tab[k_s];
-                // 节点
-                constructor_s += `${constructor_s.length ? "\n" : ""}			this.${node_data.name_s} = node.${node_data.path_s.includes("/") ? "getChildByPath" : "getChildByName"}("${node_data.path_s}")!;`;
-                // 组件
-                if (node_data.component_sss.length) {
-                    constructor_s += `${constructor_s.length ? "\n" : ""}			this.${node_data.name_s}${component_member_tail_s} = js.createMap();`;
-                    node_data.component_sss.forEach((v2_ss) => {
-                        let component_name_s = v2_ss[0].replace("cc.", "");
-                        constructor_s += `${constructor_s.length ? "\n" : ""}			this.${node_data.name_s}${component_member_tail_s}.${varname_f(component_name_s)} = this.${node_data.name_s}.getComponent(${component_name_s})!;`;
-                    });
+                // 构造
+                {
+                    // 节点
+                    constructor_s += `${constructor_s.length ? "\n" : ""}			this.${node_data.name_s} = node.${node_data.path_s.includes("/") ? "getChildByPath" : "getChildByName"}("${node_data.path_s}")!;`;
+                    // 组件
+                    if (node_data.component_sss.length) {
+                        constructor_s += `${constructor_s.length ? "\n" : ""}			this.${node_data.name_s}${component_member_tail_s} = js.createMap();`;
+                        node_data.component_sss.forEach((v2_ss) => {
+                            let component_name_s = v2_ss[0].replace("cc.", "");
+                            constructor_s += `${constructor_s.length ? "\n" : ""}			this.${node_data.name_s}${component_member_tail_s}.${varname_f(component_name_s)} = this.${node_data.name_s}.getComponent(${component_name_s})!;`;
+                        });
+                    }
                 }
+                // 成员
+                {
+                    let content_s = `	declare ${node_data.name_s}: Node;`;
+                    let content2_s = `	declare ${node_data.name_s}${component_member_tail_s}: {\n		${node_data.component_sss
+                        .map((v2_ss) => {
+                        let component_name_s = v2_ss[0].replace("cc.", "");
+                        component_tab[v2_ss[0]] = v2_ss[1];
+                        return `${varname_f(component_name_s)}: ${component_name_s};`;
+                    })
+                        .join("\n		")}\n	};`;
+                    if (node_data.component_sss.length) {
+                        member_s += `\n${content_s}\n${content2_s}`;
+                    }
+                    else {
+                        member_s += `\n${content_s}`;
+                    }
+                }
+                // 原始数据
+                encode_data_tab[node_data.path_s] = node_data;
             }
             script_s = script_s.replaceAll("构造", constructor_s);
+            script_s = script_s.replaceAll("成员", member_s.slice(1));
+            script_s = script_s.replaceAll("编码数据", JSON.stringify(encode_data_tab));
         }
         // 组件导入
         {
@@ -194,7 +207,12 @@ export default class 类名 {
             let user_component_s = "";
             for (let k_s in component_tab) {
                 if (k_s.startsWith("cc.")) {
-                    cc_component_s += `, ${k_s.slice(3)}`;
+                    let name_s = k_s.slice(3);
+                    let point_index_n = name_s.indexOf(".");
+                    if (point_index_n !== -1) {
+                        name_s = name_s.slice(0, point_index_n);
+                    }
+                    cc_component_s += `, ${name_s}`;
                 }
                 else {
                     user_component_s += `\nimport { ${k_s} } from "${this._convert_to_db_path(component_tab[k_s]).slice(0, -3)}";`;
@@ -221,7 +239,11 @@ export default class 类名 {
                 return;
             }
             let insert_index_n = host_script_s.indexOf("{", match_result.index) + 1;
-            host_script_s = `${import_s}\n` + host_script_s.slice(0, insert_index_n) + `\n\t${member_s}` + host_script_s.slice(insert_index_n);
+            host_script_s =
+                `${import_s}\n` +
+                    host_script_s.slice(0, insert_index_n) +
+                    `\n\t${member_s}` +
+                    host_script_s.slice(insert_index_n);
             Editor.Message.send("asset-db", "create-asset", this._convert_to_db_path(target_script_path_s_), host_script_s, {
                 overwrite: true,
             });
@@ -229,7 +251,8 @@ export default class 类名 {
     }
     _convert_to_db_path(fs_path_s_) {
         fs_path_s_ = fs_path_s_.replaceAll("\\", "/");
-        return "db:/" + fs_path_s_.slice(Editor.Project.path.length).replaceAll("\\", "/");
+        return ("db:/" +
+            fs_path_s_.slice(Editor.Project.path.length).replaceAll("\\", "/"));
     }
 }
 exports.default = new reference_data();
