@@ -1,6 +1,6 @@
 {
 	"$schema": "./@types/schema/package/index.json",
-	"package_version": 4,
+	"package_version": 2,
 	"name": "mk-framework",
 	"version": "1.0.4",
 	"author": "_muzzik",

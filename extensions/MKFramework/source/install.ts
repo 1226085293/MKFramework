@@ -48,9 +48,10 @@ export default async function (): Promise<void> {
 	await Promise.resolve()
 		.then(async () => {
 			console.log(Editor.I18n.t("mk-framework.安全检查"));
+			let path_s = path.join(__dirname, "..", framework_path_s);
 
 			// 覆盖安装确认
-			if (fs.existsSync(path.join(__dirname, "..", framework_path_s))) {
+			if (fs.existsSync(path_s) && fs.readdirSync(path_s).length !== 0) {
 				const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.确认安装"), {
 					buttons: [Editor.I18n.t("mk-framework.确认"), Editor.I18n.t("mk-framework.取消")],
 				});
@@ -209,9 +210,10 @@ export default async function (): Promise<void> {
 
 			// 已存在导入映射
 			if (fs.existsSync(import_map_path_s) && fs.statSync(import_map_path_s).isFile()) {
-				const import_map_tab = fs.readJSONSync(import_map_path_s);
+				const import_map_tab = fs.readJSONSync(import_map_path_s) ?? {};
 
 				// 更新导入映射
+				import_map_tab.imports = import_map_tab.imports ?? {};
 				Object.assign(import_map_tab.imports, mk_import_map_tab.imports);
 
 				// 写入导入映射
