@@ -1,6 +1,6 @@
 import path from "path";
 import electron from "electron";
-import config from "./config";
+import plugin_config from "./plugin_config";
 import fs from "fs";
 
 /** 插件工具集 */
@@ -20,7 +20,11 @@ class tool {
 	}
 
 	call_main_script(method_s_: string, ...args_as_: any[]): Promise<any> {
-		return Editor.Message.request(config.plugin_name_s, method_s_, ...args_as_);
+		return Editor.Message.request(
+			plugin_config.plugin_name_s,
+			method_s_,
+			...args_as_
+		);
 	}
 
 	/**
@@ -30,7 +34,7 @@ class tool {
 	 */
 	call_scene_script(method_s_: string, ...args_as_: any[]): Promise<any> {
 		return Editor.Message.request("scene", "execute-scene-script", {
-			name: config.plugin_name_s,
+			name: plugin_config.plugin_name_s,
 			method: method_s_,
 			args: args_as_,
 		});
@@ -46,7 +50,7 @@ class tool {
 		panel_s_: string,
 		...args_as_: any[]
 	): Promise<electron.BrowserWindow | null> {
-		let panel_name_s = `${config.plugin_name_s}.${panel_s_}`;
+		let panel_name_s = `${plugin_config.plugin_name_s}.${panel_s_}`;
 
 		if (await Editor.Panel.has(panel_name_s)) {
 			Editor.Panel.focus(panel_name_s);
@@ -58,7 +62,7 @@ class tool {
 				electron.BrowserWindow ?? electron.remote.BrowserWindow;
 			const window_id_ns = browser_window.getAllWindows().map((v) => v.id);
 			await Editor.Panel.open(
-				`${config.plugin_name_s}.${panel_s_}`,
+				`${plugin_config.plugin_name_s}.${panel_s_}`,
 				...(args_as_ ?? [])
 			);
 			setTimeout(() => {
@@ -89,7 +93,7 @@ class tool {
 	 * @returns
 	 */
 	close_panel(panel_s_: string): Promise<any> {
-		let panel_name_s = `${config.plugin_name_s}.${panel_s_}`;
+		let panel_name_s = `${plugin_config.plugin_name_s}.${panel_s_}`;
 
 		return Editor.Panel.close(panel_name_s);
 	}
@@ -116,7 +120,7 @@ class tool {
 	} {
 		let file_s = fs.readFileSync(
 			path.join(
-				config.plugin_path_s,
+				plugin_config.plugin_path_s,
 				`panel/${path.basename(dir_path_s_, ".js")}.html`
 			),
 			"utf-8"
@@ -127,7 +131,7 @@ class tool {
 			style_s: [
 				file_s.match(/(?<=<style>)([^]*)(?=<\/style>)/g)?.[0] ?? "",
 				fs.readFileSync(
-					path.join(config.plugin_path_s, `dist/tailwind.css`),
+					path.join(plugin_config.plugin_path_s, `dist/tailwind.css`),
 					"utf-8"
 				),
 			].join("\n"),

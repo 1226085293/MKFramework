@@ -15,23 +15,13 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -56,9 +46,9 @@ class node_reference {
             trigger_ss: ["asset-db:asset-change"],
             callback_f: (uuid_s_, data_) => {
                 // console.log("资源变更", ...args_as);
-                if (data_.name.endsWith(".scene") || data_.name.endsWith(".prefab")) {
-                    tool_1.default.call_scene_script("update_script");
-                }
+                // if (data_.name.endsWith(".scene") || data_.name.endsWith(".prefab")) {
+                // 	tool.call_scene_script("update_script");
+                // }
             },
         },
     ];
@@ -70,9 +60,12 @@ class node_reference {
             run_f: (node) => {
                 return reference_data_1.default.target?.uuid === node.uuid;
             },
-            callback_f: () => {
-                reference_data_1.default.target = null;
+            callback_f: async () => {
                 lib_node_tree_1.default.del(lib_node_tree_1.lib_node_tree_.extension_type.tail_left, "node-reference-name");
+                /** 挂载脚本 */
+                let script_path_s = await tool_1.default.call_scene_script("get_component_path", reference_data_1.default.target.path, reference_data_1.default.target.components.findIndex((v) => !v.type.startsWith("cc.")));
+                await reference_data_1.default.encode(script_path_s);
+                reference_data_1.default.target = null;
             },
         },
         {
@@ -87,7 +80,7 @@ class node_reference {
                 reference_data_1.default.target = node;
                 /** 挂载脚本 */
                 let script_path_s = await tool_1.default.call_scene_script("get_component_path", reference_data_1.default.target.path, reference_data_1.default.target.components.findIndex((v) => !v.type.startsWith("cc.")));
-                reference_data_1.default.decode(script_path_s);
+                await reference_data_1.default.decode(script_path_s);
                 lib_node_tree_1.default.add(lib_node_tree_1.lib_node_tree_.extension_type.tail_left, "node-reference-name", (data) => {
                     return lib_node_tree_1.default.is_parent(data.node.uuid, reference_data_1.default.target.uuid);
                 }, (data) => {
@@ -136,8 +129,7 @@ class node_reference {
                         }
                         // 更新脚本
                         if (!(!old_variable_s && !variable_s)) {
-                            await reference_data_1.default.update();
-                            reference_data_1.default.encode(script_path_s);
+                            await reference_data_1.default.encode(script_path_s);
                         }
                     });
                     return class_name_div;
@@ -244,12 +236,25 @@ class node_reference {
                         path: v_ss[4],
                         components: [],
                     };
-                    if (!reference_data_1.default.decode(v_ss[1])) {
+                    if (!(await reference_data_1.default.decode(v_ss[1]))) {
                         continue;
                     }
-                    await reference_data_1.default.update();
-                    reference_data_1.default.encode(v_ss[1]);
+                    await reference_data_1.default.encode(v_ss[1]);
                 }
+            },
+        },
+        // 获取 uuid 通过路径
+        {
+            trigger_ss: ["get_uuid_by_path"],
+            callback_f: async (path_ss_) => {
+                let root_node = cc.director.getScene();
+                if (!root_node) {
+                    return [];
+                }
+                if (cc.director.getScene()?.name === "New Node") {
+                    root_node = cc.director.getScene().children[0];
+                }
+                return path_ss_.map((v_s) => root_node.getChildByPath(v_s)?.uuid ?? "");
             },
         },
     ];
