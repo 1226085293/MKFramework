@@ -258,6 +258,11 @@ export default class 类名 {
 				// 原始数据
 				encode_data_tab[node_data.path_s] = node_data;
 			}
+
+			if (!Object.keys(encode_data_tab).length) {
+				return;
+			}
+
 			script_s = script_s.replaceAll("构造", constructor_s);
 			script_s = script_s.replaceAll("成员", member_s.slice(1));
 			script_s = script_s.replaceAll(
