@@ -253,8 +253,8 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 	 * - 动态模块：onLoad 后，open 前且存在初始化数据时被调用
 	 */
 	// @ts-ignore
-	init(data_?: any): void;
-	async init(data_?: any): Promise<void> {
+	init(data_?: this["init_data"]): void;
+	async init(data_?: this["init_data"]): Promise<void> {
 		this._wait_init_n++;
 		if (!this._onload_task.finish_b) {
 			await this._onload_task.task;
@@ -332,9 +332,9 @@ export class mk_life_cycle extends mk_layer implements mk_asset_.type_follow_rel
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 驱动生命周期运行（用于动态添加的组件） */
-	async drive(): Promise<void> {
+	async drive(init_data_?: this["init_data"]): Promise<void> {
 		// 递归 open
-		return this._open({ first_b: true });
+		return this._open({ first_b: true, init: init_data_ });
 	}
 
 	follow_release<T = mk_release_.type_release_param_type & mk_audio_._unit>(object_: T): T {
