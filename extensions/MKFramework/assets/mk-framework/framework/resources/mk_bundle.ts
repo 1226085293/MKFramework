@@ -141,18 +141,18 @@ export class mk_bundle extends mk_instance_base {
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 设置 bundle 数据
-	 * @param bundle_ bundle 信息
+	 * @param bundle_info_ bundle 信息
 	 */
-	set(bundle_: Omit<mk_bundle_.bundle_data, "manage">): void {
-		let bundle_data = this.bundle_map.get(bundle_.bundle_s);
+	set(bundle_info_: Omit<mk_bundle_.bundle_data, "manage">): void {
+		let bundle_data = this.bundle_map.get(bundle_info_.bundle_s);
 
 		// 更新旧数据
 		if (bundle_data) {
-			Object.assign(bundle_data, bundle_);
+			Object.assign(bundle_data, bundle_info_);
 		}
 		// 添加新数据
 		else {
-			this.bundle_map.set(bundle_.bundle_s, (bundle_data = new mk_bundle_.bundle_data(bundle_)));
+			this.bundle_map.set(bundle_info_.bundle_s, (bundle_data = new mk_bundle_.bundle_data(bundle_info_)));
 		}
 	}
 
@@ -346,10 +346,10 @@ export class mk_bundle extends mk_instance_base {
 
 	/**
 	 * 重新加载 bundle
-	 * @param bundle_ bundle 信息
+	 * @param bundle_info_ bundle 信息
 	 * @returns
 	 */
-	async reload(bundle_: ConstructorParameters<typeof mk_bundle_.reload_bundle_info>[0]): Promise<cc.AssetManager.Bundle | null> {
+	async reload(bundle_info_: ConstructorParameters<typeof mk_bundle_.reload_bundle_info>[0]): Promise<cc.AssetManager.Bundle | null> {
 		if (PREVIEW) {
 			this._log.error("不支持预览模式重载 bundle");
 
@@ -358,7 +358,13 @@ export class mk_bundle extends mk_instance_base {
 
 		await this._engine_init_task.task;
 
-		if (this.bundle_s === bundle_.bundle_s) {
+		if (!bundle_info_.version_s) {
+			this._log.error("不存在版本号");
+
+			return null;
+		}
+
+		if (this.bundle_s === bundle_info_.bundle_s) {
 			this._log.error("不能在重载 bundle 的场景内进行重载");
 
 			return null;
@@ -372,7 +378,7 @@ export class mk_bundle extends mk_instance_base {
 		const script_cache_tab: Record<string, any> = system_js[Reflect.ownKeys(system_js).find((v) => typeof v === "symbol")!];
 
 		// 更新 bundle 信息
-		this.set(bundle_);
+		this.set(bundle_info_);
 
 		// 初始化 bundle 脚本表
 		Object.keys(script_cache_tab).forEach((v_s) => {
@@ -388,13 +394,13 @@ export class mk_bundle extends mk_instance_base {
 			bundle_script_tab[name_s] = parent;
 		});
 
-		const bundle_root = bundle_script_tab[bundle_.bundle_s]?.d[0];
+		const bundle_root = bundle_script_tab[bundle_info_.bundle_s]?.d[0];
 
 		// 清理脚本缓存
 		{
-			if (script_cache_tab[`virtual:///prerequisite-imports/${bundle_.bundle_s}`]) {
-				system_js.delete(script_cache_tab[`virtual:///prerequisite-imports/${bundle_.bundle_s}`].id);
-				delete script_cache_tab[`virtual:///prerequisite-imports/${bundle_.bundle_s}`];
+			if (script_cache_tab[`virtual:///prerequisite-imports/${bundle_info_.bundle_s}`]) {
+				system_js.delete(script_cache_tab[`virtual:///prerequisite-imports/${bundle_info_.bundle_s}`].id);
+				delete script_cache_tab[`virtual:///prerequisite-imports/${bundle_info_.bundle_s}`];
 			}
 
 			if (bundle_root) {
@@ -426,7 +432,7 @@ export class mk_bundle extends mk_instance_base {
 			}
 
 			// 清理名称匹配的 ccclass
-			const reg = bundle_.ccclass_regexp ?? new RegExp(`${bundle_.bundle_s}(_|/)`);
+			const reg = bundle_info_.ccclass_regexp ?? new RegExp(`${bundle_info_.bundle_s}(_|/)`);
 
 			Object.keys((cc.js as any)._nameToClass ?? (cc.js as any)._registeredClassNames)
 				.filter((v_s) => v_s.match(reg) !== null)
@@ -437,16 +443,25 @@ export class mk_bundle extends mk_instance_base {
 
 		// 清理 bundle 资源
 		{
-			const bundle = cc.assetManager.getBundle(bundle_.bundle_s);
+			const bundle = cc.assetManager.getBundle(bundle_info_.bundle_s);
 
 			if (bundle) {
-				bundle.releaseAll();
+				if (bundle_info_.bundle_s !== "main") {
+					bundle.releaseAll();
+				}
 				cc.assetManager.removeBundle(bundle);
 			}
 		}
 
+		// 更新版本号
+		{
+			if (!cc.assetManager.downloader.bundleVers) {
+				cc.assetManager.downloader.bundleVers = {};
+			}
+			cc.assetManager.downloader.bundleVers[bundle_info_.bundle_s] = bundle_info_.version_s;
+		}
 		// 加载 bundle
-		return this.load(bundle_);
+		return this.load(bundle_info_);
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
