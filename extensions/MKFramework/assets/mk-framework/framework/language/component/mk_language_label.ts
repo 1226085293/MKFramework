@@ -82,9 +82,9 @@ class mk_language_label extends mk_language_base {
 			// 更新标记枚举
 			this._mark_enum = mk_tool.enum.obj_to_enum(this._data);
 			// 默认标记
-			this.mark_s = this._mark_enum[0];
+			this.mark_s = this._mark_enum[this.mark_s] !== undefined ? this.mark_s : this._mark_enum[0];
 			// 清理数据
-			this._args_ss = [];
+			this._args_ss = this._args_ss || [];
 		}
 
 		// 方向适配
