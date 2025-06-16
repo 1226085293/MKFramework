@@ -34,16 +34,12 @@ class lib_node_tree {
         let panel_map = new Map();
         // 获取面板元素
         {
-            let panel_as = globalThis.document
-                .getElementsByTagName("dock-frame")[0]
-                .shadowRoot.querySelectorAll("panel-frame");
+            let panel_as = globalThis.document.getElementsByTagName("dock-frame")[0].shadowRoot.querySelectorAll("panel-frame");
             panel_as.forEach((v) => {
                 panel_map.set(v.name, v);
             });
         }
-        this.hierarchy_vue = panel_map
-            .get("hierarchy")
-            .shadowRoot.querySelectorAll("ui-drag-area")[0].__vue__;
+        this.hierarchy_vue = panel_map.get("hierarchy").shadowRoot.querySelectorAll("ui-drag-area")[0].__vue__;
         // 初始化节点树
         this._clear_node_tree();
         this._update_node_tree();
@@ -140,24 +136,6 @@ class lib_node_tree {
         let index_n = list_as.findIndex((v_as) => v_as[0] === class_name_s_);
         return index_n !== -1;
     }
-    /** 是否为父节点 */
-    is_parent(node_uuid_s_, parent_uuid_s_) {
-        let node = this.node_as.find((v) => v.uuid === node_uuid_s_);
-        if (!node) {
-            return false;
-        }
-        let verify_f = (node) => {
-            if (node.parent === parent_uuid_s_) {
-                return true;
-            }
-            let parent = this.node_as.find((v) => v.uuid === node.parent);
-            if (!parent) {
-                return false;
-            }
-            return verify_f(parent);
-        };
-        return verify_f(node);
-    }
     /** 清理节点树 */
     _clear_node_tree() {
         this.node_element_as.forEach((v) => {
@@ -196,9 +174,18 @@ class lib_node_tree {
             let tail_extend_left_div = node_div.getElementsByClassName("tail-extend-left")?.[0];
             /** 扩展右 div */
             let tail_extend_right_div = node_div.getElementsByClassName("tail-extend-right")?.[0];
+            if (element.getAttribute("state") === "add") {
+                return;
+            }
             // 更新内容
-            element.style.display = "flex";
-            node_div.style.width = "-webkit-fill-available";
+            {
+                let name = node_div.getElementsByTagName("ui-rename-input")[0];
+                element.style.display = "flex";
+                node_div.style.width = "-webkit-fill-available";
+                if (name) {
+                    name.style.flex = "none";
+                }
+            }
             // 头扩展
             if (!head_extend_div && this._head_extension_as.length) {
                 head_extend_div = document.createElement("div");
@@ -236,17 +223,9 @@ class lib_node_tree {
                 tail_extend_right_div.style.right = "0px";
                 node_div.appendChild(tail_extend_right_div);
             }
-            [
-                this._head_extension_as,
-                this._tail_left_extension_as,
-                this._tail_right_extension_as,
-            ].forEach((v2_as, k2_n) => {
+            [this._head_extension_as, this._tail_left_extension_as, this._tail_right_extension_as].forEach((v2_as, k2_n) => {
                 /** 父标签 */
-                let parent_div = [
-                    head_extend_div,
-                    tail_extend_left_div,
-                    tail_extend_right_div,
-                ][k2_n];
+                let parent_div = [head_extend_div, tail_extend_left_div, tail_extend_right_div][k2_n];
                 /** 扩展标签 */
                 let extend_div_as = [];
                 v2_as.forEach((v3) => {
@@ -280,9 +259,7 @@ class lib_node_tree {
                     }
                 });
             });
-            node_div.style.marginLeft = !head_extend_div
-                ? "0px"
-                : `${head_extend_div.clientWidth - 5}px`;
+            node_div.style.marginLeft = !head_extend_div ? "0px" : `${head_extend_div.clientWidth - 5}px`;
         });
     }
 }

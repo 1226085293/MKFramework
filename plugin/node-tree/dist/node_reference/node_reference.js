@@ -72,8 +72,7 @@ class node_reference {
             trigger_ss: ["node/开启节点引用展示"],
             priority_n: 999,
             run_f: (node) => {
-                return (node.components.filter((v) => !v.type.startsWith("cc.")).length > 0 &&
-                    reference_data_1.default.target?.uuid !== node.uuid);
+                return node.components.filter((v) => !v.type.startsWith("cc.")).length > 0 && reference_data_1.default.target?.uuid !== node.uuid;
             },
             callback_f: async (node) => {
                 // 打开现在的开关
@@ -81,9 +80,7 @@ class node_reference {
                 /** 挂载脚本 */
                 let script_path_s = await tool_1.default.call_scene_script("get_component_path", reference_data_1.default.target.path, reference_data_1.default.target.components.findIndex((v) => !v.type.startsWith("cc.")));
                 await reference_data_1.default.decode(script_path_s);
-                lib_node_tree_1.default.add(lib_node_tree_1.lib_node_tree_.extension_type.tail_left, "node-reference-name", (data) => {
-                    return lib_node_tree_1.default.is_parent(data.node.uuid, reference_data_1.default.target.uuid);
-                }, (data) => {
+                let create_f = (data) => {
                     let class_name_div = document.createElement("ui-checkbox");
                     /** 数据键 */
                     let key_s = `${data.node.uuid}`;
@@ -133,7 +130,10 @@ class node_reference {
                         }
                     });
                     return class_name_div;
-                });
+                };
+                lib_node_tree_1.default.add(lib_node_tree_1.lib_node_tree_.extension_type.tail_left, "node-reference-name", (data) => {
+                    return data.node.path.startsWith(reference_data_1.default.target.path + "/");
+                }, create_f);
             },
         },
     ];
@@ -210,19 +210,12 @@ class node_reference {
                             let info = reference_data_1.default.parse(component_path_s);
                             if (fs.existsSync(info.script_path_s)) {
                                 let path_s = node[" INFO "].slice(node[" INFO "].indexOf("path: ") + 6);
-                                component_ss.push([
-                                    name_s,
-                                    component_path_s,
-                                    info.script_path_s,
-                                    node.uuid,
-                                    path_s,
-                                ]);
+                                component_ss.push([name_s, component_path_s, info.script_path_s, node.uuid, path_s]);
                             }
                         }
                     }
                     for (let v of node.children) {
-                        if (node.name === "Editor Scene Foreground" ||
-                            node.name === "Editor Scene Background") {
+                        if (node.name === "Editor Scene Foreground" || node.name === "Editor Scene Background") {
                             continue;
                         }
                         await get_script_f(v, component_ss);

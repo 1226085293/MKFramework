@@ -36,18 +36,13 @@ class node_reference {
 				return reference_data.target?.uuid === node.uuid;
 			},
 			callback_f: async () => {
-				lib_node_tree.del(
-					lib_node_tree_.extension_type.tail_left,
-					"node-reference-name"
-				);
+				lib_node_tree.del(lib_node_tree_.extension_type.tail_left, "node-reference-name");
 
 				/** 挂载脚本 */
 				let script_path_s: string = await tool.call_scene_script(
 					"get_component_path",
 					reference_data.target!.path,
-					reference_data.target!.components.findIndex(
-						(v) => !v.type.startsWith("cc.")
-					)
+					reference_data.target!.components.findIndex((v) => !v.type.startsWith("cc."))
 				);
 				await reference_data.encode(script_path_s);
 
@@ -58,10 +53,7 @@ class node_reference {
 			trigger_ss: ["node/开启节点引用展示"],
 			priority_n: 999,
 			run_f: (node: { path: string; components: any[]; uuid: string }) => {
-				return (
-					node.components.filter((v) => !v.type.startsWith("cc.")).length > 0 &&
-					reference_data.target?.uuid !== node.uuid
-				);
+				return node.components.filter((v) => !v.type.startsWith("cc.")).length > 0 && reference_data.target?.uuid !== node.uuid;
 			},
 			callback_f: async (node: { uuid: string }) => {
 				// 打开现在的开关
@@ -70,83 +62,74 @@ class node_reference {
 				let script_path_s: string = await tool.call_scene_script(
 					"get_component_path",
 					reference_data.target!.path,
-					reference_data.target!.components.findIndex(
-						(v) => !v.type.startsWith("cc.")
-					)
+					reference_data.target!.components.findIndex((v) => !v.type.startsWith("cc."))
 				);
 				await reference_data.decode(script_path_s);
 
+				let create_f = (data: any) => {
+					let class_name_div = document.createElement("ui-checkbox");
+					/** 数据键 */
+					let key_s = `${data.node.uuid}`;
+					/** 引用数据 */
+					let node_data = reference_data.node_reference_tab[key_s];
+					/** 变量名 */
+					let variable_s: string = node_data?.name_s ?? "";
+
+					class_name_div.setAttribute("value", `${Boolean(variable_s)}`);
+					class_name_div.style.color = "aqua";
+					class_name_div.innerHTML = variable_s;
+					class_name_div.addEventListener("confirm", async (event) => {
+						let old_variable_s = variable_s;
+
+						// 取消勾选
+						if (variable_s.length) {
+							delete reference_data.node_reference_tab[key_s];
+							variable_s = "";
+						}
+						// 勾选
+						else {
+							variable_s = variable_name(data.node.name);
+							// 变量名无效
+							if (!variable_s.length) {
+								class_name_div.removeAttribute("checked");
+								console.warn("无法转换为变量名");
+							}
+						}
+
+						class_name_div.innerHTML = variable_s;
+
+						// 变量名重复
+						if (variable_s) {
+							for (let k_s in reference_data.node_reference_tab) {
+								if (reference_data.node_reference_tab[k_s].name_s === variable_s) {
+									variable_s = "";
+									class_name_div.innerHTML = variable_s;
+									class_name_div.removeAttribute("checked");
+									console.warn("变量名重复", reference_data.node_reference_tab[k_s].path_s);
+									break;
+								}
+							}
+						}
+
+						// 标记节点
+						if (variable_s.length) {
+							reference_data.node_reference_tab[key_s] = null!;
+						}
+
+						// 更新脚本
+						if (!(!old_variable_s && !variable_s)) {
+							await reference_data.encode(script_path_s);
+						}
+					});
+					return class_name_div;
+				};
 				lib_node_tree.add(
 					lib_node_tree_.extension_type.tail_left,
 					"node-reference-name",
 					(data) => {
-						return lib_node_tree.is_parent(
-							data.node.uuid,
-							reference_data.target!.uuid
-						);
+						return (data.node.path as string).startsWith(reference_data.target!.path + "/");
 					},
-					(data) => {
-						let class_name_div = document.createElement("ui-checkbox");
-						/** 数据键 */
-						let key_s = `${data.node.uuid}`;
-						/** 引用数据 */
-						let node_data = reference_data.node_reference_tab[key_s];
-						/** 变量名 */
-						let variable_s: string = node_data?.name_s ?? "";
-
-						class_name_div.setAttribute("value", `${Boolean(variable_s)}`);
-						class_name_div.style.color = "aqua";
-						class_name_div.innerHTML = variable_s;
-						class_name_div.addEventListener("confirm", async (event) => {
-							let old_variable_s = variable_s;
-
-							// 取消勾选
-							if (variable_s.length) {
-								delete reference_data.node_reference_tab[key_s];
-								variable_s = "";
-							}
-							// 勾选
-							else {
-								variable_s = variable_name(data.node.name);
-								// 变量名无效
-								if (!variable_s.length) {
-									class_name_div.removeAttribute("checked");
-									console.warn("无法转换为变量名");
-								}
-							}
-
-							class_name_div.innerHTML = variable_s;
-
-							// 变量名重复
-							if (variable_s) {
-								for (let k_s in reference_data.node_reference_tab) {
-									if (
-										reference_data.node_reference_tab[k_s].name_s === variable_s
-									) {
-										variable_s = "";
-										class_name_div.innerHTML = variable_s;
-										class_name_div.removeAttribute("checked");
-										console.warn(
-											"变量名重复",
-											reference_data.node_reference_tab[k_s].path_s
-										);
-										break;
-									}
-								}
-							}
-
-							// 标记节点
-							if (variable_s.length) {
-								reference_data.node_reference_tab[key_s] = null!;
-							}
-
-							// 更新脚本
-							if (!(!old_variable_s && !variable_s)) {
-								await reference_data.encode(script_path_s);
-							}
-						});
-						return class_name_div;
-					}
+					create_f
 				);
 			},
 		},
@@ -169,11 +152,7 @@ class node_reference {
 					return "";
 				}
 
-				let path_s = await Editor.Message.request(
-					"asset-db",
-					"query-path",
-					(node.components[index_n_] as any).__scriptUuid
-				);
+				let path_s = await Editor.Message.request("asset-db", "query-path", (node.components[index_n_] as any).__scriptUuid);
 
 				return path_s;
 			},
@@ -187,9 +166,7 @@ class node_reference {
 
 				let get_node_info_f = async (node_: cc.Node) => {
 					if (node_.uuid in node_tab_) {
-						let path_s = (node_ as any)[" INFO "].slice(
-							(node_ as any)[" INFO "].indexOf("path: ") + 6
-						);
+						let path_s = (node_ as any)[" INFO "].slice((node_ as any)[" INFO "].indexOf("path: ") + 6);
 						let component_ss: string[][] = [];
 
 						for (let v of node_.components) {
@@ -198,11 +175,7 @@ class node_reference {
 							if (name_s.startsWith("cc")) {
 								component_ss.push([name_s]);
 							} else {
-								let component_path_s = await Editor.Message.request(
-									"asset-db",
-									"query-path",
-									(v as any).__scriptUuid
-								);
+								let component_path_s = await Editor.Message.request("asset-db", "query-path", (v as any).__scriptUuid);
 
 								if (component_path_s) {
 									component_ss.push([name_s, component_path_s]);
@@ -232,10 +205,7 @@ class node_reference {
 				// tool.call_scene_script();
 				// console.log("场景脚本", args, `cc(${Boolean(cc)})`);
 
-				let get_script_f = async (
-					node: cc.Node | cc.Scene,
-					component_ss: string[][] = []
-				) => {
+				let get_script_f = async (node: cc.Node | cc.Scene, component_ss: string[][] = []) => {
 					if (!(node instanceof cc.Scene)) {
 						for (let v of node.components) {
 							let name_s = cc.js.getClassName(v);
@@ -244,11 +214,7 @@ class node_reference {
 								continue;
 							}
 
-							let component_path_s = await Editor.Message.request(
-								"asset-db",
-								"query-path",
-								(v as any).__scriptUuid
-							);
+							let component_path_s = await Editor.Message.request("asset-db", "query-path", (v as any).__scriptUuid);
 
 							if (!component_path_s) {
 								continue;
@@ -257,25 +223,14 @@ class node_reference {
 							let info = reference_data.parse(component_path_s);
 
 							if (fs.existsSync(info.script_path_s)) {
-								let path_s = (node as any)[" INFO "].slice(
-									(node as any)[" INFO "].indexOf("path: ") + 6
-								);
-								component_ss.push([
-									name_s,
-									component_path_s,
-									info.script_path_s,
-									node.uuid,
-									path_s,
-								]);
+								let path_s = (node as any)[" INFO "].slice((node as any)[" INFO "].indexOf("path: ") + 6);
+								component_ss.push([name_s, component_path_s, info.script_path_s, node.uuid, path_s]);
 							}
 						}
 					}
 
 					for (let v of node.children) {
-						if (
-							node.name === "Editor Scene Foreground" ||
-							node.name === "Editor Scene Background"
-						) {
+						if (node.name === "Editor Scene Foreground" || node.name === "Editor Scene Background") {
 							continue;
 						}
 						await get_script_f(v, component_ss);
