@@ -26,10 +26,7 @@ class tool {
 	 * @param args_as_ 传递到面板的参数
 	 * @returns
 	 */
-	async open_panel(
-		panel_s_: string,
-		...args_as_: any[]
-	): Promise<electron.BrowserWindow | null> {
+	async open_panel(panel_s_: string, ...args_as_: any[]): Promise<electron.BrowserWindow | null> {
 		let panel_name_s = `${config.plugin_name_s}.${panel_s_}`;
 
 		if (await Editor.Panel.has(panel_name_s)) {
@@ -39,19 +36,14 @@ class tool {
 			let old_warn_f = console.warn;
 			console.warn = function () {};
 			const browser_window: typeof Electron.BrowserWindow =
-				electron.BrowserWindow ?? electron.remote.BrowserWindow;
+				electron.BrowserWindow ?? (electron.remote ?? require("@electron/remote")).BrowserWindow;
 			const window_id_ns = browser_window.getAllWindows().map((v) => v.id);
-			await Editor.Panel.open(
-				`${config.plugin_name_s}.${panel_s_}`,
-				...(args_as_ ?? [])
-			);
+			await Editor.Panel.open(`${config.plugin_name_s}.${panel_s_}`, ...(args_as_ ?? []));
 			setTimeout(() => {
 				console.warn = old_warn_f;
 			}, 500);
 
-			const window = browser_window
-				.getAllWindows()
-				.find((v) => !window_id_ns.includes(v.id))!;
+			const window = browser_window.getAllWindows().find((v) => !window_id_ns.includes(v.id))!;
 
 			if (!window) {
 				console.error(`打开 ${panel_s_} 面板失败`);
@@ -98,22 +90,13 @@ class tool {
 		html_s: string;
 		style_s: string;
 	} {
-		let file_s = fs.readFileSync(
-			path.join(
-				config.plugin_path_s,
-				`panel/${path.basename(dir_path_s_, ".js")}.html`
-			),
-			"utf-8"
-		);
+		let file_s = fs.readFileSync(path.join(config.plugin_path_s, `panel/${path.basename(dir_path_s_, ".js")}.html`), "utf-8");
 
 		return {
 			html_s: file_s.match(/<div([\s\S]*)?<\/div>/g)![0],
 			style_s: [
 				file_s.match(/(?<=<style>)([^]*)(?=<\/style>)/g)?.[0] ?? "",
-				fs.readFileSync(
-					path.join(config.plugin_path_s, `dist/tailwind.css`),
-					"utf-8"
-				),
+				fs.readFileSync(path.join(config.plugin_path_s, `dist/tailwind.css`), "utf-8"),
 			].join("\n"),
 		};
 	}

@@ -33,24 +33,15 @@ export let methods = {
 			return;
 		}
 
-		let result = await Editor.Dialog.info(
-			`确认下载 ${data.extension_name_s}(${
-				data.version_ss[data.version_index_n]
-			})？`,
-			{
-				buttons: ["确认", "取消"],
-			}
-		);
+		let result = await Editor.Dialog.info(`确认下载 ${data.extension_name_s}(${data.version_ss[data.version_index_n]})？`, {
+			buttons: ["确认", "取消"],
+		});
 
 		if (result.response !== 0) {
 			return;
 		}
 
-		await Editor.Message.request(
-			config.plugin_name_s,
-			"store.on_download",
-			data.version_ss[data.version_index_n]
-		);
+		await Editor.Message.request(config.plugin_name_s, "store.on_download", data.version_ss[data.version_index_n]);
 		tool.close_panel(path.basename(__filename.slice(0, -3)));
 	},
 
@@ -74,8 +65,7 @@ export const panel = Editor.Panel.define({
 		data.version_ss = data.init_data[1];
 		if (this.$.app) {
 			const app = createApp({});
-			app.config.compilerOptions.isCustomElement = (tag: string) =>
-				tag.startsWith("ui-");
+			app.config.compilerOptions.isCustomElement = (tag: string) => tag.startsWith("ui-");
 			app.component("panel", {
 				template: tool.get_panel_content(__filename).html_s,
 				data() {
@@ -92,9 +82,6 @@ export const panel = Editor.Panel.define({
 
 		// 非 inspector 面板 F5 刷新
 		if (!(info as any).target_s) {
-			let webFrame = electron.webFrame;
-			let window = (webFrame as any).context as typeof globalThis;
-
 			window.addEventListener("keydown", function (event) {
 				if (event.key === "F5") {
 					window.location.reload();
