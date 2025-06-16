@@ -38,15 +38,13 @@ class tool {
         else {
             let old_warn_f = console.warn;
             console.warn = function () { };
-            const browser_window = electron_1.default.BrowserWindow ?? electron_1.default.remote.BrowserWindow;
+            const browser_window = electron_1.default.BrowserWindow ?? (electron_1.default.remote ?? require("@electron/remote")).BrowserWindow;
             const window_id_ns = browser_window.getAllWindows().map((v) => v.id);
             await Editor.Panel.open(`${config_1.default.plugin_name_s}.${panel_s_}`, ...(args_as_ ?? []));
             setTimeout(() => {
                 console.warn = old_warn_f;
             }, 500);
-            const window = browser_window
-                .getAllWindows()
-                .find((v) => !window_id_ns.includes(v.id));
+            const window = browser_window.getAllWindows().find((v) => !window_id_ns.includes(v.id));
             if (!window) {
                 console.error(`打开 ${panel_s_} 面板失败`);
                 return null;

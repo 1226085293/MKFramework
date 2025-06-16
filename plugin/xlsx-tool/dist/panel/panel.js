@@ -8,7 +8,6 @@ const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("../config"));
 const vue_1 = require("vue");
-const electron_1 = __importDefault(require("electron"));
 const tool_1 = __importDefault(require("../tool"));
 const xlsx_1 = __importDefault(require("xlsx"));
 const xlsx_to_ts_1 = __importDefault(require("../convert/xlsx_to_ts"));
@@ -366,8 +365,6 @@ exports.panel = Editor.Panel.define({
         }
         // 非 inspector 面板 F5 刷新
         if (!exports.info.target_s) {
-            let webFrame = electron_1.default.webFrame;
-            let window = webFrame.context;
             window.addEventListener("keydown", function (event) {
                 if (event.key === "F5") {
                     window.location.reload();
