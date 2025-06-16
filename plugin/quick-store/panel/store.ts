@@ -4,6 +4,8 @@ import config from "../config";
 import { createApp, App } from "vue";
 import { InspectorInfo, PanelInfo, Self } from "../types";
 import electron, { BrowserWindow } from "electron";
+//@ts-ignore
+import electron_remote from "@electron/remote";
 import tool from "../tool";
 import axios from "axios";
 import file from "../file";
@@ -170,14 +172,9 @@ export let methods = {
 				// 更新下载状态
 				this._set_download_status(item_data, data.download_version_s !== "");
 				// 安装扩展
-				this._install_extension(
-					version_as.find((v) => v.version_s === data.download_version_s)
-						?.post_url_s ?? "",
-					item_data,
-					{
-						install_path_s,
-					}
-				);
+				this._install_extension(version_as.find((v) => v.version_s === data.download_version_s)?.post_url_s ?? "", item_data, {
+					install_path_s,
+				});
 			});
 		}
 	},
@@ -215,8 +212,7 @@ export let methods = {
 			return;
 		}
 
-		data.download_tab[`${item_data_.author_s}-${item_data_.name_s}`] =
-			item_data_.download_b = status_b_;
+		data.download_tab[`${item_data_.author_s}-${item_data_.name_s}`] = item_data_.download_b = status_b_;
 	},
 
 	/** 获取下载状态 */
@@ -225,9 +221,7 @@ export let methods = {
 			return false;
 		}
 
-		return Boolean(
-			data.download_tab[`${item_data_.author_s}-${item_data_.name_s}`]
-		);
+		return Boolean(data.download_tab[`${item_data_.author_s}-${item_data_.name_s}`]);
 	},
 
 	/**
@@ -268,15 +262,9 @@ export let methods = {
 		/** 帖子内容 */
 		let content_s = result.post_stream.posts[0].cooked;
 		/** 下载链接 */
-		let download_url_s: string =
-			result.post_stream.posts[0].link_counts.find((v: any) =>
-				(v.url ?? "").endsWith(".zip")
-			)?.url ?? "";
+		let download_url_s: string = result.post_stream.posts[0].link_counts.find((v: any) => (v.url ?? "").endsWith(".zip"))?.url ?? "";
 		/** 文件名 */
-		let file_name_s =
-			content_s.match(
-				new RegExp(`(?<=(${download_url_s}\\">))([^]+?)(?=\\.zip)`, "g")
-			)?.[0] ?? "";
+		let file_name_s = content_s.match(new RegExp(`(?<=(${download_url_s}\\">))([^]+?)(?=\\.zip)`, "g"))?.[0] ?? "";
 
 		if (file_name_s === "") {
 			file_name_s = path.basename(download_url_s, path.extname(download_url_s));
@@ -293,20 +281,13 @@ export let methods = {
 			// 包含商店链接
 			this._check_store_link(content_s)
 		) {
-			let index_n = data.list_as.findIndex(
-				(v) =>
-					v.author_s === item_data_.author_s && v.name_s === item_data_.name_s
-			);
+			let index_n = data.list_as.findIndex((v) => v.author_s === item_data_.author_s && v.name_s === item_data_.name_s);
 
 			if (index_n !== -1) {
 				data.list_as.splice(index_n, 1);
 			}
 
-			console.error(
-				"安装失败-无效下载地址",
-				download_url_s === "",
-				this._check_store_link(content_s)
-			);
+			console.error("安装失败-无效下载地址", download_url_s === "", this._check_store_link(content_s));
 			// 更新下载状态
 			this._set_download_status(item_data_, false);
 			return;
@@ -318,10 +299,7 @@ export let methods = {
 		}
 
 		/** 文件地址 */
-		let file_path_s = path.join(
-			Editor.Project.tmpDir,
-			path.basename(download_url_s)
-		);
+		let file_path_s = path.join(Editor.Project.tmpDir, path.basename(download_url_s));
 
 		// 删除同名文件
 		if (fs.existsSync(file_path_s)) {
@@ -347,9 +325,7 @@ export let methods = {
 
 				// 刷新目录
 				if (install_path_s.startsWith(path.resolve(Editor.Project.path))) {
-					let db_path = install_path_s
-						.replace(path.resolve(Editor.Project.path) + path.sep, "db://")
-						.replaceAll("\\", "/");
+					let db_path = install_path_s.replace(path.resolve(Editor.Project.path) + path.sep, "db://").replaceAll("\\", "/");
 
 					Editor.Message.send("asset-db", "refresh-asset", db_path);
 				}
@@ -357,16 +333,9 @@ export let methods = {
 			}
 			case "插件": {
 				// 解压到 plugin 文件夹
-				await Editor.Utils.File.unzip(
-					file_path_s,
-					path.join(Editor.Project.path, "plugin", file_name_s)
-				);
+				await Editor.Utils.File.unzip(file_path_s, path.join(Editor.Project.path, "plugin", file_name_s));
 				// 安装插件
-				await Editor.Message.request(
-					"quick-plugin",
-					"install_extension",
-					file_name_s
-				);
+				await Editor.Message.request("quick-plugin", "install_extension", file_name_s);
 				break;
 			}
 		}
@@ -414,11 +383,7 @@ export let methods = {
 		} else {
 			(result.topics as any[]).forEach((v) => {
 				// 标题不匹配
-				if (
-					!(v.fancy_title as string).startsWith(
-						`${title_info.title_head_s}${title_info.name_s}`
-					)
-				) {
+				if (!(v.fancy_title as string).startsWith(`${title_info.title_head_s}${title_info.name_s}`)) {
 					return;
 				}
 
@@ -462,14 +427,11 @@ export let methods = {
 		let name_s = "";
 		let version_s = "";
 		let title_head_s = name_s_.match(/(\[QuickPlugin([^\]]+)\]：)/g)?.[0] ?? "";
-		let type_s =
-			name_s_.match(/(?<=\[QuickPlugin)(([^\]]+)(?=\]))/g)?.[0] ?? "";
+		let type_s = name_s_.match(/(?<=\[QuickPlugin)(([^\]]+)(?=\]))/g)?.[0] ?? "";
 
 		// 去掉版本号
 		{
-			name_s_ =
-				name_s_.match(/(?<=(\[QuickPlugin([^\]]+)\]：))([^]*)/g)?.[0] ??
-				name_s_;
+			name_s_ = name_s_.match(/(?<=(\[QuickPlugin([^\]]+)\]：))([^]*)/g)?.[0] ?? name_s_;
 
 			let end_index_n = name_s_.lastIndexOf("-");
 
@@ -498,12 +460,7 @@ export let methods = {
 		data.not_more_b = false;
 		// console.log("刷新列表", data.search_s, data.content_type, data.sort_type);
 
-		let args_as = [
-			data.search_s,
-			data.content_type,
-			data.sort_type,
-			data.page_n,
-		];
+		let args_as = [data.search_s, data.content_type, data.sort_type, data.page_n];
 		let search_head_s = this._get_post_title_head(data.content_type);
 		// 格式 [QuickPlugin插件]：名字-1.0.0
 		let search_content_s = `${search_head_s}${data.search_s}`;
@@ -528,12 +485,7 @@ export let methods = {
 
 		// 安检
 		{
-			let index_n = [
-				data.search_s,
-				data.content_type,
-				data.sort_type,
-				data.page_n,
-			].findIndex((v, k_n) => v !== args_as[k_n]);
+			let index_n = [data.search_s, data.content_type, data.sort_type, data.page_n].findIndex((v, k_n) => v !== args_as[k_n]);
 
 			// 搜索内容已经改变，数据无效
 			if (index_n !== -1) {
@@ -574,13 +526,7 @@ export let methods = {
 				let start_n = description_s.indexOf(key_s);
 				let end_n = description_s.indexOf("# ", start_n + 1);
 
-				description_s =
-					start_n === -1
-						? ""
-						: description_s.slice(
-								start_n + key_s.length,
-								end_n === -1 ? description_s.length : end_n
-						  );
+				description_s = start_n === -1 ? "" : description_s.slice(start_n + key_s.length, end_n === -1 ? description_s.length : end_n);
 			}
 
 			let item_data = new list_data({
@@ -597,12 +543,7 @@ export let methods = {
 			item_data.download_b = this._get_download_status(item_data);
 
 			// 筛除不同版本的帖子
-			if (
-				data.list_as.findIndex(
-					(v2) =>
-						v2.author_s === item_data.author_s && v2.name_s === item_data.name_s
-				) !== -1
-			) {
+			if (data.list_as.findIndex((v2) => v2.author_s === item_data.author_s && v2.name_s === item_data.name_s) !== -1) {
 				return;
 			}
 
@@ -630,8 +571,7 @@ export const panel = Editor.Panel.define({
 	ready() {
 		if (this.$.app) {
 			const app = createApp({});
-			app.config.compilerOptions.isCustomElement = (tag: string) =>
-				tag.startsWith("ui-");
+			app.config.compilerOptions.isCustomElement = (tag: string) => tag.startsWith("ui-");
 			app.component("panel", {
 				template: tool.get_panel_content(__filename).html_s,
 				data() {
@@ -649,9 +589,6 @@ export const panel = Editor.Panel.define({
 
 		// 非 inspector 面板 F5 刷新
 		if (!(info as any).target_s) {
-			let webFrame = electron.webFrame;
-			let window = (webFrame as any).context as typeof globalThis;
-
 			window.addEventListener("keydown", function (event) {
 				if (event.key === "F5") {
 					window.location.reload();

@@ -419,9 +419,6 @@ export const panel = Editor.Panel.define({
 
 		// 非 inspector 面板 F5 刷新
 		if (!(info as any).target_s) {
-			let webFrame = electron.webFrame;
-			let window = (webFrame as any).context as typeof globalThis;
-
 			window.addEventListener("keydown", function (event) {
 				if (event.key === "F5") {
 					window.location.reload();

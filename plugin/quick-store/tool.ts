@@ -35,7 +35,7 @@ class tool {
 		} else {
 			let old_warn_f = console.warn;
 			console.warn = function () {};
-			const browser_window: typeof Electron.BrowserWindow = electron.BrowserWindow ?? electron.remote.BrowserWindow;
+			const browser_window: typeof Electron.BrowserWindow = electron.BrowserWindow ?? (electron.remote ?? require("@electron/remote")).BrowserWindow;
 			const window_id_ns = browser_window.getAllWindows().map((v) => v.id);
 			await Editor.Panel.open(`${config.plugin_name_s}.${panel_s_}`, ...(args_as_ ?? []));
 			setTimeout(() => {
