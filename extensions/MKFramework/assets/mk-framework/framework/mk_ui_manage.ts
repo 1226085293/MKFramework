@@ -8,6 +8,7 @@ import mk_asset, { mk_asset_ } from "./resources/mk_asset";
 import mk_status_task from "./task/mk_status_task";
 import mk_tool from "./@private/tool/mk_tool";
 import { mk_release_ } from "./mk_release";
+import mk_event_target from "./mk_event_target";
 
 namespace _mk_ui_manage {
 	/** 模块类型 */
@@ -20,6 +21,13 @@ namespace _mk_ui_manage {
 		| string
 		| cc.Node
 		| (T extends cc.Constructor<mk_view_base> ? Record<type_module<T>, cc.Prefab | string | cc.Node> : never);
+
+	export interface event_protocol {
+		/** open 模块成功后 */
+		open<T extends mk_ui_manage_.type_open_key, T2 = T["prototype"]>(key_: T, module_: T2): void;
+		/** close 模块成功后 */
+		close<T extends mk_ui_manage_.type_open_key, T2 = T["prototype"]>(key_: T, module_: T2): void;
+	}
 }
 
 /**
@@ -44,6 +52,8 @@ export class mk_ui_manage extends mk_instance_base {
 	}
 
 	/* --------------- public --------------- */
+	/** 事件 */
+	event = new mk_event_target<_mk_ui_manage.event_protocol>();
 	/**
 	 * 获取模块注册数据
 	 * @remarks
@@ -523,6 +533,9 @@ export class mk_ui_manage extends mk_instance_base {
 			return null;
 		}
 
+		// 事件通知
+		this.event.emit(this.event.key.open, key_, view_comp);
+
 		return exit_callback_f(true);
 	}
 
@@ -718,6 +731,8 @@ export class mk_ui_manage extends mk_instance_base {
 
 			// 移除父节点
 			v.node.removeFromParent();
+			// 事件通知
+			this.event.emit(this.event.key.close, v.constructor as any, v);
 
 			// 销毁
 			if (config.destroy_b || v.static_b) {
