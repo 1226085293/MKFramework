@@ -461,6 +461,7 @@ export class mk_ui_manage extends mk_instance_base {
 				return exit_callback_f(false);
 			}
 
+			node.active = true;
 			view_comp = comp;
 		}
 
@@ -672,6 +673,7 @@ export class mk_ui_manage extends mk_instance_base {
 				}
 				// 关闭了隐藏的模块，更新隐藏模块下标
 				else if (ui_index_n !== -1 && ui_index_n < this._ui_hidden_length_n) {
+					v.node.active = true;
 					--this._ui_hidden_length_n;
 				}
 			}
