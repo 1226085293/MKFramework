@@ -449,6 +449,7 @@ export class mk_bundle extends mk_instance_base {
 				if (bundle_info_.bundle_s !== "main") {
 					bundle.releaseAll();
 				}
+
 				cc.assetManager.removeBundle(bundle);
 			}
 		}
@@ -458,8 +459,10 @@ export class mk_bundle extends mk_instance_base {
 			if (!cc.assetManager.downloader.bundleVers) {
 				cc.assetManager.downloader.bundleVers = {};
 			}
+
 			cc.assetManager.downloader.bundleVers[bundle_info_.bundle_s] = bundle_info_.version_s;
 		}
+
 		// 加载 bundle
 		return this.load(bundle_info_);
 	}
