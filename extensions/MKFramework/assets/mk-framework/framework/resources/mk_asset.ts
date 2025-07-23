@@ -168,16 +168,12 @@ export class mk_asset extends mk_instance_base {
 			if (path_s_.startsWith("db://assets/")) {
 				path_s_ = path_s_.slice(12);
 
-				// 补齐 bundle
+				// 裁剪 path_s_, 补齐 bundle 名
 				if (!EDITOR && path_s_.includes("/")) {
 					const dir_s = path_s_.slice(0, path_s_.indexOf("/"));
 
 					path_s_ = path_s_.slice(dir_s.length + 1);
-
-					// 填充 bundle 名
-					if (!get_config.bundle_s) {
-						get_config.bundle_s = dir_s;
-					}
+					get_config.bundle_s = get_config.bundle_s || dir_s;
 				}
 			}
 
@@ -200,6 +196,13 @@ export class mk_asset extends mk_instance_base {
 					path_s_ += "/texture";
 				}
 			}
+		}
+
+		// 填充 bundle 名
+		if (EDITOR) {
+			get_config.bundle_s = get_config.bundle_s || "resources";
+		} else {
+			get_config.bundle_s = get_config.bundle_s || (mk_bundle.bundle_s !== "main" ? mk_bundle.bundle_s : "resources");
 		}
 
 		return new Promise<T | null>(async (resolve_f) => {
@@ -272,7 +275,7 @@ export class mk_asset extends mk_instance_base {
 					}
 
 					asset_config = get_config.remote_option;
-					asset_config.bundle = get_config.bundle_s ?? "resources";
+					asset_config.bundle = get_config.bundle_s;
 					asset_config.type = type_;
 					// uuid
 					{
@@ -366,16 +369,12 @@ export class mk_asset extends mk_instance_base {
 			if (path_s_.startsWith("db://assets/")) {
 				path_s_ = path_s_.slice(12);
 
-				// 补齐 bundle
+				// 裁剪 path_s_, 补齐 bundle 名
 				if (!EDITOR) {
 					const dir_s = path_s_.slice(0, path_s_.indexOf("/"));
 
 					path_s_ = path_s_.slice(dir_s.length + 1);
-
-					// 填充 bundle 名
-					if (!get_config.bundle_s) {
-						get_config.bundle_s = dir_s;
-					}
+					get_config.bundle_s = get_config.bundle_s || dir_s;
 				}
 			}
 
@@ -386,7 +385,7 @@ export class mk_asset extends mk_instance_base {
 				}
 
 				asset_config = get_config.remote_option as any;
-				asset_config.bundle = get_config.bundle_s;
+				asset_config.bundle = get_config.bundle_s || (mk_bundle.bundle_s !== "main" ? mk_bundle.bundle_s : "resources");
 				asset_config.type = type_;
 				asset_config.dir = path_s_;
 			}
@@ -626,7 +625,7 @@ export namespace mk_asset_ {
 		/**
 		 * bundle 名
 		 * @defaultValue
-		 * resources
+		 * 编辑器：resources，运行时：mk.bundle.bundle_s(当前场景所属 bundle)
 		 */
 		bundle_s?: string;
 		/** 进度回调 */

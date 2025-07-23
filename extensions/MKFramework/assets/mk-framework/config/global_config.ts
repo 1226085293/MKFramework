@@ -46,7 +46,7 @@ namespace global_config {
 			/** 缓存生命时长（毫秒，资源未使用时经过多久释放） */
 			cache_lifetime_ms_n = 1000;
 			/** 加载失败重试次数 */
-			retry_count_on_load_failure_n = 2;
+			retry_count_on_load_failure_n = 0;
 		})();
 	}
 
