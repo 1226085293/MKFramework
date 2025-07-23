@@ -1,20 +1,20 @@
 import * as mk from "./mk_export";
-import global_config from "../config/global_config";
+import GlobalConfig from "../Config/GlobalConfig";
 import * as cc from "cc";
 import { DEBUG, EDITOR } from "cc/env";
-import global_event from "../config/global_event";
+import GlobalEvent from "../Config/GlobalEvent";
 import * as env from "cc/env";
 
 // 初始化逻辑
 if (!EDITOR) {
 	// 保存初始设计分辨率
 	cc.director.once(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, () => {
-		(global_config.view.original_design_size as cc.Size).set(cc.view.getDesignResolutionSize());
+		(GlobalConfig.View.originalDesignSize as cc.Size).set(cc.view.getDesignResolutionSize());
 	});
 
 	// 显示调试信息
 	cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
-		if (global_config.constant.show_debug_info_b) {
+		if (GlobalConfig.Constant.isShowDebugInfo) {
 			cc.profiler?.showStats();
 		} else {
 			cc.profiler?.hideStats();
@@ -24,11 +24,11 @@ if (!EDITOR) {
 	// 屏幕大小改变事件分发
 	if ((cc.view as any).setResizeCallback) {
 		(cc.view as any).setResizeCallback(() => {
-			global_event.emit(global_event.key.resize);
+			GlobalEvent.emit(GlobalEvent.key.resize);
 		});
 	} else {
 		(cc.screen as any).on("window-resize", () => {
-			global_event.emit(global_event.key.resize);
+			GlobalEvent.emit(GlobalEvent.key.resize);
 		});
 	}
 } else {

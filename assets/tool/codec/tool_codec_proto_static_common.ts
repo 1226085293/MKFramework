@@ -1,7 +1,7 @@
 import { DEBUG } from "cc/env";
 import mk from "mk";
 import protobufjs from "protobufjs/minimal.js";
-import global_config from "global_config";
+import GlobalConfig from "global_config";
 
 /** 编解码器 - protobufjs(静态) */
 class codec_proto_static_common extends mk.codec_base {
@@ -63,7 +63,7 @@ class codec_proto_static_common extends mk.codec_base {
 	}
 
 	/** 解码 */
-	decode(data_: ArrayBuffer): global_config.network.proto_head | null {
+	decode(data_: ArrayBuffer): GlobalConfig.network.proto_head | null {
 		/** 消息体 */
 		const data_uint8_as = new Uint8Array(data_);
 		const message = this._dependent.package.decode(data_uint8_as) as unknown as { id: number; sequence: number; data: Uint8Array };

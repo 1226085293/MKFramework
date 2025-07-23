@@ -1,5 +1,5 @@
 import mk_event_target from "../mk_event_target";
-import { mk_log } from "../mk_logger";
+import { mkLog } from "../MKLogger";
 import mk_status_task from "./mk_status_task";
 
 namespace _mk_task_pipeline {
@@ -113,7 +113,7 @@ class mk_task_pipeline {
 				finish_time_ms_n = Date.now();
 			} catch (error) {
 				finish_time_ms_n = current_time_ms_n;
-				mk_log.error("任务执行失败，跳过", error, task.task_f);
+				mkLog.error("任务执行失败，跳过", error, task.task_f);
 			}
 
 			task.task.finish(true, task_result);

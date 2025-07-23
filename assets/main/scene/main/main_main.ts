@@ -7,7 +7,7 @@ import { resources_module } from "../../../resources/module/module/resources_mod
 import { resources_network } from "../../../resources/module/network/resources_network";
 import main_bundle from "../../bundle/main_bundle";
 import { main_main_item } from "../../module/main/item/main_main_item";
-import global_config from "global_config";
+import GlobalConfig from "global_config";
 const { ccclass, property } = _decorator;
 
 @ccclass("main_main")
@@ -16,7 +16,7 @@ export class main_main extends mk.static_view_base {
 	/* --------------- 属性 --------------- */
 	/* --------------- public --------------- */
 	data = new (class {
-		version_s = global_config.constant.version_s;
+		version_s = GlobalConfig.Constant.versionStr;
 		view_list_as: typeof main_main_item.prototype.data[] = [
 			{
 				label_s: "音频",
@@ -41,7 +41,7 @@ export class main_main extends mk.static_view_base {
 			{
 				label_s: "热更",
 				view: () => {
-					mk.bundle.load_scene("default", { bundle_s: global_config.asset.bundle.hot_update });
+					mk.bundle.load_scene("default", { bundle_s: "hot_update" });
 				},
 			},
 		];

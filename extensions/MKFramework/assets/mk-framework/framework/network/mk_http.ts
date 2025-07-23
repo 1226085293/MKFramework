@@ -1,4 +1,4 @@
-import mk_instance_base from "../mk_instance_base";
+import MKInstanceBase from "../MKInstanceBase";
 import mk_codec_base from "../mk_codec_base";
 import * as cc from "cc";
 
@@ -13,7 +13,7 @@ import * as cc from "cc";
  *
  * - 支持自定义编解码器
  */
-export class mk_http extends mk_instance_base {
+export class mk_http extends MKInstanceBase {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** GET */
 	async get(url_s_: string, config_: Partial<mk_http_.config>): Promise<any> {

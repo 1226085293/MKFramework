@@ -1,6 +1,6 @@
 import * as cc from "cc";
-import global_event from "../config/global_event";
-import mk_instance_base from "./mk_instance_base";
+import GlobalEvent from "../Config/GlobalEvent";
+import MKInstanceBase from "./MKInstanceBase";
 
 namespace _mk_game {
 	/** 暂停数据 */
@@ -16,7 +16,7 @@ namespace _mk_game {
  * 游戏全局功能
  * @noInheritDoc
  */
-export class mk_game extends mk_instance_base {
+export class mk_game extends MKInstanceBase {
 	/* --------------- public --------------- */
 	/** 重启中 */
 	get restarting_b(): boolean {
@@ -36,8 +36,8 @@ export class mk_game extends mk_instance_base {
 	 */
 	async restart(): Promise<void> {
 		this._restarting_b = true;
-		await Promise.all(global_event.request(global_event.key.restart));
-		await Promise.all(global_event.request(global_event.key.wait_close_scene));
+		await Promise.all(GlobalEvent.request(GlobalEvent.key.restart));
+		await Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene));
 		cc.game.restart();
 		this._restarting_b = false;
 	}

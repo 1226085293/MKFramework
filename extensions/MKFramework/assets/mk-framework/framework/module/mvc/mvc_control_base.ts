@@ -1,5 +1,5 @@
-import mk_tool from "../../@private/tool/mk_tool";
-import mk_monitor from "../../mk_monitor";
+import MKTool from "../../@Private/Tool/MKTool";
+import mk_monitor from "../../MKMonitor";
 import mk_ui_manage from "../../mk_ui_manage";
 import mk_status_task from "../../task/mk_status_task";
 import mvc_model_base from "./mvc_model_base";
@@ -24,7 +24,7 @@ namespace _mvc_control_base {
 abstract class mvc_control_base<CT extends mvc_model_base = mvc_model_base, CT2 extends mvc_view_base<CT> = mvc_view_base<CT>> {
 	// @ts-ignore
 	constructor() {
-		mk_tool.func.run_parent_func(this, ["open", "close"]);
+		MKTool.func.runParentFunc(this, ["open", "close"]);
 		// 等待初始化属性完成
 		setTimeout(async () => {
 			await this._close_task.task;

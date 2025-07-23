@@ -1,7 +1,7 @@
 import * as cc from "cc";
 import mk from "mk";
 import protobufjs from "protobufjs/light.js";
-import global_config from "global_config";
+import GlobalConfig from "global_config";
 
 /** 编解码器-protobufjs(动态) */
 class codec_proto extends mk.codec_base {
@@ -123,7 +123,7 @@ class codec_proto extends mk.codec_base {
 
 		// 将消息号加入消息体
 		// eslint-disable-next-line no-self-assign
-		data_.data[global_config.network.proto_head_key_tab.__id] = mess.fieldsById[1].getOption("default");
+		data_.data[GlobalConfig.network.proto_head_key_tab.__id] = mess.fieldsById[1].getOption("default");
 
 		// 校验数据
 		if (this._config.send_verify_b && mess.verify(data_.data)) {
@@ -139,7 +139,7 @@ class codec_proto extends mk.codec_base {
 	}
 
 	/** 解码 */
-	decode(data_: ArrayBuffer): global_config.network.proto_head | null {
+	decode(data_: ArrayBuffer): GlobalConfig.network.proto_head | null {
 		/** 消息体 */
 		const data_uint8_as = new Uint8Array(data_);
 		/** 消息号 */
@@ -171,7 +171,7 @@ class codec_proto extends mk.codec_base {
 			!mess_?.fieldsById ||
 			mess_.fieldsById[1] === undefined ||
 			// 不存在消息ID
-			mess_.fieldsById[1]?.name != global_config.network.proto_head_key_tab.__id ||
+			mess_.fieldsById[1]?.name != GlobalConfig.network.proto_head_key_tab.__id ||
 			// 不存在消息ID默认值
 			mess_.fieldsById[1].getOption("default") === undefined
 		) {

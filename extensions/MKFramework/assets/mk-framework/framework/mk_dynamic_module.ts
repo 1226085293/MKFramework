@@ -1,5 +1,5 @@
-import mk_instance_base from "./mk_instance_base";
-import { mk_log } from "./mk_logger";
+import MKInstanceBase from "./MKInstanceBase";
+import { mkLog } from "./MKLogger";
 
 /**
  * 动态模块
@@ -7,7 +7,7 @@ import { mk_log } from "./mk_logger";
  * @remarks
  * 更优雅的使用动态模块，不必每次 await import(...)
  */
-export class mk_dynamic_module extends mk_instance_base {
+export class mk_dynamic_module extends MKInstanceBase {
 	/**
 	 * 获取模块默认导出
 	 * @param module_ 动态模块
@@ -28,7 +28,7 @@ export class mk_dynamic_module extends mk_instance_base {
 					return module_export_tab["default"][key];
 				}
 
-				mk_log.error("模块未加载完成");
+				mkLog.error("模块未加载完成");
 
 				return null;
 			},
@@ -39,7 +39,7 @@ export class mk_dynamic_module extends mk_instance_base {
 					return true;
 				}
 
-				mk_log.error("模块未加载完成");
+				mkLog.error("模块未加载完成");
 
 				return false;
 			},
@@ -71,7 +71,7 @@ export class mk_dynamic_module extends mk_instance_base {
 								return module_export_tab[key][key2];
 							}
 
-							mk_log.error("模块未加载完成");
+							mkLog.error("模块未加载完成");
 
 							return null;
 						},
@@ -82,7 +82,7 @@ export class mk_dynamic_module extends mk_instance_base {
 								return true;
 							}
 
-							mk_log.error("模块未加载完成");
+							mkLog.error("模块未加载完成");
 
 							return false;
 						},

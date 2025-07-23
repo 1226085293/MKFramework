@@ -1,26 +1,26 @@
 import * as cc from "cc";
-import global_event from "../config/global_event";
-import mk_instance_base from "./mk_instance_base";
-import mk_logger from "./mk_logger";
-import mk_view_base from "./module/mk_view_base";
+import GlobalEvent from "../Config/GlobalEvent";
+import MKInstanceBase from "./MKInstanceBase";
+import mk_logger from "./MKLogger";
+import MKViewBase from "./Module/MKViewBase";
 import mk_obj_pool from "./mk_obj_pool";
 import mk_asset, { mk_asset_ } from "./resources/mk_asset";
 import mk_status_task from "./task/mk_status_task";
-import mk_tool from "./@private/tool/mk_tool";
+import MKTool from "./@Private/Tool/MKTool";
 import { mk_release_ } from "./mk_release";
 import mk_event_target from "./mk_event_target";
 
 namespace _mk_ui_manage {
 	/** 模块类型 */
 	// @ts-ignore
-	export type type_module<T extends cc.Constructor<mk_view_base>> = T["prototype"]["type_s"] | "default";
+	export type type_module<T extends cc.Constructor<MKViewBase>> = T["prototype"]["type_s"] | "default";
 
 	/** 注册资源类型 */
-	export type type_regis_source<T extends cc.Constructor<mk_view_base>> =
+	export type type_regis_source<T extends cc.Constructor<MKViewBase>> =
 		| cc.Prefab
 		| string
 		| cc.Node
-		| (T extends cc.Constructor<mk_view_base> ? Record<type_module<T>, cc.Prefab | string | cc.Node> : never);
+		| (T extends cc.Constructor<MKViewBase> ? Record<type_module<T>, cc.Prefab | string | cc.Node> : never);
 
 	export interface event_protocol {
 		/** open 模块成功后 */
@@ -43,12 +43,12 @@ namespace _mk_ui_manage {
  *
  * - 全屏 UI 展示优化
  */
-export class mk_ui_manage extends mk_instance_base {
+export class mk_ui_manage extends MKInstanceBase {
 	constructor() {
 		super();
 
 		// 事件监听
-		global_event.on(global_event.key.restart, this._event_restart, this);
+		GlobalEvent.on(GlobalEvent.key.restart, this._event_restart, this);
 	}
 
 	/* --------------- public --------------- */
@@ -59,7 +59,7 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @remarks
 	 * open 未注册模块时会使用此函数获取注册数据自动注册
 	 */
-	get_regis_data_f?: <T extends cc.Constructor<mk_view_base>>(key: T) => mk_ui_manage_.regis_data<T>;
+	get_regis_data_f?: <T extends cc.Constructor<MKViewBase>>(key: T) => mk_ui_manage_.regis_data<T>;
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log = new mk_logger("ui_manage");
@@ -82,11 +82,11 @@ export class mk_ui_manage extends mk_instance_base {
 	/** 隐藏模块列表长度 */
 	private _ui_hidden_length_n = 0;
 	/** 模块隐藏集合 */
-	private _ui_hidden_set = new Set<mk_view_base>();
+	private _ui_hidden_set = new Set<MKViewBase>();
 	/** 当前展示模块列表 */
-	private _ui_show_as: mk_view_base[] = [];
+	private _ui_show_as: MKViewBase[] = [];
 	/** 当前模块表 */
-	private _ui_map = new Map<any, mk_view_base[]>();
+	private _ui_map = new Map<any, MKViewBase[]>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 注册模块
@@ -96,7 +96,7 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @param config_ 模块配置
 	 * @returns
 	 */
-	async regis<T extends cc.Constructor<mk_view_base>>(
+	async regis<T extends cc.Constructor<MKViewBase>>(
 		key_: T,
 		source_: _mk_ui_manage.type_regis_source<T>,
 		target_: mk_release_.type_follow_release_object<mk_release_.type_release_call_back> | null,
@@ -116,7 +116,7 @@ export class mk_ui_manage extends mk_instance_base {
 		}
 
 		// 跟随对象释放
-		target_?.follow_release(async () => {
+		target_?.followRelease(async () => {
 			await this.unregis(key_);
 		});
 
@@ -245,7 +245,7 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @param key_ 模块键
 	 * @returns
 	 */
-	async unregis<T extends cc.Constructor<mk_view_base>>(key_: T): Promise<void> {
+	async unregis<T extends cc.Constructor<MKViewBase>>(key_: T): Promise<void> {
 		/** 模块注册任务 */
 		const ui_regis_task = this._ui_regis_task_map.get(key_);
 
@@ -286,7 +286,7 @@ export class mk_ui_manage extends mk_instance_base {
 	}
 
 	/** 获取所有模块 */
-	get(): ReadonlyArray<mk_view_base>;
+	get(): ReadonlyArray<MKViewBase>;
 	/**
 	 * 获取指定模块
 	 * @param key_ 模块键
@@ -302,18 +302,18 @@ export class mk_ui_manage extends mk_instance_base {
 	get<T extends mk_ui_manage_.type_open_key, T2 = _mk_ui_manage.type_module<T>, T3 = T["prototype"]>(
 		key_?: T | T[],
 		type_?: T2
-	): mk_view_base[] | T3 | T3[] | null {
+	): MKViewBase[] | T3 | T3[] | null {
 		// 获取所有模块
 		if (!key_) {
-			return this._ui_show_as.filter((v) => v.valid_b);
+			return this._ui_show_as.filter((v) => v.valid);
 		}
 		// 获取 指定模块 | 指定模块列表
 		else {
-			let ui_as = this._ui_map.get(Array.isArray(key_) ? key_[0] : key_)?.filter((v) => v.valid_b);
+			let ui_as = this._ui_map.get(Array.isArray(key_) ? key_[0] : key_)?.filter((v) => v.valid);
 
 			// 筛选类型
 			if (type_ && ui_as) {
-				ui_as = ui_as.filter((v) => v.type_s === (type_ as any));
+				ui_as = ui_as.filter((v) => v.typeStr === (type_ as any));
 			}
 
 			// 获取模块列表
@@ -417,7 +417,7 @@ export class mk_ui_manage extends mk_instance_base {
 		/** 注册任务 */
 		const regis_task = this._ui_regis_task_map.get(key_);
 		/** 视图组件 */
-		let view_comp: mk_view_base;
+		let view_comp: MKViewBase;
 
 		// 等待模块注册
 		if (regis_task && !regis_task.finish_b) {
@@ -466,9 +466,9 @@ export class mk_ui_manage extends mk_instance_base {
 		}
 
 		// 更新单独展示
-		if (view_comp.show_alone_b) {
+		if (view_comp.isShowAlone) {
 			this._ui_show_as.slice(this._ui_hidden_length_n, this._ui_show_as.length).forEach((v) => {
-				if (v.valid_b && v.node.active) {
+				if (v.valid && v.node.active) {
 					this._ui_hidden_set.add(v);
 					v.node.active = false;
 				}
@@ -493,8 +493,8 @@ export class mk_ui_manage extends mk_instance_base {
 		{
 			// 模块配置
 			view_comp.config = {
-				static_b: false,
-				type_s: config_.type as string,
+				isStatic: false,
+				typeStr: config_.type as string,
 			};
 
 			// 加入父节点
@@ -506,7 +506,7 @@ export class mk_ui_manage extends mk_instance_base {
 			{
 				const open_task = view_comp._open({
 					init: config_.init,
-					first_b: true,
+					isFirst: true,
 				});
 
 				if (parent?.isValid) {
@@ -516,7 +516,7 @@ export class mk_ui_manage extends mk_instance_base {
 		}
 
 		// 模块已被关闭
-		if (!view_comp.valid_b) {
+		if (!view_comp.valid) {
 			this._log.warn(`模块 ${cc.js.getClassName(view_comp)} 在 open 内被关闭`);
 
 			return exit_callback_f(false);
@@ -546,7 +546,7 @@ export class mk_ui_manage extends mk_instance_base {
 	 * @param config_ 关闭配置
 	 * @returns
 	 */
-	async close<T extends cc.Constructor<mk_view_base>, T2 extends mk_view_base>(
+	async close<T extends cc.Constructor<MKViewBase>, T2 extends MKViewBase>(
 		args_: cc.Node | T | T2,
 		config_?: mk_ui_manage_.close_config<T>
 	): Promise<boolean> {
@@ -565,7 +565,7 @@ export class mk_ui_manage extends mk_instance_base {
 		{
 			if (args_ instanceof cc.Node) {
 				node_ = args_;
-			} else if (args_ instanceof mk_view_base) {
+			} else if (args_ instanceof MKViewBase) {
 				view_ = args_ as any;
 			} else {
 				key_ = args_ as T;
@@ -573,11 +573,11 @@ export class mk_ui_manage extends mk_instance_base {
 		}
 
 		/** 关闭的模块列表 */
-		let close_ui_as: mk_view_base[];
+		let close_ui_as: MKViewBase[];
 
 		// 初始化关闭模块数据
 		if (node_) {
-			close_ui_as = [node_.getComponent(mk_view_base)!].filter((v) => v);
+			close_ui_as = [node_.getComponent(MKViewBase)!].filter((v) => v);
 		} else if (view_) {
 			close_ui_as = [view_];
 		} else {
@@ -597,10 +597,10 @@ export class mk_ui_manage extends mk_instance_base {
 				// 筛选类型
 				if (config.type) {
 					if (config.all_b) {
-						close_ui_as = close_ui_as.filter((v) => v.type_s === (config!.type as any));
+						close_ui_as = close_ui_as.filter((v) => v.typeStr === (config!.type as any));
 					} else {
 						for (let k_n = close_ui_as.length; k_n--; ) {
-							if (close_ui_as[k_n].type_s === (config.type as any)) {
+							if (close_ui_as[k_n].typeStr === (config.type as any)) {
 								close_ui_as = [close_ui_as[k_n]];
 								break;
 							}
@@ -622,7 +622,7 @@ export class mk_ui_manage extends mk_instance_base {
 		// 无关闭模块返回
 		if (!close_ui_as.length) {
 			// 关闭节点直接销毁
-			if (node_?.isValid && !node_.getComponent(mk_view_base)) {
+			if (node_?.isValid && !node_.getComponent(MKViewBase)) {
 				node_.removeFromParent();
 				node_.destroy();
 			}
@@ -632,7 +632,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 		// 动态模块(视图/数据)更新
 		close_ui_as.forEach((v) => {
-			if (v.static_b) {
+			if (v.isStatic) {
 				return;
 			}
 
@@ -650,7 +650,7 @@ export class mk_ui_manage extends mk_instance_base {
 
 					// 查找新的隐藏模块下标
 					for (let k_n = ui_hidden_as.length; k_n--; ) {
-						if (ui_hidden_as[k_n].show_alone_b) {
+						if (ui_hidden_as[k_n].isShowAlone) {
 							new_hidden_index_n = k_n;
 							break;
 						}
@@ -722,8 +722,8 @@ export class mk_ui_manage extends mk_instance_base {
 			}
 
 			await v._close?.({
-				first_b: true,
-				destroy_children_b: config.destroy_children_b,
+				isFirst: true,
+				isDestroyChildren: config.destroy_children_b,
 			});
 
 			// 节点已在生命周期内被销毁
@@ -737,7 +737,7 @@ export class mk_ui_manage extends mk_instance_base {
 			this.event.emit(this.event.key.close, v.constructor as any, v);
 
 			// 销毁
-			if (config.destroy_b || v.static_b) {
+			if (config.destroy_b || v.isStatic) {
 				v.node.destroy();
 			}
 			// 回收模块
@@ -750,10 +750,10 @@ export class mk_ui_manage extends mk_instance_base {
 				}
 
 				/** 节点池 */
-				const node_pool = ui_pool?.get(v.type_s);
+				const node_pool = ui_pool?.get(v.typeStr);
 
 				if (!node_pool) {
-					this._log.error("回收模块错误，未找到指定节点池类型", v.type_s);
+					this._log.error("回收模块错误，未找到指定节点池类型", v.typeStr);
 					continue;
 				}
 
@@ -767,7 +767,7 @@ export class mk_ui_manage extends mk_instance_base {
 	/* ------------------------------- 全局事件 ------------------------------- */
 	private async _event_restart(): Promise<void> {
 		// 等待场景关闭
-		await Promise.all(global_event.request(global_event.key.wait_close_scene));
+		await Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene));
 
 		// 释放对象池
 		this._ui_pool_map.forEach((v) => {
@@ -777,16 +777,16 @@ export class mk_ui_manage extends mk_instance_base {
 		});
 
 		// 重置数据
-		mk_tool.object.reset(this, true);
+		MKTool.object.reset(this, true);
 	}
 }
 
 export namespace mk_ui_manage_ {
 	/** 模块打开键类型 */
-	export type type_open_key = cc.Constructor<mk_view_base> & Function;
+	export type type_open_key = cc.Constructor<MKViewBase> & Function;
 
 	/** 关闭ui配置 */
-	export class close_config<CT extends cc.Constructor<mk_view_base>> {
+	export class close_config<CT extends cc.Constructor<MKViewBase>> {
 		constructor(init_?: close_config<CT>) {
 			Object.assign(this, init_);
 
@@ -824,7 +824,7 @@ export namespace mk_ui_manage_ {
 	}
 
 	/** 模块注册配置 */
-	export class regis_config<CT extends cc.Constructor<mk_view_base>> {
+	export class regis_config<CT extends cc.Constructor<MKViewBase>> {
 		constructor(init_?: Partial<regis_config<CT>>) {
 			if (!init_) {
 				return;
@@ -877,7 +877,7 @@ export namespace mk_ui_manage_ {
 	 * 模块注册数据
 	 * @noInheritDoc
 	 */
-	export class regis_data<CT extends cc.Constructor<mk_view_base>> extends regis_config<CT> {
+	export class regis_data<CT extends cc.Constructor<MKViewBase>> extends regis_config<CT> {
 		constructor(init_?: Partial<regis_data<CT>>) {
 			super(init_);
 			Object.assign(this, init_);

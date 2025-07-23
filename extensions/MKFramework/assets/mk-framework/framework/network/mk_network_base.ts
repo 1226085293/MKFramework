@@ -1,10 +1,10 @@
 import * as cc from "cc";
-import global_config from "../../config/global_config";
-import global_event from "../../config/global_event";
+import GlobalConfig from "../../Config/GlobalConfig";
+import GlobalEvent from "../../Config/GlobalEvent";
 import mk_codec_base from "../mk_codec_base";
 import mk_event_target from "../mk_event_target";
-import mk_instance_base from "../mk_instance_base";
-import mk_logger from "../mk_logger";
+import MKInstanceBase from "../MKInstanceBase";
+import mk_logger from "../MKLogger";
 import mk_status_task from "../task/mk_status_task";
 
 namespace _mk_network_base {
@@ -52,7 +52,7 @@ namespace _mk_network_base {
 		private _log = new mk_logger(cc.js.getClassName(this));
 		/* ------------------------------- 功能 ------------------------------- */
 		// @ts-ignore
-		on<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		on<T extends cc.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
 			this_?: any,
@@ -72,7 +72,7 @@ namespace _mk_network_base {
 		}
 
 		// @ts-ignore
-		once<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		once<T extends cc.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
 			this_?: any
@@ -81,7 +81,7 @@ namespace _mk_network_base {
 		}
 
 		// @ts-ignore
-		off<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		off<T extends cc.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			this_?: any
@@ -105,7 +105,7 @@ namespace _mk_network_base {
 		 * @remarks
 		 * 接收消息后派发，可用此接口模拟数据
 		 */
-		emit<T extends global_config.network.proto_head>(data_: T): void;
+		emit<T extends GlobalConfig.network.ProtoHead>(data_: T): void;
 		/**
 		 * 派发事件
 		 * @param type_ 消息号
@@ -114,7 +114,7 @@ namespace _mk_network_base {
 		 * 接收消息后派发，可用此接口模拟数据
 		 */
 		emit<T extends string | number>(type_: T, data_: any): void;
-		emit<T extends cc.Constructor<global_config.network.proto_head> | string | number>(args_: T, data_?: any): void {
+		emit<T extends cc.Constructor<GlobalConfig.network.ProtoHead> | string | number>(args_: T, data_?: any): void {
 			let type_: string | number | undefined;
 
 			// 参数转换
@@ -163,7 +163,7 @@ namespace _mk_network_base {
 		}
 
 		// @ts-ignore
-		has<T extends cc.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		has<T extends cc.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			target_?: any
@@ -202,7 +202,7 @@ namespace _mk_network_base {
  *
  * - 网络消息模拟
  */
-abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends mk_instance_base {
+abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends MKInstanceBase {
 	constructor(init_?: Partial<mk_network_base_.init_config<CT>>) {
 		super();
 		this.config = new mk_network_base_.init_config(init_);
@@ -211,7 +211,7 @@ abstract class mk_network_base<CT extends mk_codec_base = mk_codec_base> extends
 		this._start_heartbeat();
 
 		// 事件监听
-		global_event.on(global_event.key.restart, this._event_restart, this);
+		GlobalEvent.on(GlobalEvent.key.restart, this._event_restart, this);
 	}
 
 	/* --------------- public --------------- */
@@ -721,7 +721,7 @@ export namespace mk_network_base_ {
 			this._send_interval_ms_n = interval_ms_n_;
 
 			// 事件监听
-			global_event.on(global_event.key.restart, this._event_restart, this);
+			GlobalEvent.on(GlobalEvent.key.restart, this._event_restart, this);
 		}
 
 		/** 网络节点 */

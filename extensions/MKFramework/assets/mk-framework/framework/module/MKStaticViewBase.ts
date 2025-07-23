@@ -1,0 +1,15 @@
+import * as cc from "cc";
+import MKLifeCycle from "./MKLifeCycle";
+const { ccclass, property } = cc._decorator;
+
+/**
+ * 场景基类
+ * @remarks
+ * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
+ */
+@ccclass
+export class MKStaticViewBase extends MKLifeCycle {
+	protected _isUseLayer = false;
+}
+
+export default MKStaticViewBase;

@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import mk_logger from "./mk_logger";
+import mk_logger from "./MKLogger";
 
 /** 编解码器基类 */
 abstract class mk_codec_base {

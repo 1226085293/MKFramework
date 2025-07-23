@@ -1,6 +1,6 @@
 //@ts-nocheck
 // 框架源码位于 项目根目录\extensions\MKFramework\assets\mk-framework 下，你也可以在资源管理器下方的 mk-framework 查看
-import global_config from "../../assets/mk-framework/config/global_config";
+import GlobalConfig from "../../assets/mk-framework/Config/GlobalConfig";
 import * as cc_2 from "cc";
 
 declare namespace mk {
@@ -114,7 +114,7 @@ declare namespace mk {
 		/** add 配置 */
 		export interface add_config<T extends boolean> {
 			/** 类型 */
-			type?: global_config.audio.type;
+			type?: GlobalConfig.Audio.Type;
 			/** 分组 */
 			group_ns?: number[];
 			/** 文件夹 */
@@ -670,14 +670,14 @@ declare namespace mk {
 		export type type_data_struct<T extends _mk_language_manage.type_type = any> = Record<
 			T,
 			{
-				[k in keyof typeof global_config.language.type_tab]: string;
+				[k in keyof typeof GlobalConfig.Language.typeTab]: string;
 			}
 		>;
 		/** 获取文本配置 */
 		export class label_config {
 			constructor(init_?: Partial<label_config>);
 			/** 语言类型 */
-			language: keyof typeof global_config.language.type_tab;
+			language: keyof typeof GlobalConfig.Language.typeTab;
 			/** 参数 */
 			args_ss?: string[];
 		}
@@ -1443,10 +1443,10 @@ declare namespace mk {
 		/** 纹理数据 */
 		texture_data_tab: Record<_mk_language_manage.type_type, language_.type_data_struct>;
 		/** 当前语言类型 */
-		get type_s(): keyof typeof global_config.language.type_tab;
-		set type_s(value_: keyof typeof global_config.language.type_tab);
+		get type_s(): keyof typeof GlobalConfig.Language.typeTab;
+		set type_s(value_: keyof typeof GlobalConfig.Language.typeTab);
 		/** 获取语言数据 */
-		get data(): global_config.language.type_data;
+		get data(): GlobalConfig.Language.TypeData;
 		/** 日志 */
 		private _log;
 		/** 当前语言类型 */
@@ -1471,7 +1471,7 @@ declare namespace mk {
 			type_: _mk_language_manage.type_type,
 			mark_s_: string,
 			target_: asset_.type_follow_release_object,
-			language_?: keyof typeof global_config.language.type_tab
+			language_?: keyof typeof GlobalConfig.Language.typeTab
 		): Promise<cc_2.SpriteFrame | null>;
 		/**
 		 * 添加文本数据
@@ -1508,7 +1508,7 @@ declare namespace mk {
 	 */
 	declare class mk_language_node extends life_cycle {
 		/** 语言 */
-		language_s: keyof typeof global_config.language.type_tab;
+		language_s: keyof typeof GlobalConfig.Language.typeTab;
 		/** 语言 */
 		get language(): number;
 		set language(value_n_: number);
@@ -1538,7 +1538,7 @@ declare namespace mk {
 			get language(): number;
 			set language(value_n_: number);
 			/** 语言 */
-			language_s: keyof typeof global_config.language.type_tab;
+			language_s: keyof typeof GlobalConfig.Language.typeTab;
 			/** 节点 */
 			node: cc_2.Node;
 		}
@@ -2042,18 +2042,18 @@ declare namespace mk {
 			private _network;
 			/** 日志 */
 			private _log;
-			on<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			on<T extends cc_2.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_: T2,
 				this_?: any,
 				once_b_?: boolean
 			): typeof callback_ | null;
-			once<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			once<T extends cc_2.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_: T2,
 				this_?: any
 			): typeof callback_ | null;
-			off<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			off<T extends cc_2.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_?: T2,
 				this_?: any
@@ -2064,7 +2064,7 @@ declare namespace mk {
 			 * @remarks
 			 * 接收消息后派发，可用此接口模拟数据
 			 */
-			emit<T extends global_config.network.proto_head>(data_: T): void;
+			emit<T extends GlobalConfig.network.ProtoHead>(data_: T): void;
 			/**
 			 * 派发事件
 			 * @param type_ 消息号
@@ -2088,7 +2088,7 @@ declare namespace mk {
 			 * 等待事件回调返回
 			 */
 			request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeout_ms_n_?: number): Promise<any> | null;
-			has<T extends cc_2.Constructor<global_config.network.proto_head> | string | number, T2 extends (event_: T["prototype"]) => void>(
+			has<T extends cc_2.Constructor<GlobalConfig.network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_?: T2,
 				target_?: any

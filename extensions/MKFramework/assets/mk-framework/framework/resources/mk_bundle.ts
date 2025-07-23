@@ -1,12 +1,12 @@
-import mk_instance_base from "../mk_instance_base";
-import mk_logger, { mk_log } from "../mk_logger";
+import MKInstanceBase from "../MKInstanceBase";
+import mk_logger, { mkLog } from "../MKLogger";
 import mk_event_target from "../mk_event_target";
 import mk_network_base from "../network/mk_network_base";
 import { EDITOR, PREVIEW } from "cc/env";
 import * as cc from "cc";
 import mk_status_task from "../task/mk_status_task";
 import { mk_data_sharer_ } from "../mk_data_sharer";
-import mk_tool_func from "../@private/tool/mk_tool_func";
+import mk_tool_func from "../@Private/Tool/MKToolFunc";
 import mk_release, { mk_release_ } from "../mk_release";
 
 namespace _mk_bundle {
@@ -57,12 +57,12 @@ namespace _mk_bundle {
  *
  * - 支持 bundle 管理器，用于子游戏管理
  */
-export class mk_bundle extends mk_instance_base {
+export class mk_bundle extends MKInstanceBase {
 	constructor() {
 		super();
 
 		if (EDITOR) {
-			this.bundle_s = "main";
+			this.bundleStr = "main";
 			this._engine_init_task.finish(true);
 			this._init_task.finish(true);
 
@@ -88,7 +88,7 @@ export class mk_bundle extends mk_instance_base {
 				// init
 				await this.bundle_map.get("main")?.manage?.init?.();
 				// open
-				this.bundle_s = "main";
+				this.bundleStr = "main";
 				this._scene_s = scene.name;
 				this._init_task.finish(true);
 			},
@@ -109,20 +109,20 @@ export class mk_bundle extends mk_instance_base {
 	switch_scene_b = false;
 
 	/** 当前场景bundle */
-	get bundle_s(): string {
+	get bundleStr(): string {
 		return this._bundle_s;
 	}
 
-	set bundle_s(value_s_) {
+	set bundleStr(value_s_) {
 		this._set_bundle_s(value_s_);
 	}
 
 	/** 当前场景名 */
-	get scene_s(): string {
+	get sceneStr(): string {
 		return this._scene_s;
 	}
 
-	set scene_s(value_s: string) {
+	set sceneStr(value_s: string) {
 		this._set_scene_s(value_s);
 	}
 
@@ -227,7 +227,7 @@ export class mk_bundle extends mk_instance_base {
 	 * @param config_ 切换配置
 	 * @returns
 	 */
-	async load_scene(scene_s_: string, config_: mk_bundle_.switch_scene_config): Promise<boolean> {
+	async loadScene(scene_s_: string, config_: mk_bundle_.switch_scene_config): Promise<boolean> {
 		if (!scene_s_) {
 			this._log.error("场景名错误", scene_s_);
 
@@ -239,9 +239,9 @@ export class mk_bundle extends mk_instance_base {
 		const config = new mk_bundle_.switch_scene_config(config_);
 
 		const bundle_info =
-			this.bundle_map.get(config.bundle_s) ??
+			this.bundle_map.get(config.bundleStr) ??
 			new mk_bundle_.bundle_info({
-				bundle_s: config.bundle_s,
+				bundle_s: config.bundleStr,
 			});
 
 		const bundle = await this.load(bundle_info);
@@ -289,7 +289,7 @@ export class mk_bundle extends mk_instance_base {
 			if (bundle.name !== this._bundle_s) {
 				await this.event.request(this.event.key.before_bundle_switch, {
 					curr_bundle_s: this._bundle_s,
-					next_bundle_s: config.bundle_s,
+					next_bundle_s: config.bundleStr,
 				});
 			}
 
@@ -322,9 +322,9 @@ export class mk_bundle extends mk_instance_base {
 					cc.director.runScene(scene_asset, config?.before_load_callback_f, (error, scene) => {
 						// 更新数据
 						if (!error) {
-							this.bundle_s = bundle.name;
-							this.pre_scene_s = this.scene_s;
-							this.scene_s = scene_s_;
+							this.bundleStr = bundle.name;
+							this.pre_scene_s = this.sceneStr;
+							this.sceneStr = scene_s_;
 						} else if (manage) {
 							manage.close();
 						}
@@ -364,7 +364,7 @@ export class mk_bundle extends mk_instance_base {
 			return null;
 		}
 
-		if (this.bundle_s === bundle_info_.bundle_s) {
+		if (this.bundleStr === bundle_info_.bundle_s) {
 			this._log.error("不能在重载 bundle 的场景内进行重载");
 
 			return null;
@@ -581,7 +581,7 @@ export namespace mk_bundle_ {
 		 * @remarks
 		 * getBundle 时使用
 		 */
-		bundle_s!: string;
+		bundleStr!: string;
 		/** 预加载 */
 		preload_b?: boolean;
 		/**
@@ -609,7 +609,7 @@ export namespace mk_bundle_ {
 		constructor() {
 			// 添加至 bundle 数据
 			setTimeout(async () => {
-				if (EDITOR && this.name_s === mk_bundle.instance().bundle_s) {
+				if (EDITOR && this.name_s === mk_bundle.instance().bundleStr) {
 					await this.init?.();
 					this.open();
 				}
@@ -636,7 +636,7 @@ export namespace mk_bundle_ {
 			}) as any;
 
 			// 自动执行生命周期
-			mk_tool_func.run_parent_func(this, ["init", "open", "close"]);
+			mk_tool_func.runParentFunc(this, ["init", "open", "close"]);
 		}
 
 		/* --------------- public --------------- */
@@ -693,7 +693,7 @@ export namespace mk_bundle_ {
 		 */
 		close(): void | Promise<void> {
 			if (!this.valid_b) {
-				mk_log.error("bundle 已经卸载");
+				mkLog.error("bundle 已经卸载");
 				throw "中断";
 			}
 
@@ -723,7 +723,7 @@ export namespace mk_bundle_ {
 		}
 
 		/* ------------------------------- 功能 ------------------------------- */
-		follow_release<T = mk_release_.type_release_param_type>(object_: T): T {
+		followRelease<T = mk_release_.type_release_param_type>(object_: T): T {
 			if (!object_) {
 				return object_;
 			}
@@ -739,7 +739,7 @@ export namespace mk_bundle_ {
 			return object_;
 		}
 
-		cancel_release<T = mk_release_.type_release_param_type>(object_: T): void {
+		cancelRelease<T = mk_release_.type_release_param_type>(object_: T): void {
 			if (!object_) {
 				return;
 			}

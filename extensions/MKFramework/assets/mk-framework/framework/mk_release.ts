@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import { mk_log } from "./mk_logger";
+import { mkLog } from "./MKLogger";
 
 /**
  * 对象释放器
@@ -46,7 +46,7 @@ class mk_release {
 	 */
 	add<T extends mk_release_.type_release_param_type>(object_: T): T {
 		if (!object_) {
-			mk_log.error("添加释放对象错误", object_);
+			mkLog.error("添加释放对象错误", object_);
 
 			return object_;
 		}
@@ -75,7 +75,7 @@ class mk_release {
 	 */
 	delete<T extends mk_release_.type_release_param_type>(object_: T): void {
 		if (!object_) {
-			mk_log.error("删除释放对象错误", object_);
+			mkLog.error("删除释放对象错误", object_);
 
 			return;
 		}
@@ -161,13 +161,13 @@ export namespace mk_release_ {
 		 * 跟随释放
 		 * @param object_ 释放对象/释放对象数组
 		 */
-		follow_release<T extends CT>(object_: T): T;
+		followRelease<T extends CT>(object_: T): T;
 
 		/**
 		 * 取消释放
 		 * @param object_ 取消释放对象/取消释放对象数组
 		 */
-		cancel_release<T extends CT>(object_: T): void;
+		cancelRelease<T extends CT>(object_: T): void;
 	};
 }
 

@@ -1,11 +1,11 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
-import global_event from "../../config/global_event";
-import mk_instance_base from "../mk_instance_base";
-import mk_logger from "../mk_logger";
+import GlobalEvent from "../../Config/GlobalEvent";
+import MKInstanceBase from "../MKInstanceBase";
+import mk_logger from "../MKLogger";
 import mk_bundle from "./mk_bundle";
 import mk_game from "../mk_game";
-import global_config from "../../config/global_config";
+import GlobalConfig from "../../Config/GlobalConfig";
 import { mk_release_ } from "../mk_release";
 
 namespace _mk_asset {
@@ -62,7 +62,7 @@ namespace _mk_asset {
  *
  * - 增加强制性资源跟随释放对象
  */
-export class mk_asset extends mk_instance_base {
+export class mk_asset extends MKInstanceBase {
 	constructor() {
 		super();
 
@@ -89,7 +89,7 @@ export class mk_asset extends mk_instance_base {
 				// 重启期间直接销毁
 				if (mk_game.restarting_b) {
 					// 等待场景关闭后释放资源
-					Promise.all(global_event.request(global_event.key.wait_close_scene)).then((v) => {
+					Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene)).then((v) => {
 						mk_asset.instance().release(this);
 					});
 
@@ -106,7 +106,7 @@ export class mk_asset extends mk_instance_base {
 					);
 
 					// 缓存生命时长为 0 立即释放
-					if (global_config.asset.config.cache_lifetime_ms_n === 0) {
+					if (GlobalConfig.Asset.config.cacheLifetimeMsNum === 0) {
 						self._auto_release_asset();
 					}
 				}
@@ -116,19 +116,19 @@ export class mk_asset extends mk_instance_base {
 		}
 
 		// 定时自动释放资源
-		if (mk_asset._config.cache_lifetime_ms_n !== 0) {
-			this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset._config.cache_lifetime_ms_n);
+		if (mk_asset._config.cacheLifetimeMsNum !== 0) {
+			this._release_timer = setInterval(this._auto_release_asset.bind(this), mk_asset._config.cacheLifetimeMsNum);
 		}
 
 		// 事件监听
 		setTimeout(() => {
-			global_event.once(global_event.key.restart, this._event_restart, mk_asset.instance());
+			GlobalEvent.once(GlobalEvent.key.restart, this._event_restart, mk_asset.instance());
 		}, 0);
 	}
 
 	/* --------------- static --------------- */
 	/** 全局配置 */
-	private static _config = global_config.asset.config;
+	private static _config = GlobalConfig.Asset.config;
 
 	/* --------------- private --------------- */
 	/** 日志 */
@@ -160,7 +160,7 @@ export class mk_asset extends mk_instance_base {
 		const remote_b = Boolean(get_config.remote_option);
 
 		// 参数补齐
-		get_config.retry_n = get_config.retry_n ?? global_config.asset.config.retry_count_on_load_failure_n;
+		get_config.retry_n = get_config.retry_n ?? GlobalConfig.Asset.config.retryCountOnLoadFailureNum;
 
 		// 参数转换
 		{
@@ -202,7 +202,7 @@ export class mk_asset extends mk_instance_base {
 		if (EDITOR) {
 			get_config.bundle_s = get_config.bundle_s || "resources";
 		} else {
-			get_config.bundle_s = get_config.bundle_s || (mk_bundle.bundle_s !== "main" ? mk_bundle.bundle_s : "resources");
+			get_config.bundle_s = get_config.bundle_s || (mk_bundle.bundleStr !== "main" ? mk_bundle.bundleStr : "resources");
 		}
 
 		return new Promise<T | null>(async (resolve_f) => {
@@ -246,7 +246,7 @@ export class mk_asset extends mk_instance_base {
 				// 执行回调
 				get_config.completed_f?.(error, asset);
 				// 跟随释放
-				target_?.follow_release(asset);
+				target_?.followRelease(asset);
 				resolve_f(asset);
 			};
 
@@ -361,7 +361,7 @@ export class mk_asset extends mk_instance_base {
 		let asset_config: _mk_asset.load_any_request_type;
 
 		// 参数补齐
-		get_config.retry_n = get_config.retry_n ?? global_config.asset.config.retry_count_on_load_failure_n;
+		get_config.retry_n = get_config.retry_n ?? GlobalConfig.Asset.config.retryCountOnLoadFailureNum;
 
 		// 参数转换
 		{
@@ -385,7 +385,7 @@ export class mk_asset extends mk_instance_base {
 				}
 
 				asset_config = get_config.remote_option as any;
-				asset_config.bundle = get_config.bundle_s || (mk_bundle.bundle_s !== "main" ? mk_bundle.bundle_s : "resources");
+				asset_config.bundle = get_config.bundle_s || (mk_bundle.bundleStr !== "main" ? mk_bundle.bundleStr : "resources");
 				asset_config.type = type_;
 				asset_config.dir = path_s_;
 			}
@@ -410,9 +410,9 @@ export class mk_asset extends mk_instance_base {
 				get_config.completed_f?.(error_as, dir_asset_as);
 
 				// 跟随释放
-				if (target_?.follow_release) {
+				if (target_?.followRelease) {
 					dir_asset_as.forEach((v) => {
-						target_.follow_release(v);
+						target_.followRelease(v);
 					});
 				}
 
@@ -577,7 +577,7 @@ export class mk_asset extends mk_instance_base {
 		} else {
 			for (const [k_s, v] of this._asset_release_map.entries()) {
 				// 当前及之后的资源没超过生命时长
-				if (current_time_ms_n - v.join_time_ms_n < mk_asset._config.cache_lifetime_ms_n) {
+				if (current_time_ms_n - v.join_time_ms_n < mk_asset._config.cacheLifetimeMsNum) {
 					break;
 				}
 
@@ -597,7 +597,7 @@ export class mk_asset extends mk_instance_base {
 	/* ------------------------------- 全局事件 ------------------------------- */
 	private async _event_restart(): Promise<void> {
 		// 等待场景关闭
-		await Promise.all(global_event.request(global_event.key.wait_close_scene));
+		await Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene));
 		// 立即释放资源
 		this._auto_release_asset(true);
 		// 清理定时器

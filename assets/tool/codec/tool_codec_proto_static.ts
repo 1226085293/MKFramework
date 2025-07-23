@@ -1,7 +1,7 @@
 import { DEBUG } from "cc/env";
 import mk from "mk";
 import protobufjs from "protobufjs/minimal.js";
-import global_config from "global_config";
+import GlobalConfig from "global_config";
 
 /** 编解码器 - protobufjs(静态) */
 class codec_proto_static extends mk.codec_base {
@@ -23,16 +23,16 @@ class codec_proto_static extends mk.codec_base {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
 	encode(data_: any): ArrayBuffer | null {
-		const mess = this._mess_map.get(data_[global_config.network.proto_head_key_tab.__id]);
+		const mess = this._mess_map.get(data_[GlobalConfig.network.proto_head_key_tab.__id]);
 
 		if (!mess) {
-			this._log.error("未找到消息号为" + data_[global_config.network.proto_head_key_tab.__id] + "的已注册消息!");
+			this._log.error("未找到消息号为" + data_[GlobalConfig.network.proto_head_key_tab.__id] + "的已注册消息!");
 
 			return null;
 		}
 
 		// 添加消息头
-		data_[global_config.network.proto_head_key_tab.__id] = data_.__proto__[global_config.network.proto_head_key_tab.__id];
+		data_[GlobalConfig.network.proto_head_key_tab.__id] = data_.__proto__[GlobalConfig.network.proto_head_key_tab.__id];
 
 		// 校验数据
 		if (this._config.send_verify_b && mess.verify(data_)) {
@@ -48,7 +48,7 @@ class codec_proto_static extends mk.codec_base {
 	}
 
 	/** 解码 */
-	decode(data_: ArrayBuffer): global_config.network.proto_head | null {
+	decode(data_: ArrayBuffer): GlobalConfig.network.proto_head | null {
 		/** 消息体 */
 		const data_uint8_as = new Uint8Array(data_);
 		/** 消息号 */
@@ -80,7 +80,7 @@ class codec_proto_static extends mk.codec_base {
 		}
 
 		/** 消息号 */
-		const mess_id_n = mess_["prototype"][global_config.network.proto_head_key_tab.__id];
+		const mess_id_n = mess_["prototype"][GlobalConfig.network.proto_head_key_tab.__id];
 
 		// 不存在消息号或不存在消息ID默认值
 		if ((mess_id_n ?? null) === null) {
@@ -114,7 +114,7 @@ class codec_proto_static extends mk.codec_base {
 				case "function":
 					{
 						/** 消息号 */
-						const id_n = mess.prototype[global_config.network.proto_head_key_tab.__id];
+						const id_n = mess.prototype[GlobalConfig.network.proto_head_key_tab.__id];
 
 						// 添加路径信息
 						this._mess_path_map.set(mess, `${path_s_}.${k_s}`);

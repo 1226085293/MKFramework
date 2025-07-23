@@ -1,5 +1,5 @@
 import * as cc from "cc";
-import mk_view_base from "../mk_view_base";
+import MKViewBase from "../MKViewBase";
 import mvc_model_base from "./mvc_model_base";
 import mk_event_target from "../../mk_event_target";
 const { ccclass, property } = cc._decorator;
@@ -21,7 +21,7 @@ namespace _mvc_view_base {
 }
 
 @ccclass
-abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends mk_view_base {
+abstract class mvc_view_base<CT extends mvc_model_base = mvc_model_base> extends MKViewBase {
 	/** 视图事件 */
 	event = new mk_event_target<any>();
 	/** 数据访问器 */

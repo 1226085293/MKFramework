@@ -1,4 +1,4 @@
-import { mk_log } from "./mk_logger";
+import { mkLog } from "./MKLogger";
 import mk_task from "./task/mk_task";
 
 namespace _mk_obj_pool {
@@ -120,7 +120,7 @@ class mk_obj_pool<CT> {
 	 */
 	async put(obj_: any): Promise<void> {
 		if (!this._valid_b) {
-			mk_log.warn("对象池失效");
+			mkLog.warn("对象池失效");
 
 			this.config.clear_f?.([obj_]);
 
@@ -146,7 +146,7 @@ class mk_obj_pool<CT> {
 	/** 同步获取对象 */
 	get_sync(): CT | null {
 		if (!this._valid_b) {
-			mk_log.warn("对象池失效");
+			mkLog.warn("对象池失效");
 
 			return null!;
 		}
@@ -167,7 +167,7 @@ class mk_obj_pool<CT> {
 	/** 获取对象 */
 	async get(): Promise<CT> {
 		if (!this._valid_b) {
-			mk_log.warn("对象池失效");
+			mkLog.warn("对象池失效");
 
 			return null!;
 		}
@@ -178,7 +178,7 @@ class mk_obj_pool<CT> {
 		}
 
 		if (!this._valid_b) {
-			mk_log.warn("对象池失效");
+			mkLog.warn("对象池失效");
 			this.clear();
 
 			return null!;
@@ -257,7 +257,7 @@ namespace mk_obj_pool {
 		/** 导入对象 */
 		put(obj_: CT): void {
 			if (!this._valid_b) {
-				mk_log.warn("对象池失效");
+				mkLog.warn("对象池失效");
 
 				this.config.clear_f?.([obj_]);
 
@@ -278,7 +278,7 @@ namespace mk_obj_pool {
 		/** 获取对象 */
 		get(): CT {
 			if (!this._valid_b) {
-				mk_log.warn("对象池失效");
+				mkLog.warn("对象池失效");
 
 				return null!;
 			}
