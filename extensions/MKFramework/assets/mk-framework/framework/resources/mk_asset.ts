@@ -202,7 +202,7 @@ export class mk_asset extends mk_instance_base {
 		if (EDITOR) {
 			get_config.bundle_s = get_config.bundle_s || "resources";
 		} else {
-			get_config.bundle_s = get_config.bundle_s || mk_bundle.bundle_s;
+			get_config.bundle_s = get_config.bundle_s || (mk_bundle.bundle_s !== "main" ? mk_bundle.bundle_s : "resources");
 		}
 
 		return new Promise<T | null>(async (resolve_f) => {
@@ -385,7 +385,7 @@ export class mk_asset extends mk_instance_base {
 				}
 
 				asset_config = get_config.remote_option as any;
-				asset_config.bundle = get_config.bundle_s || mk_bundle.bundle_s;
+				asset_config.bundle = get_config.bundle_s || (mk_bundle.bundle_s !== "main" ? mk_bundle.bundle_s : "resources");
 				asset_config.type = type_;
 				asset_config.dir = path_s_;
 			}
