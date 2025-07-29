@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 "use strict";
 module.exports = {
-	名字: "mk-framework",
+	名字: "MKFramework",
 	说明: "3.x 游戏框架",
 	安装框架: "安装框架",
 	本地版本: "本地版本",
@@ -26,6 +26,6 @@ module.exports = {
 	任务开始: "任务开始...",
 	任务结束: "任务结束",
 	安装成功: "安装成功，请重启编辑器后使用",
-	安装失败: "安装失败，请求帮助：扩展/mk-framework/帮助",
+	安装失败: "安装失败，请求帮助：扩展/MKFramework/帮助",
 	未初始化: "未初始化，请在插件根目录{plugin_path_s}下执行 npm i",
 };

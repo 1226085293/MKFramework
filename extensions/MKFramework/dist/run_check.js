@@ -9,7 +9,7 @@ function default_1() {
     if (fs_1.default.existsSync(path_1.default.join(__dirname, "..", "node_modules"))) {
         return true;
     }
-    console.error(Editor.I18n.t("mk-framework.未初始化", { plugin_path_s: path_1.default.join(__dirname, "..") }));
+    console.error(Editor.I18n.t("MKFramework.未初始化", { plugin_path_s: path_1.default.join(__dirname, "..") }));
     return false;
 }
 exports.default = default_1;

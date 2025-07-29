@@ -1,7 +1,7 @@
 {
 	"$schema": "./@types/schema/package/index.json",
 	"package_version": 2,
-	"name": "mk-framework",
+	"name": "MKFramework",
 	"version": "1.0.4",
 	"author": "_muzzik",
 	"editor": ">=3.3.2",
@@ -9,7 +9,7 @@
 		"build": "tsc",
 		"watch": "tsc -w"
 	},
-	"description": "i18n:mk-framework.说明",
+	"description": "i18n:MKFramework.说明",
 	"main": "./dist/main.js",
 	"contributions": {
 		"messages": {
@@ -36,29 +36,29 @@
 		},
 		"menu": [
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.名字",
-				"label": "i18n:mk-framework.安装框架",
+				"path": "i18n:menu.extension/i18n:MKFramework.名字",
+				"label": "i18n:MKFramework.安装框架",
 				"message": "install"
 			},
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.名字",
-				"label": "i18n:mk-framework.本地版本",
+				"path": "i18n:menu.extension/i18n:MKFramework.名字",
+				"label": "i18n:MKFramework.本地版本",
 				"message": "local_version"
 			},
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.名字",
-				"label": "i18n:mk-framework.构建dts",
+				"path": "i18n:menu.extension/i18n:MKFramework.名字",
+				"label": "i18n:MKFramework.构建dts",
 				"message": "build"
 			},
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.名字",
-				"label": "i18n:mk-framework.帮助",
+				"path": "i18n:menu.extension/i18n:MKFramework.名字",
+				"label": "i18n:MKFramework.帮助",
 				"message": "help"
 			}
 		],
 		"asset-db": {
 			"mount": {
-				"path": "./assets/mk-framework",
+				"path": "./assets/MKFramework",
 				"readonly": false
 			}
 		}

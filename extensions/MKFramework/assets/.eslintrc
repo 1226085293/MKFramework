@@ -145,6 +145,12 @@
 				"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)]"
 			}
 			},
+			// public 成员 _camelCase
+			{
+			"selector": "memberLike",
+			"modifiers": ["public"],
+			"format": ["camelCase"],
+			},
 
 			// 参数为 camelCase 且结尾可下划线
 			{

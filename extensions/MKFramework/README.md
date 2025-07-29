@@ -1,39 +1,39 @@
 # MKFramework
 
-Welcome to MKFramework, which is the game code framework of the game engine CocosCreator3.x. It includes essential functional modules for developers such as audio, multi-language, UI, novice guide, network, resources, MVVM, etc., helping you develop quickly without being affected by other factors.
-For the documentation, you can temporarily view it at https://1226085293.github.io/mk-framework, and it will be moved to the repository wiki page later
+Welcome to MKFramework, the game code framework for the CocosCreator 3.x game engine. It includes essential developer modules such as audio, multi-language, UI, onboarding, networking, resources, and MVVM, helping you develop quickly without being impacted by other factors.
+Documentation is available on the [repository wiki](https://github.com/1226085293/MKFramework/wiki)
 
-# # Use the framework
+## Using the Framework
 
 ## Step 1: Initialization
 
-First close the editor, open the plugin directory `Project root directory\extensions\MKFramework` and execute the command in the current directory
+First, close the editor, open the plugin directory `Project root directory\extensions\MKFramework`, and execute the command in the current directory:
 
 ```bash
 npm install
 ```
 
-Wait for the execution to succeed and open the editor
+Wait for the command to succeed and then open the editor.
 
-## Step 2: Install the framework
+## Step 2: Install the Framework
 
-Top menu: `Extensions/mk-framework/Install framework`
+Top menu: `Extensions/MKFramework/Install Framework`
 
-Wait for the installation to succeed and restart the editor to use it. If you have any questions, please raise them in the repository
+After the installation is successful, restart the editor to use it. Feel free to report any questions in the repository.
 
-# # Update the framework
+## Updating the Framework
 
-Top menu: `Extensions/mk-framework/Install framework`
+Top menu: `Extensions/MKFramework/Install Framework`
 
-# # Customize the framework
+## Customizing the Framework
 
-The framework supports you to customize the framework content. After modifying the framework code, you can use the `Extensions/mk-framework/Build d.ts` menu to update the content of the framework declaration file (mk.d.ts)
+The framework supports customizing its content. After modifying the framework code, you can use the `Extensions/MKFramework/Build d.ts` menu to update the content of the framework declaration file (mk.d.ts).
 
-# # Framework repository
+## Framework Repository
 
 github: https://github.com/1226085293/MKFramework
-gitee: https://gitee.com/muzzik/MKFramework
+Gitee: https://gitee.com/muzzik/MKFramework
 
-# # Contact the author
+## Contact the Author
 
-Top menu: `Extensions/mk-framework/Help`
+Top Menu: Extensions/MKFramework/Help
