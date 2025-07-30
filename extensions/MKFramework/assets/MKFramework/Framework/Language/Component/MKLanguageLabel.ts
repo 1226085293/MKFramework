@@ -2,7 +2,6 @@ import * as cc from "cc";
 import mkLanguageManage from "../MKLanguageManage";
 import MKLanguageBase from "./MKLanguageBase";
 import { EDITOR } from "cc/env";
-import language_manage from "../MKLanguageManage";
 import mkTool from "../../@Private/Tool/MKTool";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -157,7 +156,7 @@ class MKLanguageLabel extends MKLanguageBase {
 						userComp = canvas.components.find((v) => !cc.js.getClassName(v).startsWith("cc."));
 					}
 
-					this._typeStr = language_manage.labelDataTab[cc.js.getClassName(userComp)]
+					this._typeStr = mkLanguageManage.labelDataTab[cc.js.getClassName(userComp)]
 						? cc.js.getClassName(userComp)
 						: MKLanguageLabel._typeStrList[0] ?? "";
 				})();

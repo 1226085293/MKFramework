@@ -20,7 +20,7 @@ class MKAudioWX extends MKAudioBase {
 	static _instance: MKAudioWX;
 	/* --------------- protected --------------- */
 	/** 日志 */
-	protected _log = new MKLogger("audio_wx");
+	protected _log = new MKLogger("MKAudioWX");
 	/* ------------------------------- 功能 ------------------------------- */
 	play(audio_: MKAudioWX_.PrivateUnit, config_?: Partial<MKAudioBase_.PlayConfig>): boolean {
 		// 安检
@@ -114,7 +114,7 @@ class MKAudioWX extends MKAudioBase {
 }
 
 export namespace MKAudioWX_ {
-	@ccclass("mk_audio_wx/unit")
+	@ccclass("MKAudioWX/Unit")
 	export class PrivateUnit extends MKAudioBase_.PrivateUnit {
 		constructor(init_?: Partial<PrivateUnit>) {
 			super(init_);

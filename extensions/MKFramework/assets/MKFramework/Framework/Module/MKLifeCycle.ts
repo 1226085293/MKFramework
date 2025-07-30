@@ -1,6 +1,6 @@
 import * as cc from "cc";
 import { EDITOR } from "cc/env";
-import mk_dynamic_module from "../MKDynamicModule";
+import mkDynamicModule from "../MKDynamicModule";
 import MKLogger from "../MKLogger";
 import mkMonitor from "../MKMonitor";
 import MKStatusTask from "../Task/MKStatusTask";
@@ -10,7 +10,7 @@ import { mkAudio, MKAudio_ } from "../Audio/MKAudioExport";
 import MKRelease, { MKRelease_ } from "../MKRelease";
 import { MKAsset_ } from "../Resources/MKAsset";
 import GlobalConfig from "../../Config/GlobalConfig";
-const uiManage = mk_dynamic_module.default(import("../MKUIManage"));
+const uiManage = mkDynamicModule.default(import("../MKUIManage"));
 const { ccclass, property } = cc._decorator;
 
 export namespace _MKLifeCycle {
@@ -99,7 +99,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			"init",
 			"open",
 			"close",
-			"late_close",
+			"lateClose",
 		] as (keyof MKLifeCycle)[]);
 
 		// 设置函数超时警告
@@ -110,7 +110,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			"init",
 			"open",
 			"close",
-			"late_close",
+			"lateClose",
 		] as (keyof MKLifeCycle)[]);
 	}
 
@@ -120,7 +120,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	/**
 	 * 视图数据
 	 * @remarks
-	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+	 * 如果是 class 类型数据会在 close 后自动重置，根据 this._isResetData 控制
 	 */
 	data?: any;
 	/**
@@ -243,7 +243,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	 * 初始化
 	 * @param data_ 初始化数据
 	 * @remarks
-	 * 所有依赖 init_data 初始化的逻辑都应在此进行
+	 * 所有依赖 initData 初始化的逻辑都应在此进行
 	 *
 	 * - 静态模块：onLoad 后调用，外部自行调用，常用于更新 item 或者静态模块
 	 *
@@ -268,7 +268,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	 * 打开
 	 * @protected
 	 * @remarks
-	 * onLoad，init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+	 * onLoad，init 后执行，在此处执行无需 initData 支持的模块初始化操作
 	 *
 	 * open 顺序: 子 -> 父
 	 */
@@ -293,7 +293,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	 * 关闭后
 	 * @protected
 	 * @remarks
-	 * 在子模块 close 和 late_close 后执行
+	 * 在子模块 close 和 lateClose 后执行
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected lateClose?(): void;

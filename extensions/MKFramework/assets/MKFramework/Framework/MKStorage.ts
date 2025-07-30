@@ -6,7 +6,7 @@ import MKTaskPipeline from "./Task/MKTaskPipeline";
  * 存储器（类型安全）
  * @noInheritDoc
  * @remarks
- * 注意：在未设置 name_s(存储器名) 之前，存储数据将不会被存储在硬盘，而是在内存中
+ * 注意：在未设置 nameStr(存储器名) 之前，存储数据将不会被存储在硬盘，而是在内存中
  */
 class MKStorage<CT extends Object> {
 	constructor(init_: MKStorage_.InitConfig<CT>) {

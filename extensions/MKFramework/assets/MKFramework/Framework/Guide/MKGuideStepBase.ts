@@ -9,7 +9,7 @@ const { ccclass, property } = _decorator;
  * 引导步骤基类
  * @noInheritDoc
  */
-@ccclass("mk_guide_step_base")
+@ccclass("MkGuideStepBase")
 abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateCell> = any> extends cc.Component {
 	/** 步骤序号 */
 	abstract stepNum: number;

@@ -13,7 +13,7 @@ import MKEventTarget from "./MKEventTarget";
 namespace _MKUIManage {
 	/** 模块类型 */
 	// @ts-ignore
-	export type TypeModule<T extends cc.Constructor<MKViewBase>> = T["prototype"]["type_s"] | "default";
+	export type TypeModule<T extends cc.Constructor<MKViewBase>> = T["prototype"]["typeStr"] | "default";
 
 	/** 注册资源类型 */
 	export type TypeRegisSource<T extends cc.Constructor<MKViewBase>> =
@@ -62,7 +62,7 @@ export class MKUIManage extends MKInstanceBase {
 	getRegisDataFunc?: <T extends cc.Constructor<MKViewBase>>(key: T) => MKUIManage_.RegisData<T>;
 	/* --------------- private --------------- */
 	/** 日志 */
-	private _log = new MKLogger("ui_manage");
+	private _log = new MKLogger("MKUIManage");
 	/** 模块注册表 */
 	private _uiRegisMap = new Map<any, MKUIManage_.RegisData<any>>();
 	/**
@@ -804,7 +804,7 @@ export namespace MKUIManage_ {
 		/**
 		 * 销毁动态子节点
 		 * @defaultValue
-		 * destroy_b
+		 * isDestroy
 		 */
 		isDestroyChildren?: boolean;
 	}

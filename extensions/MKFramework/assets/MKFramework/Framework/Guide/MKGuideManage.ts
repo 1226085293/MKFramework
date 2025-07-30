@@ -22,7 +22,7 @@ import mkBundle from "../Resources/MKBundle";
 class MKGuideManage {
 	constructor(init_: MKGuideManage_.InitConfig) {
 		// 初始化数据
-		this._log = new MKLogger(init_.nameStr ?? "guide_manage");
+		this._log = new MKLogger(init_.nameStr ?? "MKGuideManage");
 		this._initConfig = init_;
 
 		if (this._initConfig.currentStepNum !== undefined) {
@@ -316,7 +316,7 @@ export namespace MKGuideManage_ {
 		 * 切换步骤前
 		 * @param nextStepNum 下个步骤
 		 * @remarks
-		 * set_step 时执行
+		 * setStep 时执行
 		 */
 		beforeSwitch(nextStepNum: number): void;
 		/**
@@ -379,7 +379,7 @@ export namespace MKGuideManage_ {
 		 *
 		 * - 可在此内更新服务端数据并请求奖励
 		 *
-		 * - 步骤可使用 this.step_update_data 获取返回数据
+		 * - 步骤可使用 this.stepUpdateData 获取返回数据
 		 */
 		stepUpdateCallbackFunc?(stepNum: number): any;
 	}

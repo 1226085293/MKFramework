@@ -1,6 +1,6 @@
-export { default as websocket } from "./Websocket/MKWebsocket";
-export { MKWebsocket_ as websocket_ } from "./Websocket/MKWebsocket";
-export { default as websocket_wx } from "./Websocket/MKWebsocketWX";
-export { MKHttp as http, MKHttp_ as http_ } from "./MKHttp";
-export { default as base } from "./MKNetworkBase";
-export { MKNetworkBase_ as base_ } from "./MKNetworkBase";
+export { default as Websocket } from "./Websocket/MKWebsocket";
+export { MKWebsocket_ as Websocket_ } from "./Websocket/MKWebsocket";
+export { default as WebsocketWX } from "./Websocket/MKWebsocketWX";
+export { MKHttp as Http, MKHttp_ as Http_ } from "./MKHttp";
+export { default as Base } from "./MKNetworkBase";
+export { MKNetworkBase_ as Base_ } from "./MKNetworkBase";

@@ -149,4 +149,5 @@ class MKToolFunc extends MKInstanceBase {
 	}
 }
 
-export default MKToolFunc.instance();
+const mkToolFunc = MKToolFunc.instance();
+export default mkToolFunc;

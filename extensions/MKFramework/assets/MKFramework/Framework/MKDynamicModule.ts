@@ -95,4 +95,6 @@ export class MKDynamicModule extends MKInstanceBase {
 	}
 }
 
-export default MKDynamicModule.instance();
+const mkDynamicModule = MKDynamicModule.instance();
+
+export default mkDynamicModule;

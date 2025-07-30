@@ -6,7 +6,7 @@ import { EDITOR, PREVIEW } from "cc/env";
 import * as cc from "cc";
 import MKStatusTask from "../Task/MKStatusTask";
 import { MKDataSharer_ } from "../MKDataSharer";
-import mk_tool_func from "../@Private/Tool/MKToolFunc";
+import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "../MKRelease";
 
 namespace _MKBundle {
@@ -47,7 +47,7 @@ namespace _MKBundle {
  * @noInheritDoc
  * @remarks
  *
- * - 封装(加载/预加载)场景为 load_scene
+ * - 封装(加载/预加载)场景为 loadScene
  *
  * - 支持(远程/本地) bundle
  *
@@ -132,7 +132,7 @@ export class MKBundle extends MKInstanceBase {
 	/** 引擎初始化任务 */
 	private _engineInitTask = new MKStatusTask(false);
 	/** 日志 */
-	private _log = new MKLogger("bundle");
+	private _log = new MKLogger("MKBundle");
 	/** 当前场景bundle */
 	private _bundleStr!: string;
 	/** 当前场景名 */
@@ -528,9 +528,9 @@ export namespace MKBundle_ {
 		/**
 		 * 资源路径
 		 * @defaultValue
-		 * this.bundle_s
+		 * this.bundleStr
 		 * @remarks
-		 * loadBundle 时使用，不存在时将使用 bundle_s 进行 loadBundle
+		 * loadBundle 时使用，不存在时将使用 bundleStr 进行 loadBundle
 		 */
 		originStr?: string;
 	}
@@ -557,7 +557,7 @@ export namespace MKBundle_ {
 		}
 
 		/** 加载回调 */
-		progressCallbackFunc?: (curr_n: number, total_n: number) => void;
+		progressCallbackFunc?: (currentNum: number, totalNum: number) => void;
 	}
 
 	/** 重载 bundle 信息 */
@@ -570,7 +570,7 @@ export namespace MKBundle_ {
 		ccclassRegexp?: RegExp;
 	}
 
-	/** switch_scene 配置 */
+	/** switchScene 配置 */
 	export class SwitchSceneConfig {
 		constructor(init_?: Partial<SwitchSceneConfig>) {
 			Object.assign(this, init_);
@@ -636,7 +636,7 @@ export namespace MKBundle_ {
 			}) as any;
 
 			// 自动执行生命周期
-			mk_tool_func.runParentFunc(this, ["init", "open", "close"]);
+			mkToolFunc.runParentFunc(this, ["init", "open", "close"]);
 		}
 
 		/* --------------- public --------------- */
@@ -756,4 +756,4 @@ const mkBundle = MKBundle.instance();
 
 export default mkBundle;
 
-// ...需要在 main bundle reload 时执行 main_bundle_manage.close
+// ...需要在 main bundle reload 时执行 MainBundleManage.close

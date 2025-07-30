@@ -11,7 +11,7 @@ const { ccclass, property, menu, executeInEditMode } = cc._decorator;
 namespace _MKLanguageNode {
 	export const languageTypeEnum = mkTool.enum.objToEnum(GlobalConfig.Language.typeTab);
 
-	@ccclass("mk_language_node/node")
+	@ccclass("MKLanguageNode/Node")
 	export class Node {
 		constructor(init_?: Partial<Node>) {
 			Object.assign(this, init_);

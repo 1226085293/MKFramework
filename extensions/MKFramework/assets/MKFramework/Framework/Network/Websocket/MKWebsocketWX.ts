@@ -6,13 +6,13 @@ import MKNetworkBase, { MKNetworkBase_ } from "../MKNetworkBase";
  * @noInheritDoc
  */
 class MKWebsocketWX<CT extends MKCodecBase = MKCodecBase> extends MKNetworkBase<CT> {
-	constructor(config_?: Partial<mk_websocket_wx_.InitConfig<CT>>) {
+	constructor(config_?: Partial<MKWebsocketWX_.InitConfig<CT>>) {
 		super(config_);
-		this.config = new mk_websocket_wx_.InitConfig(config_);
+		this.config = new MKWebsocketWX_.InitConfig(config_);
 	}
 
 	/* --------------- public --------------- */
-	config!: Readonly<mk_websocket_wx_.InitConfig<CT>>;
+	config!: Readonly<MKWebsocketWX_.InitConfig<CT>>;
 	/* --------------- public --------------- */
 	protected _socket!: wx.SocketTask;
 	/* ------------------------------- 功能 ------------------------------- */
@@ -39,7 +39,7 @@ class MKWebsocketWX<CT extends MKCodecBase = MKCodecBase> extends MKNetworkBase<
 	}
 }
 
-export namespace mk_websocket_wx_ {
+export namespace MKWebsocketWX_ {
 	export class InitConfig<CT extends MKCodecBase = MKCodecBase> extends MKNetworkBase_.InitConfig<CT> {
 		constructor(init_?: Partial<InitConfig<CT>>) {
 			super(init_);

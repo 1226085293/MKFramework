@@ -2,13 +2,13 @@ import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import MKTool from "../@Private/Tool/MKTool";
 import { MKLifeCycle, _MKLifeCycle } from "./MKLifeCycle";
-import mk_dynamic_module from "../MKDynamicModule";
+import mkDynamicModule from "../MKDynamicModule";
 import type { MKUIManage_ } from "../MKUIManage";
-import mk_asset from "../Resources/MKAsset";
-import mk_game from "../MKGame";
+import mkAsset from "../Resources/MKAsset";
+import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
-import mk_bundle from "../Resources/MKBundle";
-const mkUIManage = mk_dynamic_module.default(import("../MKUIManage"));
+import mkBundle from "../Resources/MKBundle";
+const mkUIManage = mkDynamicModule.default(import("../MKUIManage"));
 const { ccclass, property } = cc._decorator;
 
 namespace _MKViewBase {
@@ -19,7 +19,7 @@ namespace _MKViewBase {
 	}
 
 	/** 动画配置 */
-	@ccclass("mk_view_base/animation_config")
+	@ccclass("MKViewBase/AnimationConfig")
 	export class AnimationConfig {
 		/* --------------- static --------------- */
 		/** 动画枚举表 */
@@ -205,9 +205,9 @@ export class MKViewBase extends MKLifeCycle {
 		// 关闭动画
 		if (
 			// 非重启中
-			!mk_game.isRestarting &&
+			!mkGame.isRestarting &&
 			// 非切换场景
-			!mk_bundle.isSwitchScene &&
+			!mkBundle.isSwitchScene &&
 			closeAnimationFunc
 		) {
 			await closeAnimationFunc(this.node);
@@ -282,7 +282,7 @@ export class MKViewBase extends MKLifeCycle {
 					return;
 				}
 
-				const prefab = await mk_asset.get(GlobalConfig.View.maskDataTab.prefabPathStr, cc.Prefab, this);
+				const prefab = await mkAsset.get(GlobalConfig.View.maskDataTab.prefabPathStr, cc.Prefab, this);
 
 				if (!prefab) {
 					return;

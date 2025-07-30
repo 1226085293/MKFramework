@@ -28,7 +28,7 @@ class MKAudioCommon extends MKAudioBase {
 	static _instance: MKAudioCommon;
 	/* --------------- protected --------------- */
 	/** 日志 */
-	protected _log = new MKLogger("audio_common");
+	protected _log = new MKLogger("MKAudioCommon");
 	/* --------------- private --------------- */
 	/** 音频常驻节点 */
 	private _audioNode!: cc.Node;
@@ -274,7 +274,7 @@ class MKAudioCommon extends MKAudioBase {
 }
 
 export namespace MKAudioCommon_ {
-	@ccclass("mk_audio_common/unit")
+	@ccclass("MKAudioCommon/Unit")
 	export class PrivateUnit extends MKAudioBase_.PrivateUnit {
 		constructor(init_?: Partial<PrivateUnit>) {
 			super(init_);

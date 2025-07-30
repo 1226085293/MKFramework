@@ -3,12 +3,12 @@ import { EDITOR } from "cc/env";
 import GlobalEvent from "../../Config/GlobalEvent";
 import MKInstanceBase from "../MKInstanceBase";
 import MKLogger from "../MKLogger";
-import mk_bundle from "./MKBundle";
-import mk_game from "../MKGame";
+import mkBundle from "./MKBundle";
+import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { MKRelease_ } from "../MKRelease";
 
-namespace _mk_asset {
+namespace _MKAsset {
 	/** loadRemote 配置类型 */
 	export interface LoadRemoteOptionType extends Record<string, any> {
 		uuid?: string;
@@ -46,7 +46,7 @@ namespace _mk_asset {
  * @noInheritDoc
  * @remarks
  *
- * - 统一加载接口为 get、get_dir
+ * - 统一加载接口为 get、getDir
  *
  * - 支持 EDITOR 环境加载资源
  *
@@ -54,13 +54,13 @@ namespace _mk_asset {
  *
  * - 加载路径扩展，例：db://xxx.prefab
  *
- * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
- *
- * - 修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
- *
- * - 解决同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
+ * - 资源默认引用为 2，引用为 1 时将在 GlobalConfig.Resources.cacheLifetimeMsNum 时间后自动释放
  *
  * - 增加强制性资源跟随释放对象
+ *
+ * - （3.8.6 已修复）修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
+ *
+ * - （3.8.6 已修复）修复同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
  */
 export class MKAsset extends MKInstanceBase {
 	constructor() {
@@ -87,7 +87,7 @@ export class MKAsset extends MKInstanceBase {
 				}
 
 				// 重启期间直接销毁
-				if (mk_game.isRestarting) {
+				if (mkGame.isRestarting) {
 					// 等待场景关闭后释放资源
 					Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene)).then((v) => {
 						MKAsset.instance().release(this);
@@ -100,7 +100,7 @@ export class MKAsset extends MKInstanceBase {
 				if (this.refCount === 1) {
 					self._assetReleaseMap.set(
 						this.nativeUrl || this._uuid,
-						new _mk_asset.ReleaseInfo({
+						new _MKAsset.ReleaseInfo({
 							asset: this,
 						})
 					);
@@ -132,11 +132,11 @@ export class MKAsset extends MKInstanceBase {
 
 	/* --------------- private --------------- */
 	/** 日志 */
-	private _log = new MKLogger("asset");
+	private _log = new MKLogger("MKAsset");
 	/** 管理表 */
 	private _joinTimeMsN = new Map<string, cc.Asset>();
 	/** 释放表 */
-	private _assetReleaseMap = new Map<string, _mk_asset.ReleaseInfo>();
+	private _assetReleaseMap = new Map<string, _MKAsset.ReleaseInfo>();
 	/** 释放定时器 */
 	private _releaseTimer: any;
 	/* ------------------------------- 功能 ------------------------------- */
@@ -168,7 +168,7 @@ export class MKAsset extends MKInstanceBase {
 			if (pathStr_.startsWith("db://assets/")) {
 				pathStr_ = pathStr_.slice(12);
 
-				// 裁剪 path_s_, 补齐 bundle 名
+				// 裁剪 pathStr_, 补齐 bundle 名
 				if (!EDITOR && pathStr_.includes("/")) {
 					const dirStr = pathStr_.slice(0, pathStr_.indexOf("/"));
 
@@ -202,7 +202,7 @@ export class MKAsset extends MKInstanceBase {
 		if (EDITOR) {
 			getConfig.bundleStr = getConfig.bundleStr || "resources";
 		} else {
-			getConfig.bundleStr = getConfig.bundleStr || (mk_bundle.bundleStr !== "main" ? mk_bundle.bundleStr : "resources");
+			getConfig.bundleStr = getConfig.bundleStr || (mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
 		}
 
 		return new Promise<T | null>(async (resolveFunc) => {
@@ -266,7 +266,7 @@ export class MKAsset extends MKInstanceBase {
 			// 编辑器
 			else if (EDITOR) {
 				/** 资源配置 */
-				let assetConfig: _mk_asset.LoadAnyRequestType;
+				let assetConfig: _MKAsset.LoadAnyRequestType;
 
 				// 补全加载配置
 				{
@@ -310,7 +310,7 @@ export class MKAsset extends MKInstanceBase {
 			// 本地
 			else {
 				/** bundle 资源 */
-				const bundleAsset = await mk_bundle.load(getConfig.bundleStr!);
+				const bundleAsset = await mkBundle.load(getConfig.bundleStr!);
 
 				if (!bundleAsset) {
 					this._log.error("未获取到 bundle 信息");
@@ -358,7 +358,7 @@ export class MKAsset extends MKInstanceBase {
 		/** 获取配置 */
 		const getConfig = config_ ?? {};
 		/** 资源配置 */
-		let assetConfig: _mk_asset.LoadAnyRequestType;
+		let assetConfig: _MKAsset.LoadAnyRequestType;
 
 		// 参数补齐
 		getConfig.retryNum = getConfig.retryNum ?? GlobalConfig.Asset.config.retryCountOnLoadFailureNum;
@@ -369,7 +369,7 @@ export class MKAsset extends MKInstanceBase {
 			if (pathStr_.startsWith("db://assets/")) {
 				pathStr_ = pathStr_.slice(12);
 
-				// 裁剪 path_s_, 补齐 bundle 名
+				// 裁剪 pathStr_, 补齐 bundle 名
 				if (!EDITOR) {
 					const dirStr = pathStr_.slice(0, pathStr_.indexOf("/"));
 
@@ -385,7 +385,7 @@ export class MKAsset extends MKInstanceBase {
 				}
 
 				assetConfig = getConfig.remoteOption as any;
-				assetConfig.bundle = getConfig.bundleStr || (mk_bundle.bundleStr !== "main" ? mk_bundle.bundleStr : "resources");
+				assetConfig.bundle = getConfig.bundleStr || (mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
 				assetConfig.type = type_;
 				assetConfig.dir = pathStr_;
 			}
@@ -428,7 +428,7 @@ export class MKAsset extends MKInstanceBase {
 			// 本地
 			else {
 				/** bundle 资源 */
-				const bundleAsset = await mk_bundle.load(assetConfig.bundle!);
+				const bundleAsset = await mkBundle.load(assetConfig.bundle!);
 
 				if (!bundleAsset) {
 					this._log.error("未获取到 bundle 信息");
@@ -625,7 +625,7 @@ export namespace MKAsset_ {
 		/**
 		 * bundle 名
 		 * @defaultValue
-		 * 编辑器：resources，运行时：mk.bundle.bundle_s(当前场景所属 bundle)
+		 * 编辑器：resources，运行时：mk.bundle.bundleStr(当前场景所属 bundle)
 		 */
 		bundleStr?: string;
 		/** 进度回调 */
@@ -639,10 +639,10 @@ export namespace MKAsset_ {
 		/** 完成回调 */
 		completedFunc?: (error: Error | null, asset: T) => void;
 		/** 远程配置，存在配置则为远程资源 */
-		remoteOption?: _mk_asset.LoadRemoteOptionType;
+		remoteOption?: _MKAsset.LoadRemoteOptionType;
 		/**
 		 * 失败重试次数
-		 * @defaultValue global_config.asset.config.retry_count_on_load_failure_n
+		 * @defaultValue GlobalConfig.Asset.Config.retryCountOnLoadFailureNum
 		 */
 		retryNum?: number;
 	}

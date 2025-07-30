@@ -57,7 +57,7 @@ export class MKLanguageManage extends MKInstanceBase {
 
 	/* --------------- private --------------- */
 	/** 日志 */
-	private _log = new MKLogger("language");
+	private _log = new MKLogger("MKLanguage");
 	/** 当前语言类型 */
 	private _languageStr = GlobalConfig.Language.defaultTypeStr;
 

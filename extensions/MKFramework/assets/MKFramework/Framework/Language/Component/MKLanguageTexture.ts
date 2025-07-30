@@ -1,7 +1,7 @@
 import { EDITOR } from "cc/env";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import language from "../MKLanguageManage";
-import mk_asset from "../../Resources/MKAsset";
+import mkAsset from "../../Resources/MKAsset";
 import * as cc from "cc";
 import MKLanguageBase from "./MKLanguageBase";
 import mkTool from "../../@Private/Tool/MKTool";
@@ -92,7 +92,7 @@ class MKLanguageTexture extends MKLanguageBase {
 		}
 
 		if (EDITOR) {
-			const asset = await mk_asset.get(pathStr + ".png", cc.ImageAsset, this);
+			const asset = await mkAsset.get(pathStr + ".png", cc.ImageAsset, this);
 
 			if (!asset?._uuid) {
 				return;
@@ -110,7 +110,7 @@ class MKLanguageTexture extends MKLanguageBase {
 				},
 			});
 		} else {
-			const asset = await mk_asset.get(pathStr, cc.SpriteFrame, this);
+			const asset = await mkAsset.get(pathStr, cc.SpriteFrame, this);
 
 			if (!asset) {
 				return;

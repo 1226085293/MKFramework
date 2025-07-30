@@ -11,7 +11,7 @@ namespace _MKMonitor {
 		/** 新值 */
 		value: T,
 		/** 旧值 */
-		old_value?: T,
+		oldValue?: T,
 		/** 值路径（只会在监听无键的对象类型时传递） */
 		pathStr?: string
 	) => any;
@@ -100,7 +100,7 @@ namespace _MKMonitor {
  */
 export class MKMonitor extends MKInstanceBase {
 	/** 日志管理 */
-	private _log = new MKLogger("monitor");
+	private _log = new MKLogger("MKMonitor");
 	/** 绑定数据图 */
 	private _bindDataMap = new Map<any, Map<_MKMonitor.TypeKey, _MKMonitor.BindData>>();
 	/** 对象绑定数据图 */
@@ -512,7 +512,7 @@ export class MKMonitor extends MKInstanceBase {
 
 					// 数据相同
 					if (!isCanUpdate && value === newValue && typeof value !== "object" && typeof value !== "function") {
-						// this._log.debug("更新值，数据相同跳过", key_, new_value, value_);
+						// this._log.debug("更新值，数据相同跳过", key_, newValue, value_);
 
 						return;
 					}
@@ -543,8 +543,8 @@ export class MKMonitor extends MKInstanceBase {
 					// 更新后的值和更新前一致则还原
 					if (typeof value !== "object" && typeof value !== "function" && value === valueBeforeUpdate) {
 						// 清理定时器
-						// clearTimeout(update_timer);
-						// cc.director.off(cc.Director.EVENT_END_FRAME, update_timer, this);
+						// clearTimeout(updateTimer);
+						// cc.director.off(cc.Director.EVENT_END_FRAME, updateTimer, this);
 						updateTimer = null;
 
 						// 更新 set 计数
@@ -620,8 +620,8 @@ export class MKMonitor extends MKInstanceBase {
 				};
 
 				updateFunc();
-				// cc.director.once(cc.Director.EVENT_END_FRAME, (update_timer = update_f), this);
-				// update_timer = setTimeout(update_f, 0);
+				// cc.director.once(cc.Director.EVENT_END_FRAME, (updateTimer = updateFunc), this);
+				// updateTimer = setTimeout(updateFunc, 0);
 			},
 		});
 
@@ -736,11 +736,11 @@ export class MKMonitor extends MKInstanceBase {
 
 			// 重置描述符
 			Object.defineProperty(value_, key_, bindData.descriptor);
-			// 删除 bind_data
+			// 删除 bindData
 			bindDataMap.delete(key_);
 		}
 
-		// 删除 bind_data_map
+		// 删除 bindDataMap
 		if (!bindDataMap.size) {
 			this._bindDataMap.delete(value_);
 		}
@@ -863,7 +863,7 @@ export class MKMonitor extends MKInstanceBase {
 				value = args_;
 			}
 
-			// callback_f_
+			// callbackFunc_
 			if (typeof args3_ === "function") {
 				callbackFunc = args3_;
 			}

@@ -1,4 +1,4 @@
-import mk_asset, { MKAsset_ } from "../Resources/MKAsset";
+import mkAsset, { MKAsset_ } from "../Resources/MKAsset";
 import { EDITOR } from "cc/env";
 import MKEventTarget from "../MKEventTarget";
 import MKLogger from "../MKLogger";
@@ -76,7 +76,7 @@ abstract class MKAudioBase {
 
 		if (config_?.isDir) {
 			for (const vStr of urlStrList) {
-				const assetList = await mk_asset.getDir(vStr, cc.AudioClip, target_, config_.loadConfig as any);
+				const assetList = await mkAsset.getDir(vStr, cc.AudioClip, target_, config_.loadConfig as any);
 
 				assetList?.forEach((v2) => {
 					const audio = this._getAudioUnit({
@@ -91,7 +91,7 @@ abstract class MKAudioBase {
 			result = audioList;
 		} else {
 			for (const vStr of urlStrList) {
-				const asset = await mk_asset.get(vStr, cc.AudioClip, target_, config_?.loadConfig);
+				const asset = await mkAsset.get(vStr, cc.AudioClip, target_, config_?.loadConfig);
 
 				if (!asset) {
 					audioList.push(null!);
@@ -334,7 +334,7 @@ export namespace MKAudioBase_ {
 	 * 音频单元
 	 * @internal
 	 */
-	@ccclass("mk_audio_base/unit")
+	@ccclass("MKAudioBase/Unit")
 	export abstract class PrivateUnit {
 		constructor(init_?: Partial<PrivateUnit>) {
 			Object.assign(this, init_);

@@ -1,6 +1,6 @@
 import MKAudioBase, { MKAudioBase_ } from "./MKAudioBase";
-import audio_common, { MKAudioCommon_ } from "./Platform/MKAudioCommon";
-import audio_wx, { MKAudioWX_ } from "./Platform/MKAudioWX";
+import MKAudioCommon, { MKAudioCommon_ } from "./Platform/MKAudioCommon";
+import MKAudioWX, { MKAudioWX_ } from "./Platform/MKAudioWX";
 export { default as audio } from "./MKAudioBase";
 export { MKAudioBase_ as MKAudio_ } from "./MKAudioBase";
 
@@ -21,4 +21,4 @@ Object.assign(MKAudioBase_, window.wx ? MKAudioWX_ : MKAudioCommon_);
  *
  * - 通用版本超出播放数量限制后停止当前音频而不是之前的
  */
-export const mkAudio: MKAudioBase = window.wx ? new audio_wx() : new audio_common();
+export const mkAudio: MKAudioBase = window.wx ? new MKAudioWX() : new MKAudioCommon();

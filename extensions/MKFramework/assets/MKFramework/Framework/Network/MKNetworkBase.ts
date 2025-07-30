@@ -151,7 +151,7 @@ namespace _MKNetworkBase {
 		/**
 		 * 请求
 		 * @param data_ 发送数据
-		 * @param timeoutMsNum_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 wait_timeout_ms_n
+		 * @param timeoutMsNum_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 waitTimeoutMsNum
 		 * @returns
 		 * @remarks
 		 * 等待事件回调返回
