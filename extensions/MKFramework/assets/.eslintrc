@@ -149,7 +149,7 @@
 			{
 				"selector": "memberLike",
 				"modifiers": ["public"],
-				"format": ["camelCase"],
+				"format": ["camelCase"]
 			},
 
 			// 参数为 camelCase 且结尾可下划线

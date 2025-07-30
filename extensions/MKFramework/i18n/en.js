@@ -15,7 +15,7 @@ module.exports = {
 	获取版本: "Get version",
 	下载框架: "Download framework",
 	版本适配: "Version adaptation",
-	injection_framework: "Injection framework",
+	注入框架: "Injection framework",
 	注入声明文件: "Inject declaration file",
 	添加导入映射: "Add import mapping",
 	屏蔽vscode框架文件提示: "Suppress vscode framework file hints",

@@ -1,6 +1,6 @@
 {
   "creator": {
-    "version": "3.6.3"
+    "version": "3.8.0"
   },
   "scripts": {
     "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",
@@ -20,7 +20,7 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "madge": "^5.0.2",
     "prettier": "^2.7.1",
-		"protobufjs-cli": "^1.1.3",
+    "protobufjs-cli": "^1.1.3",
     "ts-node": "^10.9.1",
     "type-fest": "^4.20.1",
     "typescript": "^4.7.4"
@@ -28,8 +28,11 @@
   "name": "mk-framework",
   "type": "module",
   "uuid": "0db88ab0-0e0d-4a27-98dc-7d2c966dad01",
-  "version": "3.6.3",
+  "version": "3.8.0",
   "dependencies": {
-		"protobufjs": "^7.4.0"
+    "protobufjs": "^7.4.0"
+  },
+  "MKFramework": {
+    "version": "开发版"
   }
 }

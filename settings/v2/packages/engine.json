@@ -121,11 +121,13 @@
       "gfx-webgl",
       "gfx-webgl2",
       "intersection-2d",
+      "light-probe",
       "particle-2d",
       "physics-2d-box2d",
       "profiler",
       "tween",
-      "ui"
+      "ui",
+      "websocket"
     ],
     "noDeprecatedFeatures": {
       "value": false,

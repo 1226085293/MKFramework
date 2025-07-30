@@ -20,7 +20,7 @@
 	// 使用本地的 typescript 版本
 	"typescript.tsdk": "node_modules\\typescript\\lib",
 	// 排除自动导入提示
-	"typescript.preferences.autoImportFileExcludePatterns": ["./extensions/MKFramework/assets/mk-framework/framework/**"],
+	"typescript.preferences.autoImportFileExcludePatterns": ["./extensions/MKFramework/assets/MKFramework/Framework/**"],
 	// 默认行尾字符
 	"files.eol": "\n",
 	// 控制编辑器在键入一行后是否自动格式化该行

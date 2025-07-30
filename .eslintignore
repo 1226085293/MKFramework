@@ -4,5 +4,5 @@ build/
 tool/
 plugin/
 extensions/*
-!extensions/MKFramework
+!extensions/MKFramework/source
 extensions_dev/

@@ -9,10 +9,10 @@ function default_1() {
     var _a;
     /** 包配置 */
     const project_package = cjson_1.default.load(path_1.default.join(Editor.Project.path, "package.json"));
-    if (!((_a = project_package["MKFramework"]) === null || _a === void 0 ? void 0 : _a.version_s)) {
-        console.log(Editor.I18n.t("MKFramework.当前项目未安装框架"));
+    if (!((_a = project_package["MKFramework"]) === null || _a === void 0 ? void 0 : _a.version)) {
+        console.log(Editor.I18n.t("mk-framework.当前项目未安装框架"));
         return;
     }
-    console.log(Editor.I18n.t("MKFramework.当前项目框架版本为") + project_package["MKFramework"].version_s);
+    console.log(Editor.I18n.t("mk-framework.当前项目框架版本为") + project_package["MKFramework"].version);
 }
 exports.default = default_1;

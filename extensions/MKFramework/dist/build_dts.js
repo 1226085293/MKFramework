@@ -52,12 +52,12 @@ async function run() {
                 .slice(0, index_n)
                 // 排除引用的绝对路径 cc.d.ts
                 .replace(/(\/\/\/ <reference)([^]+?(\/>))/g, "") +
-            "declare namespace mk {\n" +
-            dts_file_s.slice(index_n) +
-            "\n}\n export default mk;";
+                "declare namespace mk {\n" +
+                dts_file_s.slice(index_n) +
+                "\n}\n export default mk;";
     }
     // 添加全局配置引用
-    dts_file_s = `import global_config from "../../assets/MKFramework/config/global_config";\n` + dts_file_s;
+    dts_file_s = `import GlobalConfig from "../../assets/MKFramework/Config/GlobalConfig";\n` + dts_file_s;
     // 增加提示语
     dts_file_s =
         `// 框架源码位于 ${path_1.default.normalize("项目根目录/" + plugin_path_s.slice(plugin_path_s.indexOf("extensions")) + "assets/MKFramework")} 下，你也可以在资源管理器下方的 MKFramework 查看\n` + dts_file_s;

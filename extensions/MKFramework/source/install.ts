@@ -47,13 +47,13 @@ export default async function (): Promise<void> {
 
 	await Promise.resolve()
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.安全检查"));
+			console.log(Editor.I18n.t("mk-framework.安全检查"));
 			let path_s = path.join(__dirname, "..", framework_path_s);
 
 			// 覆盖安装确认
 			if (fs.existsSync(path_s) && fs.readdirSync(path_s).length !== 0) {
-				const result = await Editor.Dialog.info(Editor.I18n.t("MKFramework.确认安装"), {
-					buttons: [Editor.I18n.t("MKFramework.确认"), Editor.I18n.t("MKFramework.取消")],
+				const result = await Editor.Dialog.info(Editor.I18n.t("mk-framework.确认安装"), {
+					buttons: [Editor.I18n.t("mk-framework.确认"), Editor.I18n.t("mk-framework.取消")],
 				});
 
 				if (result.response !== 0) {
@@ -64,7 +64,7 @@ export default async function (): Promise<void> {
 			}
 		})
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.获取版本"));
+			console.log(Editor.I18n.t("mk-framework.获取版本"));
 			const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}/tags`;
 			const html_s = (await axios.get(remote_url_s)).data as string;
 			const tag_ss = html_s.match(/(?<=(data-ref="))([^"]*)(?=")/g) as string[];
@@ -79,7 +79,7 @@ export default async function (): Promise<void> {
 			version_s = tag_ss[0];
 		})
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.下载框架") + `(${version_s})`);
+			console.log(Editor.I18n.t("mk-framework.下载框架") + `(${version_s})`);
 
 			try {
 				fs.removeSync(download_path_s);
@@ -99,7 +99,7 @@ export default async function (): Promise<void> {
 		})
 		// 版本适配
 		.then(() => {
-			console.log(Editor.I18n.t("MKFramework.版本适配"));
+			console.log(Editor.I18n.t("mk-framework.版本适配"));
 			// 3.8.0 及以上删除 userData.bundleConfigID
 			if (project_package.creator?.version && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
 				const file_ss = [
@@ -117,7 +117,7 @@ export default async function (): Promise<void> {
 		})
 		// 注入框架
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.注入框架"));
+			console.log(Editor.I18n.t("mk-framework.注入框架"));
 			// 拷贝框架文件
 			{
 				fs.copySync(path.join(download_path_s, plugin_project_path_s, `assets`), path.join(install_path_s, ".."));
@@ -141,7 +141,7 @@ export default async function (): Promise<void> {
 		})
 		// 注入声明文件
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.注入声明文件"));
+			console.log(Editor.I18n.t("mk-framework.注入声明文件"));
 			/** 框架声明文件 */
 			const framework_tsconfig = cjson.load(path.join(download_path_s, "tsconfig.json"));
 			/** 声明文件路径 */
@@ -195,7 +195,7 @@ export default async function (): Promise<void> {
 		})
 		// 添加导入映射
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.添加导入映射"));
+			console.log(Editor.I18n.t("mk-framework.添加导入映射"));
 			const setting_path_s = path.join(Editor.Project.path, "settings/v2/packages/project.json");
 			const setting_config_tab = !fs.existsSync(setting_path_s) ? {} : fs.readJSONSync(setting_path_s);
 			const mk_import_map_tab = fs.readJSONSync(path.join(download_path_s, "import-map.json"));
@@ -257,7 +257,7 @@ export default async function (): Promise<void> {
 		})
 		// 屏蔽 vscode 框架文件提示
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.屏蔽vscode框架文件提示"));
+			console.log(Editor.I18n.t("mk-framework.屏蔽vscode框架文件提示"));
 			const old_settings_json = cjson.load(path.join(download_path_s, ".vscode/settings.json"));
 			const vscode_setting_path_s = path.join(Editor.Project.path, ".vscode/settings.json");
 			let settings_json: Record<string, any> = {};
@@ -284,12 +284,12 @@ export default async function (): Promise<void> {
 		})
 		// 更新框架版本信息
 		.then(async () => {
-			console.log(Editor.I18n.t("MKFramework.更新框架版本信息"));
+			console.log(Editor.I18n.t("mk-framework.更新框架版本信息"));
 			if (!project_package["MKFramework"]) {
 				project_package["MKFramework"] = {};
 			}
 
-			project_package["MKFramework"].version_s = version_s;
+			project_package["MKFramework"].version = version_s;
 
 			fs.writeFileSync(
 				path.join(Editor.Project.path, "package.json"),
@@ -302,19 +302,19 @@ export default async function (): Promise<void> {
 		})
 		// 清理临时文件
 		.then(() => {
-			console.log(Editor.I18n.t("MKFramework.清理临时文件"));
+			console.log(Editor.I18n.t("mk-framework.清理临时文件"));
 			fs.remove(download_path_s);
 		})
 		// 安装成功
 		.then(() => {
-			console.log(Editor.I18n.t("MKFramework.安装成功"));
+			console.log(Editor.I18n.t("mk-framework.安装成功"));
 		})
 		.catch((error) => {
 			if (!error) {
 				return;
 			}
 
-			console.error(Editor.I18n.t("MKFramework.安装失败"));
+			console.error(Editor.I18n.t("mk-framework.安装失败"));
 			console.error(error);
 		});
 }

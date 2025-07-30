@@ -15,11 +15,12 @@ export const methods: Record<string, (...any: any) => any> = {
 	 * @param str The string to be printed
 	 */
 	async install() {
-		console.log(Editor.I18n.t("MKFramework.任务开始"));
+		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
 			await (await import("./install")).default();
 		}
-		console.log(Editor.I18n.t("MKFramework.任务结束"));
+
+		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
 	async local_version() {
@@ -29,11 +30,12 @@ export const methods: Record<string, (...any: any) => any> = {
 	},
 
 	async build() {
-		console.log(Editor.I18n.t("MKFramework.任务开始"));
+		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
 			await (await import("./build_dts")).default();
 		}
-		console.log(Editor.I18n.t("MKFramework.任务结束"));
+
+		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
 	async help() {
