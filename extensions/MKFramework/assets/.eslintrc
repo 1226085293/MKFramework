@@ -116,47 +116,47 @@
 			},
 			// 类型结构（class, enum, interface, typeAlias 等）使用 PascalCase
 			{
-			"selector": "typeLike",
-			"format": ["PascalCase"]
+				"selector": "typeLike",
+				"format": ["PascalCase"]
 			},
 
 			// enum 成员 PascalCase
 			{
-			"selector": "enumMember",
-			"format": ["PascalCase"]
+				"selector": "enumMember",
+				"format": ["PascalCase"]
 			},
 
 			// private 成员 _camelCase
 			{
-			"selector": "memberLike",
-			"modifiers": ["private"],
-			"format": ["camelCase"],
-			"leadingUnderscore": "require"
+				"selector": "memberLike",
+				"modifiers": ["private"],
+				"format": ["camelCase"],
+				"leadingUnderscore": "require"
 			},
 
 			// protected 成员 _camelCase
 			{
-			"selector": "memberLike",
-			"modifiers": ["protected"],
-			"format": ["camelCase"],
-			"leadingUnderscore": "require",
-			"filter": {
-				"match": true,
-				"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)]"
-			}
+				"selector": "memberLike",
+				"modifiers": ["protected"],
+				"format": ["camelCase"],
+				"leadingUnderscore": "require",
+				"filter": {
+					"match": true,
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)]"
+				}
 			},
 			// public 成员 _camelCase
 			{
-			"selector": "memberLike",
-			"modifiers": ["public"],
-			"format": ["camelCase"],
+				"selector": "memberLike",
+				"modifiers": ["public"],
+				"format": ["camelCase"],
 			},
 
 			// 参数为 camelCase 且结尾可下划线
 			{
-			"selector": "parameter",
-			"format": ["camelCase"],
-			"trailingUnderscore": "allow"
+				"selector": "parameter",
+				"format": ["camelCase"],
+				"trailingUnderscore": "allow"
 			}
 		],
 		// 成员排序
