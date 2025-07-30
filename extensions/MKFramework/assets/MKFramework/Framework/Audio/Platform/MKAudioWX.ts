@@ -156,11 +156,11 @@ export namespace MKAudioWX_ {
 			return this.context.duration;
 		}
 
-		get currTimeSNum(): number {
+		get currentTimeSNum(): number {
 			return this.context.currentTime;
 		}
 
-		set currTimeSNum(valueNum_) {
+		set currentTimeSNum(valueNum_) {
 			this.context.currentTime = valueNum_;
 		}
 

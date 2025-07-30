@@ -281,7 +281,7 @@ export namespace MKAudioBase_ {
 		/** 循环 */
 		isLoop: boolean;
 		/** 当前时间（秒） */
-		currTimeSNum: number;
+		currentTimeSNum: number;
 		/** 等待播放开关 */
 		isWaitPlay?: boolean;
 		/* ------------------------------- 功能 ------------------------------- */
@@ -408,11 +408,11 @@ export namespace MKAudioBase_ {
 		}
 
 		/** 当前时间（秒） */
-		get currTimeSNum(): number {
+		get currentTimeSNum(): number {
 			return 0;
 		}
 
-		set currTimeSNum(valueNum_) {
+		set currentTimeSNum(valueNum_) {
 			throw "未实现";
 		}
 

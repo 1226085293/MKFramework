@@ -90,7 +90,7 @@ class MKAudioCommon extends MKAudioBase {
 		this._audioSourcePool.put(audio_.audioSource!);
 		audio_.audioSource = null;
 		// 重置进度
-		audio_.currTimeSNum = 0;
+		audio_.currentTimeSNum = 0;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -255,7 +255,7 @@ class MKAudioCommon extends MKAudioBase {
 			this._audioSourcePool.put(audio_.audioSource!);
 			audio_.audioSource = null;
 			// 重置进度
-			audio_.currTimeSNum = 0;
+			audio_.currentTimeSNum = 0;
 		}
 
 		// 继续播放
@@ -311,11 +311,11 @@ export namespace MKAudioCommon_ {
 			return this._getTotalTimeSNum();
 		}
 
-		get currTimeSNum(): number {
+		get currentTimeSNum(): number {
 			return this._getCurrTimeSNum();
 		}
 
-		set currTimeSNum(value_) {
+		set currentTimeSNum(value_) {
 			this._setCurrTimeSNum(value_);
 		}
 
@@ -333,7 +333,7 @@ export namespace MKAudioCommon_ {
 		/** 循环 */
 		private _isLoop = false;
 		/** 当前时间 */
-		private _currTimeSNum = 0;
+		private _currentTimeSNum = 0;
 		/** 音频组件 */
 		private _audioSource: cc.AudioSource | null = null;
 		/* ------------------------------- 功能 ------------------------------- */
@@ -413,20 +413,20 @@ export namespace MKAudioCommon_ {
 
 		private _getCurrTimeSNum(): number {
 			if (this.audioSource) {
-				this._currTimeSNum = this.audioSource.currentTime;
+				this._currentTimeSNum = this.audioSource.currentTime;
 			}
 
-			return this._currTimeSNum;
+			return this._currentTimeSNum;
 		}
 
 		private _setCurrTimeSNum(valueNum_: number): void {
-			this._currTimeSNum = valueNum_;
+			this._currentTimeSNum = valueNum_;
 
 			if (!this.audioSource) {
 				return;
 			}
 
-			this.audioSource.currentTime = this._currTimeSNum;
+			this.audioSource.currentTime = this._currentTimeSNum;
 		}
 
 		private _setAudioSource(value_: cc.AudioSource | null): void {
@@ -436,7 +436,7 @@ export namespace MKAudioCommon_ {
 			if (value_) {
 				this.volumeNum = this._volumeNum;
 				this.isLoop = this._isLoop;
-				this.currTimeSNum = this._currTimeSNum;
+				this.currentTimeSNum = this._currentTimeSNum;
 			}
 		}
 	}

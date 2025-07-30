@@ -17,7 +17,7 @@ declare namespace mk {
 			/**
 			 * bundle 名
 			 * @defaultValue
-			 * 编辑器：resources，运行时：mk.bundle.bundle_s(当前场景所属 bundle)
+			 * 编辑器：resources，运行时：mk.bundle.bundleStr(当前场景所属 bundle)
 			 */
 			bundleStr?: string;
 			/** 进度回调 */
@@ -30,10 +30,10 @@ declare namespace mk {
 			/** 完成回调 */
 			completedFunc?: (error: Error | null, asset: T) => void;
 			/** 远程配置，存在配置则为远程资源 */
-			remoteOption?: _mk_asset.LoadRemoteOptionType;
+			remoteOption?: _MKAsset.LoadRemoteOptionType;
 			/**
 			 * 失败重试次数
-			 * @defaultValue global_config.asset.config.retry_count_on_load_failure_n
+			 * @defaultValue GlobalConfig.Asset.Config.retryCountOnLoadFailureNum
 			 */
 			retryNum?: number;
 		}
@@ -100,7 +100,7 @@ declare namespace mk {
 			/** 循环 */
 			isLoop: boolean;
 			/** 当前时间（秒） */
-			currTimeSNum: number;
+			currentTimeSNum: number;
 			/** 等待播放开关 */
 			isWaitPlay?: boolean;
 			/** 克隆 */
@@ -217,9 +217,9 @@ declare namespace mk {
 			/**
 			 * 资源路径
 			 * @defaultValue
-			 * this.bundle_s
+			 * this.bundleStr
 			 * @remarks
-			 * loadBundle 时使用，不存在时将使用 bundle_s 进行 loadBundle
+			 * loadBundle 时使用，不存在时将使用 bundleStr 进行 loadBundle
 			 */
 			originStr?: string;
 		}
@@ -236,7 +236,7 @@ declare namespace mk {
 		export class LoadConfig extends BundleInfo {
 			constructor(init_: LoadConfig);
 			/** 加载回调 */
-			progressCallbackFunc?: (curr_n: number, total_n: number) => void;
+			progressCallbackFunc?: (currentNum: number, totalNum: number) => void;
 		}
 		/** 重载 bundle 信息 */
 		export class ReloadBundleInfo extends LoadConfig {
@@ -244,7 +244,7 @@ declare namespace mk {
 			/** 匹配 ccclass 名称正则表达式 */
 			ccclassRegexp?: RegExp;
 		}
-		/** switch_scene 配置 */
+		/** switchScene 配置 */
 		export class SwitchSceneConfig {
 			constructor(init_?: Partial<SwitchSceneConfig>);
 			/**
@@ -519,7 +519,7 @@ declare namespace mk {
 			 * 切换步骤前
 			 * @param nextStepNum 下个步骤
 			 * @remarks
-			 * set_step 时执行
+			 * setStep 时执行
 			 */
 			beforeSwitch(nextStepNum: number): void;
 			/**
@@ -580,7 +580,7 @@ declare namespace mk {
 			 *
 			 * - 可在此内更新服务端数据并请求奖励
 			 *
-			 * - 步骤可使用 this.step_update_data 获取返回数据
+			 * - 步骤可使用 this.stepUpdateData 获取返回数据
 			 */
 			stepUpdateCallbackFunc?(stepNum: number): any;
 		}
@@ -757,7 +757,7 @@ declare namespace mk {
 		/**
 		 * 视图数据
 		 * @remarks
-		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._reset_data_b 控制
+		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._isResetData 控制
 		 */
 		data?: any;
 		/**
@@ -818,7 +818,7 @@ declare namespace mk {
 		 * 初始化
 		 * @param data_ 初始化数据
 		 * @remarks
-		 * 所有依赖 init_data 初始化的逻辑都应在此进行
+		 * 所有依赖 initData 初始化的逻辑都应在此进行
 		 *
 		 * - 静态模块：onLoad 后调用，外部自行调用，常用于更新 item 或者静态模块
 		 *
@@ -829,7 +829,7 @@ declare namespace mk {
 		 * 打开
 		 * @protected
 		 * @remarks
-		 * onLoad，init 后执行，在此处执行无需 init_data 支持的模块初始化操作
+		 * onLoad，init 后执行，在此处执行无需 initData 支持的模块初始化操作
 		 *
 		 * open 顺序: 子 -> 父
 		 */
@@ -846,7 +846,7 @@ declare namespace mk {
 		 * 关闭后
 		 * @protected
 		 * @remarks
-		 * 在子模块 close 和 late_close 后执行
+		 * 在子模块 close 和 lateClose 后执行
 		 */
 		protected lateClose?(): void;
 		/** 驱动生命周期运行（用于动态添加的组件） */
@@ -934,48 +934,12 @@ declare namespace mk {
 		private _log;
 	}
 
-	declare namespace _mk_asset {
-		/** loadRemote 配置类型 */
-		interface LoadRemoteOptionType extends Record<string, any> {
-			uuid?: string;
-			url?: string;
-			path?: string;
-			dir?: string;
-			scene?: string;
-			ext?: string;
-		}
-		/** loadAny 配置类型 */
-		interface LoadAnyRequestType extends Record<string, any> {
-			uuid?: string;
-			url?: string;
-			path?: string;
-			dir?: string;
-			scene?: string;
-		}
-		/** 释放信息 */
-		class ReleaseInfo {
-			constructor(init_?: Partial<ReleaseInfo>);
-			/** 添加时间 */
-			joinTimeMsNum: number;
-			/** 资源 */
-			asset: cc_2.Asset;
-		}
-	}
-
-	declare namespace mk_websocket_wx_ {
-		class InitConfig<CT extends CodecBase = CodecBase> extends MKNetworkBase_.InitConfig<CT> {
-			constructor(init_?: Partial<InitConfig<CT>>);
-			/** 协议 */
-			protocolStrList: string[];
-		}
-	}
-
 	/**
 	 * 资源管理器
 	 * @noInheritDoc
 	 * @remarks
 	 *
-	 * - 统一加载接口为 get、get_dir
+	 * - 统一加载接口为 get、getDir
 	 *
 	 * - 支持 EDITOR 环境加载资源
 	 *
@@ -983,13 +947,13 @@ declare namespace mk {
 	 *
 	 * - 加载路径扩展，例：db://xxx.prefab
 	 *
-	 * - 资源默认引用为 2，引用为 1 时将在 global_config.resources.cache_lifetime_ms_n 时间后自动释放
-	 *
-	 * - 修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
-	 *
-	 * - 解决同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
+	 * - 资源默认引用为 2，引用为 1 时将在 GlobalConfig.Resources.cacheLifetimeMsNum 时间后自动释放
 	 *
 	 * - 增加强制性资源跟随释放对象
+	 *
+	 * - （3.8.6 已修复）修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
+	 *
+	 * - （3.8.6 已修复）修复同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
 	 */
 	declare class MKAsset extends InstanceBase {
 		constructor();
@@ -1045,6 +1009,34 @@ declare namespace mk {
 		 */
 		private _autoReleaseAsset;
 		private _onRestart;
+	}
+
+	declare namespace _MKAsset {
+		/** loadRemote 配置类型 */
+		interface LoadRemoteOptionType extends Record<string, any> {
+			uuid?: string;
+			url?: string;
+			path?: string;
+			dir?: string;
+			scene?: string;
+			ext?: string;
+		}
+		/** loadAny 配置类型 */
+		interface LoadAnyRequestType extends Record<string, any> {
+			uuid?: string;
+			url?: string;
+			path?: string;
+			dir?: string;
+			scene?: string;
+		}
+		/** 释放信息 */
+		class ReleaseInfo {
+			constructor(init_?: Partial<ReleaseInfo>);
+			/** 添加时间 */
+			joinTimeMsNum: number;
+			/** 资源 */
+			asset: cc_2.Asset;
+		}
 	}
 
 	/**
@@ -1104,7 +1096,7 @@ declare namespace mk {
 	 * @noInheritDoc
 	 * @remarks
 	 *
-	 * - 封装(加载/预加载)场景为 load_scene
+	 * - 封装(加载/预加载)场景为 loadScene
 	 *
 	 * - 支持(远程/本地) bundle
 	 *
@@ -1832,7 +1824,7 @@ declare namespace mk {
 			/** 新值 */
 			value: T,
 			/** 旧值 */
-			old_value?: T,
+			oldValue?: T,
 			/** 值路径（只会在监听无键的对象类型时传递） */
 			pathStr?: string
 		) => any;
@@ -2072,7 +2064,7 @@ declare namespace mk {
 			/**
 			 * 请求
 			 * @param data_ 发送数据
-			 * @param timeoutMsNum_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 wait_timeout_ms_n
+			 * @param timeoutMsNum_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 waitTimeoutMsNum
 			 * @returns
 			 * @remarks
 			 * 等待事件回调返回
@@ -2205,9 +2197,9 @@ declare namespace mk {
 			/**
 			 * 重置对象
 			 * @remarks
-			 * 在 create_f 后以及 put 时调用
+			 * 在 createFunc 后以及 put 时调用
 			 */
-			resetFunc?: (object: CT, create_b: boolean) => CT | Promise<CT>;
+			resetFunc?: (object: CT, isCreate: boolean) => CT | Promise<CT>;
 			/** 释放回调 */
 			clearFunc?: (objectList: CT[]) => void | Promise<void>;
 			/** 销毁回调 */
@@ -2243,9 +2235,9 @@ declare namespace mk {
 				/**
 				 * 重置对象
 				 * @remarks
-				 * 在 create_f 后以及 put 时调用
+				 * 在 createFunc 后以及 put 时调用
 				 */
-				resetFunc?: (object: CT, create_b: boolean) => CT;
+				resetFunc?: (object: CT, isCreate: boolean) => CT;
 				/** 释放回调 */
 				clearFunc?: (objectList: CT[]) => void;
 				/** 销毁回调 */
@@ -2499,7 +2491,7 @@ declare namespace mk {
 
 	declare namespace _MKUIManage {
 		/** 模块类型 */
-		type TypeModule<T extends cc_2.Constructor<ViewBase>> = T["prototype"]["type_s"] | "default";
+		type TypeModule<T extends cc_2.Constructor<ViewBase>> = T["prototype"]["typeStr"] | "default";
 		/** 注册资源类型 */
 		type TypeRegisSource<T extends cc_2.Constructor<ViewBase>> =
 			| cc_2.Prefab
@@ -2567,11 +2559,19 @@ declare namespace mk {
 	 * @noInheritDoc
 	 */
 	declare class MKWebsocketWX<CT extends CodecBase = CodecBase> extends MKNetworkBase<CT> {
-		constructor(config_?: Partial<mk_websocket_wx_.InitConfig<CT>>);
-		config: Readonly<mk_websocket_wx_.InitConfig<CT>>;
+		constructor(config_?: Partial<MKWebsocketWX_.InitConfig<CT>>);
+		config: Readonly<MKWebsocketWX_.InitConfig<CT>>;
 		protected _socket: wx.SocketTask;
 		/** 重置socket */
 		protected _resetSocket(): void;
+	}
+
+	declare namespace MKWebsocketWX_ {
+		class InitConfig<CT extends CodecBase = CodecBase> extends MKNetworkBase_.InitConfig<CT> {
+			constructor(init_?: Partial<InitConfig<CT>>);
+			/** 协议 */
+			protocolStrList: string[];
+		}
 	}
 
 	export declare const monitor: MKMonitor;
@@ -2935,7 +2935,7 @@ declare namespace mk {
 	/**
 	 * 场景基类
 	 * @remarks
-	 * 继承于 mk_life_cycle，屏蔽了多余 inspector 展示
+	 * 继承于 MKLifeCycle，屏蔽了多余 inspector 展示
 	 */
 	export declare class StaticViewBase extends LifeCycle {
 		protected _isUseLayer: boolean;
@@ -2945,7 +2945,7 @@ declare namespace mk {
 	 * 存储器（类型安全）
 	 * @noInheritDoc
 	 * @remarks
-	 * 注意：在未设置 name_s(存储器名) 之前，存储数据将不会被存储在硬盘，而是在内存中
+	 * 注意：在未设置 nameStr(存储器名) 之前，存储数据将不会被存储在硬盘，而是在内存中
 	 */
 	declare class Storage_2<CT extends Object> {
 		constructor(init_: MKStorage_.InitConfig<CT>);
@@ -3020,7 +3020,7 @@ declare namespace mk {
 			/**
 			 * 销毁动态子节点
 			 * @defaultValue
-			 * destroy_b
+			 * isDestroy
 			 */
 			isDestroyChildren?: boolean;
 		}
