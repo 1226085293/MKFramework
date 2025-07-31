@@ -50,16 +50,11 @@ export class ResourcesModule extends mk.ViewBase {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// init(init_?: typeof this.init_data): void {}
 	open(): void {
-		mk.uiManage.regis(ResourcesModuleLifeCycle, "db://assets/resources/module/module/life_cycle/resources_module_life_cycle.prefab", this);
-		mk.uiManage.regis(ResourcesModuleShowAlone, "db://assets/resources/module/module/show_alone/resources_module_show_alone.prefab", this);
-		mk.uiManage.regis(
-			ResourcesModuleLayerControl,
-			"db://assets/resources/module/module/layer_control/resources_module_layer_control.prefab",
-			this
-		);
-
-		mk.uiManage.regis(ResourcesModuleUIStack, "db://assets/resources/module/module/ui_stack/resources_module_ui_stack.prefab", this);
-		mk.uiManage.regis(ResourcesModuleWindow, "db://assets/resources/module/module/window/resources_module_window.prefab", this);
+		mk.uiManage.regis(ResourcesModuleLifeCycle, "db://assets/resources/Module/Module/LifeCycle/ResourcesModuleLifeCycle.prefab", this);
+		mk.uiManage.regis(ResourcesModuleShowAlone, "db://assets/resources/Module/Module/ShowAlone/ResourcesModuleShowAlone.prefab", this);
+		mk.uiManage.regis(ResourcesModuleLayerControl, "db://assets/resources/Module/Module/LayerControl/ResourcesModuleLayerControl.prefab", this);
+		mk.uiManage.regis(ResourcesModuleUIStack, "db://assets/resources/Module/Module/UIStack/ResourcesModuleUIStack.prefab", this);
+		mk.uiManage.regis(ResourcesModuleWindow, "db://assets/resources/Module/Module/Window/ResourcesModuleWindow.prefab", this);
 	}
 
 	// close(): void {}

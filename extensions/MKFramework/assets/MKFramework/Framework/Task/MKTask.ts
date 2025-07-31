@@ -1,3 +1,3 @@
-import * as MKTask from "./MKTaskExport";
+import * as mkTask from "./MKTaskExport";
 
-export default MKTask;
+export default mkTask;

@@ -15,7 +15,7 @@ export class ResourcesModuleUIStack extends mk.ViewBase {
 
 	// init(init_?: typeof this.init_data): void {}
 	open(): void {
-		mk.uiManage.regis(ResourcesModuleUIStackDemo, "db://assets/resources/module/module/ui_stack/ui/resources_module_ui_stack_demo", this, {
+		mk.uiManage.regis(ResourcesModuleUIStackDemo, "db://assets/resources/Module/Module/UIStack/UI/ResourcesModuleUIStackDemo", this, {
 			parent: this.nodes.layout,
 			isRepeat: true,
 		});

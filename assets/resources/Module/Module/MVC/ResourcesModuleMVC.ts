@@ -32,7 +32,7 @@ class Model extends mk.MVCModelBase {
 
 export class View extends mk.MVCViewBase<Model> {
 	static new<T extends new (...argsList: any[]) => any>(this: T, ...argsList_: ConstructorParameters<T>): Promise<InstanceType<T> | null> {
-		mk.uiManage.regis(View, "db://assets/resources/module/module/mvc/resources_module_mvc.prefab", null);
+		mk.uiManage.regis(View, "db://assets/resources/Module/Module/MVC/ResourcesModuleMVC.prefab", null);
 
 		return mk.uiManage.open(View);
 	}

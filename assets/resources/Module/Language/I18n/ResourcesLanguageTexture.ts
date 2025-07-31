@@ -4,7 +4,7 @@ import { ResourcesLanguage } from "../ResourcesLanguage";
 
 export default new mk.Language_.TextureData(cc.js.getClassName(ResourcesLanguage), {
 	示例: {
-		enUs: "db://assets/resources/module/language/texture/en",
-		zhCn: "db://assets/resources/module/language/texture/cn",
+		enUs: "db://assets/resources/Module/Language/Texture/en",
+		zhCn: "db://assets/resources/Module/Language/Texture/cn",
 	},
 });

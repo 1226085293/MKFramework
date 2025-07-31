@@ -1147,7 +1147,7 @@
     "_id": "4dI5r+yg9LcrkuqBXxZU+m"
   },
   {
-    "__type__": "monitor_trigger/trigger",
+    "__type__": "MonitorTrigger/Trigger",
     "event_param_as": [
       {
         "__id__": 32
@@ -1157,7 +1157,7 @@
     "type_s": "string"
   },
   {
-    "__type__": "data_method_string/编辑框",
+    "__type__": "DataMethodString/编辑框",
     "sync_modify_b": true
   },
   {
@@ -1750,7 +1750,7 @@
     "_id": "81pPX6KQZCraUIJQR3ipA8"
   },
   {
-    "__type__": "monitor_trigger/trigger",
+    "__type__": "MonitorTrigger/Trigger",
     "event_param_as": [
       {
         "__id__": 51
@@ -1760,7 +1760,7 @@
     "type_s": "string"
   },
   {
-    "__type__": "data_method_string/编辑框",
+    "__type__": "DataMethodString/编辑框",
     "sync_modify_b": true
   },
   {
@@ -2353,7 +2353,7 @@
     "_id": "84FQAwa49GlrbBLHlTxKhC"
   },
   {
-    "__type__": "monitor_trigger/trigger",
+    "__type__": "MonitorTrigger/Trigger",
     "event_param_as": [
       {
         "__id__": 70
@@ -2363,7 +2363,7 @@
     "type_s": "string"
   },
   {
-    "__type__": "data_method_string/编辑框",
+    "__type__": "DataMethodString/编辑框",
     "sync_modify_b": true
   },
   {

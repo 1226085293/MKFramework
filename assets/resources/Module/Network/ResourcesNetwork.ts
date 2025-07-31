@@ -1,7 +1,7 @@
 import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
-import tool from "../../../Tool/tool";
+import tool from "../../../Tool/Tool";
 import { test } from "../../Bundle/Proto/test.js";
 import { common } from "../../Bundle/Proto/common.js";
 const { ccclass, property } = _decorator;

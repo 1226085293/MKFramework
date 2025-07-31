@@ -49,10 +49,10 @@ export class MainMain extends mk.StaticViewBase {
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	async onLoad() {
-		mk.uiManage.regis(ResourcesAudio, "db://assets/resources/module/audio/resources_audio.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesLanguage, "db://assets/resources/module/language/resources_language.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesModule, "db://assets/resources/module/module/resources_module.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesNetwork, "db://assets/resources/module/network/resources_network.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesGuide, "db://assets/resources/module/guide/resources_guide.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesAudio, "db://assets/resources/Module/Audio/ResourcesAudio.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesLanguage, "db://assets/resources/Module/Language/ResourcesLanguage.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesModule, "db://assets/resources/Module/Module/ResourcesModule.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesNetwork, "db://assets/resources/Module/Network/ResourcesNetwork.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesGuide, "db://assets/resources/Module/Guide/ResourcesGuide.prefab", MainBundle);
 	}
 }

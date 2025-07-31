@@ -12,7 +12,7 @@ class ToolCodecProtoStaticCommon extends mk.CodecBase {
 
 	/* --------------- public --------------- */
 	/** 消息序列号 */
-	sequence_n = 0;
+	sequenceNum = 0;
 	/* --------------- protected --------------- */
 	protected _config: ToolCodecProtoStaticCommon_.Config;
 	/* --------------- private --------------- */
@@ -53,7 +53,7 @@ class ToolCodecProtoStaticCommon extends mk.CodecBase {
 			.encode(
 				this._dependent.package.create({
 					id: messageIdNum,
-					sequence: data_["__sequenceNum"] ?? this.sequence_n++,
+					sequence: data_["__sequenceNum"] ?? this.sequenceNum++,
 					data: message.encode(data_).finish(),
 				})
 			)
@@ -98,7 +98,7 @@ class ToolCodecProtoStaticCommon extends mk.CodecBase {
 		const messageKeyStr: string = class_.getTypeUrl("");
 		let messageNameStr = messageKeyStr.slice(messageKeyStr.lastIndexOf(".") + 1);
 
-		if (["C", "S", "B"].some((v_s) => messageNameStr.endsWith(v_s))) {
+		if (["C", "S", "B"].some((vStr) => messageNameStr.endsWith(vStr))) {
 			messageNameStr = messageNameStr.slice(0, -1);
 		}
 

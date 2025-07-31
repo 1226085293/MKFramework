@@ -200,9 +200,9 @@ namespace GlobalConfig {
 		// eslint-disable-next-line @typescript-eslint/no-empty-interface
 		export interface ProtoHead {
 			// /** 消息 id */
-			// __id: number;
+			// __idNum: number;
 			// /** 消息序列号 */
-			// __sequence?: number;
+			// __sequenceNum?: number;
 		}
 
 		/** 消息头键 */

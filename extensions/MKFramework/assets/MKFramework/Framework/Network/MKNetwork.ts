@@ -1,3 +1,3 @@
-import * as MKNetwork from "./MKNetworkExport";
+import * as mkNetwork from "./MKNetworkExport";
 
-export default MKNetwork;
+export default mkNetwork;

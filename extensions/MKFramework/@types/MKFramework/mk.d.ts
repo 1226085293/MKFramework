@@ -659,10 +659,10 @@ declare namespace mk {
 		static instance<T extends new (...argsList: any[]) => any>(this: T, ...argsList_: ConstructorParameters<T>): InstanceType<T>;
 	}
 
-	declare namespace Language {
+	declare namespace language {
 		export { MKLanguageLabel as Label, MKLanguageTexture as Texture, MKLanguageNode as Node };
 	}
-	export { Language };
+	export { language };
 
 	export declare namespace Language_ {
 		/** 多语言数据结构 */
@@ -2649,7 +2649,7 @@ declare namespace mk {
 		export function clear(): void;
 	}
 
-	declare namespace Network {
+	declare namespace network {
 		export {
 			MKWebsocket as Websocket,
 			MKWebsocket_ as Websocket_,
@@ -2660,7 +2660,7 @@ declare namespace mk {
 			MKNetworkBase_ as Base_,
 		};
 	}
-	export { Network };
+	export { network };
 
 	declare class NodeExtends {
 		constructor(node_: cc_2.Node);
@@ -2998,10 +2998,10 @@ declare namespace mk {
 	}
 	export { Storage_2 as Storage };
 
-	declare namespace Task {
+	declare namespace task {
 		export { MKStatusTask as Status, MKTaskPipeline as Pipeline };
 	}
-	export { Task };
+	export { task };
 
 	export declare const uiManage: MKUIManage;
 

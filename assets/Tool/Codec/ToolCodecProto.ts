@@ -34,25 +34,25 @@ class ToolCodecProto extends mk.CodecBase {
 			protobufjs.Root["_configure"](protobufjs.Type, undefined, {});
 
 			// 重载 fetch（从路径获取文件内容，json文件不能加载为 cc.TextAsset，所以必须为 txt）
-			protobufjs.Root.prototype.fetch = async (path: string, callback_f: protobufjs.FetchCallback) => {
+			protobufjs.Root.prototype.fetch = async (path: string, callbackFunc: protobufjs.FetchCallback) => {
 				const asset = await mk.asset.get(path, cc.TextAsset, null);
 
 				if (asset) {
 					this._waitReleaseAssetList.push(asset);
 				}
 
-				callback_f(asset ? null! : new Error(), asset?.text ?? null!);
+				callbackFunc(asset ? null! : new Error(), asset?.text ?? null!);
 			};
 		}
 
-		this._initTask = new Promise<void>((resolve_f) => {
+		this._initTask = new Promise<void>((resolveFunc) => {
 			// json 文件
 			if (pathStr_) {
 				mk.asset.getDir(pathStr_, cc.JsonAsset, null, {
 					completedFunc: async (error, assetList) => {
 						if (error) {
 							mk.error("加载proto文件失败, 请检查路径是否正确!");
-							resolve_f();
+							resolveFunc();
 
 							return;
 						}
@@ -60,34 +60,34 @@ class ToolCodecProto extends mk.CodecBase {
 						// 等待释放
 						this._waitReleaseAssetList.push(...assetList.filter((v) => v !== null));
 
-						const task_as = assetList.map((v) => {
+						const taskList = assetList.map((v) => {
 							if (!v) {
 								return Promise.resolve();
 							}
 
-							return new Promise<void>((resolve2_f) => {
+							return new Promise<void>((resolve2Func) => {
 								protobufjs.load(pathStr_ + "/" + v.name, (error, root) => {
 									if (!error) {
-										this._readType(this._mess, root);
+										this._readType(this._message, root);
 									} else {
 										mk.error(error);
 									}
 
-									resolve2_f();
+									resolve2Func();
 								});
 							});
 						});
 
-						await Promise.all(task_as);
+						await Promise.all(taskList);
 
-						resolve_f();
+						resolveFunc();
 					},
 				});
 			}
 			// json 模块
 			else if (jsonModule) {
-				this._readType(this._mess, jsonModule);
-				resolve_f();
+				this._readType(this._message, jsonModule);
+				resolveFunc();
 			}
 		}).then(() => {
 			// 删除资源引用
@@ -103,8 +103,10 @@ class ToolCodecProto extends mk.CodecBase {
 	/* --------------- protected --------------- */
 	protected _config: ToolCodecProto_.Config;
 	/* --------------- private --------------- */
-	private _mess: Record<string, protobufjs.Root> = Object.create(null);
-	private _messMap = new Map<number, protobufjs.Type>();
+	/** 消息 ID 键（在 proto 文件中定义的 id 属性名） */
+	private readonly _messageIdKeyStr = "__idNum";
+	private _message: Record<string, protobufjs.Root> = Object.create(null);
+	private _messageMap = new Map<number, protobufjs.Type>();
 	private _initTask: Promise<void>;
 	private _waitReleaseAssetList: cc.Asset[] = [];
 	/* ------------------------------- 功能 ------------------------------- */
@@ -112,31 +114,31 @@ class ToolCodecProto extends mk.CodecBase {
 	async encode(data_: { id: string | number; data: any }): Promise<ArrayBuffer | null> {
 		await this._initTask;
 		/** 消息类型 */
-		let mess: protobufjs.Type | null | undefined;
+		let message: protobufjs.Type | null | undefined;
 
 		if (typeof data_.id === "number") {
-			mess = this._messMap.get(data_.id);
+			message = this._messageMap.get(data_.id);
 		} else {
-			mess = await this._find_mess(data_.id);
+			message = await this._findMessage(data_.id);
 		}
 
-		if (!mess) {
+		if (!message) {
 			return null;
 		}
 
 		// 将消息号加入消息体
 		// eslint-disable-next-line no-self-assign
-		data_.data[GlobalConfig.Network.protoHeadKeyTab.__id] = mess.fieldsById[1].getOption("default");
+		data_.data[this._messageIdKeyStr] = message.fieldsById[1].getOption("default");
 
 		// 校验数据
-		if (this._config.isSendVerify && mess.verify(data_.data)) {
-			this._log.error("发送数据校验未通过", mess.fullName, data_.data);
+		if (this._config.isSendVerify && message.verify(data_.data)) {
+			this._log.error("发送数据校验未通过", message.fullName, data_.data);
 
 			return null;
 		}
 
 		/** 消息数据 */
-		const data = mess.encode(data_.data).finish();
+		const data = message.encode(data_.data).finish();
 
 		return this._config.encryptionFunc?.(data) ?? data;
 	}
@@ -148,17 +150,17 @@ class ToolCodecProto extends mk.CodecBase {
 		/** 消息号 */
 		const idNum = protobufjs.Reader.create(dataUint8List).skipType(0).uint32();
 		/** 消息 */
-		const mess = this._messMap.get(idNum);
+		const message = this._messageMap.get(idNum);
 
-		if (!mess) {
+		if (!message) {
 			this._log.error("未找到消息号为 " + idNum + " 的已注册消息!");
 
 			return null;
 		}
 
-		const data = this._config.decryptFunc?.(mess.decode(dataUint8List)) ?? mess.decode(dataUint8List);
+		const data = this._config.decryptFunc?.(message.decode(dataUint8List)) ?? message.decode(dataUint8List);
 
-		if (this._config.isRecvVerify && mess.verify(data)) {
+		if (this._config.isRecvVerify && message.verify(data)) {
 			this._log.error("接收包数据校验未通过, 请联系服务端协调!");
 
 			return null;
@@ -174,7 +176,7 @@ class ToolCodecProto extends mk.CodecBase {
 			!mess_?.fieldsById ||
 			mess_.fieldsById[1] === undefined ||
 			// 不存在消息ID
-			mess_.fieldsById[1]?.name != GlobalConfig.Network.protoHeadKeyTab.__id ||
+			mess_.fieldsById[1]?.name != this._messageIdKeyStr ||
 			// 不存在消息ID默认值
 			mess_.fieldsById[1].getOption("default") === undefined
 		) {
@@ -182,10 +184,10 @@ class ToolCodecProto extends mk.CodecBase {
 		}
 
 		/** 相同消息 */
-		const sameMess = this._messMap.get(mess_.fieldsById[1].getOption("default"));
+		const sameMessage = this._messageMap.get(mess_.fieldsById[1].getOption("default"));
 
-		if (sameMess) {
-			mk.error(`${sameMess.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
+		if (sameMessage) {
+			mk.error(`${sameMessage.fullName} 与 ${mess_.fullName} 消息 ID 相同!`);
 
 			return false;
 		}
@@ -221,7 +223,7 @@ class ToolCodecProto extends mk.CodecBase {
 
 		for (const [kStr, v] of Object.entries(args_.nested)) {
 			if (this._regisMessageCheck(v)) {
-				this._messMap.set(v.fieldsById[1].getOption("default"), v);
+				this._messageMap.set(v.fieldsById[1].getOption("default"), v);
 			} else if (v.nested) {
 				this._readId(v);
 			}
@@ -229,7 +231,7 @@ class ToolCodecProto extends mk.CodecBase {
 	}
 
 	/** 查找消息类型 */
-	private async _find_mess(messStr_: string): Promise<protobufjs.Type | null> {
+	private async _findMessage(messStr_: string): Promise<protobufjs.Type | null> {
 		// 安检
 		const messStrList = messStr_.split(`.`);
 
@@ -238,24 +240,24 @@ class ToolCodecProto extends mk.CodecBase {
 		}
 
 		// 查找
-		let mess: any = this._mess;
+		let message: any = this._message;
 
 		await this._initTask;
 		for (let kNum = 0; kNum < messStrList.length - 1; ++kNum) {
-			if (!mess[messStrList[kNum]] || !(mess = mess[messStrList[kNum]].nested)) {
+			if (!message[messStrList[kNum]] || !(message = message[messStrList[kNum]].nested)) {
 				mk.error("未找到名为" + messStr_ + "的已注册消息!");
 
 				return null;
 			}
 		}
 
-		if (!(mess = mess[messStrList[messStrList.length - 1]])) {
+		if (!(message = message[messStrList[messStrList.length - 1]])) {
 			mk.error("未找到名为" + messStr_ + "的已注册消息!");
 
 			return null;
 		}
 
-		return mess;
+		return message;
 	}
 }
 

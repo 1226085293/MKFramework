@@ -52,31 +52,31 @@ class ToolCodecBase64 extends mk.CodecBase {
 	}
 
 	/** 解码 */
-	decode(data_s_: string): string {
-		let result_s = "";
+	decode(dataStr_: string): string {
+		let resultStr = "";
 		let tempNum: number, temp2Num: number, temp3Num: number, temp4Num: number, temp5Num: number, temp6Num: number, temp7Num: number;
 
 		// eslint-disable-next-line no-useless-escape
-		data_s_ = data_s_.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-		for (let kNum = 0; kNum < data_s_.length; ) {
-			temp4Num = _ToolCodecBase64.libStr.indexOf(data_s_.charAt(kNum++));
-			temp5Num = _ToolCodecBase64.libStr.indexOf(data_s_.charAt(kNum++));
-			temp6Num = _ToolCodecBase64.libStr.indexOf(data_s_.charAt(kNum++));
-			temp7Num = _ToolCodecBase64.libStr.indexOf(data_s_.charAt(kNum++));
+		dataStr_ = dataStr_.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+		for (let kNum = 0; kNum < dataStr_.length; ) {
+			temp4Num = _ToolCodecBase64.libStr.indexOf(dataStr_.charAt(kNum++));
+			temp5Num = _ToolCodecBase64.libStr.indexOf(dataStr_.charAt(kNum++));
+			temp6Num = _ToolCodecBase64.libStr.indexOf(dataStr_.charAt(kNum++));
+			temp7Num = _ToolCodecBase64.libStr.indexOf(dataStr_.charAt(kNum++));
 			tempNum = (temp4Num << 2) | (temp5Num >> 4);
 			temp2Num = ((temp5Num & 15) << 4) | (temp6Num >> 2);
 			temp3Num = ((temp6Num & 3) << 6) | temp7Num;
-			result_s = result_s + String.fromCharCode(tempNum);
+			resultStr = resultStr + String.fromCharCode(tempNum);
 			if (temp6Num != 64) {
-				result_s = result_s + String.fromCharCode(temp2Num);
+				resultStr = resultStr + String.fromCharCode(temp2Num);
 			}
 
 			if (temp7Num != 64) {
-				result_s = result_s + String.fromCharCode(temp3Num);
+				resultStr = resultStr + String.fromCharCode(temp3Num);
 			}
 		}
 
-		return this._utf8Codec.decode(result_s);
+		return this._utf8Codec.decode(resultStr);
 	}
 }
 

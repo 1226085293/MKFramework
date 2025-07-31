@@ -10,12 +10,14 @@ class ToolCodecProtoStatic extends mk.CodecBase {
 		this._config = new ToolCodecProtoStatic_.Config(option_);
 
 		// 注册消息类型
-		this._regis_message(proto_, this._config.name_s);
+		this._regisMessage(proto_, this._config.nameStr);
 	}
 
 	/* --------------- protected --------------- */
 	protected _config: ToolCodecProtoStatic_.Config;
 	/* --------------- private --------------- */
+	/** 消息 ID 键（在 proto 文件中定义的 id 属性名） */
+	private readonly _messageIdKeyStr = "__idNum";
 	/** 消息类型表 */
 	private _messMap = new Map<number, protobufjs.Type>();
 	/** 消息路径表 */
@@ -23,26 +25,26 @@ class ToolCodecProtoStatic extends mk.CodecBase {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 编码 */
 	encode(data_: any): ArrayBuffer | null {
-		const mess = this._messMap.get(data_[GlobalConfig.Network.protoHeadKeyTab.__id]);
+		const message = this._messMap.get(data_[this._messageIdKeyStr]);
 
-		if (!mess) {
-			this._log.error("未找到消息号为" + data_[GlobalConfig.Network.protoHeadKeyTab.__id] + "的已注册消息!");
+		if (!message) {
+			this._log.error("未找到消息号为" + data_[this._messageIdKeyStr] + "的已注册消息!");
 
 			return null;
 		}
 
 		// 添加消息头
-		data_[GlobalConfig.Network.protoHeadKeyTab.__id] = data_.__proto__[GlobalConfig.Network.protoHeadKeyTab.__id];
+		data_[this._messageIdKeyStr] = data_.__proto__[this._messageIdKeyStr];
 
 		// 校验数据
-		if (this._config.isSendVerify && mess.verify(data_)) {
-			this._log.error("发送数据校验未通过", this._messPathMap.get(mess), data_);
+		if (this._config.isSendVerify && message.verify(data_)) {
+			this._log.error("发送数据校验未通过", this._messPathMap.get(message), data_);
 
 			return null;
 		}
 
 		/** 消息数据 */
-		const data = mess.encode(data_).finish();
+		const data = message.encode(data_).finish();
 
 		return this._config.encryptionFunc?.(data) ?? data;
 	}
@@ -54,17 +56,17 @@ class ToolCodecProtoStatic extends mk.CodecBase {
 		/** 消息号 */
 		const idNum = protobufjs.Reader.create(dataUint8List).skipType(0).uint32();
 		/** 消息 */
-		const mess = this._messMap.get(idNum);
+		const message = this._messMap.get(idNum);
 
-		if (!mess) {
+		if (!message) {
 			this._log.error("未找到消息号为" + idNum + "的已注册消息!");
 
 			return null;
 		}
 
-		const data = this._config.decryptFunc?.(mess.decode(dataUint8List)) ?? mess.decode(dataUint8List);
+		const data = this._config.decryptFunc?.(message.decode(dataUint8List)) ?? message.decode(dataUint8List);
 
-		if (this._config.isRecvVerify && mess.verify(data)) {
+		if (this._config.isRecvVerify && message.verify(data)) {
 			this._log.error("接收包数据校验未通过, 请联系服务端协调!");
 
 			return null;
@@ -74,13 +76,13 @@ class ToolCodecProtoStatic extends mk.CodecBase {
 	}
 
 	/** 消息注册检查 */
-	private _regis_message_check(mess_: protobufjs.Type): boolean {
+	private _regisMessageCheck(mess_: protobufjs.Type): boolean {
 		if (!mess_) {
 			return false;
 		}
 
 		/** 消息号 */
-		const messIdNum = mess_["prototype"][GlobalConfig.Network.protoHeadKeyTab.__id];
+		const messIdNum = mess_["prototype"][this._messageIdKeyStr];
 
 		// 不存在消息号或不存在消息ID默认值
 		if ((messIdNum ?? null) === null) {
@@ -88,10 +90,10 @@ class ToolCodecProtoStatic extends mk.CodecBase {
 		}
 
 		/** 相同消息 */
-		const sameMess = this._messMap.get(messIdNum);
+		const sameMessage = this._messMap.get(messIdNum);
 
-		if (sameMess) {
-			this._log.error(`${this._messPathMap.get(mess_)} 与 ${this._messPathMap.get(sameMess)} 消息号相同!`);
+		if (sameMessage) {
+			this._log.error(`${this._messPathMap.get(mess_)} 与 ${this._messPathMap.get(sameMessage)} 消息号相同!`);
 
 			return false;
 		}
@@ -100,29 +102,29 @@ class ToolCodecProtoStatic extends mk.CodecBase {
 	}
 
 	/** 注册消息 */
-	private _regis_message(messTab_: any, pathStr_: string): void {
+	private _regisMessage(messTab_: any, pathStr_: string): void {
 		for (const kStr in messTab_) {
-			const mess = messTab_[kStr];
+			const message = messTab_[kStr];
 
-			switch (typeof mess) {
+			switch (typeof message) {
 				case "object":
 					{
-						this._regis_message(mess, `${pathStr_}.${kStr}`);
+						this._regisMessage(message, `${pathStr_}.${kStr}`);
 					}
 
 					break;
 				case "function":
 					{
 						/** 消息号 */
-						const idNum = mess.prototype[GlobalConfig.Network.protoHeadKeyTab.__id];
+						const idNum = message.prototype[this._messageIdKeyStr];
 
 						// 添加路径信息
-						this._messPathMap.set(mess, `${pathStr_}.${kStr}`);
+						this._messPathMap.set(message, `${pathStr_}.${kStr}`);
 
-						if (this._regis_message_check(mess)) {
-							this._messMap.set(idNum, mess);
+						if (this._regisMessageCheck(message)) {
+							this._messMap.set(idNum, message);
 						} else {
-							this._messPathMap.delete(mess);
+							this._messPathMap.delete(message);
 						}
 					}
 
@@ -144,7 +146,7 @@ export namespace ToolCodecProtoStatic_ {
 		/** 接收校验 */
 		isRecvVerify = DEBUG;
 		/** 协议名 */
-		name_s = "root";
+		nameStr = "root";
 	}
 }
 
