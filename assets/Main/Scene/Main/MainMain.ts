@@ -1,3 +1,4 @@
+import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
 import { ResourcesAudio } from "../../../resources/Module/Audio/ResourcesAudio";
@@ -6,18 +7,28 @@ import { ResourcesLanguage } from "../../../resources/Module/Language/ResourcesL
 import { ResourcesModule } from "../../../resources/Module/Module/ResourcesModule";
 import { ResourcesNetwork } from "../../../resources/Module/Network/ResourcesNetwork";
 import MainBundle from "../../Bundle/MainBundle";
+import tool from "db://assets/Tool/Tool";
 import { MainMainItem } from "../../Module/Main/Item/MainMainItem";
-import GlobalConfig from "global_config";
 const { ccclass, property } = _decorator;
 
 @ccclass("MainMain")
 export class MainMain extends mk.StaticViewBase {
-	/* --------------- static --------------- */
 	/* --------------- 属性 --------------- */
-	/* --------------- public --------------- */
-	data = new (class {
-		versionStr = GlobalConfig.Constant.versionStr;
-		viewListList: typeof MainMainItem.prototype.data[] = [
+	@property({ displayName: "列表", type: cc.Node })
+	listNode: cc.Node = null!;
+
+	@property({ displayName: "版本号", type: cc.Node })
+	versionNode: cc.Node = null!;
+
+	/* ------------------------------- 生命周期 ------------------------------- */
+	protected open(): void {
+		mk.uiManage.regis(ResourcesAudio, "db://assets/resources/Module/Audio/ResourcesAudio.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesLanguage, "db://assets/resources/Module/Language/ResourcesLanguage.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesModule, "db://assets/resources/Module/Module/ResourcesModule.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesNetwork, "db://assets/resources/Module/Network/ResourcesNetwork.prefab", MainBundle);
+		mk.uiManage.regis(ResourcesGuide, "db://assets/resources/Module/Guide/ResourcesGuide.prefab", MainBundle);
+
+		const dataList: MainMainItem["initData"][] = [
 			{
 				labelStr: "音频",
 				view: ResourcesAudio,
@@ -41,18 +52,16 @@ export class MainMain extends mk.StaticViewBase {
 			{
 				labelStr: "热更",
 				view: () => {
-					mk.bundle.loadScene("default", { bundleStr: "hot_update" });
+					mk.bundle.loadScene("default", { bundleStr: "HotUpdate" });
 				},
 			},
 		];
-	})();
 
-	/* ------------------------------- 生命周期 ------------------------------- */
-	async onLoad() {
-		mk.uiManage.regis(ResourcesAudio, "db://assets/resources/Module/Audio/ResourcesAudio.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesLanguage, "db://assets/resources/Module/Language/ResourcesLanguage.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesModule, "db://assets/resources/Module/Module/ResourcesModule.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesNetwork, "db://assets/resources/Module/Network/ResourcesNetwork.prefab", MainBundle);
-		mk.uiManage.regis(ResourcesGuide, "db://assets/resources/Module/Guide/ResourcesGuide.prefab", MainBundle);
+		tool.node.synchronizedChildNodeNumber(this.listNode, dataList.length);
+		dataList.forEach((v, kNum) => {
+			const node = this.listNode.children[kNum];
+
+			node.getComponent(MainMainItem)!.init(v);
+		});
 	}
 }

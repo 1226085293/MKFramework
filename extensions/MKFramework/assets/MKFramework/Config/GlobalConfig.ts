@@ -16,7 +16,7 @@ namespace GlobalConfig {
 
 	/** 音频 */
 	export namespace Audio {
-		/** 音频类型（必须 < 0） */
+		/** 音频类型（小于 0 防止和其他位置定义的音频组冲突） */
 		export enum Type {
 			/** 音效 */
 			Effect = -99,

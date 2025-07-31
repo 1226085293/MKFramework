@@ -21,6 +21,35 @@ class ToolNode extends mk.InstanceBase {
 
 		return this.traverseParent(node_.parent, callbackFunc_);
 	}
+
+	/**
+	 * 同步子节点数量
+	 * @param node_ 父节点
+	 * @param valueN_ 子节点数量
+	 */
+	synchronizedChildNodeNumber(node_: cc.Node, valueN_: number): void {
+		if (valueN_ === 0) {
+			node_.children[0].active = false;
+
+			return;
+		}
+
+		// 移除多余的子节点
+		for (let kN = 0, lenN = node_.children.length - valueN_; kN < lenN; ++kN) {
+			const node = node_.children[node_.children.length - 1];
+
+			node.destroy();
+			node.removeFromParent();
+		}
+
+		// 增加缺失的子节点
+		for (let kN = 0, lenN = valueN_ - node_.children.length; kN < lenN; ++kN) {
+			const node = cc.instantiate(node_.children[node_.children.length - 1]);
+
+			node.parent = node_;
+			node.active = true;
+		}
+	}
 }
 
 export default ToolNode.instance();

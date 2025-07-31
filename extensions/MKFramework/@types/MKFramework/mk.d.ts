@@ -173,7 +173,8 @@ declare namespace mk {
 			private _isStop;
 			/**
 			 * 播放
-			 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放，例：mk.audio_.state.pause | mk.audio_.state.stop
+			 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放，例：mk.Audio_.State.Pause | mk.Audio_.State.Stop
+			 * @defaultValue State.Play | State.Pause | State.Stop
 			 */
 			play(containsStateNum_?: number): void;
 			/** 暂停 */
