@@ -609,7 +609,7 @@
     },
     "component": "",
     "_componentId": "a625fCfEvBCopN51fJCS6Lt",
-    "handler": "close",
+    "handler": "clickClose",
     "customEventData": ""
   },
   {

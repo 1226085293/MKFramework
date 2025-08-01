@@ -1,6 +1,5 @@
 import * as cc from "cc";
 import { _decorator } from "cc";
-import ResourcesConfig from "../../Bundle/ResourcesConfig";
 import mk from "mk";
 import GlobalConfig from "global_config";
 const { ccclass, property } = _decorator;
@@ -38,11 +37,11 @@ export class ResourcesAudio extends mk.ViewBase {
 		this._initEvent();
 	}
 
-	close(): void {
+	close(config_?: Omit<mk.UIManage_.CloseConfig<any>, "type" | "isAll">): void | Promise<void> {
 		// 停止音乐
 		mk.audio.stopAll();
-		mk.audio.getGroup(ResourcesConfig.Audio.Group.Test).clear();
-		mk.audio.getGroup(ResourcesConfig.Audio.Group.Test2).clear();
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).clear();
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).clear();
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
@@ -67,13 +66,17 @@ export class ResourcesAudio extends mk.ViewBase {
 		// 循环播放
 		this.music.isLoop = true;
 		this.effect.isLoop = true;
-		mk.audio.play(this.music);
-		mk.audio.play(this.effect);
+		// 开启播放
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).stop(false);
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).stop(false);
 	}
 
 	/** 初始化视图 */
 	private _initView(): void {
-		// ...
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).pause();
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).play(mk.Audio_.State.Stop);
+		// mk.audio.play(this.music);
+		// mk.audio.play(this.effect);
 	}
 
 	/** 初始化事件 */
@@ -82,13 +85,19 @@ export class ResourcesAudio extends mk.ViewBase {
 	}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
+	clickClose(): void {
+		this.close({
+			isDestroy: true,
+		});
+	}
+
 	/** 重叠播放 */
 	clickOverlapPlay(): void {
 		mk.audio.play(this._overlapEffectList.find((v) => v.state === mk.Audio_.State.Stop)!);
 	}
 
 	/** 音乐暂停 */
-	clickMusicPause(): void {
+	clickMusicPause(toggle): void {
 		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Music).isPlay) {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).pause();
 		} else {
@@ -99,6 +108,7 @@ export class ResourcesAudio extends mk.ViewBase {
 	/** 音乐停止 */
 	clickMusicStop(): void {
 		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Music).isStop) {
+			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).stop(false);
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).play(mk.Audio_.State.Stop);
 		} else {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).stop();
@@ -118,7 +128,8 @@ export class ResourcesAudio extends mk.ViewBase {
 	/** 音效停止 */
 	clickEffectStop(): void {
 		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).isStop) {
-			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).play(mk.Audio_.State.Stop);
+			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).stop(false);
+			mk.audio.play(this.effect);
 		} else {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).stop();
 			this.effectPause.isChecked = false;

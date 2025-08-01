@@ -541,13 +541,18 @@ export namespace MKAudioBase_ {
 		/* ------------------------------- 功能 ------------------------------- */
 		/**
 		 * 播放
-		 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放，例：mk.Audio_.State.Pause | mk.Audio_.State.Stop
-		 * @defaultValue State.Play | State.Pause | State.Stop
+		 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放，例：`mk.Audio_.State.Pause | mk.Audio_.State.Stop`
+		 * @defaultValue `State.Pause | State.Stop`
 		 */
-		play(containsStateNum_ = State.Play | State.Pause | State.Stop): void {
+		play(containsStateNum_ = State.Pause | State.Stop): void {
 			// 停止状态没有暂停的音乐
 			if (this._isStop) {
 				containsStateNum_ &= ~State.Pause;
+			}
+
+			// 没有包含状态
+			if (!containsStateNum_) {
+				return;
 			}
 
 			this._isPlay = true;
@@ -562,29 +567,6 @@ export namespace MKAudioBase_ {
 				// 播放音频
 				this._audioManage.play(v);
 			});
-			// let isPlaySuccess = false;
-			// const oldIsPlay = this._isPlay;
-			// const oldIsStop = this._isStop;
-
-			// this._isPlay = true;
-			// this._isStop = false;
-			// this.audioUnitList.forEach((v) => {
-			// 	if (!(v.state & containsStateNum_)) {
-			// 		return;
-			// 	}
-
-			// 	// 更新音频停止组
-			// 	this._updateStopGroup(v, false);
-			// 	// 播放音频
-			// 	if (this._audioManage.play(v)) {
-			// 		isPlaySuccess = true;
-			// 	}
-			// });
-
-			// if (!isPlaySuccess) {
-			// 	this._isPlay = oldIsPlay;
-			// 	this._isStop = oldIsStop;
-			// }
 		}
 
 		/** 暂停 */
@@ -597,8 +579,9 @@ export namespace MKAudioBase_ {
 
 		/**
 		 * 停止
+		 * @param isStop_ 停止状态
 		 * @remarks
-		 * - 停止后播放的音频将跳过
+		 * - 停止后续播放音频将不会执行播放逻辑
 		 */
 		stop(isStop_ = true): void {
 			this._isPlay = !isStop_;
