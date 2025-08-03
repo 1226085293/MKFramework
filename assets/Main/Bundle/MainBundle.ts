@@ -7,11 +7,9 @@ import GlobalConfig from "global_config";
 class MainBundle extends mk.Bundle_.BundleManageBase {
 	nameStr = "main";
 	event = new mk.EventTarget<MainEventProtocol>();
-	storage = new mk.Storage<MainConfig.StorageData>({
+	storage = new mk.Storage({
 		nameStr: "main_bundle",
-		data: {
-			bundleVersionTab: {},
-		},
+		data: new MainConfig.StorageData(),
 	});
 
 	/* ------------------------------- 生命周期 ------------------------------- */

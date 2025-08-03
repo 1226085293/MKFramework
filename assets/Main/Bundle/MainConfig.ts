@@ -1,8 +1,8 @@
 namespace MainConfig {
 	/** 存储数据 */
-	export interface StorageData {
+	export class StorageData {
 		/** bundle 版本 */
-		bundleVersionTab: Record<string, string>;
+		bundleVersionTab: Record<string, string> = {};
 	}
 }
 
