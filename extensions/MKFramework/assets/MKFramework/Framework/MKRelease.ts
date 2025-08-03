@@ -161,7 +161,7 @@ export namespace MKRelease_ {
 		 * 跟随释放
 		 * @param object_ 释放对象/释放对象数组
 		 */
-		followRelease<T extends CT>(object_: T): T;
+		followRelease<T extends CT>(object_: T): void;
 
 		/**
 		 * 取消释放

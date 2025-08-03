@@ -6,6 +6,7 @@ import * as cc from "cc";
 import GlobalEvent from "../../Config/GlobalEvent";
 import mkTool from "../@Private/Tool/MKTool";
 import GlobalConfig from "../../Config/GlobalConfig";
+import MKRelease, { MKRelease_ } from "../MKRelease";
 
 const { ccclass, property } = cc._decorator;
 
@@ -54,7 +55,7 @@ abstract class MKAudioBase {
 	 */
 	async add<T extends string | string[], T2 extends true | false = false>(
 		url_: T,
-		target_: MKAsset_.TypeFollowReleaseObject,
+		target_: MKRelease_.TypeFollowReleaseObject,
 		config_?: MKAudioBase_.AddConfig<T2>
 	): Promise<T2 extends true ? (MKAudioBase_.Unit | null)[] : T extends string ? MKAudioBase_.Unit | null : (MKAudioBase_.Unit | null)[]> {
 		if (EDITOR) {
@@ -76,7 +77,7 @@ abstract class MKAudioBase {
 
 		if (config_?.isDir) {
 			for (const vStr of urlStrList) {
-				const assetList = await mkAsset.getDir(vStr, cc.AudioClip, target_, config_.loadConfig as any);
+				const assetList = await mkAsset.getDir(vStr, cc.AudioClip, null, config_.loadConfig as any);
 
 				assetList?.forEach((v2) => {
 					const audio = this._getAudioUnit({
@@ -91,7 +92,7 @@ abstract class MKAudioBase {
 			result = audioList;
 		} else {
 			for (const vStr of urlStrList) {
-				const asset = await mkAsset.get(vStr, cc.AudioClip, target_, config_?.loadConfig);
+				const asset = await mkAsset.get(vStr, cc.AudioClip, null, config_?.loadConfig);
 
 				if (!asset) {
 					audioList.push(null!);
@@ -117,6 +118,29 @@ abstract class MKAudioBase {
 
 			this._add(v, config_?.groupNumList);
 		});
+
+		if (target_?.followRelease) {
+			target_.followRelease(() => {
+				audioList.forEach((v) => {
+					if (!v) {
+						return;
+					}
+
+					// 删除音频组内的音频单元
+					{
+						this.getGroup(v.type).delAudio(v);
+						v.groupNumList.forEach((v2Num) => {
+							this.getGroup(v2Num).delAudio(v);
+						});
+					}
+
+					// 清理音频资源
+					if (v.clip) {
+						MKRelease.release(v.clip);
+					}
+				});
+			});
+		}
 
 		return result as any;
 	}

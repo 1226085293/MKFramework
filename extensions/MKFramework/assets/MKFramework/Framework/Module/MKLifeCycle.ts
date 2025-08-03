@@ -299,6 +299,29 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	protected lateClose?(): void;
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async lateClose?(): Promise<void> {
+		/** 参数表 */
+		const attrTab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
+		/** 参数键列表 */
+		const attrKeyStrList = Object.keys(attrTab);
+
+		// 删除音频单元
+		attrKeyStrList.forEach((vStr) => {
+			if (!vStr.endsWith("$_$ctor")) {
+				return;
+			}
+
+			/** 属性名 */
+			const nameStr = vStr.slice(0, -7);
+
+			// 清理音频组内的音频单元
+			if (this[nameStr] instanceof MKAudio_.PrivateUnit) {
+				mkAudio.getGroup(this[nameStr].type).delAudio(this[nameStr]);
+				this[nameStr].groupNumList.forEach((v2Num) => {
+					mkAudio.getGroup(v2Num).delAudio(this[nameStr]);
+				});
+			}
+		});
+
 		// 清理事件
 		this.eventTargetList.splice(0, this.eventTargetList.length).forEach((v) => {
 			v.targetOff?.(this);
@@ -330,15 +353,15 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		return this._open({ isFirst: true, init: initData_ });
 	}
 
-	followRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): T {
+	followRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
 		if (!object_) {
-			return object_;
+			return;
 		}
 
 		if (this.node && !this.node.active) {
 			this._log.warn("节点已隐藏，资源可能不会跟随释放");
 
-			return object_;
+			return;
 		}
 
 		// 添加释放对象
@@ -361,8 +384,6 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 				this._releaseManage.add(object_ as any);
 			}
 		}
-
-		return object_;
 	}
 
 	cancelRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
