@@ -73,10 +73,8 @@ export class ResourcesAudio extends mk.ViewBase {
 
 	/** 初始化视图 */
 	private _initView(): void {
-		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).pause();
-		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).play(mk.Audio_.State.Stop);
-		// mk.audio.play(this.music);
-		// mk.audio.play(this.effect);
+		mk.audio.play(this.music);
+		mk.audio.play(this.effect);
 	}
 
 	/** 初始化事件 */
@@ -97,8 +95,15 @@ export class ResourcesAudio extends mk.ViewBase {
 	}
 
 	/** 音乐暂停 */
-	clickMusicPause(toggle): void {
-		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Music).isPlay) {
+	clickMusicPause(toggle_: cc.Toggle): void {
+		// 停止状态不能暂停
+		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Music).isStop) {
+			this.musicPause.isChecked = false;
+
+			return;
+		}
+
+		if (toggle_.isChecked) {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).pause();
 		} else {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).play(mk.Audio_.State.Pause);
@@ -106,19 +111,26 @@ export class ResourcesAudio extends mk.ViewBase {
 	}
 
 	/** 音乐停止 */
-	clickMusicStop(): void {
-		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Music).isStop) {
-			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).stop(false);
-			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).play(mk.Audio_.State.Stop);
-		} else {
+	clickMusicStop(toggle_: cc.Toggle): void {
+		if (toggle_.isChecked) {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).stop();
 			this.musicPause.isChecked = false;
+		} else {
+			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).stop(false);
+			mk.audio.getGroup(GlobalConfig.Audio.Type.Music).play(mk.Audio_.State.Stop);
 		}
 	}
 
 	/** 音效暂停 */
-	clickEffectPause(): void {
-		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).isPlay) {
+	clickEffectPause(toggle_: cc.Toggle): void {
+		// 停止状态不能暂停
+		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).isStop) {
+			this.effectPause.isChecked = false;
+
+			return;
+		}
+
+		if (toggle_.isChecked) {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).pause();
 		} else {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).play(mk.Audio_.State.Pause);
@@ -126,13 +138,13 @@ export class ResourcesAudio extends mk.ViewBase {
 	}
 
 	/** 音效停止 */
-	clickEffectStop(): void {
-		if (mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).isStop) {
-			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).stop(false);
-			mk.audio.play(this.effect);
-		} else {
+	clickEffectStop(toggle_: cc.Toggle): void {
+		if (toggle_.isChecked) {
 			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).stop();
 			this.effectPause.isChecked = false;
+		} else {
+			mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).stop(false);
+			mk.audio.play(this.effect);
 		}
 	}
 }
