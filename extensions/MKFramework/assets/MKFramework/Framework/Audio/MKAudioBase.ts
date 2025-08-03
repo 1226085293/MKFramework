@@ -613,8 +613,12 @@ export namespace MKAudioBase_ {
 			}
 
 			audioUnitList.forEach((v) => {
-				// 已存在当前分组
-				if (v.groupNumList.includes(this.priorityNum)) {
+				if (
+					// 不能重复添加
+					this.audioUnitList.includes(v) ||
+					// 已存在当前分组
+					v.groupNumList.includes(this.priorityNum)
+				) {
 					return;
 				}
 
