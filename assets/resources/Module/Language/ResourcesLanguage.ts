@@ -15,15 +15,11 @@ export class ResourcesLanguage extends mk.ViewBase {
 	// close(): void {}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
-	buttonClose(): void {
-		mk.uiManage.close(this);
-	}
-
-	buttonChinese(): void {
+	clickChinese(): void {
 		mk.languageManage.typeStr = GlobalConfig.Language.types.zhCn;
 	}
 
-	buttonEnglish(): void {
+	clickEnglish(): void {
 		mk.languageManage.typeStr = GlobalConfig.Language.types.enUs;
 	}
 }

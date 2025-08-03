@@ -31,7 +31,6 @@ export class MainMainItem extends mk.StaticViewBase {
 			this.labelNode.getComponent(mk.language.Label)!.destroy();
 		}
 	}
-
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	/** 按钮-点击 */
 	async buttonClick(): Promise<void> {

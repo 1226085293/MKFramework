@@ -48,6 +48,7 @@ class ToolNode extends mk.InstanceBase {
 
 			node.parent = node_;
 			node.active = true;
+			node.getComponent(mk.LifeCycle)?.drive();
 		}
 	}
 }
