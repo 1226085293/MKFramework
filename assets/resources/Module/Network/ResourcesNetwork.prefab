@@ -3059,8 +3059,8 @@
   },
   {
     "__type__": "MKViewBase/AnimationConfig",
-    "open_animation_s": "默认",
-    "close_animation_s": "默认"
+    "openAnimationStr": "默认",
+    "closeAnimationStr": "默认"
   },
   {
     "__type__": "cc.PrefabInfo",

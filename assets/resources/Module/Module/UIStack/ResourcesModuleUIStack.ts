@@ -24,13 +24,13 @@ export class ResourcesModuleUIStack extends mk.ViewBase {
 	// close(): void {}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
-	buttonOpen(): void {
+	clickOpen(): void {
 		mk.uiManage.open(ResourcesModuleUIStackDemo, {
 			init: mk.uiManage.get([ResourcesModuleUIStackDemo]).length,
 		});
 	}
 
-	buttonClose(): void {
+	clickClose(): void {
 		const uiList = mk.uiManage.get();
 
 		if (uiList.length) {

@@ -3848,8 +3848,8 @@
   },
   {
     "__type__": "MKViewBase/AnimationConfig",
-    "open_animation_s": "无",
-    "close_animation_s": "默认"
+    "openAnimationStr": "无",
+    "closeAnimationStr": "默认"
   },
   {
     "__type__": "cc.BlockInputEvents",
