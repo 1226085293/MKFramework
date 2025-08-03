@@ -1,10 +1,11 @@
 {
-  "__version__": "1.0.5",
+  "__version__": "1.0.6",
   "script": {
     "useDefineForClassFields": true,
     "allowDeclareFields": true,
     "importMap": "project://import-map.json",
-    "loose": true
+    "loose": true,
+    "preserveSymlinks": true
   },
   "general": {
     "designResolution": {
