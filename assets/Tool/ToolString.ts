@@ -1,9 +1,9 @@
 import tool_math from "./ToolMath";
-import Codec from "./Codec/ToolCodec";
+import codec from "./Codec/ToolCodec";
 
 class ToolString {
 	/** unicode 编解码器 */
-	private _codecUnicode = new Codec.Unicode();
+	private _codecUnicode = new codec.Unicode();
 	/** 姓 */
 	private _lastNameStrList = [
 		"赵",

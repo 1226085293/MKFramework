@@ -1,3 +1,3 @@
-import * as Codec from "./ToolCodecExport";
+import * as codec from "./ToolCodecExport";
 
-export default Codec;
+export default codec;
