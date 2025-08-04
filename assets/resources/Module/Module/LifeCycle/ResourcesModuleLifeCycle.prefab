@@ -31,17 +31,17 @@
         "__id__": 63
       },
       {
-        "__id__": 65
+        "__id__": 66
       },
       {
-        "__id__": 67
+        "__id__": 68
       },
       {
-        "__id__": 69
+        "__id__": 70
       }
     ],
     "_prefab": {
-      "__id__": 71
+      "__id__": 72
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -595,6 +595,29 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
     "_id": ""
   },
   {
@@ -1165,6 +1188,29 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
     "_id": ""
   },
   {
@@ -1452,10 +1498,12 @@
     "__prefab": {
       "__id__": 64
     },
-    "layerTypeNum": 0,
+    "layerTypeNum": 1,
     "_childLayerNum": 0,
     "isShowAlone": false,
-    "animationConfig": null,
+    "animationConfig": {
+      "__id__": 65
+    },
     "contentNode": {
       "__id__": 14
     },
@@ -1464,6 +1512,12 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "fdd5crJzpL2oB8tHTSQt6r"
+  },
+  {
+    "__type__": "MKViewBase/AnimationConfig",
+    "isWaitAnimationComplete": true,
+    "openAnimationStr": "默认",
+    "closeAnimationStr": "默认"
   },
   {
     "__type__": "cc.UITransform",
@@ -1475,7 +1529,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 66
+      "__id__": 67
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -1503,7 +1557,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 68
+      "__id__": 69
     },
     "_alignFlags": 45,
     "_target": null,
@@ -1539,7 +1593,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 70
+      "__id__": 71
     },
     "_id": ""
   },

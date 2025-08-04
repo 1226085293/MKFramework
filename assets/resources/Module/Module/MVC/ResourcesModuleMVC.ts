@@ -1,5 +1,6 @@
 import mk from "mk";
 import * as cc from "cc";
+import GlobalConfig from "global_config";
 const { ccclass, property } = cc._decorator;
 
 class Control extends mk.MVCControlBase<Model, View> {
@@ -36,6 +37,8 @@ export class View extends mk.MVCViewBase<Model> {
 
 		return mk.uiManage.open(View);
 	}
+
+	layerTypeNum = GlobalConfig.View.LayerType.窗口;
 
 	protected open(): void {
 		console.log("mvc_view_base-open");

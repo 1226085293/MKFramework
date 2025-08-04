@@ -17,11 +17,6 @@ export class ResourcesModule extends mk.ViewBase {
 	/* --------------- 属性 --------------- */
 	@property({ displayName: "列表", type: cc.Node })
 	listNode: cc.Node = null!;
-	/* --------------- public --------------- */
-	data = {
-		functionList: [],
-	};
-
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// init(init_?: typeof this.init_data): void {}
 	open(): void {

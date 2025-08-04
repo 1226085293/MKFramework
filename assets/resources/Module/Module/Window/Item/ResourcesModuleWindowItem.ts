@@ -1,9 +1,14 @@
+import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
 const { ccclass, property } = _decorator;
 
 @ccclass("ResourcesModuleWindowItem")
 export class ResourcesModuleWindowItem extends mk.ViewBase {
+	/* --------------- 属性 --------------- */
+	@property({ displayName: "文本", type: cc.Node })
+	nameNode: cc.Node = null!;
+	/* --------------- 属性 --------------- */
 	initData!: typeof this.data;
 	data = new (class {
 		nameStr = "";
@@ -15,6 +20,7 @@ export class ResourcesModuleWindowItem extends mk.ViewBase {
 	// 有数据初始化
 	init(init_?: typeof this.initData): void {
 		Object.assign(this.data, this.initData);
+		mk.N(this.nameNode).label.string = this.data.nameStr;
 	}
 	// 无数据初始化
 	// open(): void {}
@@ -23,7 +29,7 @@ export class ResourcesModuleWindowItem extends mk.ViewBase {
 		console.log("close");
 	}
 	/* ------------------------------- 按钮事件 ------------------------------- */
-	buttonSelf(): void {
-		this.data.clickFunc();
+	clickSelf(): void {
+		this.data.clickFunc?.();
 	}
 }

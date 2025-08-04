@@ -1,18 +1,20 @@
+import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
-import { ResourcesModuleWindowItem } from "./Item/ResourcesModuleWindowItem";
 import { ResourcesModuleWindowNormal } from "./Normal/ResourcesModuleWindowNormal";
 import { ResourcesModuleWindowFullScreen } from "./FullScreen/ResourcesModuleWindowFullScreen";
 import { ResourcesModuleWindowTips } from "./Tips/ResourcesModuleWindowTips";
 import { ResourcesModuleWindowLoading } from "./Loading/ResourcesModuleWindowLoading";
 import tool from "../../../../Tool/Tool";
+import { ResourcesModuleWindowItem } from "./Item/ResourcesModuleWindowItem";
 const { ccclass, property } = _decorator;
 
 @ccclass("ResourcesModuleWindow")
 export class ResourcesModuleWindow extends mk.ViewBase {
-	data = new (class {
-		dataList: typeof ResourcesModuleWindowItem.prototype.initData[] = [];
-	})();
+	/* --------------- 属性 --------------- */
+	@property({ displayName: "列表", type: cc.Node })
+	listNode: cc.Node = null!;
+	/* ------------------------------- 生命周期 ------------------------------- */
 	// 初始化视图
 	// create(): void {}
 	// 有数据初始化
@@ -34,35 +36,41 @@ export class ResourcesModuleWindow extends mk.ViewBase {
 			this
 		);
 
-		this.data.dataList.push({
-			nameStr: "弹窗",
-			clickFunc: () => {
-				mk.uiManage.open(ResourcesModuleWindowNormal);
+		const dataList: typeof ResourcesModuleWindowItem.prototype.initData[] = [
+			{
+				nameStr: "弹窗",
+				clickFunc: () => {
+					mk.uiManage.open(ResourcesModuleWindowNormal);
+				},
 			},
-		});
+			{
+				nameStr: "全屏弹窗",
+				clickFunc: () => {
+					mk.uiManage.open(ResourcesModuleWindowFullScreen);
+				},
+			},
+			{
+				nameStr: "tips",
+				clickFunc: () => {
+					mk.uiManage.open(ResourcesModuleWindowTips);
+				},
+			},
+			{
+				nameStr: "loading",
+				clickFunc: () => {
+					tool.loading.open(ResourcesModuleWindowLoading);
+					setTimeout(() => {
+						tool.loading.close(ResourcesModuleWindowLoading);
+					}, 2000);
+				},
+			},
+		];
 
-		this.data.dataList.push({
-			nameStr: "全屏弹窗",
-			clickFunc: () => {
-				mk.uiManage.open(ResourcesModuleWindowFullScreen);
-			},
-		});
+		tool.node.synchronizedChildNodeNumber(this.listNode, dataList.length);
+		dataList.forEach((v, kNum) => {
+			const node = this.listNode.children[kNum];
 
-		this.data.dataList.push({
-			nameStr: "tips",
-			clickFunc: () => {
-				mk.uiManage.open(ResourcesModuleWindowTips);
-			},
-		});
-
-		this.data.dataList.push({
-			nameStr: "loading",
-			clickFunc: () => {
-				tool.loading.open(ResourcesModuleWindowLoading);
-				setTimeout(() => {
-					tool.loading.close(ResourcesModuleWindowLoading);
-				}, 2000);
-			},
+			node.getComponent(ResourcesModuleWindowItem)!.init(v);
 		});
 	}
 	// 模块关闭
