@@ -71,6 +71,10 @@ namespace _MKViewBase {
 		}
 
 		/* --------------- public --------------- */
+		/** 关闭动画 */
+		@property({ displayName: "等待动画执行完成", tooltip: "是否等待动画执行完成再执行生命周期 open" })
+		isWaitAnimationComplete = true;
+
 		/** 打开动画 */
 		@property({ visible: false })
 		openAnimationStr = "";
@@ -178,7 +182,11 @@ export class MKViewBase extends MKLifeCycle {
 
 		// 打开动画
 		if (openAnimationFunc) {
-			await openAnimationFunc(this.node);
+			if (this.animationConfig.isWaitAnimationComplete) {
+				await openAnimationFunc(this.node);
+			} else {
+				openAnimationFunc(this.node);
+			}
 		}
 	}
 
