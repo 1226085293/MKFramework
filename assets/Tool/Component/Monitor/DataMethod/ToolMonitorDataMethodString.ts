@@ -20,7 +20,7 @@ export namespace 默认 {
 	}
 
 	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: CCClassParams): void {
-		const languageComp = node_.getComponent(mk.Language.Label);
+		const languageComp = node_.getComponent(mk.language.Label);
 
 		mk.monitor
 			.on(
