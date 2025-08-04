@@ -24,12 +24,12 @@ export class HotUpdateDefault extends mk.ViewBase {
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	/** 关闭 */
-	buttonClose(): void {
+	clickClose(): void {
 		mk.bundle.loadScene("main", { bundleStr: GlobalConfig.Asset.bundle.main });
 	}
 
 	/** 确认 */
-	async buttonConfirm(): Promise<void> {
+	async clickConfirm(): Promise<void> {
 		await mk.bundle.reload({
 			bundleStr: GlobalConfig.Asset.bundle.Config,
 			originStr: this.data.remoteUrlStr + "/" + GlobalConfig.Asset.bundle.Config,
