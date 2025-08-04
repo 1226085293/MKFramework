@@ -1,2 +1,2 @@
 self.loadBundleStrList = self.loadBundleStrList ?? (self.loadBundleStrList = []);
-self.loadBundleStrList.push("decorator", "tool");
+self.loadBundleStrList.push("Decorator", "Tool");

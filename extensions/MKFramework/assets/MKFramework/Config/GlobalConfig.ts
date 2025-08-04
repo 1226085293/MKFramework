@@ -32,8 +32,10 @@ namespace GlobalConfig {
 			internal: any;
 			resources: any;
 			main: any;
-			config: any;
-			framework: any;
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			Config: any;
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			Framework: any;
 		}
 
 		/** bundle 键 */

@@ -31,8 +31,8 @@ export class HotUpdateDefault extends mk.ViewBase {
 	/** 确认 */
 	async buttonConfirm(): Promise<void> {
 		await mk.bundle.reload({
-			bundleStr: GlobalConfig.Asset.bundle.config,
-			originStr: this.data.remoteUrlStr + "/" + GlobalConfig.Asset.bundle.config,
+			bundleStr: GlobalConfig.Asset.bundle.Config,
+			originStr: this.data.remoteUrlStr + "/" + GlobalConfig.Asset.bundle.Config,
 			versionStr: this.data.configVersionStr,
 		});
 
