@@ -85,7 +85,7 @@ namespace GlobalConfig {
 		/** 默认遮罩 */
 		export const maskDataTab = {
 			nodeNameStr: "遮罩",
-			prefabPathStr: "db://assets/resources/module/@common/mask/resources_common_mask.prefab",
+			prefabPathStr: "db://assets/resources/Module/@Common/Mask/ResourcesCommonMask.prefab",
 		};
 
 		export const config = new (class {

@@ -185,9 +185,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 85,
-      "b": 175,
+      "r": 51,
+      "g": 51,
+      "b": 51,
       "a": 255
     },
     "_spriteFrame": {
@@ -2328,6 +2328,7 @@
   },
   {
     "__type__": "MKViewBase/AnimationConfig",
+    "isWaitAnimationComplete": true,
     "openAnimationStr": "默认",
     "closeAnimationStr": "默认"
   },
