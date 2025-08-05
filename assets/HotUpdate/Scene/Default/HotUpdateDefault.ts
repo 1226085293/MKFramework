@@ -1,3 +1,4 @@
+import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
 import GlobalConfig from "GlobalConfig";
@@ -6,15 +7,14 @@ const { ccclass, property } = _decorator;
 @ccclass("HotUpdateDefault")
 export class HotUpdateDefault extends mk.ViewBase {
 	/* --------------- 属性 --------------- */
-	/* --------------- public --------------- */
-	data = new (class {
-		/** 远程地址 */
-		remoteUrlStr = "http://localhost:8080";
-		/** main bundle 版本 */
-		configVersionStr = "";
-		/** main bundle 版本 */
-		mainVersionStr = "";
-	})();
+	@property({ displayName: "远程地址", type: cc.EditBox })
+	remoteUrlEditBox: cc.EditBox = null!;
+
+	@property({ displayName: "Config 地址", type: cc.EditBox })
+	configUrlEditBox: cc.EditBox = null!;
+
+	@property({ displayName: "Main 地址", type: cc.EditBox })
+	mainUrlEditBox: cc.EditBox = null!;
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// create(): void {}
@@ -32,14 +32,14 @@ export class HotUpdateDefault extends mk.ViewBase {
 	async clickConfirm(): Promise<void> {
 		await mk.bundle.reload({
 			bundleStr: GlobalConfig.Asset.bundle.Config,
-			originStr: this.data.remoteUrlStr + "/" + GlobalConfig.Asset.bundle.Config,
-			versionStr: this.data.configVersionStr,
+			originStr: this.remoteUrlEditBox.string + "/" + GlobalConfig.Asset.bundle.Config,
+			versionStr: this.configUrlEditBox.string,
 		});
 
 		await mk.bundle.reload({
 			bundleStr: GlobalConfig.Asset.bundle.main,
-			originStr: this.data.remoteUrlStr + "/" + GlobalConfig.Asset.bundle.main,
-			versionStr: this.data.mainVersionStr,
+			originStr: this.remoteUrlEditBox.string + "/" + GlobalConfig.Asset.bundle.main,
+			versionStr: this.mainUrlEditBox.string,
 		});
 
 		this._log.log("热更完成");
