@@ -41,7 +41,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 129
+      "__id__": 130
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -2953,12 +2953,20 @@
     "layerTypeNum": 1,
     "_childLayerNum": 0,
     "isShowAlone": false,
-    "animationConfig": null,
+    "animationConfig": {
+      "__id__": 129
+    },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "d7xbGbc6tEbJw3CiikJf4t"
+  },
+  {
+    "__type__": "MKViewBase/AnimationConfig",
+    "isWaitAnimationComplete": true,
+    "openAnimationStr": "默认",
+    "closeAnimationStr": "默认"
   },
   {
     "__type__": "cc.PrefabInfo",

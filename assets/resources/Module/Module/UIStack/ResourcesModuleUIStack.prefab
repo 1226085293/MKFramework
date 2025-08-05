@@ -46,14 +46,14 @@
         "__id__": 75
       },
       {
-        "__id__": 77
+        "__id__": 78
       },
       {
-        "__id__": 79
+        "__id__": 80
       }
     ],
     "_prefab": {
-      "__id__": 81
+      "__id__": 82
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -1865,12 +1865,20 @@
     "layerTypeNum": 1,
     "_childLayerNum": 0,
     "isShowAlone": false,
-    "animationConfig": null,
+    "animationConfig": {
+      "__id__": 77
+    },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "18H/88hOdCaqrRFGjOG6vK"
+  },
+  {
+    "__type__": "MKViewBase/AnimationConfig",
+    "isWaitAnimationComplete": true,
+    "openAnimationStr": "默认",
+    "closeAnimationStr": "默认"
   },
   {
     "__type__": "cc.Widget",
@@ -1882,7 +1890,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 78
+      "__id__": 79
     },
     "_alignFlags": 45,
     "_target": null,
@@ -1918,7 +1926,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 80
+      "__id__": 81
     },
     "_id": ""
   },
