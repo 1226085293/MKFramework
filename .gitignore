@@ -23,15 +23,13 @@ node_modules/
 #//////////////////////////
 # 扩展
 #//////////////////////////
-!extensions/
+extensions/
 !extensions/MKFramework
 !extensions/quick-plugin
-extensions/*
 
-!tool/
+tool/
 !tool/test
 !tool/typedoc
 tool/typedoc/docs
-tool/*
 
 .protobufjs.js
