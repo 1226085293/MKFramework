@@ -14,7 +14,7 @@ window.loadBundleStrList = window.loadBundleStrList ?? (window.loadBundleStrList
 			// 加载框架
 			else {
 				/** 加载 bundle */
-				let loadBundleStrList = ["config", "framework"];
+				let loadBundleStrList = ["Config", "Framework"];
 
 				// 添加其他需要加载的 bundle
 				loadBundleStrList.push(...window.loadBundleStrList);
