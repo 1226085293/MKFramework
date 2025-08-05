@@ -3,11 +3,11 @@ import MKLogger, { mkLog } from "../MKLogger";
 import MKEventTarget from "../MKEventTarget";
 import MKNetworkBase from "../Network/MKNetworkBase";
 import { EDITOR, PREVIEW } from "cc/env";
-import * as cc from "cc";
 import MKStatusTask from "../Task/MKStatusTask";
 import { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "../MKRelease";
+import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, NodePool } from "cc";
 
 namespace _MKBundle {
 	export interface EventProtocol {
@@ -70,14 +70,14 @@ export class MKBundle extends MKInstanceBase {
 		}
 
 		// 引擎初始化事件
-		cc.game.once(cc.Game.EVENT_GAME_INITED, () => {
+		game.once(Game.EVENT_GAME_INITED, () => {
 			this._engineInitTask.finish(true);
 		});
 
 		// 模块初始化事件
-		cc.director.once(
-			cc.Director.EVENT_BEFORE_SCENE_LAUNCH,
-			async (scene: cc.Scene) => {
+		director.once(
+			Director.EVENT_BEFORE_SCENE_LAUNCH,
+			async (scene: Scene) => {
 				if (!scene.name) {
 					this._log.warn("未选择启动场景");
 					this._initTask.finish(true);
@@ -161,7 +161,7 @@ export class MKBundle extends MKInstanceBase {
 	 * @param args_ bundle 名 | 加载配置
 	 * @returns
 	 */
-	async load(args_: string | MKBundle_.LoadConfig): Promise<cc.AssetManager.Bundle | null> {
+	async load(args_: string | MKBundle_.LoadConfig): Promise<AssetManager.Bundle | null> {
 		/** 加载配置 */
 		const loadConfig = typeof args_ === "string" ? new MKBundle_.LoadConfig({ bundleStr: args_ }) : args_;
 
@@ -177,7 +177,7 @@ export class MKBundle extends MKInstanceBase {
 		await this._engineInitTask.task;
 
 		/** bundle 资源 */
-		const bundle = cc.assetManager.getBundle(bundleInfo.bundleStr);
+		const bundle = assetManager.getBundle(bundleInfo.bundleStr);
 
 		if (bundle) {
 			loadConfig.progressCallbackFunc?.(1, 1);
@@ -185,12 +185,12 @@ export class MKBundle extends MKInstanceBase {
 			return bundle;
 		}
 
-		return new Promise<cc.AssetManager.Bundle | null>((resolveFunc) => {
+		return new Promise<AssetManager.Bundle | null>((resolveFunc) => {
 			if (!bundleInfo) {
 				return;
 			}
 
-			cc.assetManager.loadBundle(
+			assetManager.loadBundle(
 				bundleInfo.originStr ?? bundleInfo.bundleStr,
 				{
 					version: bundleInfo.versionStr,
@@ -319,7 +319,7 @@ export class MKBundle extends MKInstanceBase {
 					}
 
 					// 运行场景
-					cc.director.runScene(sceneAsset, config?.beforeLoadCallbackFunc, (error, scene) => {
+					director.runScene(sceneAsset, config?.beforeLoadCallbackFunc, (error, scene) => {
 						// 更新数据
 						if (!error) {
 							this.bundleStr = bundle.name;
@@ -349,7 +349,7 @@ export class MKBundle extends MKInstanceBase {
 	 * @param bundleInfo_ bundle 信息
 	 * @returns
 	 */
-	async reload(bundleInfo_: ConstructorParameters<typeof MKBundle_.ReloadBundleInfo>[0]): Promise<cc.AssetManager.Bundle | null> {
+	async reload(bundleInfo_: ConstructorParameters<typeof MKBundle_.ReloadBundleInfo>[0]): Promise<AssetManager.Bundle | null> {
 		if (PREVIEW) {
 			this._log.error("不支持预览模式重载 bundle");
 
@@ -424,8 +424,8 @@ export class MKBundle extends MKInstanceBase {
 					}
 
 					for (const k2Str in v.C) {
-						if (cc.js.isChildClassOf(v.C[k2Str], cc.Component)) {
-							cc.js.unregisterClass(v.C[k2Str]);
+						if (js.isChildClassOf(v.C[k2Str], Component)) {
+							js.unregisterClass(v.C[k2Str]);
 						}
 					}
 				});
@@ -434,33 +434,33 @@ export class MKBundle extends MKInstanceBase {
 			// 清理名称匹配的 ccclass
 			const reg = bundleInfo_.ccclassRegexp ?? new RegExp(`${bundleInfo_.bundleStr}(_|/)`);
 
-			Object.keys((cc.js as any)._nameToClass ?? (cc.js as any)._registeredClassNames)
+			Object.keys((js as any)._nameToClass ?? (js as any)._registeredClassNames)
 				.filter((vStr) => vStr.match(reg) !== null)
 				.forEach((vStr) => {
-					cc.js.unregisterClass(cc.js.getClassByName(vStr));
+					js.unregisterClass(js.getClassByName(vStr));
 				});
 		}
 
 		// 清理 bundle 资源
 		{
-			const bundle = cc.assetManager.getBundle(bundleInfo_.bundleStr);
+			const bundle = assetManager.getBundle(bundleInfo_.bundleStr);
 
 			if (bundle) {
 				if (bundleInfo_.bundleStr !== "main") {
 					bundle.releaseAll();
 				}
 
-				cc.assetManager.removeBundle(bundle);
+				assetManager.removeBundle(bundle);
 			}
 		}
 
 		// 更新版本号
 		{
-			if (!cc.assetManager.downloader.bundleVers) {
-				cc.assetManager.downloader.bundleVers = {};
+			if (!assetManager.downloader.bundleVers) {
+				assetManager.downloader.bundleVers = {};
 			}
 
-			cc.assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
+			assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
 		}
 
 		// 加载 bundle
@@ -590,13 +590,13 @@ export namespace MKBundle_ {
 		 * @param total 总数量
 		 * @param item 当前项目
 		 */
-		progressCallbackFunc?(finishNum: number, total: number, item?: cc.AssetManager.RequestItem): void;
+		progressCallbackFunc?(finishNum: number, total: number, item?: AssetManager.RequestItem): void;
 		/** 加载前调用的函数 */
-		beforeLoadCallbackFunc?: cc.Director.OnBeforeLoadScene;
+		beforeLoadCallbackFunc?: Director.OnBeforeLoadScene;
 		/** 启动后调用的函数 */
-		launchedCallbackFunc?: cc.Director.OnSceneLaunched;
+		launchedCallbackFunc?: Director.OnSceneLaunched;
 		/** 场景卸载后回调 */
-		unloadedCallbackFunc?: cc.Director.OnUnload;
+		unloadedCallbackFunc?: Director.OnUnload;
 	}
 
 	/**
@@ -625,10 +625,10 @@ export namespace MKBundle_ {
 			}
 
 			// 对象池
-			this.nodePoolTab = new Proxy(cc.js.createMap(true), {
+			this.nodePoolTab = new Proxy(js.createMap(true), {
 				get: (target_, key_) => {
 					if (!target_[key_]) {
-						target_[key_] = new cc.NodePool(key_ as string);
+						target_[key_] = new NodePool(key_ as string);
 					}
 
 					return target_[key_];
@@ -645,7 +645,7 @@ export namespace MKBundle_ {
 		/** 管理器有效状态 */
 		isValid = false;
 		/** 节点池表 */
-		nodePoolTab!: Record<string, cc.NodePool>;
+		nodePoolTab!: Record<string, NodePool>;
 		/** 事件对象 */
 		event?: MKEventTarget<any>;
 		/** 网络对象 */

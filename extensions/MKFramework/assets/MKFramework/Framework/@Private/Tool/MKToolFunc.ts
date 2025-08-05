@@ -1,6 +1,6 @@
-import * as cc from "cc";
 import { mkLog } from "../../MKLogger";
 import MKInstanceBase from "../../MKInstanceBase";
+import { js } from "cc";
 
 /** 函数扩展 */
 class MKToolFunc extends MKInstanceBase {
@@ -115,7 +115,7 @@ class MKToolFunc extends MKInstanceBase {
 			target_[keyStr_] = (...argsList: any[]) => {
 				/** 定时器 */
 				const timer = setTimeout(() => {
-					mkLog.error(`${cc.js.getClassName(target_)}:${keyStr_} 执行超时`, target_);
+					mkLog.error(`${js.getClassName(target_)}:${keyStr_} 执行超时`, target_);
 				}, timeMsN_);
 
 				const result = oldFunc.call(target_, ...argsList);
@@ -140,7 +140,7 @@ class MKToolFunc extends MKInstanceBase {
 			return funcList_;
 		}
 
-		this._getParentFunc(cc.js.getSuper(target_), key_, target_, funcList_);
+		this._getParentFunc(js.getSuper(target_), key_, target_, funcList_);
 		if (target_.prototype[key_] && (oldTarget_ ? target_.prototype[key_] !== oldTarget_.prototype[key_] : true)) {
 			funcList_.push(target_.prototype[key_]);
 		}
@@ -150,4 +150,5 @@ class MKToolFunc extends MKInstanceBase {
 }
 
 const mkToolFunc = MKToolFunc.instance();
+
 export default mkToolFunc;

@@ -1,4 +1,3 @@
-import * as cc from "cc";
 import GlobalEvent from "../Config/GlobalEvent";
 import MKInstanceBase from "./MKInstanceBase";
 import MKLogger from "./MKLogger";
@@ -9,18 +8,19 @@ import MKStatusTask from "./Task/MKStatusTask";
 import MKTool from "./@Private/Tool/MKTool";
 import { MKRelease_ } from "./MKRelease";
 import MKEventTarget from "./MKEventTarget";
+import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node } from "cc";
 
 namespace _MKUIManage {
 	/** 模块类型 */
 	// @ts-ignore
-	export type TypeModule<T extends cc.Constructor<MKViewBase>> = T["prototype"]["typeStr"] | "default";
+	export type TypeModule<T extends Constructor<MKViewBase>> = T["prototype"]["typeStr"] | "default";
 
 	/** 注册资源类型 */
-	export type TypeRegisSource<T extends cc.Constructor<MKViewBase>> =
-		| cc.Prefab
+	export type TypeRegisSource<T extends Constructor<MKViewBase>> =
+		| Prefab
 		| string
-		| cc.Node
-		| (T extends cc.Constructor<MKViewBase> ? Record<TypeModule<T>, cc.Prefab | string | cc.Node> : never);
+		| Node
+		| (T extends Constructor<MKViewBase> ? Record<TypeModule<T>, Prefab | string | Node> : never);
 
 	export interface EventProtocol {
 		/** open 模块成功后 */
@@ -59,7 +59,7 @@ export class MKUIManage extends MKInstanceBase {
 	 * @remarks
 	 * open 未注册模块时会使用此函数获取注册数据自动注册
 	 */
-	getRegisDataFunc?: <T extends cc.Constructor<MKViewBase>>(key: T) => MKUIManage_.RegisData<T>;
+	getRegisDataFunc?: <T extends Constructor<MKViewBase>>(key: T) => MKUIManage_.RegisData<T>;
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log = new MKLogger("MKUIManage");
@@ -78,7 +78,7 @@ export class MKUIManage extends MKInstanceBase {
 	 */
 	private _uiLoadMap = new Map<any, MKStatusTask>();
 	/** 模块对象池 */
-	private _uiPoolMap = new Map<any, Map<string, MKObjectPool<cc.Node>>>();
+	private _uiPoolMap = new Map<any, Map<string, MKObjectPool<Node>>>();
 	/** 隐藏模块列表长度 */
 	private _uiHiddenLengthN = 0;
 	/** 模块隐藏集合 */
@@ -96,7 +96,7 @@ export class MKUIManage extends MKInstanceBase {
 	 * @param config_ 模块配置
 	 * @returns
 	 */
-	async regis<T extends cc.Constructor<MKViewBase>>(
+	async regis<T extends Constructor<MKViewBase>>(
 		key_: T,
 		source_: _MKUIManage.TypeRegisSource<T>,
 		target_: MKRelease_.TypeFollowReleaseObject<MKRelease_.TypeReleaseCallBack> | null,
@@ -133,7 +133,7 @@ export class MKUIManage extends MKInstanceBase {
 		this._uiRegisMap.set(key_, regisData);
 
 		/** 节点池 */
-		const objectPoolMap = new Map<string, MKObjectPool<cc.Node>>();
+		const objectPoolMap = new Map<string, MKObjectPool<Node>>();
 
 		/** 退出回调 */
 		const exitCallbackFunc = async (isSuccess: boolean): Promise<void> => {
@@ -148,14 +148,14 @@ export class MKUIManage extends MKInstanceBase {
 		};
 
 		/** 来源表 */
-		const sourceTab: Record<string, string | cc.Prefab | cc.Node | undefined> = Object.create(null);
+		const sourceTab: Record<string, string | Prefab | Node | undefined> = Object.create(null);
 		/** 来源失效计数 */
 		let sourceInvalidCountNum = 0;
 
 		// 初始化来源表
 		{
 			// 资源路径/节点
-			if (typeof source_ !== "object" || source_ instanceof cc.Node) {
+			if (typeof source_ !== "object" || source_ instanceof Node) {
 				sourceTab["default"] = source_;
 			}
 			// 资源表
@@ -166,7 +166,7 @@ export class MKUIManage extends MKInstanceBase {
 
 		// 初始化对象池
 		for (const kStr in sourceTab) {
-			let source: cc.Prefab | cc.Node | null = null;
+			let source: Prefab | Node | null = null;
 			const v = sourceTab[kStr];
 
 			if (!v) {
@@ -175,7 +175,7 @@ export class MKUIManage extends MKInstanceBase {
 
 			// 资源路径
 			if (typeof v === "string" && regisData.poolInitFillNum > 0) {
-				source = await MKAsset.get(v, cc.Prefab, null, regisData.loadConfig);
+				source = await MKAsset.get(v, Prefab, null, regisData.loadConfig);
 			}
 
 			// 预制体/节点
@@ -190,11 +190,11 @@ export class MKUIManage extends MKInstanceBase {
 			}
 
 			/** 对象池 */
-			const objectPool = new MKObjectPool<cc.Node>({
+			const objectPool = new MKObjectPool<Node>({
 				createFunc: async () => {
 					// 不存在预制体开始加载
 					if (!source && typeof v === "string") {
-						source = (await MKAsset.get(v, cc.Prefab, null, regisData.loadConfig))!;
+						source = (await MKAsset.get(v, Prefab, null, regisData.loadConfig))!;
 					}
 
 					if (!source?.isValid) {
@@ -203,7 +203,7 @@ export class MKUIManage extends MKInstanceBase {
 						return null;
 					}
 
-					return cc.instantiate(source as any);
+					return instantiate(source as any);
 				},
 				clearFunc: async (objectList) => {
 					objectList.forEach((v) => {
@@ -213,7 +213,7 @@ export class MKUIManage extends MKInstanceBase {
 				destroyFunc: () => {
 					// 动态加载的资源手动销毁
 					if (typeof v === "string" && source?.isValid) {
-						(source as cc.Prefab).decRef();
+						(source as Prefab).decRef();
 					}
 				},
 				maxHoldNum: regisData.poolMaxHoldNum,
@@ -245,7 +245,7 @@ export class MKUIManage extends MKInstanceBase {
 	 * @param key_ 模块键
 	 * @returns
 	 */
-	async unregis<T extends cc.Constructor<MKViewBase>>(key_: T): Promise<void> {
+	async unregis<T extends Constructor<MKViewBase>>(key_: T): Promise<void> {
 		/** 模块注册任务 */
 		const uiRegisTask = this._uiRegisTaskMap.get(key_);
 
@@ -362,7 +362,7 @@ export class MKUIManage extends MKInstanceBase {
 
 		// 安检
 		if (!regisData) {
-			this._log.error(cc.js.getClassName(key_), "模块未注册");
+			this._log.error(js.getClassName(key_), "模块未注册");
 
 			return null;
 		}
@@ -517,7 +517,7 @@ export class MKUIManage extends MKInstanceBase {
 
 		// 模块已被关闭
 		if (!viewComp.valid) {
-			this._log.warn(`模块 ${cc.js.getClassName(viewComp)} 在 open 内被关闭`);
+			this._log.warn(`模块 ${js.getClassName(viewComp)} 在 open 内被关闭`);
 
 			return exitCallbackFunc(false);
 		}
@@ -546,8 +546,8 @@ export class MKUIManage extends MKInstanceBase {
 	 * @param config_ 关闭配置
 	 * @returns
 	 */
-	async close<T extends cc.Constructor<MKViewBase>, T2 extends MKViewBase>(
-		args_: cc.Node | T | T2,
+	async close<T extends Constructor<MKViewBase>, T2 extends MKViewBase>(
+		args_: Node | T | T2,
 		config_?: MKUIManage_.CloseConfig<T>
 	): Promise<boolean> {
 		if (!args_) {
@@ -558,12 +558,12 @@ export class MKUIManage extends MKInstanceBase {
 
 		const config = new MKUIManage_.CloseConfig(config_);
 		let key_: T | undefined;
-		let node_: cc.Node | undefined;
+		let node_: Node | undefined;
 		let view_: T2 | undefined;
 
 		// 参数转换
 		{
-			if (args_ instanceof cc.Node) {
+			if (args_ instanceof Node) {
 				node_ = args_;
 			} else if (args_ instanceof MKViewBase) {
 				view_ = args_ as any;
@@ -716,9 +716,9 @@ export class MKUIManage extends MKInstanceBase {
 				continue;
 			}
 
-			if (cc.director.isPersistRootNode(v.node)) {
+			if (director.isPersistRootNode(v.node)) {
 				this._log.warn("关闭常驻节点", v);
-				cc.director.removePersistRootNode(v.node);
+				director.removePersistRootNode(v.node);
 			}
 
 			await v._close?.({
@@ -727,7 +727,7 @@ export class MKUIManage extends MKInstanceBase {
 			});
 
 			// 节点已在生命周期内被销毁
-			if (!cc.isValid(v.node, true)) {
+			if (!isValid(v.node, true)) {
 				continue;
 			}
 
@@ -783,10 +783,10 @@ export class MKUIManage extends MKInstanceBase {
 
 export namespace MKUIManage_ {
 	/** 模块打开键类型 */
-	export type TypeOpenKey = cc.Constructor<MKViewBase> & Function;
+	export type TypeOpenKey = Constructor<MKViewBase> & Function;
 
 	/** 关闭ui配置 */
-	export class CloseConfig<CT extends cc.Constructor<MKViewBase>> {
+	export class CloseConfig<CT extends Constructor<MKViewBase>> {
 		constructor(init_?: CloseConfig<CT>) {
 			Object.assign(this, init_);
 
@@ -820,11 +820,11 @@ export namespace MKUIManage_ {
 		/** 类型 */
 		type?: _MKUIManage.TypeModule<CT> = "default";
 		/** 父节点 */
-		parent?: cc.Node | null;
+		parent?: Node | null;
 	}
 
 	/** 模块注册配置 */
-	export class RegisConfig<CT extends cc.Constructor<MKViewBase>> {
+	export class RegisConfig<CT extends Constructor<MKViewBase>> {
 		constructor(init_?: Partial<RegisConfig<CT>>) {
 			if (!init_) {
 				return;
@@ -848,11 +848,11 @@ export namespace MKUIManage_ {
 		 * @defaultValue
 		 * Canvas 节点
 		 */
-		parent: cc.Scene | cc.Node | (() => cc.Node | null) | undefined = (): cc.Node | null => {
-			return cc.director.getScene()?.getComponentInChildren(cc.Canvas)?.node ?? null;
+		parent: Scene | Node | (() => Node | null) | undefined = (): Node | null => {
+			return director.getScene()?.getComponentInChildren(Canvas)?.node ?? null;
 		};
 		/** 加载配置 */
-		loadConfig?: MKAsset_.GetConfig<cc.Prefab>;
+		loadConfig?: MKAsset_.GetConfig<Prefab>;
 		/**
 		 * 对象池数量不足时扩充数量
 		 * @defaultValue
@@ -877,7 +877,7 @@ export namespace MKUIManage_ {
 	 * 模块注册数据
 	 * @noInheritDoc
 	 */
-	export class RegisData<CT extends cc.Constructor<MKViewBase>> extends RegisConfig<CT> {
+	export class RegisData<CT extends Constructor<MKViewBase>> extends RegisConfig<CT> {
 		constructor(init_?: Partial<RegisData<CT>>) {
 			super(init_);
 			Object.assign(this, init_);

@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import { sys } from "cc";
 import MKCodecBase from "./MKCodecBase";
 import MKTaskPipeline from "./Task/MKTaskPipeline";
 
@@ -48,7 +48,7 @@ class MKStorage<CT extends Object> {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 清空所有存储器数据 */
 	static clear(): void {
-		cc.sys.localStorage.clear();
+		sys.localStorage.clear();
 	}
 
 	/**
@@ -94,7 +94,7 @@ class MKStorage<CT extends Object> {
 		}
 
 		/** 存储数据 */
-		let storageStr = !this._initConfig.nameStr ? null : cc.sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(keyStr)}`);
+		let storageStr = !this._initConfig.nameStr ? null : sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(keyStr)}`);
 
 		// 不存在则创建新数据
 		if (storageStr === null) {
@@ -128,7 +128,7 @@ class MKStorage<CT extends Object> {
 		keyStr = `${this._initConfig.nameStr}-${String(keyStr)}`;
 		// 删除数据
 		this._writePipeline.add(() => {
-			cc.sys.localStorage.removeItem(keyStr);
+			sys.localStorage.removeItem(keyStr);
 		});
 	}
 
@@ -146,7 +146,7 @@ class MKStorage<CT extends Object> {
 			const keyStr = `${this._initConfig.nameStr}-${String(vStr)}`;
 
 			this._writePipeline.add(() => {
-				cc.sys.localStorage.removeItem(keyStr);
+				sys.localStorage.removeItem(keyStr);
 			});
 		});
 	}
@@ -173,7 +173,7 @@ class MKStorage<CT extends Object> {
 
 		// 写入数据
 		this._writePipeline.add(() => {
-			cc.sys.localStorage.setItem(keyStr, dataStr_);
+			sys.localStorage.setItem(keyStr, dataStr_);
 		});
 	}
 	/* ------------------------------- get/set ------------------------------- */
@@ -198,7 +198,7 @@ class MKStorage<CT extends Object> {
 		// 迁移本地到本地
 		else {
 			Object.keys(this._initConfig.data).forEach((vStr) => {
-				const dataStr = cc.sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(vStr)}`);
+				const dataStr = sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(vStr)}`);
 
 				if (dataStr === null) {
 					return;
@@ -208,8 +208,8 @@ class MKStorage<CT extends Object> {
 				const oldKeyStr = `${this._initConfig.nameStr}-${String(vStr)}`;
 
 				this._writePipeline.add(() => {
-					cc.sys.localStorage.setItem(newKeyStr, dataStr);
-					cc.sys.localStorage.removeItem(oldKeyStr);
+					sys.localStorage.setItem(newKeyStr, dataStr);
+					sys.localStorage.removeItem(oldKeyStr);
 				});
 			});
 

@@ -1,9 +1,9 @@
 import { EDITOR } from "cc/env";
-import * as cc from "cc";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKN from "../@Extends/@Node/MKNodes";
+import { _decorator, Component, Enum, CCClass } from "cc";
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, executeInEditMode } = cc._decorator;
+const { ccclass, property, executeInEditMode } = _decorator;
 
 /**
  * 层级管理
@@ -15,7 +15,7 @@ const { ccclass, property, executeInEditMode } = cc._decorator;
  * - 支持类型层级细粒度划分
  */
 @ccclass
-class MKLayer extends cc.Component {
+class MKLayer extends Component {
 	/* --------------- static --------------- */
 	protected static _config = GlobalConfig.View.config;
 	/* --------------- 属性 --------------- */
@@ -32,7 +32,7 @@ class MKLayer extends cc.Component {
 	/** 层类型 */
 	@property({
 		displayName: "层类型",
-		type: cc.Enum({ 未初始化: 0 }),
+		type: Enum({ 未初始化: 0 }),
 		group: { name: "视图配置", id: "1" },
 		visible: function (this: MKLayer) {
 			return this._isUseLayer;
@@ -93,7 +93,7 @@ class MKLayer extends cc.Component {
 		// 更新编辑器
 		if (EDITOR) {
 			// 层类型
-			cc.CCClass.Attr.setClassAttr(MKLayer, "layerTypeNum", "enumList", cc.Enum.getList(cc.Enum(GlobalConfig.View.LayerType)));
+			CCClass.Attr.setClassAttr(MKLayer, "layerTypeNum", "enumList", Enum.getList(Enum(GlobalConfig.View.LayerType)));
 		}
 	}
 

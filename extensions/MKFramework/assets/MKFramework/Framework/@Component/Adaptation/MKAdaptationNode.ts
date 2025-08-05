@@ -1,10 +1,11 @@
-import * as cc from "cc";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { _decorator, Component, size, Vec3, v3, UITransform, Sprite, Size, v2, director, Canvas, Enum, Node } from "cc";
 import GlobalEvent from "../../../Config/GlobalEvent";
 import { mkLog } from "../../MKLogger";
 import { EDITOR } from "cc/env";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, menu, executeInEditMode } = cc._decorator;
+const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 namespace _MKAdaptationNode {
 	/** 适配类型 */
@@ -39,7 +40,7 @@ namespace _MKAdaptationNode {
  */
 @ccclass
 @executeInEditMode
-export default class MKAdaptationNode extends cc.Component {
+export default class MKAdaptationNode extends Component {
 	/* --------------- 属性 --------------- */
 	/** 编辑器预览 */
 	@property({ displayName: "编辑器预览" })
@@ -55,11 +56,11 @@ export default class MKAdaptationNode extends cc.Component {
 	}
 
 	/** 适配模式 */
-	@property({ displayName: "适配模式", type: cc.Enum(_MKAdaptationNode.Mode) })
+	@property({ displayName: "适配模式", type: Enum(_MKAdaptationNode.Mode) })
 	adaptationMode = _MKAdaptationNode.Mode.Scale;
 
 	/** 适配来源 */
-	@property({ displayName: "适配来源", type: cc.Enum(_MKAdaptationNode.Source) })
+	@property({ displayName: "适配来源", type: Enum(_MKAdaptationNode.Source) })
 	adaptationSource = _MKAdaptationNode.Source.Canvas;
 
 	/** 原始大小 */
@@ -69,7 +70,7 @@ export default class MKAdaptationNode extends cc.Component {
 			return this.adaptationMode === _MKAdaptationNode.Mode.Size;
 		},
 	})
-	originalSize = cc.size();
+	originalSize = size();
 
 	/** 自定义适配大小 */
 	@property({
@@ -78,10 +79,10 @@ export default class MKAdaptationNode extends cc.Component {
 			return this.adaptationSource === _MKAdaptationNode.Source.Customize;
 		},
 	})
-	customAdaptSize = cc.size();
+	customAdaptSize = size();
 
 	/** 适配类型 */
-	@property({ displayName: "适配类型", type: cc.Enum(_MKAdaptationNode.Type) })
+	@property({ displayName: "适配类型", type: Enum(_MKAdaptationNode.Type) })
 	get type(): _MKAdaptationNode.Type {
 		return this._type;
 	}
@@ -132,12 +133,12 @@ export default class MKAdaptationNode extends cc.Component {
 	/** 最大缩放 */
 	@property({
 		displayName: "最大缩放",
-		type: cc.Vec3,
+		type: Vec3,
 		visible: function (this: MKAdaptationNode): boolean {
 			return this.isLimitMaxScale;
 		},
 	})
-	get maxScaleV3(): cc.Vec3 {
+	get maxScaleV3(): Vec3 {
 		return this._maxScaleV3;
 	}
 
@@ -151,12 +152,12 @@ export default class MKAdaptationNode extends cc.Component {
 	/** 最小缩放 */
 	@property({
 		displayName: "最小缩放",
-		type: cc.Vec3,
+		type: Vec3,
 		visible: function (this: MKAdaptationNode): boolean {
 			return this.isLimitMinScale;
 		},
 	})
-	get minScaleV3(): cc.Vec3 {
+	get minScaleV3(): Vec3 {
 		return this._minScaleV3;
 	}
 
@@ -182,19 +183,19 @@ export default class MKAdaptationNode extends cc.Component {
 
 	/** 最大缩放 */
 	@property
-	private _maxScaleV3 = cc.v3(1, 1, 1);
+	private _maxScaleV3 = v3(1, 1, 1);
 
 	/** 最小缩放 */
 	@property
-	private _minScaleV3 = cc.v3(1, 1, 1);
+	private _minScaleV3 = v3(1, 1, 1);
 
 	/** 编辑器预览 */
 	private _isEditorPreview = false;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	onLoad() {
 		if (EDITOR) {
-			if (this.originalSize.equals(cc.size())) {
-				this.originalSize = this.node.getComponent(cc.UITransform)!.contentSize.clone();
+			if (this.originalSize.equals(size())) {
+				this.originalSize = this.node.getComponent(UITransform)!.contentSize.clone();
 			}
 
 			this.updateAdaptation();
@@ -207,25 +208,25 @@ export default class MKAdaptationNode extends cc.Component {
 		if (this.adaptationSource === _MKAdaptationNode.Source.Canvas) {
 			GlobalEvent.on(GlobalEvent.key.resize, this._onGlobalResize, this);
 		} else if (this.adaptationSource === _MKAdaptationNode.Source.Parent) {
-			this.node.parent?.on(cc.Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
+			this.node.parent?.on(Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
 		}
 
-		if (this.node.getComponent(cc.Sprite)) {
-			this.node.on(cc.Sprite.EventType.SPRITE_FRAME_CHANGED, this._onNodeSpriteFrameChanged, this);
+		if (this.node.getComponent(Sprite)) {
+			this.node.on(Sprite.EventType.SPRITE_FRAME_CHANGED, this._onNodeSpriteFrameChanged, this);
 		}
 
-		this.node.on(cc.Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
+		this.node.on(Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
 	}
 
 	onDisable(): void {
 		if (this.adaptationSource === _MKAdaptationNode.Source.Canvas) {
 			GlobalEvent.off(GlobalEvent.key.resize, this._onGlobalResize, this);
 		} else if (this.adaptationSource === _MKAdaptationNode.Source.Parent) {
-			this.node.parent?.off(cc.Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
+			this.node.parent?.off(Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
 		}
 
-		this.node.off(cc.Sprite.EventType.SPRITE_FRAME_CHANGED, this._onNodeSpriteFrameChanged, this);
-		this.node.off(cc.Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
+		this.node.off(Sprite.EventType.SPRITE_FRAME_CHANGED, this._onNodeSpriteFrameChanged, this);
+		this.node.off(Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
 	}
 
 	/* ------------------------------- 功能函数 ------------------------------- */
@@ -237,8 +238,8 @@ export default class MKAdaptationNode extends cc.Component {
 	}
 
 	/** 自适应-展示完 */
-	private _adaptiveShowAll(designSize_: cc.Size, frameSize_: cc.Size): void {
-		const scaleV2 = cc.v2(designSize_.width / frameSize_.width, designSize_.height / frameSize_.height);
+	private _adaptiveShowAll(designSize_: Size, frameSize_: Size): void {
+		const scaleV2 = v2(designSize_.width / frameSize_.width, designSize_.height / frameSize_.height);
 
 		if (scaleV2.x < scaleV2.y) {
 			scaleV2.y = scaleV2.x;
@@ -249,13 +250,13 @@ export default class MKAdaptationNode extends cc.Component {
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Scale) {
 			this.node.setScale(scaleV2.x, scaleV2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
+			this.node.getComponent(UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
 		}
 	}
 
 	/** 自适应-填充满 */
-	private _adaptiveFillUp(designSize_: cc.Size, frameSize_: cc.Size): void {
-		const scaleV2 = cc.v2(designSize_.width / frameSize_.width, designSize_.height / frameSize_.height);
+	private _adaptiveFillUp(designSize_: Size, frameSize_: Size): void {
+		const scaleV2 = v2(designSize_.width / frameSize_.width, designSize_.height / frameSize_.height);
 
 		if (scaleV2.x < scaleV2.y) {
 			scaleV2.x = scaleV2.y;
@@ -266,14 +267,14 @@ export default class MKAdaptationNode extends cc.Component {
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Scale) {
 			this.node.setScale(scaleV2.x, scaleV2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
+			this.node.getComponent(UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
 		}
 	}
 
 	/** 填充宽 */
-	private _fillWidth(designSize_: cc.Size, frameSize_: cc.Size): void {
+	private _fillWidth(designSize_: Size, frameSize_: Size): void {
 		const scaleNum = designSize_.width / frameSize_.width;
-		const scaleV2 = cc.v2(scaleNum, scaleNum);
+		const scaleV2 = v2(scaleNum, scaleNum);
 
 		if (this.isLimitMaxScale) {
 			scaleV2.x = Math.min(scaleV2.x, this.maxScaleV3.x);
@@ -288,14 +289,14 @@ export default class MKAdaptationNode extends cc.Component {
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Scale) {
 			this.node.setScale(scaleV2.x, scaleV2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
+			this.node.getComponent(UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
 		}
 	}
 
 	/** 填充高 */
-	private _fillHeight(designSize_: cc.Size, frameSize_: cc.Size): void {
+	private _fillHeight(designSize_: Size, frameSize_: Size): void {
 		const scaleNum = designSize_.height / frameSize_.height;
-		const scaleV2 = cc.v2(scaleNum, scaleNum);
+		const scaleV2 = v2(scaleNum, scaleNum);
 
 		if (this.isLimitMaxScale) {
 			scaleV2.x = Math.min(scaleV2.x, this.maxScaleV3.x);
@@ -310,22 +311,22 @@ export default class MKAdaptationNode extends cc.Component {
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Scale) {
 			this.node.setScale(scaleV2.x, scaleV2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
+			this.node.getComponent(UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.y);
 		}
 	}
 
 	/** 默认 */
-	private _default(designSize_: cc.Size, frameSize_: cc.Size): void {
+	private _default(designSize_: Size, frameSize_: Size): void {
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Scale) {
 			this.node.setScale(1, 1);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this.originalSize.width, this.originalSize.height);
+			this.node.getComponent(UITransform)!.setContentSize(this.originalSize.width, this.originalSize.height);
 		}
 	}
 
 	/** 缩放 */
-	private _scale(designSize_: cc.Size, frameSize_: cc.Size): void {
-		const scaleV2 = cc.v2(designSize_.width / frameSize_.width, designSize_.height / frameSize_.height);
+	private _scale(designSize_: Size, frameSize_: Size): void {
+		const scaleV2 = v2(designSize_.width / frameSize_.width, designSize_.height / frameSize_.height);
 
 		if (this.isLimitMaxScale) {
 			scaleV2.x = Math.min(scaleV2.x, this.maxScaleV3.x);
@@ -340,7 +341,7 @@ export default class MKAdaptationNode extends cc.Component {
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Scale) {
 			this.node.setScale(scaleV2.x, scaleV2.y);
 		} else {
-			this.node.getComponent(cc.UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.x);
+			this.node.getComponent(UITransform)!.setContentSize(this.originalSize.width * scaleV2.x, this.originalSize.height * scaleV2.x);
 		}
 	}
 
@@ -352,15 +353,15 @@ export default class MKAdaptationNode extends cc.Component {
 
 		try {
 			/** 设计尺寸 */
-			let designSize: cc.Size;
+			let designSize: Size;
 			/** 真实尺寸 */
-			let frameSize: cc.Size;
+			let frameSize: Size;
 			/** 容器节点 */
-			let layoutNode: cc.Node | null = null;
+			let layoutNode: Node | null = null;
 
 			switch (this.adaptationMode) {
 				case _MKAdaptationNode.Mode.Scale: {
-					frameSize = this.node.getComponent(cc.UITransform)!.contentSize.clone();
+					frameSize = this.node.getComponent(UITransform)!.contentSize.clone();
 					break;
 				}
 
@@ -372,14 +373,14 @@ export default class MKAdaptationNode extends cc.Component {
 
 			switch (this.adaptationSource) {
 				case _MKAdaptationNode.Source.Canvas: {
-					layoutNode = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!.node;
-					designSize = layoutNode.getComponent(cc.UITransform)!.contentSize.clone();
+					layoutNode = director.getScene()!.getComponentInChildren(Canvas)!.node;
+					designSize = layoutNode.getComponent(UITransform)!.contentSize.clone();
 					break;
 				}
 
 				case _MKAdaptationNode.Source.Parent: {
 					layoutNode = this.node.parent!;
-					designSize = layoutNode.getComponent(cc.UITransform)!.contentSize.clone();
+					designSize = layoutNode.getComponent(UITransform)!.contentSize.clone();
 					break;
 				}
 
@@ -430,7 +431,7 @@ export default class MKAdaptationNode extends cc.Component {
 	private _onNodeSpriteFrameChanged(): void {
 		// 更新原始节点大小
 		if (this.adaptationMode === _MKAdaptationNode.Mode.Size) {
-			this.originalSize = this.getComponent(cc.UITransform)!.contentSize.clone();
+			this.originalSize = this.getComponent(UITransform)!.contentSize.clone();
 		}
 
 		// 适配节点

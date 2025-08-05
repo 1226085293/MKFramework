@@ -1,10 +1,10 @@
 import { EDITOR } from "cc/env";
 import GlobalConfig from "../../Config/GlobalConfig";
-import * as cc from "cc";
 import MKEventTarget from "../MKEventTarget";
 import MKInstanceBase from "../MKInstanceBase";
 import MKLogger from "../MKLogger";
 import mkAsset, { MKAsset_ } from "../Resources/MKAsset";
+import { SpriteFrame, ImageAsset } from "cc";
 
 namespace _MKLanguageManage {
 	/** 多语言类型类型 */
@@ -103,7 +103,7 @@ export class MKLanguageManage extends MKInstanceBase {
 		markStr_: string,
 		target_: MKAsset_.TypeFollowReleaseObject,
 		language_: keyof typeof GlobalConfig.Language.typeTab = this._languageStr
-	): Promise<cc.SpriteFrame | null> {
+	): Promise<SpriteFrame | null> {
 		const pathStr = this.textureDataTab[type_]?.[markStr_]?.[GlobalConfig.Language.types[language_]];
 
 		if (!pathStr) {
@@ -113,13 +113,13 @@ export class MKLanguageManage extends MKInstanceBase {
 		}
 
 		if (EDITOR) {
-			const asset = await mkAsset.get(pathStr + ".png", cc.ImageAsset, target_);
+			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, target_);
 
 			if (asset) {
-				return cc.SpriteFrame.createWithImage(asset);
+				return SpriteFrame.createWithImage(asset);
 			}
 		} else {
-			const asset = await mkAsset.get(pathStr, cc.SpriteFrame, target_);
+			const asset = await mkAsset.get(pathStr, SpriteFrame, target_);
 
 			if (asset) {
 				return asset;

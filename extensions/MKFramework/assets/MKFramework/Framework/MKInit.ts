@@ -1,33 +1,33 @@
 import * as mk from "./MKExport";
 import GlobalConfig from "../Config/GlobalConfig";
-import * as cc from "cc";
 import { DEBUG, EDITOR } from "cc/env";
 import GlobalEvent from "../Config/GlobalEvent";
 import * as env from "cc/env";
+import { Director, director, profiler, Size, view } from "cc";
 
 // 初始化逻辑
 if (!EDITOR) {
 	// 保存初始设计分辨率
-	cc.director.once(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, () => {
-		(GlobalConfig.View.originalDesignSize as cc.Size).set(cc.view.getDesignResolutionSize());
+	director.once(Director.EVENT_BEFORE_SCENE_LAUNCH, () => {
+		(GlobalConfig.View.originalDesignSize as Size).set(view.getDesignResolutionSize());
 	});
 
 	// 显示调试信息
-	cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, () => {
+	director.once(Director.EVENT_AFTER_SCENE_LAUNCH, () => {
 		if (GlobalConfig.Constant.isShowDebugInfo) {
-			cc.profiler?.showStats();
+			profiler?.showStats();
 		} else {
-			cc.profiler?.hideStats();
+			profiler?.hideStats();
 		}
 	});
 
 	// 屏幕大小改变事件分发
-	if ((cc.view as any).setResizeCallback) {
-		(cc.view as any).setResizeCallback(() => {
+	if ((view as any).setResizeCallback) {
+		(view as any).setResizeCallback(() => {
 			GlobalEvent.emit(GlobalEvent.key.resize);
 		});
 	} else {
-		(cc.screen as any).on("window-resize", () => {
+		(screen as any).on("window-resize", () => {
 			GlobalEvent.emit(GlobalEvent.key.resize);
 		});
 	}

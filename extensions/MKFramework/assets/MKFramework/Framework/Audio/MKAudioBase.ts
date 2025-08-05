@@ -2,13 +2,14 @@ import mkAsset, { MKAsset_ } from "../Resources/MKAsset";
 import { EDITOR } from "cc/env";
 import MKEventTarget from "../MKEventTarget";
 import MKLogger from "../MKLogger";
-import * as cc from "cc";
 import GlobalEvent from "../../Config/GlobalEvent";
 import mkTool from "../@Private/Tool/MKTool";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKRelease, { MKRelease_ } from "../MKRelease";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { _decorator, AudioClip, AudioSource, Enum } from "cc";
 
-const { ccclass, property } = cc._decorator;
+const { ccclass, property } = _decorator;
 
 /**
  * 音频基类
@@ -77,7 +78,7 @@ abstract class MKAudioBase {
 
 		if (config_?.isDir) {
 			for (const vStr of urlStrList) {
-				const assetList = await mkAsset.getDir(vStr, cc.AudioClip, null, config_.loadConfig as any);
+				const assetList = await mkAsset.getDir(vStr, AudioClip, null, config_.loadConfig as any);
 
 				assetList?.forEach((v2) => {
 					const audio = this._getAudioUnit({
@@ -92,7 +93,7 @@ abstract class MKAudioBase {
 			result = audioList;
 		} else {
 			for (const vStr of urlStrList) {
-				const asset = await mkAsset.get(vStr, cc.AudioClip, null, config_?.loadConfig);
+				const asset = await mkAsset.get(vStr, AudioClip, null, config_?.loadConfig);
 
 				if (!asset) {
 					audioList.push(null!);
@@ -151,7 +152,7 @@ abstract class MKAudioBase {
 	 * @param config_ 播放配置
 	 * @returns
 	 * @remarks
-	 * 使用通用音频系统时，当播放数量超过 cc.AudioSource.maxAudioChannel 时会导致播放失败
+	 * 使用通用音频系统时，当播放数量超过 AudioSource.maxAudioChannel 时会导致播放失败
 	 */
 	play(audio_: MKAudioBase_.Unit, config_?: Partial<MKAudioBase_.PlayConfig>): boolean {
 		const audio = audio_ as MKAudioBase_.PrivateUnit;
@@ -297,9 +298,9 @@ export namespace MKAudioBase_ {
 		 * @remarks
 		 * 通用音频系统使用
 		 */
-		readonly audioSource: cc.AudioSource | null;
+		readonly audioSource: AudioSource | null;
 		/** 音频资源 */
-		clip: cc.AudioClip | null;
+		clip: AudioClip | null;
 		/** 音量 */
 		volumeNum: number;
 		/** 循环 */
@@ -327,7 +328,7 @@ export namespace MKAudioBase_ {
 		/** 文件夹 */
 		isDir?: T;
 		/** 加载配置 */
-		loadConfig?: MKAsset_.GetConfig<cc.AudioClip>;
+		loadConfig?: MKAsset_.GetConfig<AudioClip>;
 	}
 
 	/** play 配置 */
@@ -366,13 +367,13 @@ export namespace MKAudioBase_ {
 
 		/* --------------- 属性 --------------- */
 		/** 音频资源 */
-		@property({ displayName: "音频资源", type: cc.AudioClip ?? null })
-		clip: cc.AudioClip | null = null;
+		@property({ displayName: "音频资源", type: AudioClip ?? null })
+		clip: AudioClip | null = null;
 
 		/** 音频类型 */
 		@property({
 			displayName: "音频类型",
-			type: cc.Enum(GlobalConfig.Audio.Type),
+			type: Enum(GlobalConfig.Audio.Type),
 		})
 		type = GlobalConfig.Audio.Type.Effect;
 
@@ -459,7 +460,7 @@ export namespace MKAudioBase_ {
 		 * @remarks
 		 * 通用音频系统使用
 		 */
-		get audioSource(): cc.AudioSource | null {
+		get audioSource(): AudioSource | null {
 			return null;
 		}
 

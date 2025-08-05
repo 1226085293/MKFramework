@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import { EventTarget } from "cc";
 
 /**
  * 事件对象（类型安全）
@@ -6,7 +6,7 @@ import * as cc from "cc";
  * @remarks
  * 获取事件键使用 EventTarget.key.xxx
  */
-class MKEventTarget<CT> extends cc.EventTarget {
+class MKEventTarget<CT> extends EventTarget {
 	/** 事件键 */
 	key: { [k in keyof CT]: k } = new Proxy(Object.create(null), {
 		get: (target, key) => key,

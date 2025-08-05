@@ -1,4 +1,3 @@
-import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import MKTool from "../@Private/Tool/MKTool";
 import { MKLifeCycle, _MKLifeCycle } from "./MKLifeCycle";
@@ -8,8 +7,9 @@ import mkAsset from "../Resources/MKAsset";
 import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
 import mkBundle from "../Resources/MKBundle";
+import { _decorator, Enum, Widget, BlockInputEvents, CCClass, Prefab, instantiate } from "cc";
 const mkUIManage = mkDynamicModule.default(import("../MKUIManage"));
-const { ccclass, property } = cc._decorator;
+const { ccclass, property } = _decorator;
 
 namespace _MKViewBase {
 	/** create 配置 */
@@ -39,7 +39,7 @@ namespace _MKViewBase {
 		 */
 		@property({
 			displayName: "打开动画",
-			type: cc.Enum({ 未初始化: 0 }),
+			type: Enum({ 未初始化: 0 }),
 		})
 		get openAnimationNum(): number {
 			return (AnimationConfig.animationEnumTab.open[this.openAnimationStr] as number) ?? 0;
@@ -57,7 +57,7 @@ namespace _MKViewBase {
 		 */
 		@property({
 			displayName: "关闭动画",
-			type: cc.Enum({ 未初始化: 0 }),
+			type: Enum({ 未初始化: 0 }),
 		})
 		get closeAnimationNum(): number {
 			return (AnimationConfig.animationEnumTab.close[this.closeAnimationStr] as number) ?? 0;
@@ -134,7 +134,7 @@ export class MKViewBase extends MKLifeCycle {
 		group: { name: "快捷操作", id: "1" },
 	})
 	get isAutoWidget(): boolean {
-		return Boolean(this.getComponent(cc.Widget));
+		return Boolean(this.getComponent(Widget));
 	}
 
 	set isAutoWidget(value_) {
@@ -148,7 +148,7 @@ export class MKViewBase extends MKLifeCycle {
 		group: { name: "快捷操作", id: "1" },
 	})
 	get isAutoBlockInput(): boolean {
-		return Boolean(this.getComponent(cc.BlockInputEvents));
+		return Boolean(this.getComponent(BlockInputEvents));
 	}
 
 	set isAutoBlockInput(value_) {
@@ -231,7 +231,7 @@ export class MKViewBase extends MKLifeCycle {
 		{
 			// 打开
 			{
-				_MKViewBase.AnimationConfig.animationEnumTab.open = cc.Enum(MKTool.enum.objToEnum(MKViewBase._config.windowAnimationTab.open));
+				_MKViewBase.AnimationConfig.animationEnumTab.open = Enum(MKTool.enum.objToEnum(MKViewBase._config.windowAnimationTab.open));
 
 				if (this.animationConfig && !this.animationConfig.openAnimationStr) {
 					this.animationConfig.openAnimationStr = Object.keys(_MKViewBase.AnimationConfig.animationEnumTab.open)[0];
@@ -239,18 +239,18 @@ export class MKViewBase extends MKLifeCycle {
 
 				// 更新编辑器
 				if (EDITOR) {
-					cc.CCClass.Attr.setClassAttr(
+					CCClass.Attr.setClassAttr(
 						_MKViewBase.AnimationConfig,
 						"openAnimationNum",
 						"enumList",
-						cc.Enum.getList(_MKViewBase.AnimationConfig.animationEnumTab.open)
+						Enum.getList(_MKViewBase.AnimationConfig.animationEnumTab.open)
 					);
 				}
 			}
 
 			// 关闭
 			{
-				_MKViewBase.AnimationConfig.animationEnumTab.close = cc.Enum(MKTool.enum.objToEnum(MKViewBase._config.windowAnimationTab.close));
+				_MKViewBase.AnimationConfig.animationEnumTab.close = Enum(MKTool.enum.objToEnum(MKViewBase._config.windowAnimationTab.close));
 
 				if (this.animationConfig && !this.animationConfig.closeAnimationStr) {
 					this.animationConfig.closeAnimationStr = Object.keys(_MKViewBase.AnimationConfig.animationEnumTab.close)[0];
@@ -258,11 +258,11 @@ export class MKViewBase extends MKLifeCycle {
 
 				// 更新编辑器
 				if (EDITOR) {
-					cc.CCClass.Attr.setClassAttr(
+					CCClass.Attr.setClassAttr(
 						_MKViewBase.AnimationConfig,
 						"closeAnimationNum",
 						"enumList",
-						cc.Enum.getList(_MKViewBase.AnimationConfig.animationEnumTab.close)
+						Enum.getList(_MKViewBase.AnimationConfig.animationEnumTab.close)
 					);
 				}
 			}
@@ -290,13 +290,13 @@ export class MKViewBase extends MKLifeCycle {
 					return;
 				}
 
-				const prefab = await mkAsset.get(GlobalConfig.View.maskDataTab.prefabPathStr, cc.Prefab, this);
+				const prefab = await mkAsset.get(GlobalConfig.View.maskDataTab.prefabPathStr, Prefab, this);
 
 				if (!prefab) {
 					return;
 				}
 
-				const node = cc.instantiate(prefab);
+				const node = instantiate(prefab);
 
 				// 设置节点名
 				if (GlobalConfig.View.maskDataTab.nodeNameStr) {
@@ -318,12 +318,12 @@ export class MKViewBase extends MKLifeCycle {
 	private _setIsAutoWidget(value_: boolean): void {
 		if (EDITOR) {
 			if (value_) {
-				const widget = this.addComponent(cc.Widget)!;
+				const widget = this.addComponent(Widget)!;
 
 				widget.isAlignTop = widget.isAlignBottom = widget.isAlignLeft = widget.isAlignRight = true;
 				widget.top = widget.bottom = widget.left = widget.right = 0;
 			} else {
-				this.getComponent(cc.Widget)?.destroy();
+				this.getComponent(Widget)?.destroy();
 			}
 		}
 	}
@@ -331,9 +331,9 @@ export class MKViewBase extends MKLifeCycle {
 	private _setIsAutoBlockInput(value_: boolean): void {
 		if (EDITOR) {
 			if (value_) {
-				this.addComponent(cc.BlockInputEvents);
+				this.addComponent(BlockInputEvents);
 			} else {
-				this.getComponent(cc.BlockInputEvents)?.destroy();
+				this.getComponent(BlockInputEvents)?.destroy();
 			}
 		}
 	}

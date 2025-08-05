@@ -1,44 +1,44 @@
-import * as cc from "cc";
+import { director, Director, EditBox, Label, Layout, Node, ProgressBar, RichText, Slider, Sprite, Toggle, UIOpacity, UITransform, Vec2 } from "cc";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import GlobalEvent from "../../../Config/GlobalEvent";
 
 class NodeExtends {
-	constructor(node_: cc.Node) {
+	constructor(node_: Node) {
 		this._node = node_;
 
 		this._node.components.forEach((v) => {
-			if (v instanceof cc.Label) {
+			if (v instanceof Label) {
 				this.label = v;
-			} else if (v instanceof cc.Sprite) {
+			} else if (v instanceof Sprite) {
 				this.sprite = v;
-			} else if (v instanceof cc.UIOpacity) {
+			} else if (v instanceof UIOpacity) {
 				this._uiOpacity = v;
-			} else if (v instanceof cc.UITransform) {
+			} else if (v instanceof UITransform) {
 				this.transform = v;
-			} else if (cc.Animation && v instanceof cc.Animation) {
+			} else if (Animation && v instanceof Animation) {
 				this.animation = v;
-			} else if (v instanceof cc.EditBox) {
+			} else if (v instanceof EditBox) {
 				this.editBox = v;
-			} else if (v instanceof cc.RichText) {
+			} else if (v instanceof RichText) {
 				this.richText = v;
-			} else if (v instanceof cc.Layout) {
+			} else if (v instanceof Layout) {
 				this.layout = v;
-			} else if (v instanceof cc.ProgressBar) {
+			} else if (v instanceof ProgressBar) {
 				this.progressBar = v;
-			} else if (v instanceof cc.Slider) {
+			} else if (v instanceof Slider) {
 				this.slider = v;
-			} else if (v instanceof cc.Toggle) {
+			} else if (v instanceof Toggle) {
 				this.toggle = v;
 			}
 		});
 
-		node_.on(cc.Node.EventType.PARENT_CHANGED, this._onNodeParentChanged, this);
+		node_.on(Node.EventType.PARENT_CHANGED, this._onNodeParentChanged, this);
 		this._onNodeParentChanged();
 	}
 
 	/* --------------- static --------------- */
 	/** 节点扩展数据 */
-	static nodeExtendsMap = new Map<cc.Node, NodeExtends>();
+	static nodeExtendsMap = new Map<Node, NodeExtends>();
 	/** 渲染顺序更新倒计时 */
 	static orderUpdateTimer: any = null;
 	/** 全局配置 */
@@ -48,16 +48,16 @@ class NodeExtends {
 	/** 更新任务 */
 	private static _orderUpdateTaskFuncList: Function[] = [];
 	/* --------------- public --------------- */
-	label!: cc.Label;
-	sprite!: cc.Sprite;
-	transform!: cc.UITransform;
-	animation!: cc.Animation;
-	editBox!: cc.EditBox;
-	richText!: cc.RichText;
-	layout!: cc.Layout;
-	progressBar!: cc.ProgressBar;
-	slider!: cc.Slider;
-	toggle!: cc.Toggle;
+	label!: Label;
+	sprite!: Sprite;
+	transform!: UITransform;
+	animation!: Animation;
+	editBox!: EditBox;
+	richText!: RichText;
+	layout!: Layout;
+	progressBar!: ProgressBar;
+	slider!: Slider;
+	toggle!: Toggle;
 
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -97,24 +97,24 @@ class NodeExtends {
 	}
 
 	/** 锚点 */
-	get anchor(): Readonly<cc.Vec2> {
+	get anchor(): Readonly<Vec2> {
 		return this.transform.anchorPoint;
 	}
 
-	set anchor(valueV2_: cc.Vec2) {
+	set anchor(valueV2_: Vec2) {
 		this.transform.anchorPoint = valueV2_;
 	}
 
 	/* --------------- private --------------- */
 	/** 持有节点 */
-	private _node: cc.Node;
+	private _node: Node;
 	/** 节点渲染次序 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _orderNum = NaN;
 	/** 节点渲染次序更新时间 */
 	private _orderTimestampNum = 0;
 	/** 透明度组件 */
-	private _uiOpacity!: cc.UIOpacity;
+	private _uiOpacity!: UIOpacity;
 	/* ------------------------------- 节点事件 ------------------------------- */
 	private _onNodeParentChanged(): void {
 		if (!this._node.parent?.isValid) {
@@ -124,7 +124,7 @@ class NodeExtends {
 		// 避免 children 数据未更新
 		if (!this._node.parent.children.includes(this._node)) {
 			this._node.parent.once(
-				cc.Node.EventType.CHILD_ADDED,
+				Node.EventType.CHILD_ADDED,
 				() => {
 					this._setOrderNum(this._orderNum, true);
 				},
@@ -216,7 +216,7 @@ class NodeExtends {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function MKN(node_: cc.Node, isForce_ = true): NodeExtends {
+function MKN(node_: Node, isForce_ = true): NodeExtends {
 	if (!node_?.isValid) {
 		return null!;
 	}
@@ -246,7 +246,7 @@ namespace MKN {
 }
 
 // 切换场景后自动清理
-cc.director.on(cc.Director.EVENT_BEFORE_SCENE_LAUNCH, MKN.clear, this);
+director.on(Director.EVENT_BEFORE_SCENE_LAUNCH, MKN.clear, this);
 // 重启时自动清理
 GlobalEvent.on(GlobalEvent.key.restart, MKN.clear, this);
 

@@ -1,10 +1,10 @@
 import { EDITOR } from "cc/env";
-import * as cc from "cc";
 import MKLogger from "../../MKLogger";
 import MKAudioBase, { MKAudioBase_ } from "../MKAudioBase";
 import MKObjectPool from "../../MKObjectPool";
+import { _decorator, AudioSource, director, Director, Node } from "cc";
 
-const { ccclass } = cc._decorator;
+const { ccclass } = _decorator;
 
 /**
  * 通用音频
@@ -31,13 +31,13 @@ class MKAudioCommon extends MKAudioBase {
 	protected _log = new MKLogger("MKAudioCommon");
 	/* --------------- private --------------- */
 	/** 音频常驻节点 */
-	private _audioNode!: cc.Node;
+	private _audioNode!: Node;
 	/** 音频 uuid 索引表 */
 	private _audioUnitMap = new Map<string, MKAudioCommon_.PrivateUnit>();
 	/** 当前播放数量 */
 	private _currentPlayNum = 0;
 	/** AudioSource 对象池 */
-	private _audioSourcePool!: MKObjectPool.Sync<cc.AudioSource>;
+	private _audioSourcePool!: MKObjectPool.Sync<AudioSource>;
 	/** 倒计时集合 */
 	private _timerSet = new Set<any>();
 	/* ------------------------------- 功能 ------------------------------- */
@@ -134,7 +134,7 @@ class MKAudioCommon extends MKAudioBase {
 		}
 
 		// 若超出 maxAudioChannel 继续播放则会停止之前播放的音频，故退出
-		if (lastState === MKAudioBase_.State.Stop && this._currentPlayNum > cc.AudioSource.maxAudioChannel) {
+		if (lastState === MKAudioBase_.State.Stop && this._currentPlayNum > AudioSource.maxAudioChannel) {
 			this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
 			this.stop(audio_);
 
@@ -157,20 +157,20 @@ class MKAudioCommon extends MKAudioBase {
 
 		// 添加常驻节点
 		{
-			let scene = cc.director.getScene();
+			let scene = director.getScene();
 
 			if (!scene) {
 				await new Promise<void>((resolveFunc) => {
-					cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, resolveFunc);
+					director.once(Director.EVENT_AFTER_SCENE_LAUNCH, resolveFunc);
 				});
 
-				scene = cc.director.getScene()!;
+				scene = director.getScene()!;
 			}
 
 			this._audioNode?.destroy();
-			this._audioNode = new cc.Node("audio");
+			this._audioNode = new Node("audio");
 			scene.addChild(this._audioNode);
-			cc.director.addPersistRootNode(this._audioNode);
+			director.addPersistRootNode(this._audioNode);
 		}
 
 		// 节点池
@@ -182,7 +182,7 @@ class MKAudioCommon extends MKAudioBase {
 				});
 			},
 			createFunc: () => {
-				const audioSource = new cc.AudioSource();
+				const audioSource = new AudioSource();
 
 				audioSource.node = this._audioNode;
 
@@ -196,15 +196,15 @@ class MKAudioCommon extends MKAudioBase {
 
 				return value;
 			},
-			initFillNum: Math.floor(cc.AudioSource.maxAudioChannel * 0.5),
-			maxHoldNum: cc.AudioSource.maxAudioChannel,
+			initFillNum: Math.floor(AudioSource.maxAudioChannel * 0.5),
+			maxHoldNum: AudioSource.maxAudioChannel,
 		});
 
 		// 添加回调
 		{
 			this._audioNode.on(
-				cc.AudioSource.EventType.STARTED,
-				(audioComp: cc.AudioSource) => {
+				AudioSource.EventType.STARTED,
+				(audioComp: AudioSource) => {
 					const audio = this._audioUnitMap.get(audioComp.uuid);
 
 					if (audio) {
@@ -215,8 +215,8 @@ class MKAudioCommon extends MKAudioBase {
 			);
 
 			this._audioNode.on(
-				cc.AudioSource.EventType.ENDED,
-				(audioComp: cc.AudioSource) => {
+				AudioSource.EventType.ENDED,
+				(audioComp: AudioSource) => {
 					const audio = this._audioUnitMap.get(audioComp.uuid);
 
 					if (audio) {
@@ -319,7 +319,7 @@ export namespace MKAudioCommon_ {
 			this._setCurrTimeSNum(value_);
 		}
 
-		get audioSource(): cc.AudioSource | null {
+		get audioSource(): AudioSource | null {
 			return this._audioSource;
 		}
 
@@ -335,7 +335,7 @@ export namespace MKAudioCommon_ {
 		/** 当前时间 */
 		private _currentTimeSNum = 0;
 		/** 音频组件 */
-		private _audioSource: cc.AudioSource | null = null;
+		private _audioSource: AudioSource | null = null;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 更新音量 */
 		updateVolume(): void {
@@ -429,7 +429,7 @@ export namespace MKAudioCommon_ {
 			this.audioSource.currentTime = this._currentTimeSNum;
 		}
 
-		private _setAudioSource(value_: cc.AudioSource | null): void {
+		private _setAudioSource(value_: AudioSource | null): void {
 			this._audioSource = value_;
 
 			// 更新组件数据

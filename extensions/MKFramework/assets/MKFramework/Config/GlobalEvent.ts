@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import { EventTarget } from "cc";
 import { DEBUG } from "cc/env";
 
 interface GlobalEventProtocol {
@@ -10,7 +10,7 @@ interface GlobalEventProtocol {
 	waitCloseScene(): void;
 }
 
-class Event<CT> extends cc.EventTarget {
+class Event<CT> extends EventTarget {
 	key: { [key in keyof CT]: key } = new Proxy(Object.create(null), {
 		get: (target, key) => key,
 	});

@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import { js, Constructor, EventTarget } from "cc";
 import GlobalConfig from "../../Config/GlobalConfig";
 import GlobalEvent from "../../Config/GlobalEvent";
 import MKCodecBase from "../MKCodecBase";
@@ -39,7 +39,7 @@ namespace _MKNetworkBase {
 	}
 
 	/** 消息事件 */
-	export class MessageEvent<CT extends MKCodecBase = MKCodecBase> extends cc.EventTarget {
+	export class MessageEvent<CT extends MKCodecBase = MKCodecBase> extends EventTarget {
 		constructor(network_: MKNetworkBase) {
 			super();
 			this._network = network_;
@@ -49,10 +49,10 @@ namespace _MKNetworkBase {
 		/** 网络实例 */
 		private _network: MKNetworkBase;
 		/** 日志 */
-		private _log = new MKLogger(cc.js.getClassName(this));
+		private _log = new MKLogger(js.getClassName(this));
 		/* ------------------------------- 功能 ------------------------------- */
 		// @ts-ignore
-		on<T extends cc.Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		on<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
 			this_?: any,
@@ -72,7 +72,7 @@ namespace _MKNetworkBase {
 		}
 
 		// @ts-ignore
-		once<T extends cc.Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		once<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
 			this_?: any
@@ -81,7 +81,7 @@ namespace _MKNetworkBase {
 		}
 
 		// @ts-ignore
-		off<T extends cc.Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		off<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			this_?: any
@@ -114,7 +114,7 @@ namespace _MKNetworkBase {
 		 * 接收消息后派发，可用此接口模拟数据
 		 */
 		emit<T extends string | number>(type_: T, data_: any): void;
-		emit<T extends cc.Constructor<GlobalConfig.Network.ProtoHead> | string | number>(args_: T, data_?: any): void {
+		emit<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number>(args_: T, data_?: any): void {
 			let type_: string | number | undefined;
 
 			// 参数转换
@@ -163,7 +163,7 @@ namespace _MKNetworkBase {
 		}
 
 		// @ts-ignore
-		has<T extends cc.Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		has<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			target_?: any
@@ -240,7 +240,7 @@ abstract class MKNetworkBase<CT extends MKCodecBase = MKCodecBase> extends MKIns
 	/** socket */
 	protected abstract _socket: any;
 	/** 日志 */
-	protected _log = new MKLogger(cc.js.getClassName(this));
+	protected _log = new MKLogger(js.getClassName(this));
 	/** socket 状态 */
 	protected _state = MKNetworkBase_.Status.Closed;
 	/** 地址 */

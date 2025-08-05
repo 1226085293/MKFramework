@@ -1,4 +1,3 @@
-import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import mkDynamicModule from "../MKDynamicModule";
 import MKLogger from "../MKLogger";
@@ -10,8 +9,9 @@ import { mkAudio, MKAudio_ } from "../Audio/MKAudioExport";
 import MKRelease, { MKRelease_ } from "../MKRelease";
 import { MKAsset_ } from "../Resources/MKAsset";
 import GlobalConfig from "../../Config/GlobalConfig";
+import { _decorator, js, CCClass, isValid, Node } from "cc";
 const uiManage = mkDynamicModule.default(import("../MKUIManage"));
-const { ccclass, property } = cc._decorator;
+const { ccclass, property } = _decorator;
 
 export namespace _MKLifeCycle {
 	/** 运行状态 */
@@ -31,7 +31,7 @@ export namespace _MKLifeCycle {
 	/** 递归 open 配置 */
 	export interface RecursiveOpenConfig {
 		/** 递归目标节点 */
-		target: cc.Node;
+		target: Node;
 		/** 激活状态 */
 		isActive: boolean;
 	}
@@ -39,7 +39,7 @@ export namespace _MKLifeCycle {
 	/** 递归 close 配置 */
 	export interface RecursiveCloseConfig {
 		/** 递归目标节点 */
-		target: cc.Node;
+		target: Node;
 		/** 激活状态 */
 		isActive: boolean;
 		/** 父模块配置 */
@@ -177,7 +177,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 
 	/** 日志 */
 	protected get _log(): MKLogger {
-		return this._log2 ?? (this._log2 = new MKLogger(cc.js.getClassName(this)));
+		return this._log2 ?? (this._log2 = new MKLogger(js.getClassName(this)));
 	}
 
 	/* --------------- private --------------- */
@@ -191,7 +191,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		this._onLoadTask.finish(true);
 
 		/** 参数表 */
-		const attrTab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
+		const attrTab = CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
 		/** 参数键列表 */
 		const attrKeyStrList = Object.keys(attrTab);
 
@@ -300,7 +300,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async lateClose?(): Promise<void> {
 		/** 参数表 */
-		const attrTab = cc.CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
+		const attrTab = CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
 		/** 参数键列表 */
 		const attrKeyStrList = Object.keys(attrTab);
 
@@ -589,7 +589,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 
 		for (const v of staticCompList) {
 			// 跳过当前ui组件
-			if (v.enabled && v.uuid !== this.uuid && cc.isValid(v, true)) {
+			if (v.enabled && v.uuid !== this.uuid && isValid(v, true)) {
 				if (isActive && config_.isActive) {
 					await v._open(openConfig);
 				} else {
@@ -618,7 +618,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 
 		for (const v of compList) {
 			// 跳过当前ui组件
-			if (v.enabled && v.uuid !== this.uuid && cc.isValid(v, true)) {
+			if (v.enabled && v.uuid !== this.uuid && isValid(v, true)) {
 				if (isActive && config_.isActive) {
 					await v._close(closeConfig);
 				} else {

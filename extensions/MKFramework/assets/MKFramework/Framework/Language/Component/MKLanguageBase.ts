@@ -1,11 +1,12 @@
-import * as cc from "cc";
 import language, { MKLanguageManage_ } from "../MKLanguageManage";
 import { EDITOR } from "cc/env";
 import MKTool from "../../@Private/Tool/MKTool";
 import MKLifeCycle from "../../Module/MKLifeCycle";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { _decorator, Enum } from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, menu, executeInEditMode } = cc._decorator;
+const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 /**
  * 多语言组件基类
@@ -38,7 +39,7 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	/** 类型 */
 	@property({
 		displayName: "键",
-		type: cc.Enum({ 未初始化: 0 }),
+		type: Enum({ 未初始化: 0 }),
 		group: { name: "类型", id: "0" },
 		visible: function (this: MKLanguageBase) {
 			return !this.isFuzzyMatchType;
@@ -75,7 +76,7 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	/** 语言标识枚举 */
 	@property({
 		displayName: "键",
-		type: cc.Enum({}),
+		type: Enum({}),
 		group: { name: "语言标识", id: "1" },
 		visible: function (this: MKLanguageBase) {
 			return !this.isFuzzyMatchMark;

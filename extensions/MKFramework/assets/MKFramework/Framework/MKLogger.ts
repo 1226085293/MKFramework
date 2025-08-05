@@ -1,8 +1,8 @@
 import { EDITOR } from "cc/env";
-import * as cc from "cc";
 import MKInstanceBase from "./MKInstanceBase";
 import MKHttp from "./Network/MKHttp";
 import GlobalConfig from "../Config/GlobalConfig";
+import { sys, debug, log, warn, error } from "cc";
 
 namespace _MKLogger {
 	/** 计时日志 */
@@ -70,7 +70,7 @@ class MKLogger extends MKInstanceBase {
 				MKLogger._config.errorHandlingFunc?.(...argsList);
 			};
 
-			if (cc.sys.isBrowser) {
+			if (sys.isBrowser) {
 				let oldHandler: any;
 
 				if (window.onerror) {
@@ -83,7 +83,7 @@ class MKLogger extends MKInstanceBase {
 						oldHandler(...argsList);
 					}
 				};
-			} else if (cc.sys.isNative) {
+			} else if (sys.isNative) {
 				let oldHandler: any;
 
 				if (window["jsb"]) {
@@ -140,10 +140,10 @@ class MKLogger extends MKInstanceBase {
 		},
 		[GlobalConfig.Log.LogObjectType.CC]: {
 			target: cc,
-			debug: cc.debug,
-			log: cc.log,
-			warn: cc.warn,
-			error: cc.error,
+			debug: debug,
+			log: log,
+			warn: warn,
+			error: error,
 		},
 	};
 

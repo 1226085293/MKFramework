@@ -1,12 +1,29 @@
-import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import GlobalEvent from "../../Config/GlobalEvent";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { mkLog } from "../MKLogger";
 import mkMonitor from "../MKMonitor";
+import {
+	_decorator,
+	PolygonCollider2D,
+	Component,
+	Mask,
+	Vec3,
+	v3,
+	Graphics,
+	size,
+	Vec2,
+	v2,
+	view,
+	UITransform,
+	color,
+	EventTouch,
+	EventMouse,
+	Node,
+} from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, requireComponent, executeInEditMode } = cc._decorator;
+const { ccclass, property, requireComponent, executeInEditMode } = _decorator;
 
 /**
  * 多边形遮罩
@@ -19,12 +36,12 @@ const { ccclass, property, requireComponent, executeInEditMode } = cc._decorator
  */
 @ccclass
 @executeInEditMode
-@requireComponent([cc.PolygonCollider2D])
-export class MKPolygonMask extends cc.Component {
+@requireComponent([PolygonCollider2D])
+export class MKPolygonMask extends Component {
 	/* --------------- 属性 --------------- */
 	/** 遮罩组件 */
-	@property({ displayName: "遮罩组件", type: cc.Mask })
-	mask: cc.Mask | null = null;
+	@property({ displayName: "遮罩组件", type: Mask })
+	mask: Mask | null = null;
 
 	/** 屏蔽触摸 */
 	@property({ displayName: "屏蔽触摸", tooltip: "屏蔽展示区域外的触摸事件" })
@@ -33,10 +50,10 @@ export class MKPolygonMask extends cc.Component {
 	/** 跟踪节点 */
 	@property({
 		displayName: "跟踪节点",
-		type: cc.Node,
+		type: Node,
 		tooltip: "遮罩对应的节点",
 	})
-	get trackNode(): cc.Node {
+	get trackNode(): Node {
 		return this._trackNode;
 	}
 
@@ -46,7 +63,7 @@ export class MKPolygonMask extends cc.Component {
 
 	/* --------------- public --------------- */
 	/** 偏移坐标 */
-	get offsetV3(): cc.Vec3 {
+	get offsetV3(): Vec3 {
 		return this._offsetV3;
 	}
 
@@ -65,53 +82,53 @@ export class MKPolygonMask extends cc.Component {
 
 	/* --------------- private --------------- */
 	/** 跟踪节点 */
-	@property(cc.Node)
-	private _trackNode: cc.Node = null!;
+	@property(Node)
+	private _trackNode: Node = null!;
 
 	/** 跟踪节点初始坐标 */
 	@property
-	private _trackNodeStartPosV3 = cc.v3();
+	private _trackNodeStartPosV3 = v3();
 
 	/** 调试模式 */
 	private _isDebug = false;
 	/** 调试绘图组件 */
-	private _graphics?: cc.Graphics;
+	private _graphics?: Graphics;
 	/** 初始设计尺寸 */
-	private _initialDesignSize = cc.size();
+	private _initialDesignSize = size();
 	/** 偏移坐标 */
-	private _offsetV3 = cc.v3();
+	private _offsetV3 = v3();
 	/** 多边形本地点 */
-	private _polygonLocalPointV2List!: cc.Vec2[];
+	private _polygonLocalPointV2List!: Vec2[];
 	/** 当前多边形本地点 */
-	private _currentPolygonLocalPointV2List!: cc.Vec2[];
+	private _currentPolygonLocalPointV2List!: Vec2[];
 	/** 多边形世界点 */
-	private _polygonWorldPointV2List!: cc.Vec2[];
+	private _polygonWorldPointV2List!: Vec2[];
 	/** 当前多边形世界点 */
-	private _currentPolygonWorldPointV2List!: cc.Vec2[];
+	private _currentPolygonWorldPointV2List!: Vec2[];
 	/** 跟踪节点世界坐标 */
-	private _trackNodeWorldPosV3 = cc.v3();
+	private _trackNodeWorldPosV3 = v3();
 	/** 输入事件 */
 	private _inputEventList = [
-		cc.Node.EventType.TOUCH_START,
-		cc.Node.EventType.TOUCH_END,
-		cc.Node.EventType.TOUCH_MOVE,
-		cc.Node.EventType.MOUSE_DOWN,
-		cc.Node.EventType.MOUSE_MOVE,
-		cc.Node.EventType.MOUSE_UP,
-		cc.Node.EventType.MOUSE_ENTER,
-		cc.Node.EventType.MOUSE_LEAVE,
-		cc.Node.EventType.MOUSE_WHEEL,
+		Node.EventType.TOUCH_START,
+		Node.EventType.TOUCH_END,
+		Node.EventType.TOUCH_MOVE,
+		Node.EventType.MOUSE_DOWN,
+		Node.EventType.MOUSE_MOVE,
+		Node.EventType.MOUSE_UP,
+		Node.EventType.MOUSE_ENTER,
+		Node.EventType.MOUSE_LEAVE,
+		Node.EventType.MOUSE_WHEEL,
 	];
 
 	/** 临时变量 */
 	private _tempTab = {
-		v2: cc.v2(),
-		v3: cc.v3(),
+		v2: v2(),
+		v3: v3(),
 	};
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
-		if (this.getComponent(cc.Mask)) {
+		if (this.getComponent(Mask)) {
 			mkLog.error("不能在 mask 组件的节点上添加组件");
 			this.destroy();
 
@@ -119,10 +136,10 @@ export class MKPolygonMask extends cc.Component {
 		}
 
 		/** 多边形组件 */
-		const polygonComp = this.getComponent(cc.PolygonCollider2D)!;
+		const polygonComp = this.getComponent(PolygonCollider2D)!;
 
 		// 更新初始设计尺寸
-		this._initialDesignSize = cc.view.getDesignResolutionSize();
+		this._initialDesignSize = view.getDesignResolutionSize();
 		// 初始化跟踪节点世界坐标
 		this._trackNode?.getWorldPosition(this._trackNodeWorldPosV3);
 
@@ -139,7 +156,7 @@ export class MKPolygonMask extends cc.Component {
 			if (EDITOR) {
 				// 初始化遮罩
 				if (this.mask) {
-					this.mask.type = cc.Mask.Type.GRAPHICS_STENCIL;
+					this.mask.type = Mask.Type.GRAPHICS_STENCIL;
 				}
 
 				// 监听多边形坐标变更
@@ -231,25 +248,25 @@ export class MKPolygonMask extends cc.Component {
 
 		// 编辑器更新初始坐标
 		if (EDITOR) {
-			this._trackNodeStartPosV3 = !this._trackNode ? cc.v3() : this._trackNode.worldPosition.clone();
+			this._trackNodeStartPosV3 = !this._trackNode ? v3() : this._trackNode.worldPosition.clone();
 		}
 		// 更新遮罩坐标
 		else {
 			/** 当前显示尺寸 */
-			const currentVisibleSize = cc.view.getVisibleSize();
+			const currentVisibleSize = view.getVisibleSize();
 			/** 当前设计尺寸 */
-			const currentDesignSize = cc.view.getDesignResolutionSize();
+			const currentDesignSize = view.getDesignResolutionSize();
 			/** 节点偏移坐标 */
-			const nodeOffsetV3 = !this._trackNode ? cc.v3() : this._trackNode.worldPosition.clone().subtract(this._trackNodeStartPosV3);
+			const nodeOffsetV3 = !this._trackNode ? v3() : this._trackNode.worldPosition.clone().subtract(this._trackNodeStartPosV3);
 
 			/** 显示偏移坐标 */
-			const visibleOffsetV3 = cc.v3(
+			const visibleOffsetV3 = v3(
 				(currentVisibleSize.width - GlobalConfig.View.originalDesignSize.width) * -0.5,
 				(currentVisibleSize.height - GlobalConfig.View.originalDesignSize.height) * -0.5
 			);
 
 			/** 设计偏移坐标 */
-			const designOffset2V3 = cc.v3(
+			const designOffset2V3 = v3(
 				(this._initialDesignSize.width - currentDesignSize.width) * -0.5,
 				(this._initialDesignSize.height - currentDesignSize.height) * -0.5
 			);
@@ -283,7 +300,7 @@ export class MKPolygonMask extends cc.Component {
 			// 编辑器且节点隐藏
 			(EDITOR && !this.node.active) ||
 			// 遮罩类型不一致
-			this.mask?.type !== cc.Mask.Type.GRAPHICS_STENCIL ||
+			this.mask?.type !== Mask.Type.GRAPHICS_STENCIL ||
 			// 依赖数据不存在
 			!this._currentPolygonLocalPointV2List
 		) {
@@ -291,7 +308,7 @@ export class MKPolygonMask extends cc.Component {
 		}
 
 		/** 绘图组件 */
-		const graphicsComp = this.mask.node.getComponent(cc.Graphics)!;
+		const graphicsComp = this.mask.node.getComponent(Graphics)!;
 		/** 多边形坐标 */
 		const pointV2List = this._currentPolygonLocalPointV2List;
 
@@ -316,7 +333,7 @@ export class MKPolygonMask extends cc.Component {
 			return;
 		}
 
-		const uiTransform = this._graphics.getComponent(cc.UITransform);
+		const uiTransform = this._graphics.getComponent(UITransform);
 
 		this._graphics.clear();
 		this._currentPolygonLocalPointV2List.forEach((vV2) => {
@@ -331,7 +348,7 @@ export class MKPolygonMask extends cc.Component {
 	 * @en Test whether the point is in the polygon
 	 * @zh 测试一个点是否在一个多边形中
 	 */
-	private _pointInPolygon(pointV2List_: Readonly<cc.Vec2>, polygonV2List_: readonly cc.Vec2[]): boolean {
+	private _pointInPolygon(pointV2List_: Readonly<Vec2>, polygonV2List_: readonly Vec2[]): boolean {
 		let isInside = false;
 		const x = pointV2List_.x;
 		const y = pointV2List_.y;
@@ -362,27 +379,27 @@ export class MKPolygonMask extends cc.Component {
 		}
 
 		if (this._isDebug && !this._graphics) {
-			this._graphics = this.node.addComponent(cc.Graphics);
+			this._graphics = this.node.addComponent(Graphics);
 			this._graphics.lineWidth = 6;
-			this._graphics.strokeColor = cc.color(0, 0, 255, 255);
+			this._graphics.strokeColor = color(0, 0, 255, 255);
 			this._updateGraphics();
 		} else {
 			this._graphics?.clear();
 		}
 	}
 
-	private _setOffsetV3(valueV3_: cc.Vec3): void {
+	private _setOffsetV3(valueV3_: Vec3): void {
 		this._offsetV3.set(valueV3_);
 		this.updateMask();
 	}
 
-	private _setTrackNode(value_: cc.Node): void {
+	private _setTrackNode(value_: Node): void {
 		this._trackNode = value_;
 		this._trackNode?.getWorldPosition(this._trackNodeWorldPosV3);
 		this.updateMask();
 	}
 	/* ------------------------------- 节点事件 ------------------------------- */
-	private _onNodeInput(event_: cc.EventTouch | cc.EventMouse): void {
+	private _onNodeInput(event_: EventTouch | EventMouse): void {
 		/** 碰撞状态 */
 		let isCollision = this._pointInPolygon(event_.getUILocation(this._tempTab.v2), this._currentPolygonWorldPointV2List);
 

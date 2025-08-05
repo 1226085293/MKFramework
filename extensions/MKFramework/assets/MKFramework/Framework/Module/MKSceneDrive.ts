@@ -1,11 +1,11 @@
-import * as cc from "cc";
 import { MKLifeCycle } from "./MKLifeCycle";
 import { EDITOR } from "cc/env";
 import bundle from "../Resources/MKBundle";
 import GlobalEvent from "../../Config/GlobalEvent";
 import MKStatusTask from "../Task/MKStatusTask";
+import { _decorator, director, Director, Node } from "cc";
 
-const { ccclass, property } = cc._decorator;
+const { ccclass, property } = _decorator;
 
 /**
  * 场景驱动
@@ -37,7 +37,7 @@ class MKSceneDrive extends MKLifeCycle {
 	/* ------------------------------- segmentation ------------------------------- */
 	async onBeforeSceneSwitch(): Promise<void> {
 		// 常驻节点
-		if (cc.director.isPersistRootNode(this.node)) {
+		if (director.isPersistRootNode(this.node)) {
 			return;
 		}
 
@@ -60,7 +60,7 @@ class MKSceneDrive extends MKLifeCycle {
 
 	private async _onWaitCloseScene(): Promise<void> {
 		// 常驻节点
-		if (cc.director.isPersistRootNode(this.node)) {
+		if (director.isPersistRootNode(this.node)) {
 			return;
 		}
 
@@ -70,10 +70,10 @@ class MKSceneDrive extends MKLifeCycle {
 
 // 自动添加至场景节点
 if (!EDITOR) {
-	cc.director.on(
-		cc.Director.EVENT_AFTER_SCENE_LAUNCH,
+	director.on(
+		Director.EVENT_AFTER_SCENE_LAUNCH,
 		() => {
-			const scene = cc.director.getScene()!;
+			const scene = director.getScene()!;
 
 			const updateChildCompFunc = (): void => {
 				scene.children.forEach((v) => {
@@ -84,7 +84,7 @@ if (!EDITOR) {
 			};
 
 			updateChildCompFunc();
-			scene.on(cc.Node.EventType.CHILD_ADDED, () => {
+			scene.on(Node.EventType.CHILD_ADDED, () => {
 				updateChildCompFunc();
 			});
 		},
@@ -94,7 +94,7 @@ if (!EDITOR) {
 	bundle.event.on(
 		bundle.event.key.beforeSceneSwitch,
 		() => {
-			const scene = cc.director.getScene()!;
+			const scene = director.getScene()!;
 
 			scene.children.forEach(async (v) => {
 				const sceneDrive = v.getComponent(MKSceneDrive) ?? v.addComponent(MKSceneDrive);

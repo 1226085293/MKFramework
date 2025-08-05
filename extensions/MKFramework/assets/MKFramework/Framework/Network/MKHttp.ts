@@ -1,6 +1,6 @@
 import MKInstanceBase from "../MKInstanceBase";
 import MKCodecBase from "../MKCodecBase";
-import * as cc from "cc";
+import { sys } from "cc";
 
 /**
  * http 模块
@@ -106,7 +106,7 @@ export class MKHttp extends MKInstanceBase {
 			xmlHttp.open(typeStr_, urlStr_, true);
 			// 设置标头
 			{
-				if (cc.sys.isNative) {
+				if (sys.isNative) {
 					xmlHttp.setRequestHeader("Accept-Encoding", "gzip,deflate");
 				}
 

@@ -1,8 +1,8 @@
-import * as cc from "cc";
 import MKViewBase from "../MKViewBase";
 import MVCModelBase from "./MVCModelBase";
 import MKEventTarget from "../../MKEventTarget";
-const { ccclass, property } = cc._decorator;
+import { _decorator } from "cc";
+const { ccclass, property } = _decorator;
 
 namespace _MVCViewBase {
 	/** 递归只读 */

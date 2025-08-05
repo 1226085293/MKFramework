@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import { game, Layout, Node, Size, size } from "cc";
 import { DEBUG } from "cc/env";
 
 /**
@@ -77,7 +77,7 @@ namespace GlobalConfig {
 		/** 适配类型 */
 		export const adaptationType: AdaptationMode = AdaptationMode.Adaptive;
 		/** 初始设计尺寸 */
-		export const originalDesignSize: Omit<Readonly<cc.Size>, "set"> = cc.size();
+		export const originalDesignSize: Omit<Readonly<Size>, "set"> = size();
 		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时警告，0 为关闭）
 		 * @remarks 此方法可用来排除生命周期阻塞位置，但如果节点 active 为 false 也将阻塞生命周期执行
 		 */
@@ -92,13 +92,13 @@ namespace GlobalConfig {
 			/** 层间隔 */
 			layerSpacingNum = 100;
 			/** 渲染层级刷新间隔 */
-			layerRefreshIntervalMsNum = cc.game.frameTime;
+			layerRefreshIntervalMsNum = game.frameTime;
 			/** 窗口打开动画 */
 			windowAnimationTab: Readonly<{
 				/** 打开动画 */
-				open: Record<string, (value: cc.Node) => void | Promise<void>>;
+				open: Record<string, (value: Node) => void | Promise<void>>;
 				/** 关闭动画 */
-				close: Record<string, (value: cc.Node) => void | Promise<void>>;
+				close: Record<string, (value: Node) => void | Promise<void>>;
 			}> = {
 				open: {
 					无: null!,
@@ -116,17 +116,17 @@ namespace GlobalConfig {
 		const privateTypeTab = {
 			/** 中文(中华人民共和国) */
 			zhCn: {
-				dire: cc.Layout.HorizontalDirection.LEFT_TO_RIGHT,
+				dire: Layout.HorizontalDirection.LEFT_TO_RIGHT,
 			},
 			/** 英语(美国) */
 			enUs: {
-				dire: cc.Layout.HorizontalDirection.LEFT_TO_RIGHT,
+				dire: Layout.HorizontalDirection.LEFT_TO_RIGHT,
 			},
 		};
 
 		/** 语种信息 */
 		export interface TypeData {
-			/** 方向（cc.Layout.HorizontalDirection） */
+			/** 方向（Layout.HorizontalDirection） */
 			dire: number;
 		}
 

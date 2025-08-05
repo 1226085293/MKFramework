@@ -1,19 +1,19 @@
-import * as cc from "cc";
+import { Asset, Node } from "cc";
 import { mkLog } from "./MKLogger";
 
 /**
  * 对象释放器
  * @remarks
  *
- * - 统一 (cc.Node/cc.Asset) 资源的释放逻辑
+ * - 统一 (Node/Asset) 资源的释放逻辑
  *
  * - 可以通过 function 或继承添加自定义释放逻辑
  */
 class MKRelease {
 	/** 节点集合 */
-	private _nodeSet = new Set<cc.Node>();
+	private _nodeSet = new Set<Node>();
 	/** 资源集合 */
-	private _assetSet = new Set<cc.Asset>();
+	private _assetSet = new Set<Asset>();
 	/** 对象集合 */
 	private _objectSet = new Set<MKRelease_.TypeReleaseObject>();
 	/** 回调集合 */
@@ -24,12 +24,12 @@ class MKRelease {
 	 * @param object_ 指定对象
 	 */
 	static async release(object_?: MKRelease_.TypeReleaseParamType): Promise<void> {
-		if (object_ instanceof cc.Node) {
+		if (object_ instanceof Node) {
 			if (object_.isValid) {
 				object_.removeFromParent();
 				object_.destroy();
 			}
-		} else if (object_ instanceof cc.Asset) {
+		} else if (object_ instanceof Asset) {
 			if (object_.isValid) {
 				object_.decRef();
 			}
@@ -52,11 +52,11 @@ class MKRelease {
 		}
 
 		// 添加引用数据
-		if (object_ instanceof cc.Node) {
+		if (object_ instanceof Node) {
 			if (object_.isValid) {
 				this._nodeSet.add(object_);
 			}
-		} else if (object_ instanceof cc.Asset) {
+		} else if (object_ instanceof Asset) {
 			if (object_.isValid) {
 				this._assetSet.add(object_);
 			}
@@ -81,9 +81,9 @@ class MKRelease {
 		}
 
 		// 添加引用数据
-		if (object_ instanceof cc.Node) {
+		if (object_ instanceof Node) {
 			this._nodeSet.delete(object_);
-		} else if (object_ instanceof cc.Asset) {
+		} else if (object_ instanceof Asset) {
 			this._assetSet.delete(object_);
 		} else if (typeof object_ === "function") {
 			this._callbackSet.delete(object_);
@@ -99,12 +99,12 @@ class MKRelease {
 	 * @param object_ 指定对象
 	 */
 	async release(object_?: MKRelease_.TypeReleaseParamType): Promise<void> {
-		if (object_ instanceof cc.Node) {
+		if (object_ instanceof Node) {
 			if (this._nodeSet.delete(object_) && object_.isValid) {
 				object_.removeFromParent();
 				object_.destroy();
 			}
-		} else if (object_ instanceof cc.Asset) {
+		} else if (object_ instanceof Asset) {
 			if (this._assetSet.delete(object_) && object_.isValid) {
 				object_.decRef();
 			}
@@ -153,7 +153,7 @@ export namespace MKRelease_ {
 	/** 释放回调类型 */
 	export type TypeReleaseCallBack = () => any | Promise<any>;
 	/** 释放参数类型 */
-	export type TypeReleaseParamType = cc.Node | cc.Asset | TypeReleaseObject | TypeReleaseCallBack;
+	export type TypeReleaseParamType = Node | Asset | TypeReleaseObject | TypeReleaseCallBack;
 
 	/** 跟随释放类型 */
 	export type TypeFollowReleaseObject<CT = TypeReleaseParamType> = {

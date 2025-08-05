@@ -1,6 +1,6 @@
-import * as cc from "cc";
+import { _decorator } from "cc";
 import MKLifeCycle from "./MKLifeCycle";
-const { ccclass, property } = cc._decorator;
+const { ccclass, property } = _decorator;
 
 /**
  * 场景基类

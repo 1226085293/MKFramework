@@ -1,8 +1,7 @@
-import * as cc from "cc";
 import { mkLog } from "../MKLogger";
 import type MKGuideManage from "./MKGuideManage";
 import type { MKGuideManage_ } from "./MKGuideManage";
-import { _decorator } from "cc";
+import { _decorator, Component } from "cc";
 const { ccclass, property } = _decorator;
 
 /**
@@ -10,7 +9,7 @@ const { ccclass, property } = _decorator;
  * @noInheritDoc
  */
 @ccclass("MkGuideStepBase")
-abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateCell> = any> extends cc.Component {
+abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateCell> = any> extends Component {
 	/** 步骤序号 */
 	abstract stepNum: number;
 	/**

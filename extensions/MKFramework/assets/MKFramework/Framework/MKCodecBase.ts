@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import { js } from "cc";
 import MKLogger from "./MKLogger";
 
 /** 编解码器基类 */
@@ -15,7 +15,7 @@ abstract class MKCodecBase {
 
 	/** 日志 */
 	protected get _log(): MKLogger {
-		return this._log2 ?? (this._log2 = new MKLogger(cc.js.getClassName(this)));
+		return this._log2 ?? (this._log2 = new MKLogger(js.getClassName(this)));
 	}
 
 	/* --------------- private --------------- */

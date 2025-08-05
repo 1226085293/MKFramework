@@ -2,19 +2,19 @@ import { EDITOR } from "cc/env";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import language from "../MKLanguageManage";
 import mkAsset from "../../Resources/MKAsset";
-import * as cc from "cc";
 import MKLanguageBase from "./MKLanguageBase";
 import mkTool from "../../@Private/Tool/MKTool";
+import { _decorator, Sprite, SpriteFrame, CCClass, Enum, ImageAsset, error } from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, menu, executeInEditMode, requireComponent } = cc._decorator;
+const { ccclass, property, menu, executeInEditMode, requireComponent } = _decorator;
 
 /**
  * 多语言图片
  * @noInheritDoc
  */
 @ccclass
-@requireComponent(cc.Sprite)
+@requireComponent(Sprite)
 @executeInEditMode
 class MKLanguageTexture extends MKLanguageBase {
 	/* --------------- static --------------- */
@@ -36,9 +36,9 @@ class MKLanguageTexture extends MKLanguageBase {
 
 	/* --------------- private --------------- */
 	/** sprite组件 */
-	private _sprite!: cc.Sprite;
+	private _sprite!: Sprite;
 	/** 初始纹理 */
-	private _initialSpriteFrame: cc.SpriteFrame | null = null;
+	private _initialSpriteFrame: SpriteFrame | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
 		if (EDITOR) {
@@ -70,11 +70,11 @@ class MKLanguageTexture extends MKLanguageBase {
 		// 更新编辑器
 		if (EDITOR) {
 			if (Object.keys(MKLanguageTexture._typeEnum).length) {
-				cc.CCClass.Attr.setClassAttr(MKLanguageTexture, "type", "enumList", cc.Enum.getList(cc.Enum(MKLanguageTexture._typeEnum)));
+				CCClass.Attr.setClassAttr(MKLanguageTexture, "type", "enumList", Enum.getList(Enum(MKLanguageTexture._typeEnum)));
 			}
 
 			if (Object.keys(this._markEnum).length) {
-				cc.CCClass.Attr.setClassAttr(MKLanguageTexture, "markEnum", "enumList", cc.Enum.getList(cc.Enum(this._markEnum)));
+				CCClass.Attr.setClassAttr(MKLanguageTexture, "markEnum", "enumList", Enum.getList(Enum(this._markEnum)));
 			}
 		}
 	}
@@ -92,7 +92,7 @@ class MKLanguageTexture extends MKLanguageBase {
 		}
 
 		if (EDITOR) {
-			const asset = await mkAsset.get(pathStr + ".png", cc.ImageAsset, this);
+			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, this);
 
 			if (!asset?._uuid) {
 				return;
@@ -103,14 +103,14 @@ class MKLanguageTexture extends MKLanguageBase {
 				uuid: this.node.uuid,
 				path: `__comps__.${this.node.components.indexOf(this._sprite)}.spriteFrame`,
 				dump: {
-					type: "cc.SpriteFrame",
+					type: "SpriteFrame",
 					value: {
 						uuid: asset._uuid + "@f9941",
 					},
 				},
 			});
 		} else {
-			const asset = await mkAsset.get(pathStr, cc.SpriteFrame, this);
+			const asset = await mkAsset.get(pathStr, SpriteFrame, this);
 
 			if (!asset) {
 				return;
@@ -149,9 +149,9 @@ class MKLanguageTexture extends MKLanguageBase {
 	}
 
 	protected _initData(): void {
-		this._sprite = this.node.getComponent(cc.Sprite)!;
+		this._sprite = this.node.getComponent(Sprite)!;
 		if (!this._sprite) {
-			cc.error("节点不存在 Sprite 组件");
+			error("节点不存在 Sprite 组件");
 
 			return;
 		}

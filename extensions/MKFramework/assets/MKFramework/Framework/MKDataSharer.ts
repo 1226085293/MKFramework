@@ -1,4 +1,4 @@
-import * as cc from "cc";
+import type { Constructor } from "cc";
 import MKStatusTask from "./Task/MKStatusTask";
 
 /**
@@ -8,7 +8,7 @@ import MKStatusTask from "./Task/MKStatusTask";
  * @remarks
  * 如果需要监听数据修改，请使用 returns.source
  */
-export default function mkDataSharer<T extends Object, T2 = T & MKDataSharer_.Api<T>>(class_: cc.Constructor<T>): T2 {
+export default function mkDataSharer<T extends Object, T2 = T & MKDataSharer_.Api<T>>(class_: Constructor<T>): T2 {
 	let data: T;
 	/** 请求表 */
 	const requestMap = new Map<any, MKStatusTask<any>>();

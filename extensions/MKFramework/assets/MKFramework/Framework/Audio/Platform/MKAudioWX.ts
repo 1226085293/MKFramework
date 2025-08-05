@@ -1,8 +1,8 @@
-import * as cc from "cc";
+import { _decorator } from "cc";
 import MKLogger from "../../MKLogger";
 import MKAudioBase, { MKAudioBase_ } from "../MKAudioBase";
 
-const { ccclass } = cc._decorator;
+const { ccclass } = _decorator;
 
 /**
  * 微信音频

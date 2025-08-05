@@ -1,4 +1,3 @@
-import * as cc from "cc";
 import { EDITOR } from "cc/env";
 import GlobalEvent from "../../Config/GlobalEvent";
 import MKInstanceBase from "../MKInstanceBase";
@@ -7,6 +6,7 @@ import mkBundle from "./MKBundle";
 import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { MKRelease_ } from "../MKRelease";
+import { Asset, Constructor, SpriteFrame, Texture2D, assetManager, dynamicAtlasManager } from "cc";
 
 namespace _MKAsset {
 	/** loadRemote 配置类型 */
@@ -37,7 +37,7 @@ namespace _MKAsset {
 		/** 添加时间 */
 		joinTimeMsNum = Date.now();
 		/** 资源 */
-		asset!: cc.Asset;
+		asset!: Asset;
 	}
 }
 
@@ -76,9 +76,9 @@ export class MKAsset extends MKInstanceBase {
 			// eslint-disable-next-line @typescript-eslint/no-this-alias
 			const self = this;
 			/** decRef 原函数 */
-			const originFunc = cc.Asset.prototype.decRef;
+			const originFunc = Asset.prototype.decRef;
 
-			cc.Asset.prototype.decRef = function (this: cc.Asset, ...argsList: any[]) {
+			Asset.prototype.decRef = function (this: Asset, ...argsList: any[]) {
 				const result = originFunc.call(this, ...argsList);
 
 				// 跳过未纳入管理资源
@@ -134,7 +134,7 @@ export class MKAsset extends MKInstanceBase {
 	/** 日志 */
 	private _log = new MKLogger("MKAsset");
 	/** 管理表 */
-	private _joinTimeMsN = new Map<string, cc.Asset>();
+	private _joinTimeMsN = new Map<string, Asset>();
 	/** 释放表 */
 	private _assetReleaseMap = new Map<string, _MKAsset.ReleaseInfo>();
 	/** 释放定时器 */
@@ -148,9 +148,9 @@ export class MKAsset extends MKInstanceBase {
 	 * @param config_ 获取配置
 	 * @returns
 	 */
-	get<T extends cc.Asset>(
+	get<T extends Asset>(
 		pathStr_: string,
-		type_: cc.Constructor<T>,
+		type_: Constructor<T>,
 		target_: MKAsset_.TypeFollowReleaseObject | null,
 		config_?: MKAsset_.GetConfig<T>
 	): Promise<T | null> {
@@ -190,9 +190,9 @@ export class MKAsset extends MKInstanceBase {
 			if (!isRemote) {
 				const assetType = type_ as any;
 
-				if (assetType === cc.SpriteFrame && !pathStr_.endsWith("/spriteFrame")) {
+				if (assetType === SpriteFrame && !pathStr_.endsWith("/spriteFrame")) {
 					pathStr_ += "/spriteFrame";
-				} else if (assetType === cc.Texture2D && !pathStr_.endsWith("/texture")) {
+				} else if (assetType === Texture2D && !pathStr_.endsWith("/texture")) {
 					pathStr_ += "/texture";
 				}
 			}
@@ -253,7 +253,7 @@ export class MKAsset extends MKInstanceBase {
 			// 远程
 			if (isRemote) {
 				// eslint-disable-next-line @typescript-eslint/naming-convention
-				cc.assetManager.loadRemote(
+				assetManager.loadRemote(
 					pathStr_,
 					{
 						// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -293,7 +293,7 @@ export class MKAsset extends MKInstanceBase {
 						}
 
 						// 如果是 spriteFrame 添加后缀
-						if ((type_ as any) === cc.SpriteFrame) {
+						if ((type_ as any) === SpriteFrame) {
 							uuidStr += "@f9941";
 						}
 
@@ -302,9 +302,9 @@ export class MKAsset extends MKInstanceBase {
 				}
 
 				if (getConfig.progressFunc) {
-					cc.assetManager.loadAny(assetConfig, getConfig.progressFunc, completedFunc);
+					assetManager.loadAny(assetConfig, getConfig.progressFunc, completedFunc);
 				} else {
-					cc.assetManager.loadAny(assetConfig, completedFunc);
+					assetManager.loadAny(assetConfig, completedFunc);
 				}
 			}
 			// 本地
@@ -349,9 +349,9 @@ export class MKAsset extends MKInstanceBase {
 	 * @param config_ 获取配置
 	 * @returns
 	 */
-	getDir<T extends cc.Asset>(
+	getDir<T extends Asset>(
 		pathStr_: string,
-		type_: cc.Constructor<T>,
+		type_: Constructor<T>,
 		target_: MKAsset_.TypeFollowReleaseObject | null,
 		config_?: MKAsset_.GetDirConfig<T>
 	): Promise<T[] | null> {
@@ -495,8 +495,8 @@ export class MKAsset extends MKInstanceBase {
 	 * 释放资源
 	 * @param asset_ 释放的资源
 	 */
-	release(asset_: cc.Asset | cc.Asset[]): void {
-		const assetList: cc.Asset[] = Array.isArray(asset_) ? asset_ : [asset_];
+	release(asset_: Asset | Asset[]): void {
+		const assetList: Asset[] = Array.isArray(asset_) ? asset_ : [asset_];
 
 		assetList.forEach((v) => {
 			if (!v.isValid) {
@@ -504,11 +504,11 @@ export class MKAsset extends MKInstanceBase {
 			}
 
 			// 释放动态图集中的资源
-			if (cc.dynamicAtlasManager?.enabled) {
-				if (v instanceof cc.SpriteFrame) {
-					cc.dynamicAtlasManager.deleteAtlasSpriteFrame(v);
-				} else if (v instanceof cc.Texture2D) {
-					cc.dynamicAtlasManager.deleteAtlasTexture(v);
+			if (dynamicAtlasManager?.enabled) {
+				if (v instanceof SpriteFrame) {
+					dynamicAtlasManager.deleteAtlasSpriteFrame(v);
+				} else if (v instanceof Texture2D) {
+					dynamicAtlasManager.deleteAtlasTexture(v);
 				}
 			}
 
@@ -518,7 +518,7 @@ export class MKAsset extends MKInstanceBase {
 			}
 
 			// 释放资源，禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的
-			cc.assetManager.releaseAsset(v);
+			assetManager.releaseAsset(v);
 			// 更新资源管理表
 			this._joinTimeMsN.delete(v.nativeUrl || v._uuid);
 
@@ -527,7 +527,7 @@ export class MKAsset extends MKInstanceBase {
 	}
 
 	/** 资源初始化 */
-	private _assetInit<T extends cc.Asset>(asset_: T): T {
+	private _assetInit<T extends Asset>(asset_: T): T {
 		/** 已加载资源 */
 		const loadedAsset = this._joinTimeMsN.get(asset_.nativeUrl || asset_._uuid) as T;
 
@@ -559,7 +559,7 @@ export class MKAsset extends MKInstanceBase {
 		const currentTimeMsNum = Date.now();
 
 		if (isForce_) {
-			const assetsList: cc.Asset[] = [];
+			const assetsList: Asset[] = [];
 
 			this._assetReleaseMap.forEach((v) => {
 				// 已经被释放或增加了引用计数
@@ -603,7 +603,7 @@ export class MKAsset extends MKInstanceBase {
 		// 清理定时器
 		clearInterval(this._releaseTimer);
 		// 释放 bundle 资源
-		cc.assetManager.bundles.forEach((v) => {
+		assetManager.bundles.forEach((v) => {
 			if (v["releaseUnusedAssets"]) {
 				v["releaseUnusedAssets"]();
 			} else {
@@ -615,13 +615,13 @@ export class MKAsset extends MKInstanceBase {
 
 export namespace MKAsset_ {
 	/** 加载文件夹配置 */
-	export interface GetDirConfig<T extends cc.Asset> extends Omit<GetConfig<T>, "completedFunc"> {
+	export interface GetDirConfig<T extends Asset> extends Omit<GetConfig<T>, "completedFunc"> {
 		/** 完成回调 */
 		completedFunc?: (error: Error[] | null, asset: (T | null)[]) => void;
 	}
 
 	/** 加载配置 */
-	export interface GetConfig<T extends cc.Asset = cc.Asset> {
+	export interface GetConfig<T extends Asset = Asset> {
 		/**
 		 * bundle 名
 		 * @defaultValue
@@ -648,7 +648,7 @@ export namespace MKAsset_ {
 	}
 
 	/** 跟随释放对象 */
-	export type TypeFollowReleaseObject = MKRelease_.TypeFollowReleaseObject<cc.Asset>;
+	export type TypeFollowReleaseObject = MKRelease_.TypeFollowReleaseObject<Asset>;
 }
 
 const mkAsset = MKAsset.instance();

@@ -1,19 +1,20 @@
-import * as cc from "cc";
-import { EDITOR } from "cc/env";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import mkLanguageManage from "../MKLanguageManage";
 import mkTool from "../../@Private/Tool/MKTool";
 import MKLifeCycle from "../../Module/MKLifeCycle";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { _decorator, Enum, Layout, Node } from "cc";
+import { EDITOR } from "cc/env";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, menu, executeInEditMode } = cc._decorator;
+const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 namespace _MKLanguageNode {
 	export const languageTypeEnum = mkTool.enum.objToEnum(GlobalConfig.Language.typeTab);
 
 	@ccclass("MKLanguageNode/Node")
-	export class Node {
-		constructor(init_?: Partial<Node>) {
+	export class LNode {
+		constructor(init_?: Partial<LNode>) {
 			Object.assign(this, init_);
 		}
 
@@ -21,7 +22,7 @@ namespace _MKLanguageNode {
 		/** 语言 */
 		@property({
 			displayName: "语言",
-			type: cc.Enum(languageTypeEnum),
+			type: Enum(languageTypeEnum),
 		})
 		get language(): number {
 			return languageTypeEnum[this.languageStr];
@@ -36,8 +37,8 @@ namespace _MKLanguageNode {
 		languageStr: keyof typeof GlobalConfig.Language.typeTab = GlobalConfig.Language.defaultTypeStr;
 
 		/** 节点 */
-		@property({ displayName: "节点", type: cc.Node })
-		node: cc.Node = null!;
+		@property({ displayName: "节点", type: Node })
+		node: Node = null!;
 	}
 }
 
@@ -55,7 +56,7 @@ class MKLanguageNode extends MKLifeCycle {
 	/** 语言 */
 	@property({
 		displayName: "语言",
-		type: cc.Enum(_MKLanguageNode.languageTypeEnum),
+		type: Enum(_MKLanguageNode.languageTypeEnum),
 	})
 	get language(): number {
 		return _MKLanguageNode.languageTypeEnum[this.languageStr];
@@ -69,21 +70,21 @@ class MKLanguageNode extends MKLifeCycle {
 	/** 当前语言节点 */
 	@property({
 		displayName: "当前语言节点",
-		type: cc.Node,
+		type: Node,
 		visible: true,
 	})
-	private get _node(): cc.Node {
-		return this.nodeList.find((v) => v instanceof _MKLanguageNode.Node && v.languageStr === this.languageStr)?.node ?? null!;
+	private get _node(): Node {
+		return this.nodeList.find((v) => v instanceof _MKLanguageNode.LNode && v.languageStr === this.languageStr)?.node ?? null!;
 	}
 
 	private set _node(value_) {
-		const node = this.nodeList.find((v) => v instanceof _MKLanguageNode.Node && v.languageStr === this.languageStr);
+		const node = this.nodeList.find((v) => v instanceof _MKLanguageNode.LNode && v.languageStr === this.languageStr);
 
 		if (node) {
 			node.node = value_;
 		} else {
 			this.nodeList.push(
-				new _MKLanguageNode.Node({
+				new _MKLanguageNode.LNode({
 					languageStr: this.languageStr,
 					node: value_,
 				})
@@ -94,10 +95,10 @@ class MKLanguageNode extends MKLifeCycle {
 	/** 语言节点列表 */
 	@property({
 		displayName: "语言节点列表",
-		type: [_MKLanguageNode.Node],
+		type: [_MKLanguageNode.LNode],
 		visible: false,
 	})
-	nodeList: _MKLanguageNode.Node[] = [];
+	nodeList: _MKLanguageNode.LNode[] = [];
 
 	/** layout 适配 */
 	@property({
@@ -108,18 +109,18 @@ class MKLanguageNode extends MKLifeCycle {
 
 	/* --------------- public --------------- */
 	/** 当前语言节点 */
-	get currentNode(): cc.Node | null {
+	get currentNode(): Node | null {
 		return this.nodeList.find((v) => v.languageStr === GlobalConfig.Language.types[mkLanguageManage.typeStr])?.node ?? null!;
 	}
 
 	/* --------------- protected --------------- */
 	protected _isUseLayer = false;
 	/* --------------- private --------------- */
-	private _layout: cc.Layout | null = null;
+	private _layout: Layout | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected create(): void | Promise<void> {
-		this._layout = this.getComponent(cc.Layout);
+		this._layout = this.getComponent(Layout);
 	}
 
 	protected open(): void | Promise<void> {

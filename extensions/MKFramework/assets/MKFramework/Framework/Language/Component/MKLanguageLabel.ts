@@ -1,11 +1,12 @@
-import * as cc from "cc";
 import mkLanguageManage from "../MKLanguageManage";
 import MKLanguageBase from "./MKLanguageBase";
 import { EDITOR } from "cc/env";
 import mkTool from "../../@Private/Tool/MKTool";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { _decorator, CCString, Label, RichText, director, Component, js, Canvas, Layout, HorizontalTextAlignment, CCClass, Enum } from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { ccclass, property, menu, executeInEditMode } = cc._decorator;
+const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 /**
  * 多语言文本
@@ -38,7 +39,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	/** 参数 */
 	@property({
 		displayName: "参数",
-		type: [cc.CCString],
+		type: [CCString],
 	})
 	get argsStrList(): string[] {
 		return this._argsStrList;
@@ -53,11 +54,11 @@ class MKLanguageLabel extends MKLanguageBase {
 	protected _typeStr = "";
 
 	/* --------------- private --------------- */
-	@property([cc.CCString])
+	@property([CCString])
 	private _argsStrList: string[] = [];
 
 	/** label组件 */
-	private _label!: cc.Label | cc.RichText | null;
+	private _label!: Label | RichText | null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
 		if (EDITOR) {
@@ -124,7 +125,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	}
 
 	protected _initData(): void {
-		this._label = this.node.getComponent(cc.Label) ?? this.node.getComponent(cc.RichText);
+		this._label = this.node.getComponent(Label) ?? this.node.getComponent(RichText);
 
 		if (!this._label) {
 			this._log.error("节点不存在 Label | RichText 组件");
@@ -141,23 +142,23 @@ class MKLanguageLabel extends MKLanguageBase {
 			// 设置默认类型
 			else {
 				(async () => {
-					const scene = cc.director.getScene()!;
+					const scene = director.getScene()!;
 					/** 用户组件 */
-					let userComp: cc.Component | undefined;
+					let userComp: Component | undefined;
 
 					// 预制体
 					if (scene.name === "New Node") {
-						userComp = cc.director.getScene()!.children[0].children[1].components.find((v) => !cc.js.getClassName(v).startsWith("cc."));
+						userComp = director.getScene()!.children[0].children[1].components.find((v) => !js.getClassName(v).startsWith(""));
 					}
 					// 场景
 					else {
-						const canvas = cc.director.getScene()!.getComponentInChildren(cc.Canvas)!.node;
+						const canvas = director.getScene()!.getComponentInChildren(Canvas)!.node;
 
-						userComp = canvas.components.find((v) => !cc.js.getClassName(v).startsWith("cc."));
+						userComp = canvas.components.find((v) => !js.getClassName(v).startsWith(""));
 					}
 
-					this._typeStr = mkLanguageManage.labelDataTab[cc.js.getClassName(userComp)]
-						? cc.js.getClassName(userComp)
+					this._typeStr = mkLanguageManage.labelDataTab[js.getClassName(userComp)]
+						? js.getClassName(userComp)
 						: MKLanguageLabel._typeStrList[0] ?? "";
 				})();
 			}
@@ -173,9 +174,7 @@ class MKLanguageLabel extends MKLanguageBase {
 		}
 
 		this._label.horizontalAlign =
-			mkLanguageManage.data.dire === cc.Layout.HorizontalDirection.LEFT_TO_RIGHT
-				? cc.HorizontalTextAlignment.LEFT
-				: cc.HorizontalTextAlignment.RIGHT;
+			mkLanguageManage.data.dire === Layout.HorizontalDirection.LEFT_TO_RIGHT ? HorizontalTextAlignment.LEFT : HorizontalTextAlignment.RIGHT;
 	}
 
 	/** 初始化组件 */
@@ -207,11 +206,11 @@ class MKLanguageLabel extends MKLanguageBase {
 		// 更新属性
 		{
 			if (MKLanguageLabel._typeEnum && Object.keys(MKLanguageLabel._typeEnum).length) {
-				cc.CCClass.Attr.setClassAttr(MKLanguageLabel, "type", "enumList", cc.Enum.getList(cc.Enum(MKLanguageLabel._typeEnum)));
+				CCClass.Attr.setClassAttr(MKLanguageLabel, "type", "enumList", Enum.getList(Enum(MKLanguageLabel._typeEnum)));
 			}
 
 			if (this._markEnum && Object.keys(this._markEnum).length) {
-				cc.CCClass.Attr.setClassAttr(MKLanguageLabel, "markEnum", "enumList", cc.Enum.getList(cc.Enum(this._markEnum)));
+				CCClass.Attr.setClassAttr(MKLanguageLabel, "markEnum", "enumList", Enum.getList(Enum(this._markEnum)));
 			}
 		}
 	}
