@@ -16,20 +16,22 @@ node_modules/
 #//////////////////////////
 # VSCode
 #//////////////////////////
+!.vscode/
 !.vscode/settings.json
-.vscode
+.vscode/*
 
 #//////////////////////////
-# WebStorm
+# 扩展
 #//////////////////////////
-.idea/
-extensions/*
+!extensions/
 !extensions/MKFramework
 !extensions/quick-plugin
+extensions/*
 
-tool/*
+!tool/
 !tool/test
 !tool/typedoc
 tool/typedoc/docs
+tool/*
 
 .protobufjs.js
