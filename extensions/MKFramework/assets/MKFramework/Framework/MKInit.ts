@@ -3,7 +3,7 @@ import GlobalConfig from "../Config/GlobalConfig";
 import { DEBUG, EDITOR } from "cc/env";
 import globalEvent from "../Config/GlobalEvent";
 import * as env from "cc/env";
-import { Director, director, profiler, Size, view } from "cc";
+import { Director, director, profiler, screen, Size, view } from "cc";
 
 // 初始化逻辑
 if (!EDITOR) {
@@ -22,15 +22,9 @@ if (!EDITOR) {
 	});
 
 	// 屏幕大小改变事件分发
-	if ((view as any).setResizeCallback) {
-		(view as any).setResizeCallback(() => {
-			globalEvent.emit(globalEvent.key.resize);
-		});
-	} else {
-		(screen as any).on("window-resize", () => {
-			globalEvent.emit(globalEvent.key.resize);
-		});
-	}
+	screen.on("window-resize", () => {
+		globalEvent.emit(globalEvent.key.resize);
+	});
 } else {
 	// 编辑器预览模式
 	if (window["cc"].GAME_VIEW) {

@@ -433,7 +433,7 @@ export class MKBundle extends MKInstanceBase {
 			// 清理名称匹配的 ccclass
 			const reg = bundleInfo_.ccclassRegexp ?? new RegExp(`${bundleInfo_.bundleStr}(_|/)`);
 
-			Object.keys((js as any)._nameToClass ?? (js as any)._registeredClassNames)
+			Object.keys((js as any)._registeredClassNames)
 				.filter((vStr) => vStr.match(reg) !== null)
 				.forEach((vStr) => {
 					js.unregisterClass(js.getClassByName(vStr));

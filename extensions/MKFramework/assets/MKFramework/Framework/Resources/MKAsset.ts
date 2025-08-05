@@ -6,7 +6,7 @@ import mkBundle from "./MKBundle";
 import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { MKRelease_ } from "../MKRelease";
-import { Asset, Constructor, SpriteFrame, Texture2D, assetManager, dynamicAtlasManager } from "cc";
+import { Asset, Constructor, DynamicAtlasManager, SpriteFrame, Texture2D, assetManager } from "cc";
 
 namespace _MKAsset {
 	/** loadRemote 配置类型 */
@@ -82,7 +82,7 @@ export class MKAsset extends MKInstanceBase {
 				const result = originFunc.call(this, ...argsList);
 
 				// 跳过未纳入管理资源
-				if (!self._joinTimeMsN.has(this.nativeUrl || this._uuid)) {
+				if (!self._joinTimeMsN.has(this.nativeUrl || this.uuid)) {
 					return result;
 				}
 
@@ -99,7 +99,7 @@ export class MKAsset extends MKInstanceBase {
 				// 引用为 1 时自动释放
 				if (this.refCount === 1) {
 					self._assetReleaseMap.set(
-						this.nativeUrl || this._uuid,
+						this.nativeUrl || this.uuid,
 						new _MKAsset.ReleaseInfo({
 							asset: this,
 						})
@@ -502,11 +502,11 @@ export class MKAsset extends MKInstanceBase {
 			}
 
 			// 释放动态图集中的资源
-			if (dynamicAtlasManager?.enabled) {
+			if (DynamicAtlasManager?.instance?.enabled) {
 				if (v instanceof SpriteFrame) {
-					dynamicAtlasManager.deleteAtlasSpriteFrame(v);
+					DynamicAtlasManager.instance.deleteAtlasSpriteFrame(v);
 				} else if (v instanceof Texture2D) {
-					dynamicAtlasManager.deleteAtlasTexture(v);
+					DynamicAtlasManager.instance.deleteAtlasTexture(v);
 				}
 			}
 
@@ -518,16 +518,16 @@ export class MKAsset extends MKInstanceBase {
 			// 释放资源，禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的
 			assetManager.releaseAsset(v);
 			// 更新资源管理表
-			this._joinTimeMsN.delete(v.nativeUrl || v._uuid);
+			this._joinTimeMsN.delete(v.nativeUrl || v.uuid);
 
-			this._log.debug("释放资源", v.name, v.nativeUrl, v._uuid);
+			this._log.debug("释放资源", v.name, v.nativeUrl, v.uuid);
 		});
 	}
 
 	/** 资源初始化 */
 	private _assetInit<T extends Asset>(asset_: T): T {
 		/** 已加载资源 */
-		const loadedAsset = this._joinTimeMsN.get(asset_.nativeUrl || asset_._uuid) as T;
+		const loadedAsset = this._joinTimeMsN.get(asset_.nativeUrl || asset_.uuid) as T;
 
 		// 如果资源已经加载，则返回的资源是一个新资源，此时引用计数和前一个对象不一致，需要替换
 		// 如果资源无效，则加载的资源绕过了框架释放，例如使用 bundle.releaseAll
@@ -541,7 +541,7 @@ export class MKAsset extends MKInstanceBase {
 			asset_.addRef();
 			asset_.addRef();
 
-			this._joinTimeMsN.set(asset_.nativeUrl || asset_._uuid, asset_);
+			this._joinTimeMsN.set(asset_.nativeUrl || asset_.uuid, asset_);
 
 			return asset_;
 		}
@@ -602,11 +602,7 @@ export class MKAsset extends MKInstanceBase {
 		clearInterval(this._releaseTimer);
 		// 释放 bundle 资源
 		assetManager.bundles.forEach((v) => {
-			if (v["releaseUnusedAssets"]) {
-				v["releaseUnusedAssets"]();
-			} else {
-				v.releaseAll();
-			}
+			v.releaseAll();
 		});
 	}
 }
