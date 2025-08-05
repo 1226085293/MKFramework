@@ -1,6 +1,6 @@
 import { EDITOR } from "cc/env";
 import GlobalConfig from "../../../Config/GlobalConfig";
-import GlobalEvent from "../../../Config/GlobalEvent";
+import globalEvent from "../../../Config/GlobalEvent";
 import { _decorator, Component, director, Canvas, view, ResolutionPolicy, Director, screen } from "cc";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -16,7 +16,7 @@ export default class MKAdaptationCanvas extends Component {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
 		// 事件监听
-		GlobalEvent.on(GlobalEvent.key.resize, this.adaptation, this);
+		globalEvent.on(globalEvent.key.resize, this.adaptation, this);
 	}
 
 	protected onEnable(): void {
@@ -25,7 +25,7 @@ export default class MKAdaptationCanvas extends Component {
 	}
 
 	protected onDestroy(): void {
-		GlobalEvent.targetOff(this);
+		globalEvent.targetOff(this);
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */

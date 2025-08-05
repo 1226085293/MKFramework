@@ -1,5 +1,5 @@
 import { EDITOR } from "cc/env";
-import GlobalEvent from "../../Config/GlobalEvent";
+import globalEvent from "../../Config/GlobalEvent";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { mkLog } from "../MKLogger";
 import mkMonitor from "../MKMonitor";
@@ -184,7 +184,7 @@ export class MKPolygonMask extends Component {
 		}
 
 		// 全局事件
-		GlobalEvent.on(GlobalEvent.key.resize, this._onGlobalResize, this);
+		globalEvent.on(globalEvent.key.resize, this._onGlobalResize, this);
 	}
 
 	protected start(): void {
@@ -235,7 +235,7 @@ export class MKPolygonMask extends Component {
 
 	protected onDestroy(): void {
 		mkMonitor.clear(this);
-		GlobalEvent.targetOff(this);
+		globalEvent.targetOff(this);
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */

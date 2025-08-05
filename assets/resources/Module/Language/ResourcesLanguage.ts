@@ -1,5 +1,5 @@
 import { _decorator } from "cc";
-import GlobalConfig from "global_config";
+import GlobalConfig from "GlobalConfig";
 import mk from "mk";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import Decorator from "../../../Decorator/Decorator";

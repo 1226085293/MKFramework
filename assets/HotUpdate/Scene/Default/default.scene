@@ -551,7 +551,7 @@
       "b": 201,
       "a": 255
     },
-    "_string": "1. 构建 web桌面端（任务1）\n2. 修改 global_config.constant.version_s 后构建 web桌面端（任务2）\n3. 在任务2的 构建输出目录/assets 下执行 npx http-server\n3. 运行web桌面端（任务1）\n4. 点击热更 -> 点击确定 -> X\n5. 右下角版本已经改变\n",
+    "_string": "1. 构建 web桌面端（任务1）\n2. 修改 GlobalConfig.constant.version_s 后构建 web桌面端（任务2）\n3. 在任务2的 构建输出目录/assets 下执行 npx http-server\n3. 运行web桌面端（任务1）\n4. 点击热更 -> 点击确定 -> X\n5. 右下角版本已经改变\n",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 34.3,

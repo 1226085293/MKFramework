@@ -1,8 +1,8 @@
 import * as cc from "cc";
 import { ToolMonitorTriggerEvent } from "../ToolMonitorTriggerEvent";
 import mk from "mk";
-import global_event from "global_event";
-import tool_node from "../../../ToolNode";
+import toolNode from "../../../ToolNode";
+import globalEvent from "globalEvent";
 
 const { ccclass, property } = cc._decorator;
 
@@ -38,7 +38,7 @@ export namespace 默认 {
 		/** 节点池 */
 		private _nodePool!: mk.ObjectPool<cc.Node>;
 		/** 任务管线 */
-		private _taskPipeline = new mk.Task.Pipeline();
+		private _taskPipeline = new mk.task.Pipeline();
 		/** 注册目标 */
 		private _uiRegisTarget: mk.LifeCycle = null!;
 		/* ------------------------------- 功能 ------------------------------- */
@@ -49,7 +49,7 @@ export namespace 默认 {
 
 			// 模块
 			if (this._itemViewType) {
-				this._uiRegisTarget = tool_node
+				this._uiRegisTarget = toolNode
 					.traverseParent(this._initData.root.parent, (node) => node.getComponent(mk.LifeCycle) !== null)!
 					.getComponent(mk.LifeCycle)!;
 
@@ -76,13 +76,13 @@ export namespace 默认 {
 			}
 
 			// 注册事件
-			global_event.on(global_event.key.restart, this._onRestart, this);
+			globalEvent.on(globalEvent.key.restart, this._onRestart, this);
 		}
 
 		/** 销毁 */
 		async destroy(): Promise<void> {
 			// 注销事件
-			global_event.removeAll(this);
+			globalEvent.removeAll(this);
 
 			await this._taskPipeline.add(async () => {
 				if (!this._initData.root.children.length) {

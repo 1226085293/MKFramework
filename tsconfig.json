@@ -20,10 +20,10 @@
 			  "./assets/*"
 			],
 			"mk": ["./extensions/MKFramework/@types/MKFramework/mk.d.ts"],
-			"global_config": [
+			"GlobalConfig": [
 			  "./extensions/MKFramework/assets/MKFramework/Config/GlobalConfig.ts"
 			],
-			"global_event": [
+			"globalEvent": [
 			  "./extensions/MKFramework/assets/MKFramework/Config/GlobalEvent.ts"
 			]
 		}

@@ -1,7 +1,7 @@
 import * as cc from "cc";
 import { _decorator } from "cc";
 import mk from "mk";
-import GlobalConfig from "global_config";
+import GlobalConfig from "GlobalConfig";
 const { ccclass, property } = _decorator;
 
 @ccclass("ResourcesAudio")

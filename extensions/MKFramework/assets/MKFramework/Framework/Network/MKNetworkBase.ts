@@ -1,6 +1,6 @@
 import { js, Constructor, EventTarget } from "cc";
 import GlobalConfig from "../../Config/GlobalConfig";
-import GlobalEvent from "../../Config/GlobalEvent";
+import globalEvent from "../../Config/GlobalEvent";
 import MKCodecBase from "../MKCodecBase";
 import MKEventTarget from "../MKEventTarget";
 import MKInstanceBase from "../MKInstanceBase";
@@ -211,7 +211,7 @@ abstract class MKNetworkBase<CT extends MKCodecBase = MKCodecBase> extends MKIns
 		this._startHeartbeat();
 
 		// 事件监听
-		GlobalEvent.on(GlobalEvent.key.restart, this._onRestart, this);
+		globalEvent.on(globalEvent.key.restart, this._onRestart, this);
 	}
 
 	/* --------------- public --------------- */
@@ -723,7 +723,7 @@ export namespace MKNetworkBase_ {
 			this._sendIntervalMsNum = intervalMsN_;
 
 			// 事件监听
-			GlobalEvent.on(GlobalEvent.key.restart, this._onRestart, this);
+			globalEvent.on(globalEvent.key.restart, this._onRestart, this);
 		}
 
 		/** 网络节点 */

@@ -2,7 +2,7 @@ import mkAsset, { MKAsset_ } from "../Resources/MKAsset";
 import { EDITOR } from "cc/env";
 import MKEventTarget from "../MKEventTarget";
 import MKLogger from "../MKLogger";
-import GlobalEvent from "../../Config/GlobalEvent";
+import globalEvent from "../../Config/GlobalEvent";
 import mkTool from "../@Private/Tool/MKTool";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKRelease, { MKRelease_ } from "../MKRelease";
@@ -17,7 +17,7 @@ const { ccclass, property } = _decorator;
  */
 abstract class MKAudioBase {
 	constructor() {
-		GlobalEvent.on(GlobalEvent.key.restart, this._eventRestart, this);
+		globalEvent.on(globalEvent.key.restart, this._eventRestart, this);
 	}
 
 	/* --------------- protected --------------- */

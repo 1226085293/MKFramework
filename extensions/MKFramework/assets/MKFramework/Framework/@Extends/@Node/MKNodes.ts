@@ -1,6 +1,6 @@
 import { director, Director, EditBox, Label, Layout, Node, ProgressBar, RichText, Slider, Sprite, Toggle, UIOpacity, UITransform, Vec2 } from "cc";
 import GlobalConfig from "../../../Config/GlobalConfig";
-import GlobalEvent from "../../../Config/GlobalEvent";
+import globalEvent from "../../../Config/GlobalEvent";
 
 class NodeExtends {
 	constructor(node_: Node) {
@@ -248,6 +248,6 @@ namespace MKN {
 // 切换场景后自动清理
 director.on(Director.EVENT_BEFORE_SCENE_LAUNCH, MKN.clear, this);
 // 重启时自动清理
-GlobalEvent.on(GlobalEvent.key.restart, MKN.clear, this);
+globalEvent.on(globalEvent.key.restart, MKN.clear, this);
 
 export default MKN;

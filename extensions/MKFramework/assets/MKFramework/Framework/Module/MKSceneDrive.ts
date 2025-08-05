@@ -1,7 +1,7 @@
 import { MKLifeCycle } from "./MKLifeCycle";
 import { EDITOR } from "cc/env";
 import bundle from "../Resources/MKBundle";
-import GlobalEvent from "../../Config/GlobalEvent";
+import globalEvent from "../../Config/GlobalEvent";
 import MKStatusTask from "../Task/MKStatusTask";
 import { _decorator, director, Director, Node } from "cc";
 
@@ -25,13 +25,13 @@ class MKSceneDrive extends MKLifeCycle {
 		// 事件监听
 		{
 			// 全局事件
-			GlobalEvent.on(GlobalEvent.key.restart, this._onRestart, this);
-			GlobalEvent.on(GlobalEvent.key.waitCloseScene, this._onWaitCloseScene, this);
+			globalEvent.on(globalEvent.key.restart, this._onRestart, this);
+			globalEvent.on(globalEvent.key.waitCloseScene, this._onWaitCloseScene, this);
 		}
 	}
 
 	protected onDestroy() {
-		GlobalEvent.targetOff(this);
+		globalEvent.targetOff(this);
 		bundle.event.targetOff(this);
 	}
 	/* ------------------------------- segmentation ------------------------------- */

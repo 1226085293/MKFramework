@@ -1,6 +1,6 @@
 import mk from "mk";
 import * as cc from "cc";
-import GlobalConfig from "global_config";
+import GlobalConfig from "GlobalConfig";
 const { ccclass, property } = cc._decorator;
 
 class Control extends mk.MVCControlBase<Model, View> {

@@ -1,5 +1,5 @@
 import { EDITOR } from "cc/env";
-import GlobalEvent from "../../Config/GlobalEvent";
+import globalEvent from "../../Config/GlobalEvent";
 import MKInstanceBase from "../MKInstanceBase";
 import MKLogger from "../MKLogger";
 import mkBundle from "./MKBundle";
@@ -89,7 +89,7 @@ export class MKAsset extends MKInstanceBase {
 				// 重启期间直接销毁
 				if (mkGame.isRestarting) {
 					// 等待场景关闭后释放资源
-					Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene)).then((v) => {
+					Promise.all(globalEvent.request(globalEvent.key.waitCloseScene)).then((v) => {
 						MKAsset.instance().release(this);
 					});
 
@@ -122,7 +122,7 @@ export class MKAsset extends MKInstanceBase {
 
 		// 事件监听
 		setTimeout(() => {
-			GlobalEvent.once(GlobalEvent.key.restart, this._onRestart, MKAsset.instance());
+			globalEvent.once(globalEvent.key.restart, this._onRestart, MKAsset.instance());
 		}, 0);
 	}
 
@@ -597,7 +597,7 @@ export class MKAsset extends MKInstanceBase {
 	/* ------------------------------- 全局事件 ------------------------------- */
 	private async _onRestart(): Promise<void> {
 		// 等待场景关闭
-		await Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene));
+		await Promise.all(globalEvent.request(globalEvent.key.waitCloseScene));
 		// 立即释放资源
 		this._autoReleaseAsset(true);
 		// 清理定时器

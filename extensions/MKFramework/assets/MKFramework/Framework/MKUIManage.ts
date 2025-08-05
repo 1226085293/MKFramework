@@ -1,4 +1,4 @@
-import GlobalEvent from "../Config/GlobalEvent";
+import globalEvent from "../Config/GlobalEvent";
 import MKInstanceBase from "./MKInstanceBase";
 import MKLogger from "./MKLogger";
 import MKViewBase from "./Module/MKViewBase";
@@ -48,7 +48,7 @@ export class MKUIManage extends MKInstanceBase {
 		super();
 
 		// 事件监听
-		GlobalEvent.on(GlobalEvent.key.restart, this._eventRestart, this);
+		globalEvent.on(globalEvent.key.restart, this._eventRestart, this);
 	}
 
 	/* --------------- public --------------- */
@@ -767,7 +767,7 @@ export class MKUIManage extends MKInstanceBase {
 	/* ------------------------------- 全局事件 ------------------------------- */
 	private async _eventRestart(): Promise<void> {
 		// 等待场景关闭
-		await Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene));
+		await Promise.all(globalEvent.request(globalEvent.key.waitCloseScene));
 
 		// 释放对象池
 		this._uiPoolMap.forEach((v) => {

@@ -2,7 +2,7 @@ import mk from "mk";
 import MainConfig from "./MainConfig";
 import MainEventProtocol from "./MainEvent";
 import * as cc from "cc";
-import GlobalConfig from "global_config";
+import GlobalConfig from "GlobalConfig";
 
 class MainBundle extends mk.Bundle_.BundleManageBase {
 	nameStr = "main";

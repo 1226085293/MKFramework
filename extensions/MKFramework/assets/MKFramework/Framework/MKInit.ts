@@ -1,7 +1,7 @@
 import * as mk from "./MKExport";
 import GlobalConfig from "../Config/GlobalConfig";
 import { DEBUG, EDITOR } from "cc/env";
-import GlobalEvent from "../Config/GlobalEvent";
+import globalEvent from "../Config/GlobalEvent";
 import * as env from "cc/env";
 import { Director, director, profiler, Size, view } from "cc";
 
@@ -24,11 +24,11 @@ if (!EDITOR) {
 	// 屏幕大小改变事件分发
 	if ((view as any).setResizeCallback) {
 		(view as any).setResizeCallback(() => {
-			GlobalEvent.emit(GlobalEvent.key.resize);
+			globalEvent.emit(globalEvent.key.resize);
 		});
 	} else {
 		(screen as any).on("window-resize", () => {
-			GlobalEvent.emit(GlobalEvent.key.resize);
+			globalEvent.emit(globalEvent.key.resize);
 		});
 	}
 } else {

@@ -1,5 +1,5 @@
 import { Animation, director, dragonBones, game, Node, sp, TweenSystem } from "cc";
-import GlobalEvent from "../Config/GlobalEvent";
+import globalEvent from "../Config/GlobalEvent";
 import MKInstanceBase from "./MKInstanceBase";
 
 namespace _MKGame {
@@ -36,8 +36,8 @@ export class MKGame extends MKInstanceBase {
 	 */
 	async restart(): Promise<void> {
 		this._isRestarting = true;
-		await Promise.all(GlobalEvent.request(GlobalEvent.key.restart));
-		await Promise.all(GlobalEvent.request(GlobalEvent.key.waitCloseScene));
+		await Promise.all(globalEvent.request(globalEvent.key.restart));
+		await Promise.all(globalEvent.request(globalEvent.key.waitCloseScene));
 		game.restart();
 		this._isRestarting = false;
 	}

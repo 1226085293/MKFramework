@@ -1,6 +1,6 @@
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, Component, size, Vec3, v3, UITransform, Sprite, Size, v2, director, Canvas, Enum, Node } from "cc";
-import GlobalEvent from "../../../Config/GlobalEvent";
+import globalEvent from "../../../Config/GlobalEvent";
 import { mkLog } from "../../MKLogger";
 import { EDITOR } from "cc/env";
 
@@ -206,7 +206,7 @@ export default class MKAdaptationNode extends Component {
 		this.updateAdaptation();
 
 		if (this.adaptationSource === _MKAdaptationNode.Source.Canvas) {
-			GlobalEvent.on(GlobalEvent.key.resize, this._onGlobalResize, this);
+			globalEvent.on(globalEvent.key.resize, this._onGlobalResize, this);
 		} else if (this.adaptationSource === _MKAdaptationNode.Source.Parent) {
 			this.node.parent?.on(Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
 		}
@@ -220,7 +220,7 @@ export default class MKAdaptationNode extends Component {
 
 	onDisable(): void {
 		if (this.adaptationSource === _MKAdaptationNode.Source.Canvas) {
-			GlobalEvent.off(GlobalEvent.key.resize, this._onGlobalResize, this);
+			globalEvent.off(globalEvent.key.resize, this._onGlobalResize, this);
 		} else if (this.adaptationSource === _MKAdaptationNode.Source.Parent) {
 			this.node.parent?.off(Node.EventType.SIZE_CHANGED, this._onNodeSizeChanged, this);
 		}
