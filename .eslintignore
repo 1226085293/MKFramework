@@ -1,8 +1,7 @@
 node_modules/
-./build/
+build/
 *.d.ts
-./tool/
-./plugin/
-./extensions/*
-!./extensions/MKFramework/source
+tool/
+plugin/
+extensions/
 ./extensions_dev/
