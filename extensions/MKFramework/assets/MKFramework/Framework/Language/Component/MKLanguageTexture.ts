@@ -6,7 +6,6 @@ import MKLanguageBase from "./MKLanguageBase";
 import mkTool from "../../@Private/Tool/MKTool";
 import { _decorator, Sprite, SpriteFrame, CCClass, Enum, ImageAsset, error } from "cc";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode, requireComponent } = _decorator;
 
 /**

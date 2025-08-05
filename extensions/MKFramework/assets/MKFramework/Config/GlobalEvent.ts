@@ -119,7 +119,6 @@ class Event<CT> extends EventTarget {
 	}
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const globalEvent = new Event<GlobalEventProtocol>();
 
 if (DEBUG) {

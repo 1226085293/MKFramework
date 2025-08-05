@@ -6,7 +6,6 @@ import MKLifeCycle from "../../Module/MKLifeCycle";
 import { _decorator, Enum, Layout, Node } from "cc";
 import { EDITOR } from "cc/env";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 namespace _MKLanguageNode {
@@ -118,7 +117,6 @@ class MKLanguageNode extends MKLifeCycle {
 	/* --------------- private --------------- */
 	private _layout: Layout | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected create(): void | Promise<void> {
 		this._layout = this.getComponent(Layout);
 	}

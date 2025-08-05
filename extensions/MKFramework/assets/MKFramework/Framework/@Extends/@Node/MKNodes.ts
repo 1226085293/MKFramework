@@ -60,7 +60,6 @@ class NodeExtends {
 	toggle!: Toggle;
 
 	/** 节点渲染次序 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	get orderNum(): number {
 		return this._orderNum;
 	}
@@ -109,7 +108,6 @@ class NodeExtends {
 	/** 持有节点 */
 	private _node: Node;
 	/** 节点渲染次序 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private _orderNum = NaN;
 	/** 节点渲染次序更新时间 */
 	private _orderTimestampNum = 0;

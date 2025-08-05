@@ -3,7 +3,6 @@ import GlobalConfig from "../../../Config/GlobalConfig";
 import globalEvent from "../../../Config/GlobalEvent";
 import { _decorator, Component, director, Canvas, view, ResolutionPolicy, Director, screen } from "cc";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, disallowMultiple } = _decorator;
 
 /**

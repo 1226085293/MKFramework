@@ -5,7 +5,6 @@ import mkTool from "../../@Private/Tool/MKTool";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, CCString, Label, RichText, director, Component, js, Canvas, Layout, HorizontalTextAlignment, CCClass, Enum } from "cc";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 /**

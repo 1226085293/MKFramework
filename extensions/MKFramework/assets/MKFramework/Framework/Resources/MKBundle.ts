@@ -194,7 +194,6 @@ export class MKBundle extends MKInstanceBase {
 				bundleInfo.originStr ?? bundleInfo.bundleStr,
 				{
 					version: bundleInfo.versionStr,
-					// eslint-disable-next-line @typescript-eslint/naming-convention
 					onFileProgress: loadConfig.progressCallbackFunc,
 				},
 				(error, bundle) => {

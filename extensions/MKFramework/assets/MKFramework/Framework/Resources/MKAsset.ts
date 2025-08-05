@@ -252,11 +252,9 @@ export class MKAsset extends MKInstanceBase {
 
 			// 远程
 			if (isRemote) {
-				// eslint-disable-next-line @typescript-eslint/naming-convention
 				assetManager.loadRemote(
 					pathStr_,
 					{
-						// eslint-disable-next-line @typescript-eslint/naming-convention
 						onFileProgress: getConfig.progressFunc,
 						...(getConfig.remoteOption ?? {}),
 					},

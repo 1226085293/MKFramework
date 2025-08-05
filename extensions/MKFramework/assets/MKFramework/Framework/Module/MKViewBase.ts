@@ -203,9 +203,7 @@ export class MKViewBase extends MKLifeCycle {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected lateClose?(): void | Promise<void>;
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async lateClose?(): Promise<void> {
 		/** 关闭动画函数 */
 		const closeAnimationFunc = MKViewBase._config.windowAnimationTab?.close?.[this.animationConfig?.closeAnimationStr];

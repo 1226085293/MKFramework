@@ -2,7 +2,7 @@ import { EDITOR } from "cc/env";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKN from "../@Extends/@Node/MKNodes";
 import { _decorator, Component, Enum, CCClass } from "cc";
-// eslint-disable-next-line @typescript-eslint/naming-convention
+
 const { ccclass, property, executeInEditMode } = _decorator;
 
 /**

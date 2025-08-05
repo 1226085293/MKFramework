@@ -22,7 +22,6 @@ import {
 	Node,
 } from "cc";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, requireComponent, executeInEditMode } = _decorator;
 
 /**

@@ -4,7 +4,6 @@ import globalEvent from "../../../Config/GlobalEvent";
 import { mkLog } from "../../MKLogger";
 import { EDITOR } from "cc/env";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 namespace _MKAdaptationNode {

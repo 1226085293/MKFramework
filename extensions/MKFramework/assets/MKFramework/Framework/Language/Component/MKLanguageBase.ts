@@ -5,7 +5,6 @@ import MKLifeCycle from "../../Module/MKLifeCycle";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, Enum } from "cc";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 /**
@@ -116,7 +115,6 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	/** 重置数据 */
 	protected abstract _resetData(): void;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected create(): void | Promise<void> {
 		// 初始化数据
 		this._initData();

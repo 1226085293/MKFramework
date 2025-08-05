@@ -236,7 +236,6 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	 *
 	 * - 动态模块：addChild 后调用
 	 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected create?(): void;
 
 	/**
@@ -272,7 +271,6 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	 *
 	 * open 顺序: 子 -> 父
 	 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected open?(): void;
 	protected async open?(): Promise<void> {
 		if (!this._onLoadTask.isFinish) {
@@ -295,9 +293,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	 * @remarks
 	 * 在子模块 close 和 lateClose 后执行
 	 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected lateClose?(): void;
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected async lateClose?(): Promise<void> {
 		/** 参数表 */
 		const attrTab = CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
