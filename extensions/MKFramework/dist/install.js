@@ -33,7 +33,7 @@ async function default_1() {
     /** 远程路径 */
     const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
     /** 下载路径 */
-    const download_path_s = path_1.default.join(temp_path_s, "mk_framework");
+    const download_path_s = path_1.default.join(temp_path_s, "MKFramework");
     /** 框架代码路径 */
     const framework_path_s = "assets/MKFramework";
     /** 安装路径 */
@@ -88,23 +88,6 @@ async function default_1() {
             depth: 1,
             ref: version_s,
         });
-    })
-        // 版本适配
-        .then(() => {
-        var _a;
-        console.log(Editor.I18n.t("mk-framework.版本适配"));
-        // 3.8.0 及以上删除 userData.bundleConfigID
-        if (((_a = project_package.creator) === null || _a === void 0 ? void 0 : _a.version) && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
-            const file_ss = [
-                `${plugin_project_path_s}/${framework_path_s}/config.meta`,
-                `${plugin_project_path_s}/${framework_path_s}/framework.meta`,
-            ];
-            file_ss.forEach((v_s) => {
-                const data = fs_extra_1.default.readJSONSync(path_1.default.join(download_path_s, v_s));
-                delete data.userData.bundleConfigID;
-                fs_extra_1.default.writeJSONSync(path_1.default.join(download_path_s, v_s), data);
-            });
-        }
     })
         // 注入框架
         .then(async () => {

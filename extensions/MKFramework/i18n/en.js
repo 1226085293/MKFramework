@@ -14,7 +14,6 @@ module.exports = {
 	安全检查: "Safety check",
 	获取版本: "Get version",
 	下载框架: "Download framework",
-	版本适配: "Version adaptation",
 	注入框架: "Injection framework",
 	注入声明文件: "Inject declaration file",
 	添加导入映射: "Add import mapping",

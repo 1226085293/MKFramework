@@ -33,7 +33,7 @@ export default async function (): Promise<void> {
 	/** 远程路径 */
 	const remote_url_s = `https://gitee.com/${owner_s}/${repo_s}.git`;
 	/** 下载路径 */
-	const download_path_s = path.join(temp_path_s, "mk_framework");
+	const download_path_s = path.join(temp_path_s, "MKFramework");
 	/** 框架代码路径 */
 	const framework_path_s = "assets/MKFramework";
 	/** 安装路径 */
@@ -96,24 +96,6 @@ export default async function (): Promise<void> {
 				depth: 1,
 				ref: version_s,
 			});
-		})
-		// 版本适配
-		.then(() => {
-			console.log(Editor.I18n.t("mk-framework.版本适配"));
-			// 3.8.0 及以上删除 userData.bundleConfigID
-			if (project_package.creator?.version && Number(project_package.creator.version.replace(/\./g, "")) >= 380) {
-				const file_ss = [
-					`${plugin_project_path_s}/${framework_path_s}/config.meta`,
-					`${plugin_project_path_s}/${framework_path_s}/framework.meta`,
-				];
-
-				file_ss.forEach((v_s) => {
-					const data = fs.readJSONSync(path.join(download_path_s, v_s));
-
-					delete data.userData.bundleConfigID;
-					fs.writeJSONSync(path.join(download_path_s, v_s), data);
-				});
-			}
 		})
 		// 注入框架
 		.then(async () => {
