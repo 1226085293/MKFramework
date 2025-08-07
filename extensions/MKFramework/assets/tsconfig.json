@@ -11,7 +11,7 @@
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"isolatedModules": true,
+		"isolatedModules": false,
 		"rootDir": "./",
 		"outDir": "../temp/",
 		"skipLibCheck": true,
