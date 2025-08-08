@@ -41,6 +41,7 @@ export { default as bundle, MKBundle_ as Bundle_ } from "./Resources/MKBundle";
 // 资源管理器
 export { default as asset } from "./Resources/MKAsset";
 export type { MKAsset_ as Asset_ } from "./Resources/MKAsset";
+// 对象释放器
 export { default as Release } from "./MKRelease";
 export type { MKRelease_ as Release_ } from "./MKRelease";
 /* ------------------------------- 数据 ------------------------------- */

@@ -2,6 +2,7 @@ import { EDITOR } from "cc/env";
 import globalEvent from "../../Config/GlobalEvent";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { mkLog } from "../MKLogger";
+/** @weak */
 import mkMonitor from "../MKMonitor";
 import {
 	_decorator,

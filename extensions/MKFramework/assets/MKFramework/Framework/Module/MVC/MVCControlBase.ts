@@ -1,6 +1,6 @@
 import MKTool from "../../@Private/Tool/MKTool";
 import MKMonitor from "../../MKMonitor";
-import MKUIManage from "../../MKUIManage";
+import mkUIManage from "../../MKUIManage";
 import MKStatusTask from "../../Task/MKStatusTask";
 import MVCModelBase from "./MVCModelBase";
 import MVCViewBase from "./MVCViewBase";
@@ -65,7 +65,7 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 
 		// 关闭 view
 		if (this._view) {
-			await MKUIManage.close(this._view as unknown as MVCViewBase);
+			await mkUIManage.close(this._view as unknown as MVCViewBase);
 		}
 
 		// 取消数据监听事件

@@ -890,4 +890,5 @@ export namespace MKUIManage_ {
 	}
 }
 
-export default MKUIManage.instance();
+const mkUIManage = MKUIManage.instance();
+export default mkUIManage;
