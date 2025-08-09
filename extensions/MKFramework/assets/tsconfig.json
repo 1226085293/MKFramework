@@ -15,6 +15,7 @@
 		"rootDir": "./",
 		"outDir": "../temp/",
 		"skipLibCheck": true,
-		"declaration": true
+		"declaration": true,
+		"types": ["@cocos/creator-types/editor"]
 	}
 }
