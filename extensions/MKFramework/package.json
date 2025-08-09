@@ -65,7 +65,7 @@
 	},
 	"panels": {},
 	"devDependencies": {
-		"@cocos/creator-types": "^3.8.2",
+		"@cocos/creator-types": "^3.8.6",
 		"@types/cjson": "^0.5.3",
 		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^18.17.1",
