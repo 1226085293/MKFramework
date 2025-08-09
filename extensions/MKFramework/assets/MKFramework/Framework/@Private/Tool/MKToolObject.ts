@@ -88,4 +88,6 @@ class MKToolObject extends MKInstanceBase {
 	}
 }
 
-export default MKToolObject.instance();
+const mkToolObject = MKToolObject.instance();
+
+export default mkToolObject;

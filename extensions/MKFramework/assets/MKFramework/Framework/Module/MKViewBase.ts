@@ -1,5 +1,4 @@
 import { EDITOR } from "cc/env";
-import MKTool from "../@Private/Tool/MKTool";
 import { MKLifeCycle, _MKLifeCycle } from "./MKLifeCycle";
 import mkDynamicModule from "../MKDynamicModule";
 import type { MKUIManage_ } from "../MKUIManage";
@@ -8,6 +7,7 @@ import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
 import mkBundle from "../Resources/MKBundle";
 import { _decorator, Enum, Widget, BlockInputEvents, CCClass, Prefab, instantiate } from "cc";
+import mkToolEnum from "../@Private/Tool/MKToolEnum";
 const mkUIManage = mkDynamicModule.default(import("../MKUIManage"));
 const { ccclass, property } = _decorator;
 
@@ -229,7 +229,7 @@ export class MKViewBase extends MKLifeCycle {
 		{
 			// 打开
 			{
-				_MKViewBase.AnimationConfig.animationEnumTab.open = Enum(MKTool.enum.objToEnum(MKViewBase._config.windowAnimationTab.open));
+				_MKViewBase.AnimationConfig.animationEnumTab.open = Enum(mkToolEnum.objToEnum(MKViewBase._config.windowAnimationTab.open));
 
 				if (this.animationConfig && !this.animationConfig.openAnimationStr) {
 					this.animationConfig.openAnimationStr = Object.keys(_MKViewBase.AnimationConfig.animationEnumTab.open)[0];
@@ -248,7 +248,7 @@ export class MKViewBase extends MKLifeCycle {
 
 			// 关闭
 			{
-				_MKViewBase.AnimationConfig.animationEnumTab.close = Enum(MKTool.enum.objToEnum(MKViewBase._config.windowAnimationTab.close));
+				_MKViewBase.AnimationConfig.animationEnumTab.close = Enum(mkToolEnum.objToEnum(MKViewBase._config.windowAnimationTab.close));
 
 				if (this.animationConfig && !this.animationConfig.closeAnimationStr) {
 					this.animationConfig.closeAnimationStr = Object.keys(_MKViewBase.AnimationConfig.animationEnumTab.close)[0];

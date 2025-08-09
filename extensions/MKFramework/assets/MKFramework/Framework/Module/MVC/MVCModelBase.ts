@@ -1,10 +1,11 @@
-import MKTool from "../../@Private/Tool/MKTool";
+import mkToolFunc from "../../@Private/Tool/MKToolFunc";
+import mkToolObject from "../../@Private/Tool/MKToolObject";
 import MKMonitor from "../../MKMonitor";
 
 abstract class MVCModelBase {
 	constructor() {
 		// 父类自启函数
-		MKTool.func.runParentFunc(this, ["open", "close"]);
+		mkToolFunc.runParentFunc(this, ["open", "close"]);
 	}
 	/**
 	 * 重置 data
@@ -39,7 +40,7 @@ abstract class MVCModelBase {
 
 		// 重置数据
 		if (this._isResetData) {
-			MKTool.object.reset(this, true);
+			mkToolObject.reset(this, true);
 		}
 	}
 }

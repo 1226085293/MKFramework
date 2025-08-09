@@ -5,10 +5,10 @@ import MKViewBase from "./Module/MKViewBase";
 import MKObjectPool from "./MKObjectPool";
 import MKAsset, { MKAsset_ } from "./Resources/MKAsset";
 import MKStatusTask from "./Task/MKStatusTask";
-import MKTool from "./@Private/Tool/MKTool";
 import { MKRelease_ } from "./MKRelease";
 import MKEventTarget from "./MKEventTarget";
 import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node } from "cc";
+import mkToolObject from "./@Private/Tool/MKToolObject";
 
 namespace _MKUIManage {
 	/** 模块类型 */
@@ -737,27 +737,12 @@ export class MKUIManage extends MKInstanceBase {
 			this.event.emit(this.event.key.close, v.constructor as any, v);
 
 			// 销毁
-			if (config.isDestroy || v.isStatic) {
+			if (config.isDestroy || v.isStatic || !this._uiPoolMap.has(v.constructor)) {
 				v.node.destroy();
 			}
 			// 回收模块
-			else if (v.constructor) {
-				/** 模块池 */
-				const uiPool = this._uiPoolMap.get(v.constructor);
-
-				if (!uiPool) {
-					continue;
-				}
-
-				/** 节点池 */
-				const nodePool = uiPool?.get(v.typeStr);
-
-				if (!nodePool) {
-					this._log.error("回收模块错误，未找到指定节点池类型", v.typeStr);
-					continue;
-				}
-
-				nodePool.put(v.node);
+			else {
+				this._uiPoolMap.get(v.constructor)!.get(v.typeStr)!.put(v.node);
 			}
 		}
 
@@ -777,7 +762,7 @@ export class MKUIManage extends MKInstanceBase {
 		});
 
 		// 重置数据
-		MKTool.object.reset(this, true);
+		mkToolObject.reset(this, true);
 	}
 }
 

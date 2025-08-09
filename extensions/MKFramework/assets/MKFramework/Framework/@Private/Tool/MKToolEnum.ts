@@ -25,4 +25,5 @@ class MKToolEnum extends MKInstanceBase {
 	}
 }
 
-export default MKToolEnum.instance();
+const mkToolEnum = new MKToolEnum();
+export default mkToolEnum;

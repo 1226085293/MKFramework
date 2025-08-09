@@ -4,13 +4,14 @@ import MKLogger from "../MKLogger";
 import mkMonitor from "../MKMonitor";
 import MKStatusTask from "../Task/MKStatusTask";
 import MKLayer from "./MKLayer";
-import mkTool from "../@Private/Tool/MKTool";
 /** @weak */
 import { mkAudio, MKAudio_ } from "../Audio/MKAudioExport";
 import MKRelease, { MKRelease_ } from "../MKRelease";
 import { MKAsset_ } from "../Resources/MKAsset";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { _decorator, js, CCClass, isValid, Node } from "cc";
+import mkToolFunc from "../@Private/Tool/MKToolFunc";
+import mkToolObject from "../@Private/Tool/MKToolObject";
 const uiManage = mkDynamicModule.default(import("../MKUIManage"));
 const { ccclass, property } = _decorator;
 
@@ -88,7 +89,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		}
 
 		// 设置父类自启函数
-		mkTool.func.runParentFunc(this, [
+		mkToolFunc.runParentFunc(this, [
 			"onLoad",
 			"start",
 			"update",
@@ -104,7 +105,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		] as (keyof MKLifeCycle)[]);
 
 		// 设置函数超时警告
-		mkTool.func.timeoutWarning<MKLifeCycle>(GlobalConfig.View.blockingWarningTimeMsNum, this, [
+		mkToolFunc.timeoutWarning<MKLifeCycle>(GlobalConfig.View.blockingWarningTimeMsNum, this, [
 			"_open",
 			"_close",
 			"create",
@@ -343,7 +344,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		await this._releaseManage.releaseAll();
 		// 重置数据
 		if (this.data && this._isResetData) {
-			mkTool.object.reset(this.data, true);
+			mkToolObject.reset(this.data, true);
 		}
 	}
 

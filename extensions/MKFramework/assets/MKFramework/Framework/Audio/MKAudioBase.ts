@@ -3,11 +3,11 @@ import { EDITOR } from "cc/env";
 import MKEventTarget from "../MKEventTarget";
 import MKLogger from "../MKLogger";
 import globalEvent from "../../Config/GlobalEvent";
-import mkTool from "../@Private/Tool/MKTool";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKRelease, { MKRelease_ } from "../MKRelease";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, AudioClip, AudioSource, Enum } from "cc";
+import mkToolObject from "../@Private/Tool/MKToolObject";
 
 const { ccclass, property } = _decorator;
 
@@ -258,7 +258,7 @@ abstract class MKAudioBase {
 		this.stopAll();
 
 		// 重置数据，音频资源释放应该由模块管理
-		mkTool.object.reset(this, true);
+		mkToolObject.reset(this, true);
 	}
 }
 

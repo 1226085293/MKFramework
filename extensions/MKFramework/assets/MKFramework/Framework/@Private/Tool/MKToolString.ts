@@ -135,4 +135,6 @@ class MKToolString extends MKInstanceBase {
 	}
 }
 
-export default MKToolString.instance();
+const mkToolString = MKToolString.instance();
+
+export default mkToolString;

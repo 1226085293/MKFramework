@@ -1,4 +1,4 @@
-import MKTool from "../../@Private/Tool/MKTool";
+import mkToolFunc from "../../@Private/Tool/MKToolFunc";
 import MKMonitor from "../../MKMonitor";
 import mkUIManage from "../../MKUIManage";
 import MKStatusTask from "../../Task/MKStatusTask";
@@ -24,7 +24,7 @@ namespace _MVCControlBase {
 abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extends MVCViewBase<CT> = MVCViewBase<CT>> {
 	// @ts-ignore
 	constructor() {
-		MKTool.func.runParentFunc(this, ["open", "close"]);
+		mkToolFunc.runParentFunc(this, ["open", "close"]);
 		// 等待初始化属性完成
 		setTimeout(async () => {
 			await this._closeTask.task;

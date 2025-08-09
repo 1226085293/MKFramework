@@ -1,4 +1,4 @@
-import MKTool from "./@Private/Tool/MKTool";
+import mkToolObject from "./@Private/Tool/MKToolObject";
 import MKInstanceBase from "./MKInstanceBase";
 import MKLogger from "./MKLogger";
 import MKStatusTask from "./Task/MKStatusTask";
@@ -173,7 +173,7 @@ export class MKMonitor extends MKInstanceBase {
 		const target: any = target_ ?? (typeof args3_ === "object" ? args3_ : undefined);
 		const offCallbackFunc: _MKMonitor.TypeOffCallback | undefined = typeof args3_ === "function" ? args3_ : undefined;
 
-		MKTool.object.traverse(value_, (value: any, keyStr: string, pathStr: string) => {
+		mkToolObject.traverse(value_, (value: any, keyStr: string, pathStr: string) => {
 			if (!["string", "number", "boolean", "symbol"].includes(typeof value)) {
 				return;
 			}
@@ -305,7 +305,7 @@ export class MKMonitor extends MKInstanceBase {
 		const target = target_ ?? (typeof args2_ === "object" ? args2_ : undefined);
 		const taskList: Promise<any>[] = [];
 
-		MKTool.object.traverse(value_, (value: any, keyStr: string, pathStr: string) => {
+		mkToolObject.traverse(value_, (value: any, keyStr: string, pathStr: string) => {
 			const typeStr = typeof value;
 
 			if (!["string", "number", "boolean", "symbol"].includes(typeStr)) {
