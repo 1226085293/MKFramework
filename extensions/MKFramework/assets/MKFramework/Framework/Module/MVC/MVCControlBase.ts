@@ -1,5 +1,6 @@
 import mkToolFunc from "../../@Private/Tool/MKToolFunc";
 import MKMonitor from "../../MKMonitor";
+/** @weak */
 import mkUIManage from "../../MKUIManage";
 import MKStatusTask from "../../Task/MKStatusTask";
 import MVCModelBase from "./MVCModelBase";
@@ -64,7 +65,7 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 		}
 
 		// 关闭 view
-		if (this._view) {
+		if (this._view && mkUIManage) {
 			await mkUIManage.close(this._view as unknown as MVCViewBase);
 		}
 

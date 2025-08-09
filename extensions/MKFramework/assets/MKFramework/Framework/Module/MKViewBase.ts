@@ -198,7 +198,10 @@ export class MKViewBase extends MKLifeCycle {
 	async close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): Promise<void> {
 		// 不在关闭中或者已经关闭代表外部调用
 		if (!(this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close))) {
-			await mkUIManage.close(this, config_);
+			// 可能被剔除
+			if (mkUIManage) {
+				await mkUIManage.close(this, config_);
+			}
 			throw "中断";
 		}
 	}
