@@ -1,7 +1,6 @@
 //@ts-nocheck
 // 框架源码位于 项目根目录\extensions\MKFramework\assets\MKFramework 下，你也可以在资源管理器下方的 MKFramework 查看
 import GlobalConfig from "../../assets/MKFramework/Config/GlobalConfig";
-
 import { __private } from "cc";
 import { Asset } from "cc";
 import { AssetManager } from "cc";
@@ -1453,7 +1452,7 @@ declare namespace mk {
 	 * 多语言组件基类
 	 * @noInheritDoc
 	 */
-	declare abstract class MKLanguageBase extends LifeCycle {
+	declare abstract class MKLanguageBase extends Component {
 		/** 模糊匹配类型 */
 		isFuzzyMatchType: boolean;
 		/** 类型 */
@@ -1479,6 +1478,8 @@ declare namespace mk {
 		protected _data?: Language_.TypeDataStruct;
 		/** 标记枚举数据 */
 		protected _markEnum?: any;
+		/** 日志 */
+		protected _log: Logger;
 		/** 更新内容 */
 		protected abstract _updateContent(): void;
 		/** 更新标记 */
@@ -1489,9 +1490,9 @@ declare namespace mk {
 		protected abstract _setTypeStr(valueStr_: string): void;
 		/** 重置数据 */
 		protected abstract _resetData(): void;
-		protected create(): void | Promise<void>;
-		protected open(): void | Promise<void>;
-		close(): void | Promise<void>;
+		protected onLoad(): void;
+		protected onEnable(): void;
+		protected onDisable(): void;
 		/** 初始化数据 */
 		protected _initData(): void;
 		/** 初始化事件 */
@@ -1624,7 +1625,7 @@ declare namespace mk {
 	 * 多语言节点
 	 * @noInheritDoc
 	 */
-	declare class MKLanguageNode extends LifeCycle {
+	declare class MKLanguageNode extends Component {
 		/** 语言 */
 		languageStr: keyof typeof GlobalConfig.Language.typeTab;
 		/** 语言 */
@@ -1639,10 +1640,12 @@ declare namespace mk {
 		isLayoutAdaptation: boolean;
 		/** 当前语言节点 */
 		get currentNode(): Node_2 | null;
-		protected _isUseLayer: boolean;
 		private _layout;
-		protected create(): void | Promise<void>;
-		protected open(): void | Promise<void>;
+		protected onLoad(): void;
+		protected onEnable(): void;
+		protected onDisable(): void;
+		/** 初始化事件 */
+		protected _initEvent(isInit_: boolean): void;
 		/** 更新节点展示 */
 		private _updateView;
 		private _onSwitchLanguage;
@@ -1676,10 +1679,13 @@ declare namespace mk {
 		protected _typeStr: string;
 		/** sprite组件 */
 		private _sprite;
-		/** 初始纹理 */
-		private _initialSpriteFrame;
+		/** 上个纹理 */
+		private _previousSpriteFrame;
+		/** 任务管线 */
+		private _taskPipeline;
 		protected onEnable(): void;
 		protected onDisable(): void;
+		protected onDestroy(): void;
 		/** 重置数据 */
 		protected _resetData(): void;
 		protected _updateContent(): Promise<void>;

@@ -848,8 +848,6 @@
     "__prefab": {
       "__id__": 33
     },
-    "layerTypeNum": 0,
-    "_childLayerNum": 0,
     "_typeStr": "ResourcesLanguage",
     "_markStr": "示例",
     "isDirectionAdaptation": false,
@@ -1011,15 +1009,13 @@
     "__prefab": {
       "__id__": 41
     },
-    "layerTypeNum": 0,
-    "_childLayerNum": 0,
     "_typeStr": "ResourcesLanguage",
     "_markStr": "示例",
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "ffFrGPJYlESr6SjoxgIKHk"
+    "fileId": "3dQ7qdElJC9Losl3KCJGbu"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -2175,8 +2171,6 @@
     "__prefab": {
       "__id__": 89
     },
-    "layerTypeNum": 0,
-    "_childLayerNum": 0,
     "languageStr": "enUs",
     "nodeList": [
       {

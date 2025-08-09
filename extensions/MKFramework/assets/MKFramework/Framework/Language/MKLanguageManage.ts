@@ -214,4 +214,6 @@ export namespace MKLanguageManage_ {
 	}
 }
 
-export default MKLanguageManage.instance();
+const mkLanguageManage = MKLanguageManage.instance();
+
+export default mkLanguageManage;

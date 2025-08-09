@@ -278,7 +278,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 775.8814993954051,
+    "_orthoHeight": 375,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -968,8 +968,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "layerTypeNum": 0,
-    "_childLayerNum": 0,
     "_typeStr": "MainMain",
     "_markStr": "音频",
     "isDirectionAdaptation": false,

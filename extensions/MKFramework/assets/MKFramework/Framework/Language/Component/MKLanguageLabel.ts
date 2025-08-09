@@ -1,9 +1,10 @@
 import mkLanguageManage from "../MKLanguageManage";
 import MKLanguageBase from "./MKLanguageBase";
 import { EDITOR } from "cc/env";
-import mkTool from "../../@Private/Tool/MKTool";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, CCString, Label, RichText, director, Component, js, Canvas, Layout, HorizontalTextAlignment, CCClass, Enum } from "cc";
+import mkToolEnum from "../../@Private/Tool/MKToolEnum";
+import mkToolString from "../../@Private/Tool/MKToolString";
 
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
@@ -18,7 +19,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	/** 类型数组 */
 	private static _typeStrList = Object.keys(mkLanguageManage.labelDataTab);
 	/** 注册类型 */
-	private static _typeEnum: any = mkTool.enum.objToEnum(mkLanguageManage.labelDataTab);
+	private static _typeEnum: any = mkToolEnum.objToEnum(mkLanguageManage.labelDataTab);
 	/* --------------- 属性 --------------- */
 	/** label 适配 */
 	@property({
@@ -60,14 +61,16 @@ class MKLanguageLabel extends MKLanguageBase {
 	private _label!: Label | RichText | null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
+		super.onEnable();
 		if (EDITOR) {
 			mkLanguageManage.event.on(mkLanguageManage.event.key.labelDataChange, this._onLabelDataChange, this)?.call(this);
 		}
 	}
 
 	protected onDisable(): void {
+		super.onDisable();
 		if (EDITOR) {
-			mkLanguageManage.event.off(mkLanguageManage.event.key.labelDataChange, this._onLabelDataChange, this);
+			mkLanguageManage.event.targetOff(this);
 		}
 	}
 
@@ -78,7 +81,7 @@ class MKLanguageLabel extends MKLanguageBase {
 		this._data = mkLanguageManage.labelDataTab[this._typeStr];
 		if (EDITOR) {
 			// 更新标记枚举
-			this._markEnum = mkTool.enum.objToEnum(this._data);
+			this._markEnum = mkToolEnum.objToEnum(this._data);
 			// 默认标记
 			this.markStr = this._markEnum[this.markStr] !== undefined ? this.markStr : this._markEnum[0];
 			// 清理数据
@@ -112,7 +115,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 	protected _setTypeStr(valueStr_: string): void {
 		if (EDITOR) {
-			const typeStr = mkTool.string.fuzzyMatch(MKLanguageLabel._typeStrList, valueStr_);
+			const typeStr = mkToolString.fuzzyMatch(MKLanguageLabel._typeStrList, valueStr_);
 			const typeNum = MKLanguageLabel._typeEnum[typeStr ?? ""];
 
 			if (typeNum !== undefined) {
@@ -179,7 +182,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	/** 初始化组件 */
 	private _initComponent(): void {
 		// 注册类型
-		MKLanguageLabel._typeEnum = mkTool.enum.objToEnum(mkLanguageManage.labelDataTab);
+		MKLanguageLabel._typeEnum = mkToolEnum.objToEnum(mkLanguageManage.labelDataTab);
 
 		if (!EDITOR) {
 			return;
@@ -199,7 +202,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 		// 更新标记枚举
 		if (!this._markEnum) {
-			this._markEnum = mkTool.enum.objToEnum(this._data);
+			this._markEnum = mkToolEnum.objToEnum(this._data);
 		}
 
 		// 更新属性

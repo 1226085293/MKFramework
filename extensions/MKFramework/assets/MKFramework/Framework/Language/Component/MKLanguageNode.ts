@@ -1,15 +1,14 @@
 import GlobalConfig from "../../../Config/GlobalConfig";
 import mkLanguageManage from "../MKLanguageManage";
-import mkTool from "../../@Private/Tool/MKTool";
-import MKLifeCycle from "../../Module/MKLifeCycle";
 // eslint-disable-next-line unused-imports/no-unused-imports
-import { _decorator, Enum, Layout, Node } from "cc";
+import { _decorator, Component, Enum, Layout, Node } from "cc";
 import { EDITOR } from "cc/env";
+import mkToolEnum from "../../@Private/Tool/MKToolEnum";
 
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
 namespace _MKLanguageNode {
-	export const languageTypeEnum = mkTool.enum.objToEnum(GlobalConfig.Language.typeTab);
+	export const languageTypeEnum = mkToolEnum.objToEnum(GlobalConfig.Language.typeTab);
 
 	@ccclass("MKLanguageNode/Node")
 	export class LNode {
@@ -46,7 +45,7 @@ namespace _MKLanguageNode {
  * @noInheritDoc
  */
 @ccclass
-class MKLanguageNode extends MKLifeCycle {
+class MKLanguageNode extends Component {
 	/* --------------- 属性 --------------- */
 	/** 语言 */
 	@property({ visible: false })
@@ -112,20 +111,30 @@ class MKLanguageNode extends MKLifeCycle {
 		return this.nodeList.find((v) => v.languageStr === GlobalConfig.Language.types[mkLanguageManage.typeStr])?.node ?? null!;
 	}
 
-	/* --------------- protected --------------- */
-	protected _isUseLayer = false;
 	/* --------------- private --------------- */
 	private _layout: Layout | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected create(): void | Promise<void> {
+	protected onLoad(): void {
 		this._layout = this.getComponent(Layout);
 	}
 
-	protected open(): void | Promise<void> {
-		mkLanguageManage.event.on(mkLanguageManage.event.key.switchLanguage, this._onSwitchLanguage, this)?.call(this);
+	protected onEnable(): void {
+		this._onSwitchLanguage();
+		this._initEvent(true);
 	}
 
-	// close(): void { }
+	protected onDisable(): void {
+		this._initEvent(false);
+	}
+
+	/** 初始化事件 */
+	protected _initEvent(isInit_: boolean): void {
+		if (isInit_) {
+			mkLanguageManage.event.on(mkLanguageManage.event.key.switchLanguage, this._onSwitchLanguage, this);
+		} else {
+			mkLanguageManage.event.off(mkLanguageManage.event.key.switchLanguage, this._onSwitchLanguage, this);
+		}
+	}
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 更新节点展示 */
 	private _updateView(): void {

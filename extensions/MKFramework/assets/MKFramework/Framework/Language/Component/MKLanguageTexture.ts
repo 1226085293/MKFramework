@@ -3,8 +3,10 @@ import GlobalConfig from "../../../Config/GlobalConfig";
 import language from "../MKLanguageManage";
 import mkAsset from "../../Resources/MKAsset";
 import MKLanguageBase from "./MKLanguageBase";
-import mkTool from "../../@Private/Tool/MKTool";
-import { _decorator, Sprite, SpriteFrame, CCClass, Enum, ImageAsset, error } from "cc";
+import { _decorator, Sprite, SpriteFrame, CCClass, Enum, ImageAsset, error, Asset } from "cc";
+import mkToolEnum from "../../@Private/Tool/MKToolEnum";
+import mkToolString from "../../@Private/Tool/MKToolString";
+import MKTaskPipeline from "../../Task/MKTaskPipeline";
 
 const { ccclass, property, menu, executeInEditMode, requireComponent } = _decorator;
 
@@ -20,7 +22,7 @@ class MKLanguageTexture extends MKLanguageBase {
 	/** 类型数组 */
 	private static _typeStrList = Object.keys(language.textureDataTab);
 	/** 注册类型 */
-	private static _typeEnum: any = mkTool.enum.objToEnum(language.textureDataTab);
+	private static _typeEnum: any = mkToolEnum.objToEnum(language.textureDataTab);
 	/* --------------- 属性 --------------- */
 	get type(): number {
 		return MKLanguageTexture._typeEnum[this._typeStr];
@@ -36,19 +38,28 @@ class MKLanguageTexture extends MKLanguageBase {
 	/* --------------- private --------------- */
 	/** sprite组件 */
 	private _sprite!: Sprite;
-	/** 初始纹理 */
-	private _initialSpriteFrame: SpriteFrame | null = null;
+	/** 上个纹理 */
+	private _previousSpriteFrame: Asset | null = null;
+	/** 任务管线 */
+	private _taskPipeline = new MKTaskPipeline();
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
+		super.onEnable();
 		if (EDITOR) {
 			language.event.on(language.event.key.textureDataChange, this._onTextureDataChange, this)?.call(this);
 		}
 	}
 
 	protected onDisable(): void {
+		super.onDisable();
 		if (EDITOR) {
-			language.event.off(language.event.key.textureDataChange, this._onTextureDataChange, this);
+			language.event.targetOff(this);
 		}
+	}
+
+	protected onDestroy(): void {
+		// 释放上个资源
+		this._previousSpriteFrame?.decRef();
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
@@ -58,7 +69,7 @@ class MKLanguageTexture extends MKLanguageBase {
 		this._data = language.textureDataTab[this._typeStr];
 		if (EDITOR) {
 			// 更新标记枚举
-			this._markEnum = mkTool.enum.objToEnum(this._data);
+			this._markEnum = mkToolEnum.objToEnum(this._data);
 			// 默认标记
 			this.markStr = this._markEnum[this.markStr] !== undefined ? this.markStr : this._markEnum[0];
 		}
@@ -91,37 +102,41 @@ class MKLanguageTexture extends MKLanguageBase {
 		}
 
 		if (EDITOR) {
-			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, this);
+			// 释放上个纹理资源
+			this._previousSpriteFrame?.decRef();
+			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, null);
+			this._previousSpriteFrame = asset;
 
-			if (!asset?._uuid) {
+			if (!asset?.uuid) {
 				return;
 			}
 
-			// @ts-ignore
+			if (!(await Editor.Message.request("scene", "query-node", this.node.uuid))) {
+				return;
+			}
+
 			Editor.Message.request("scene", "set-property", {
 				uuid: this.node.uuid,
 				path: `__comps__.${this.node.components.indexOf(this._sprite)}.spriteFrame`,
 				dump: {
-					type: "SpriteFrame",
+					type: "cc.SpriteFrame",
 					value: {
-						uuid: asset._uuid + "@f9941",
+						uuid: asset.uuid + "@f9941",
 					},
 				},
 			});
 		} else {
-			const asset = await mkAsset.get(pathStr, SpriteFrame, this);
+			this._taskPipeline.clear(true);
+			this._taskPipeline.add(async () => {
+				// 释放上个纹理资源
+				this._previousSpriteFrame?.decRef();
+				const asset = await mkAsset.get(pathStr, SpriteFrame, null);
+				this._previousSpriteFrame = this._sprite.spriteFrame = asset;
 
-			if (!asset) {
-				return;
-			}
-
-			// 释放初始纹理资源
-			if (this._initialSpriteFrame && this._initialSpriteFrame._uuid !== asset._uuid) {
-				this._initialSpriteFrame.decRef();
-				this._initialSpriteFrame = null;
-			}
-
-			this._sprite.spriteFrame = asset;
+				if (!asset) {
+					return;
+				}
+			});
 		}
 	}
 
@@ -136,7 +151,7 @@ class MKLanguageTexture extends MKLanguageBase {
 
 	protected _setTypeStr(valueStr_: string): void {
 		if (EDITOR) {
-			const typeStr = mkTool.string.fuzzyMatch(MKLanguageTexture._typeStrList, valueStr_);
+			const typeStr = mkToolString.fuzzyMatch(MKLanguageTexture._typeStrList, valueStr_);
 			const typeNum = MKLanguageTexture._typeEnum[typeStr ?? ""];
 
 			if (typeNum !== undefined) {
@@ -155,15 +170,13 @@ class MKLanguageTexture extends MKLanguageBase {
 			return;
 		}
 
-		this._initialSpriteFrame = this._sprite.spriteFrame;
-
 		super._initData();
 	}
 
 	/** 初始化组件 */
 	private _initComponent(): void {
 		/** 注册类型 */
-		MKLanguageTexture._typeEnum = mkTool.enum.objToEnum(language.textureDataTab);
+		MKLanguageTexture._typeEnum = mkToolEnum.objToEnum(language.textureDataTab);
 		if (!EDITOR) {
 			return;
 		}

@@ -1,9 +1,9 @@
-import language, { MKLanguageManage_ } from "../MKLanguageManage";
+import mkLanguageManage, { MKLanguageManage_ } from "../MKLanguageManage";
 import { EDITOR } from "cc/env";
-import MKTool from "../../@Private/Tool/MKTool";
-import MKLifeCycle from "../../Module/MKLifeCycle";
 // eslint-disable-next-line unused-imports/no-unused-imports
-import { _decorator, Enum } from "cc";
+import { _decorator, Component, Enum, js } from "cc";
+import MKLogger from "../../MKLogger";
+import mkToolString from "../../@Private/Tool/MKToolString";
 
 const { ccclass, property, menu, executeInEditMode } = _decorator;
 
@@ -13,7 +13,7 @@ const { ccclass, property, menu, executeInEditMode } = _decorator;
  */
 @ccclass
 @executeInEditMode
-abstract class MKLanguageBase extends MKLifeCycle {
+abstract class MKLanguageBase extends Component {
 	/* --------------- 属性 --------------- */
 	/** 模糊匹配类型 */
 	@property({ displayName: "模糊匹配", serializable: false, group: { name: "类型", id: "0" } })
@@ -103,6 +103,8 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	protected _data?: MKLanguageManage_.TypeDataStruct;
 	/** 标记枚举数据 */
 	protected _markEnum?: any;
+	/** 日志 */
+	protected _log = new MKLogger(js.getClassName(this));
 	/* ------------------------------- 抽象函数 ------------------------------- */
 	/** 更新内容 */
 	protected abstract _updateContent(): void;
@@ -115,17 +117,22 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	/** 重置数据 */
 	protected abstract _resetData(): void;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected create(): void | Promise<void> {
+	protected onLoad(): void {
 		// 初始化数据
 		this._initData();
 	}
 
-	protected open(): void | Promise<void> {
-		this._initEvent(true);
+	protected onEnable(): void {
+		if (!EDITOR) {
+			this._onSwitchLanguage();
+			this._initEvent(true);
+		}
 	}
 
-	close(): void | Promise<void> {
-		this._initEvent(false);
+	protected onDisable(): void {
+		if (!EDITOR) {
+			this._initEvent(false);
+		}
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
@@ -137,9 +144,9 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	/** 初始化事件 */
 	protected _initEvent(isInit_: boolean): void {
 		if (isInit_) {
-			language.event.on(language.event.key.switchLanguage, this._onSwitchLanguage, this);
+			mkLanguageManage.event.on(mkLanguageManage.event.key.switchLanguage, this._onSwitchLanguage, this);
 		} else {
-			language.event.off(language.event.key.switchLanguage, this._onSwitchLanguage, this);
+			mkLanguageManage.event.off(mkLanguageManage.event.key.switchLanguage, this._onSwitchLanguage, this);
 		}
 	}
 
@@ -168,7 +175,7 @@ abstract class MKLanguageBase extends MKLifeCycle {
 	/* ------------------------------- get/set ------------------------------- */
 	protected _setMarkStr(valueStr_: string): void {
 		if (EDITOR) {
-			const typeStr = MKTool.string.fuzzyMatch(Object.keys(this._data ?? {}), valueStr_);
+			const typeStr = mkToolString.fuzzyMatch(Object.keys(this._data ?? {}), valueStr_);
 
 			if (typeStr) {
 				this._setMark(typeStr);
