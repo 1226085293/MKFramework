@@ -159,6 +159,7 @@ export class MKPolygonMask extends Component {
 					this.mask.type = Mask.Type.GRAPHICS_STENCIL;
 				}
 
+				// @weak-start-include-MKMonitor
 				// 监听多边形坐标变更
 				{
 					const eventPolygonPositionChangeFunc = (): void => {
@@ -173,6 +174,7 @@ export class MKPolygonMask extends Component {
 					mkMonitor.on(polygonComp.offset, "x", eventPolygonPositionChangeFunc, this);
 					mkMonitor.on(polygonComp.offset, "y", eventPolygonPositionChangeFunc, this);
 				}
+				// @weak-end
 
 				this.updateMask();
 

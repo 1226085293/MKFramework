@@ -64,10 +64,12 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 			await this._model.close();
 		}
 
+		// @weak-start-include-MKUIManage
 		// 关闭 view
-		if (this._view && mkUIManage) {
+		if (this._view) {
 			await mkUIManage.close(this._view as unknown as MVCViewBase);
 		}
+		// @weak-end
 
 		// 取消数据监听事件
 		{

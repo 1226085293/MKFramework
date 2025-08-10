@@ -1,6 +1,7 @@
 import { EDITOR } from "cc/env";
 import { MKLifeCycle, _MKLifeCycle } from "./MKLifeCycle";
 import mkDynamicModule from "../MKDynamicModule";
+/** @weak */
 import type { MKUIManage_ } from "../MKUIManage";
 import mkAsset from "../Resources/MKAsset";
 import mkGame from "../MKGame";
@@ -8,7 +9,10 @@ import GlobalConfig from "../../Config/GlobalConfig";
 import mkBundle from "../Resources/MKBundle";
 import { _decorator, Enum, Widget, BlockInputEvents, CCClass, Prefab, instantiate } from "cc";
 import mkToolEnum from "../@Private/Tool/MKToolEnum";
+
+// @weak-start-include-MKUIManage
 const mkUIManage = mkDynamicModule.default(import("../MKUIManage"));
+// @weak-end
 const { ccclass, property } = _decorator;
 
 namespace _MKViewBase {
@@ -194,8 +198,13 @@ export class MKViewBase extends MKLifeCycle {
 	 * 关闭
 	 * @param config_ 关闭配置
 	 */
+	// @weak-start-content-MKUIManage
+	// @position:/(?<=config_\?: )/
+	// @import:Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">
+	// @unimport:any
 	close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): void | Promise<void>;
 	async close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): Promise<void> {
+		// @weak-end
 		// 不在关闭中或者已经关闭代表外部调用
 		if (!(this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close))) {
 			// 可能被剔除

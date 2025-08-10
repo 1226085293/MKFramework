@@ -197,7 +197,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		/** 参数键列表 */
 		const attrKeyStrList = Object.keys(attrTab);
 
-		// @weak-start-MKAudioExport-include
+		// @weak-start-include-MKAudioExport
 		// 初始化音频单元
 		attrKeyStrList.forEach((vStr) => {
 			if (!vStr.endsWith("$_$ctor")) {
@@ -304,7 +304,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		/** 参数键列表 */
 		const attrKeyStrList = Object.keys(attrTab);
 
-		// @weak-start-MKAudioExport-include
+		// @weak-start-include-MKAudioExport
 		// 删除音频单元
 		attrKeyStrList.forEach((vStr) => {
 			if (!vStr.endsWith("$_$ctor")) {
@@ -355,9 +355,9 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		return this._open({ isFirst: true, init: initData_ });
 	}
 
-	// @weak-start-MKAudioExport-content
-	//  & MKAudio_.PrivateUnit
-	// @weak-start-MKAudioExport-content-position:/(?<=TypeReleaseParamType)/
+	// @weak-start-content-MKAudioExport
+	// @position:/(?<=TypeReleaseParamType)/
+	// @import: & MKAudio_.PrivateUnit
 	followRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
 		// @weak-end
 		if (!object_) {
@@ -370,7 +370,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			return;
 		}
 
-		// @weak-start-MKAudioExport-include
+		// @weak-start-include-MKAudioExport
 		// 添加释放对象
 		if (MKAudio_ && object_ instanceof MKAudio_.PrivateUnit) {
 			if (object_.clip) {
@@ -391,7 +391,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			} else {
 				this._releaseManage.add(object_ as any);
 			}
-			// @weak-start-MKAudioExport-include
+			// @weak-start-include-MKAudioExport
 		}
 		// @weak-end
 	}
@@ -405,7 +405,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			return;
 		}
 
-		// @weak-start-MKAudioExport-include
+		// @weak-start-include-MKAudioExport
 		// 删除释放对象
 		if (object_ instanceof MKAudio_.PrivateUnit) {
 			if (object_.clip) {
@@ -414,7 +414,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		} else {
 			// @weak-end
 			this._releaseManage.delete(object_ as any);
-			// @weak-start-MKAudioExport-include
+			// @weak-start-include-MKAudioExport
 		}
 		// @weak-end
 
