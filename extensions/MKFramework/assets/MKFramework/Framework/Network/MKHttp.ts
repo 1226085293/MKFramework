@@ -99,7 +99,7 @@ export class MKHttp extends MKInstanceBase {
 					}
 
 					clearTimeout(timeoutTimer);
-					resolveFunc(result);
+					resolveFunc(!config.codec ? result : config.codec.decode(result));
 				}
 			};
 
@@ -122,7 +122,7 @@ export class MKHttp extends MKInstanceBase {
 				config.openCallbackFunc(xmlHttp);
 			}
 
-			xmlHttp.send(config.body);
+			xmlHttp.send(!config.codec ? config.body : config.codec.encode(config.body));
 		});
 	}
 }
