@@ -1,5 +1,6 @@
 import mkToolFunc from "../../@Private/Tool/MKToolFunc";
-import MKMonitor from "../../MKMonitor";
+/** @weak */
+import mkMonitor from "../../MKMonitor";
 /** @weak */
 import mkUIManage from "../../MKUIManage";
 import MKStatusTask from "../../Task/MKStatusTask";
@@ -71,14 +72,16 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 		}
 		// @weak-end
 
+		// @weak-start-include-MKMonitor
 		// 取消数据监听事件
 		{
-			const task = MKMonitor.clear(this);
+			const task = mkMonitor.clear(this);
 
 			if (task) {
 				await task;
 			}
 		}
+		// @weak-end
 	}
 
 	protected open?(): void;

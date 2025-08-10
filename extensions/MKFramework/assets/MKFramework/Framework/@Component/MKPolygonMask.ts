@@ -236,7 +236,9 @@ export class MKPolygonMask extends Component {
 	}
 
 	protected onDestroy(): void {
+		// @weak-start-include-MKMonitor
 		mkMonitor.clear(this);
+		// @weak-end
 		globalEvent.targetOff(this);
 	}
 

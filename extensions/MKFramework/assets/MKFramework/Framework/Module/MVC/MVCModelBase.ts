@@ -1,6 +1,7 @@
 import mkToolFunc from "../../@Private/Tool/MKToolFunc";
 import mkToolObject from "../../@Private/Tool/MKToolObject";
-import MKMonitor from "../../MKMonitor";
+/** @weak */
+import mkMonitor from "../../MKMonitor";
 
 abstract class MVCModelBase {
 	constructor() {
@@ -29,14 +30,16 @@ abstract class MVCModelBase {
 	open?(): void;
 	close(): void;
 	async close(): Promise<void> {
+		// @weak-start-include-MKMonitor
 		// 取消数据监听事件
 		{
-			const task = MKMonitor.clear(this);
+			const task = mkMonitor.clear(this);
 
 			if (task) {
 				await task;
 			}
 		}
+		// @weak-end
 
 		// 重置数据
 		if (this._isResetData) {

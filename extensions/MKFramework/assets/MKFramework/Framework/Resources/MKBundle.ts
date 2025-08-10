@@ -651,7 +651,9 @@ export namespace MKBundle_ {
 		/** 网络对象 */
 		network?: MKNetworkBase;
 		/** 数据获取器 */
+		// @weak-start-include-MKDataSharer
 		data?: MKDataSharer_.Api<any>;
+		// @weak-end
 		/* --------------- protected --------------- */
 		/** 释放管理器 */
 		protected _releaseManage = new MKRelease();
@@ -708,7 +710,9 @@ export namespace MKBundle_ {
 			// 清理网络事件
 			this.network?.event.clear();
 			// 清理数据
+			// @weak-start-include-MKDataSharer
 			this.data?.reset();
+			// @weak-end
 
 			// 清理对象池
 			for (const kStr in this.nodePoolTab) {

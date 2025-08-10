@@ -1,6 +1,7 @@
 import { EDITOR } from "cc/env";
 import mkDynamicModule from "../MKDynamicModule";
 import MKLogger from "../MKLogger";
+/** @weak */
 import mkMonitor from "../MKMonitor";
 import MKStatusTask from "../Task/MKStatusTask";
 import MKLayer from "./MKLayer";
@@ -333,6 +334,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 
 		// 取消所有定时器
 		this.unscheduleAllCallbacks();
+		// @weak-start-include-MKMonitor
 		// 取消数据监听事件
 		{
 			const task = mkMonitor.clear(this);
@@ -341,6 +343,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 				await task;
 			}
 		}
+		// @weak-end
 
 		// 释放资源
 		await this._releaseManage.releaseAll();
