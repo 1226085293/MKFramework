@@ -16,18 +16,18 @@ node_modules/
 #//////////////////////////
 # VSCode
 #//////////////////////////
+.vscode/*
 !.vscode/
 !.vscode/settings.json
-.vscode/*
 
 #//////////////////////////
 # 扩展
 #//////////////////////////
-extensions/
+extensions/*
 !extensions/MKFramework
 !extensions/quick-plugin
 
-tool/
+tool/*
 !tool/test
 !tool/typedoc
 tool/typedoc/docs
