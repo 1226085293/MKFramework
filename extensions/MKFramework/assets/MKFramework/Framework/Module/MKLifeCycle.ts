@@ -12,7 +12,9 @@ import GlobalConfig from "../../Config/GlobalConfig";
 import { _decorator, js, CCClass, isValid, Node } from "cc";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import mkToolObject from "../@Private/Tool/MKToolObject";
+// @weak-start-include-MKUIManage
 const uiManage = mkDynamicModule.default(import("../MKUIManage"));
+// @weak-end
 const { ccclass, property } = _decorator;
 
 export namespace _MKLifeCycle {
@@ -396,9 +398,9 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 		// @weak-end
 	}
 
-	// @weak-start-MKAudioExport-content
-	//  & MKAudio_.PrivateUnit
-	// @weak-start-MKAudioExport-content-position:/(?<=TypeReleaseParamType)/
+	// @weak-start-content-MKAudioExport
+	// @import: & MKAudio_.PrivateUnit
+	// @position:/(?<=TypeReleaseParamType)/
 	cancelRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
 		// @weak-end
 		if (!object_) {
@@ -571,7 +573,9 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			}
 			// 回收
 			else {
+				// @weak-start-include-MKUIManage
 				uiManage.close(this.node);
+				// @weak-end
 
 				return;
 			}

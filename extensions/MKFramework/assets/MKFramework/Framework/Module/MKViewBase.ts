@@ -199,18 +199,16 @@ export class MKViewBase extends MKLifeCycle {
 	 * @param config_ 关闭配置
 	 */
 	// @weak-start-content-MKUIManage
-	// @position:/(?<=config_\?: )/
-	// @import:Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">
-	// @unimport:any
+	// @position:/(?<=close\()/g
+	// @import:config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">
 	close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): void | Promise<void>;
 	async close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): Promise<void> {
 		// @weak-end
 		// 不在关闭中或者已经关闭代表外部调用
 		if (!(this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close))) {
-			// 可能被剔除
-			if (mkUIManage) {
-				await mkUIManage.close(this, config_);
-			}
+			// @weak-start-include-MKUIManage
+			await mkUIManage.close(this, config_);
+			// @weak-end
 			throw "中断";
 		}
 	}
