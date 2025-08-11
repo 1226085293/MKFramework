@@ -788,6 +788,8 @@ export namespace MKUIManage_ {
 		isDestroy?: boolean;
 		/**
 		 * 销毁动态子节点
+		 * @remarks
+		 * 动态子节点是动态添加到当前模块节点下的其他 MKLifeCycle 组件节点
 		 * @defaultValue
 		 * isDestroy
 		 */
