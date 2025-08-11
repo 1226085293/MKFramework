@@ -454,26 +454,35 @@ async function runOnePass(rootDir: string, entryFile: string, exclude: string[] 
 	return changed;
 }
 
-export async function manageFiles(params: Params) {
+export async function manageFiles(params: Params): Promise<boolean> {
 	const { rootDir, entryFile, exclude = [] } = params;
 
 	let round = 1;
+	let isChanged = false;
 	while (true) {
 		console.log(`\n🔁 Pass ${round}`);
 		const changed = await runOnePass(rootDir, entryFile, exclude);
 		if (!changed) {
 			console.log(`✅ No more changes. Done after ${round} pass(es).`);
 			break;
+		} else {
+			isChanged = true;
 		}
 		round++;
 	}
+
+	return isChanged;
 }
 
-const rootDir = "E:/muzzik/MKFramework/extensions/MKFramework/assets";
-const entryFile = "E:/muzzik/MKFramework/extensions/MKFramework/assets/MKFramework/Framework/MKExport.ts";
+export default async function (): Promise<boolean> {
+	/** 插件根目录 */
+	const pluginPathStr = path.join(__dirname, "../");
+	const rootDir = path.join(pluginPathStr, "assets");
+	const entryFile = path.join(rootDir, "MKFramework/Framework/MKExport.ts");
 
-manageFiles({
-	rootDir,
-	entryFile,
-	exclude: [rootDir + "/MKFramework/Framework/MKInit.ts"],
-});
+	return await manageFiles({
+		rootDir,
+		entryFile,
+		exclude: [rootDir + "/MKFramework/Framework/MKInit.ts"],
+	});
+}

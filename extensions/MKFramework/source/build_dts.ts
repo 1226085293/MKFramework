@@ -5,7 +5,6 @@ import child_process from "child_process";
 import fs from "fs-extra";
 import prettier from "prettier";
 import cjson from "cjson";
-import { argv, cwd } from "process";
 
 export default async function run(): Promise<void> {
 	/** 插件根目录 */
@@ -103,14 +102,4 @@ export default async function run(): Promise<void> {
 	fs.writeFileSync(dts_path_s, dts_file_s);
 	// 清理临时文件
 	fs.remove(path.join(plugin_path_s, "assets", build_tsconfig.compilerOptions.outDir));
-}
-
-if (argv.slice(2)[0] === "build") {
-	(global.Editor as any) = {
-		Project: {
-			path: cwd(),
-		},
-	};
-
-	run();
 }

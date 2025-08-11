@@ -1,6 +1,7 @@
 //@ts-nocheck
 // 框架源码位于 项目根目录\extensions\MKFramework\assets\MKFramework 下，你也可以在资源管理器下方的 MKFramework 查看
 import GlobalConfig from "../../assets/MKFramework/Config/GlobalConfig";
+
 import { __private } from "cc";
 import { Asset } from "cc";
 import { AssetManager } from "cc";
