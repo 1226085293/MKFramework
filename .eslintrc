@@ -111,38 +111,52 @@
 			// 蛇形命名规则
 			{
 				"selector": "variableLike",
-				"format": ["snake_case"],
+				"format": ["camelCase"],
 				"trailingUnderscore": "allowSingleOrDouble"
 			},
-			// private 命名规则
+			// 类型结构（class, enum, interface, typeAlias 等）使用 PascalCase
+			{
+				"selector": "typeLike",
+				"format": ["PascalCase"]
+			},
+
+			// enum 成员 PascalCase
+			{
+				"selector": "enumMember",
+				"format": ["PascalCase"]
+			},
+
+			// private 成员 _camelCase
 			{
 				"selector": "memberLike",
 				"modifiers": ["private"],
-				"format": ["snake_case"],
+				"format": ["camelCase"],
 				"leadingUnderscore": "require"
 			},
-			// protected 命名规则
+
+			// protected 成员 _camelCase
 			{
 				"selector": "memberLike",
 				"modifiers": ["protected"],
-				"format": ["snake_case"],
+				"format": ["camelCase"],
+				"leadingUnderscore": "require",
 				"filter": {
 					"match": true,
 					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)]"
-				},
-				"leadingUnderscore": "require"
+				}
 			},
-			// public 命名规则
+			// public 成员 _camelCase
 			{
 				"selector": "memberLike",
 				"modifiers": ["public"],
-				"format": ["snake_case"],
-				"filter": {
-					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)]"
-				},
-				"leadingUnderscore": "allowSingleOrDouble",
-				"trailingUnderscore": "allowSingleOrDouble"
+				"format": ["camelCase"]
+			},
+
+			// 参数为 camelCase 且结尾可下划线
+			{
+				"selector": "parameter",
+				"format": ["camelCase"],
+				"trailingUnderscore": "allow"
 			}
 		],
 		// 成员排序

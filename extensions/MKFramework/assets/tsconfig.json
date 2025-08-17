@@ -1,5 +1,5 @@
 {
-	"include": ["../../../temp/declarations/", "../@types/mk-framework/", "./"],
+	"include": ["../../../temp/declarations/", "../@types/MKFramework", "./"],
 	"compilerOptions": {
 		"target": "es6",
 		"lib": ["ES2015", "ES2017", "ES2020", "ES2022", "DOM"],
@@ -11,10 +11,11 @@
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"isolatedModules": true,
+		"isolatedModules": false,
 		"rootDir": "./",
 		"outDir": "../temp/",
 		"skipLibCheck": true,
-		"declaration": true
+		"declaration": true,
+		"types": ["@cocos/creator-types/editor"]
 	}
 }

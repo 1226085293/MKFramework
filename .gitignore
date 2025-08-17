@@ -16,12 +16,13 @@ node_modules/
 #//////////////////////////
 # VSCode
 #//////////////////////////
-.vscode/
+.vscode/*
+!.vscode/
+!.vscode/settings.json
 
 #//////////////////////////
-# WebStorm
+# 扩展
 #//////////////////////////
-.idea/
 extensions/*
 !extensions/MKFramework
 !extensions/quick-plugin

@@ -1,13 +1,13 @@
 {
   "creator": {
-    "version": "3.6.3"
+    "version": "3.8.6"
   },
   "scripts": {
     "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",
     "prettier 全局格式化": "npx prettier --write ./assets/**/*.ts",
     "查找循环依赖": "npx madge --circular --extensions ts ./assets/",
-    "构建框架 d.ts": "npx ts-node ./extensions/MKFramework/source/build_dts.ts build",
-    "构建框架文档": "cd ./tool/typedoc && npm install && npx ts-node ./script/build_doc.ts",
+    "构建框架 d.ts": "npx ts-node ./extensions/MKFramework/source/CMD.ts build-dts",
+    "剔除或恢复框架模块": "npx ts-node ./extensions/MKFramework/source/CMD.ts tree-shaking",
     "开启测试服务器": "cd ./tool/test/websocket-server && npm install && npx ts-node ./index.ts",
     "更新远程分支": "git fetch --prune & git remote prune origin"
   },
@@ -20,7 +20,7 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "madge": "^5.0.2",
     "prettier": "^2.7.1",
-		"protobufjs-cli": "^1.1.3",
+    "protobufjs-cli": "^1.1.3",
     "ts-node": "^10.9.1",
     "type-fest": "^4.20.1",
     "typescript": "^4.7.4"
@@ -28,8 +28,11 @@
   "name": "mk-framework",
   "type": "module",
   "uuid": "0db88ab0-0e0d-4a27-98dc-7d2c966dad01",
-  "version": "3.6.3",
+  "version": "3.8.0",
   "dependencies": {
-		"protobufjs": "^7.4.0"
+    "protobufjs": "^7.4.0"
+  },
+  "MKFramework": {
+    "version": "开发版"
   }
 }

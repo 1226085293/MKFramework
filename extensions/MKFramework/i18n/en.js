@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 "use strict";
 module.exports = {
-	名字: "mk-framework",
+	名字: "MKFramework",
 	说明: "3.x game framework",
 	安装框架: "Install framework",
 	本地版本: "Local version",
@@ -14,8 +14,7 @@ module.exports = {
 	安全检查: "Safety check",
 	获取版本: "Get version",
 	下载框架: "Download framework",
-	版本适配: "Version adaptation",
-	injection_framework: "Injection framework",
+	注入框架: "Injection framework",
 	注入声明文件: "Inject declaration file",
 	添加导入映射: "Add import mapping",
 	屏蔽vscode框架文件提示: "Suppress vscode framework file hints",
@@ -26,6 +25,9 @@ module.exports = {
 	任务开始: "The mission begins...",
 	任务结束: "Mission ended",
 	安装成功: "Installation is successful, please restart the editor before using",
-	安装失败: "Installation failed, please help: extensions/mk-framework/help",
+	安装失败: "Installation failed, please help: extensions/MKFramework/help",
 	未初始化: "Not initialized, please execute npm i in the plugin root directory {plugin_path_s}",
+	剔除或恢复框架模块: "Eliminate or restore the module",
+	稳定版本: "Stable version",
+	开发版本: "Development version"
 };

@@ -1,6 +1,6 @@
 {
 	"extends": "./temp/tsconfig.cocos.json",
-	"types": ["./extensions/mk-framework/@types/mk-framework/"],
+	"types": ["./extensions/MKFramework/@types/MKFramework/"],
 	"exclude": ["./tool"],
 	"compilerOptions": {
 		"target": "es6",
@@ -19,12 +19,12 @@
 			"db://assets/*": [
 			  "./assets/*"
 			],
-			"mk": ["./extensions/MKFramework/@types/mk-framework/mk.d.ts"],
-			"global_config": [
-			  "./extensions/MKFramework/assets/mk-framework/config/global_config.ts"
+			"mk": ["./extensions/MKFramework/@types/MKFramework/mk.d.ts"],
+			"GlobalConfig": [
+			  "./extensions/MKFramework/assets/MKFramework/Config/GlobalConfig.ts"
 			],
-			"global_event": [
-			  "./extensions/MKFramework/assets/mk-framework/config/global_event.ts"
+			"globalEvent": [
+			  "./extensions/MKFramework/assets/MKFramework/Config/GlobalEvent.ts"
 			]
 		}
 	}

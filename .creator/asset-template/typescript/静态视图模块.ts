@@ -2,8 +2,8 @@ import { _decorator } from "cc";
 import mk from "mk";
 const { ccclass, property } = _decorator;
 
-@ccclass("<%UnderscoreCaseClassName%>")
-export class <%UnderscoreCaseClassName%> extends mk.static_view_base {
+@ccclass("<%CamelCaseClassName%>")
+export class <%CamelCaseClassName%> extends mk.StaticViewBase {
 	// 初始化视图
 	// create(): void {}
 	// 有数据初始化
