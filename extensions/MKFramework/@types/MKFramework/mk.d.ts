@@ -2719,8 +2719,15 @@ declare namespace mk {
 		protected _view: _MVCControlBase.TypeView<CT2>;
 		private _openTask;
 		private _closeTask;
-		/**  */
+		/** 关闭回调
+		 * @remarks
+		 * 不使用此模块时手动调用，会顺序关闭 Model, View
+		 */
 		close(isExternalCall_?: boolean): void;
+		/** 打开回调
+		 * @remarks
+		 * 构造后下帧执行，自动执行父类函数，无须执行 super.open
+		 */
 		protected open?(): void;
 		private _lastClose;
 	}
@@ -2750,7 +2757,15 @@ declare namespace mk {
 		protected _isResetData: boolean;
 		/** 创建模型实例 */
 		static new<T extends new (...argsList: any[]) => any>(this: T, ...argsList_: ConstructorParameters<T>): Promise<InstanceType<T>>;
+		/** 打开回调
+		 * @remarks
+		 * 执行当前类静态函数 new 时调用
+		 */
 		open?(): void;
+		/** 关闭回调
+		 * @remarks
+		 * 在 Control 关闭时被调用
+		 */
 		close(): void;
 	}
 

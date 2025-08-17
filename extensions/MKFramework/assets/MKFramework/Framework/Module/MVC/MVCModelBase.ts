@@ -27,7 +27,16 @@ abstract class MVCModelBase {
 		return model as any;
 	}
 
+	/** 打开回调
+	 * @remarks
+	 * 执行当前类静态函数 new 时调用
+	 */
 	open?(): void;
+
+	/** 关闭回调
+	 * @remarks
+	 * 在 Control 关闭时被调用
+	 */
 	close(): void;
 	async close(): Promise<void> {
 		// @weak-start-include-MKMonitor

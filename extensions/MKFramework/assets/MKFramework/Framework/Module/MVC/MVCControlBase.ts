@@ -48,7 +48,10 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 	private _openTask = new MKStatusTask(false);
 	private _closeTask = new MKStatusTask(true);
 	/* ------------------------------- segmentation ------------------------------- */
-	/**  */
+	/** 关闭回调
+	 * @remarks
+	 * 不使用此模块时手动调用，会顺序关闭 Model, View
+	 */
 	close(isExternalCall_?: boolean): void;
 	async close(isExternalCall_ = true): Promise<void> {
 		await this._openTask.task;
@@ -84,6 +87,10 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 		// @weak-end
 	}
 
+	/** 打开回调
+	 * @remarks
+	 * 构造后下帧执行，自动执行父类函数，无须执行 super.open
+	 */
 	protected open?(): void;
 
 	private async _lastClose(): Promise<void> {
