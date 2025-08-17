@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-export default function (): boolean {
+export default function runCheck(): boolean {
 	if (fs.existsSync(path.join(__dirname, "..", "node_modules"))) {
 		return true;
 	}

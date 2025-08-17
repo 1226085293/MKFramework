@@ -1,6 +1,6 @@
 import { argv, cwd } from "process";
-import build_dts from "./build_dts";
-import TreeShaking from "./TreeShaking";
+import buildDTS from "./BuildDTS";
+import treeShaking from "./TreeShaking";
 
 (global.Editor as any) = {
 	Project: {
@@ -10,13 +10,13 @@ import TreeShaking from "./TreeShaking";
 
 switch (argv.slice(2)[0]) {
 	case "build-dts": {
-		build_dts();
+		buildDTS();
 		break;
 	}
 	case "tree-shaking": {
-		TreeShaking().then((isChanged) => {
+		treeShaking().then((isChanged) => {
 			if (isChanged) {
-				return build_dts();
+				return buildDTS();
 			}
 		});
 		break;

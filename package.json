@@ -6,9 +6,8 @@
     "eslint 全局修复": "npx eslint --fix ./assets/**/*.ts",
     "prettier 全局格式化": "npx prettier --write ./assets/**/*.ts",
     "查找循环依赖": "npx madge --circular --extensions ts ./assets/",
-    "构建框架 d.ts": "npx ts-node ./extensions/MKFramework/source/cmd.ts build-dts",
-    "剔除或恢复框架模块": "npx ts-node ./extensions/MKFramework/source/cmd.ts tree-shaking",
-    "构建框架文档": "cd ./tool/typedoc && npm install && npx ts-node ./script/build_doc.ts",
+    "构建框架 d.ts": "npx ts-node ./extensions/MKFramework/source/CMD.ts build-dts",
+    "剔除或恢复框架模块": "npx ts-node ./extensions/MKFramework/source/CMD.ts tree-shaking",
     "开启测试服务器": "cd ./tool/test/websocket-server && npm install && npx ts-node ./index.ts",
     "更新远程分支": "git fetch --prune & git remote prune origin"
   },

@@ -1,8 +1,10 @@
-import run_check from "./run_check";
+import run_check from "./RunCheck";
 
-delete require.cache[__dirname + "\\build_dts.js"];
-delete require.cache[__dirname + "\\install.js"];
-delete require.cache[__dirname + "\\help.js"];
+delete require.cache[__dirname + "\\Install.js"];
+delete require.cache[__dirname + "\\LocalVersion.js"];
+delete require.cache[__dirname + "\\BuildDTS.js"];
+delete require.cache[__dirname + "\\Help.js"];
+delete require.cache[__dirname + "\\TreeShaking.js"];
 
 /**
  * @en Methods within the extension can be triggered by message
@@ -17,22 +19,31 @@ export const methods: Record<string, (...any: any) => any> = {
 	async install() {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
-			await (await import("./install")).default();
+			await (await import("./Install")).default();
 		}
 
 		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 
-	async local_version() {
+	async installDev() {
+		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
-			await (await import("./local_version")).default();
+			await (await import("./Install")).default();
+		}
+
+		console.log(Editor.I18n.t("mk-framework.任务结束"));
+	},
+
+	async localVersion() {
+		if (run_check()) {
+			await (await import("./LocalVersion")).default();
 		}
 	},
 
 	async build() {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
-			await (await import("./build_dts")).default();
+			await (await import("./BuildDTS")).default();
 		}
 
 		console.log(Editor.I18n.t("mk-framework.任务结束"));
@@ -40,8 +51,16 @@ export const methods: Record<string, (...any: any) => any> = {
 
 	async help() {
 		if (run_check()) {
-			await (await import("./help")).default();
+			await (await import("./Help")).default();
 		}
+	},
+
+	async treeShaking() {
+		console.log(Editor.I18n.t("mk-framework.任务开始"));
+		if (run_check()) {
+			await (await import("./TreeShaking")).default();
+		}
+		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},
 };
 

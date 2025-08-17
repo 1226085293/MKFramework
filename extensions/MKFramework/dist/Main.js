@@ -27,10 +27,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unload = exports.load = exports.methods = void 0;
-const run_check_1 = __importDefault(require("./run_check"));
-delete require.cache[__dirname + "\\build_dts.js"];
-delete require.cache[__dirname + "\\install.js"];
-delete require.cache[__dirname + "\\help.js"];
+const RunCheck_1 = __importDefault(require("./RunCheck"));
+delete require.cache[__dirname + "\\Install.js"];
+delete require.cache[__dirname + "\\LocalVersion.js"];
+delete require.cache[__dirname + "\\BuildDTS.js"];
+delete require.cache[__dirname + "\\Help.js"];
+delete require.cache[__dirname + "\\TreeShaking.js"];
 /**
  * @en Methods within the extension can be triggered by message
  * @zh 扩展内的方法，可以通过 message 触发
@@ -43,27 +45,41 @@ exports.methods = {
      */
     async install() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
-        if ((0, run_check_1.default)()) {
-            await (await Promise.resolve().then(() => __importStar(require("./install")))).default();
+        if ((0, RunCheck_1.default)()) {
+            await (await Promise.resolve().then(() => __importStar(require("./Install")))).default();
         }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
-    async local_version() {
-        if ((0, run_check_1.default)()) {
-            await (await Promise.resolve().then(() => __importStar(require("./local_version")))).default();
+    async installDev() {
+        console.log(Editor.I18n.t("mk-framework.任务开始"));
+        if ((0, RunCheck_1.default)()) {
+            await (await Promise.resolve().then(() => __importStar(require("./Install")))).default();
+        }
+        console.log(Editor.I18n.t("mk-framework.任务结束"));
+    },
+    async localVersion() {
+        if ((0, RunCheck_1.default)()) {
+            await (await Promise.resolve().then(() => __importStar(require("./LocalVersion")))).default();
         }
     },
     async build() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
-        if ((0, run_check_1.default)()) {
-            await (await Promise.resolve().then(() => __importStar(require("./build_dts")))).default();
+        if ((0, RunCheck_1.default)()) {
+            await (await Promise.resolve().then(() => __importStar(require("./BuildDTS")))).default();
         }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
     async help() {
-        if ((0, run_check_1.default)()) {
-            await (await Promise.resolve().then(() => __importStar(require("./help")))).default();
+        if ((0, RunCheck_1.default)()) {
+            await (await Promise.resolve().then(() => __importStar(require("./Help")))).default();
         }
+    },
+    async treeShaking() {
+        console.log(Editor.I18n.t("mk-framework.任务开始"));
+        if ((0, RunCheck_1.default)()) {
+            await (await Promise.resolve().then(() => __importStar(require("./TreeShaking")))).default();
+        }
+        console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
 };
 /**

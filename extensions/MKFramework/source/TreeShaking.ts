@@ -474,7 +474,7 @@ export async function manageFiles(params: Params): Promise<boolean> {
 	return isChanged;
 }
 
-export default async function (): Promise<boolean> {
+export default async function treeShaking(): Promise<boolean> {
 	/** 插件根目录 */
 	const pluginPathStr = path.join(__dirname, "../");
 	const rootDir = path.join(pluginPathStr, "assets");

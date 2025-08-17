@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function default_1() {
+function help() {
     console.log(Editor.I18n.t("mk-framework.帮助内容"));
 }
-exports.default = default_1;
+exports.default = help;

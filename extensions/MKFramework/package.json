@@ -10,7 +10,7 @@
 		"watch": "tsc -w"
 	},
 	"description": "i18n:mk-framework.说明",
-	"main": "./dist/main.js",
+	"main": "./dist/Main.js",
 	"contributions": {
 		"messages": {
 			"install": {
@@ -18,14 +18,24 @@
 					"install"
 				]
 			},
-			"local_version": {
+			"installDev": {
 				"methods": [
-					"local_version"
+					"installDev"
+				]
+			},
+			"localVersion": {
+				"methods": [
+					"localVersion"
 				]
 			},
 			"build": {
 				"methods": [
 					"build"
+				]
+			},
+			"treeShaking": {
+				"methods": [
+					"treeShaking"
 				]
 			},
 			"help": {
@@ -36,19 +46,29 @@
 		},
 		"menu": [
 			{
-				"path": "i18n:menu.extension/i18n:mk-framework.名字",
-				"label": "i18n:mk-framework.安装框架",
+				"path": "i18n:menu.extension/i18n:mk-framework.名字/i18n:mk-framework.安装框架",
+				"label": "i18n:mk-framework.稳定版本",
 				"message": "install"
+			},
+			{
+				"path": "i18n:menu.extension/i18n:mk-framework.名字/i18n:mk-framework.安装框架",
+				"label": "i18n:mk-framework.开发版本",
+				"message": "installDev"
 			},
 			{
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",
 				"label": "i18n:mk-framework.本地版本",
-				"message": "local_version"
+				"message": "localVersion"
 			},
 			{
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",
 				"label": "i18n:mk-framework.构建dts",
 				"message": "build"
+			},
+			{
+				"path": "i18n:menu.extension/i18n:mk-framework.名字",
+				"label": "i18n:mk-framework.剔除或恢复框架模块",
+				"message": "treeShaking"
 			},
 			{
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",

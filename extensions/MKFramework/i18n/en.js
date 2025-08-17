@@ -27,4 +27,7 @@ module.exports = {
 	安装成功: "Installation is successful, please restart the editor before using",
 	安装失败: "Installation failed, please help: extensions/MKFramework/help",
 	未初始化: "Not initialized, please execute npm i in the plugin root directory {plugin_path_s}",
+	剔除或恢复框架模块: "Eliminate or restore the module",
+	稳定版本: "Stable version",
+	开发版本: "Development version"
 };
