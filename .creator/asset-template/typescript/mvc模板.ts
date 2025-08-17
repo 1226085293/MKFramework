@@ -13,7 +13,7 @@ export class <%CamelCaseClassName%> extends mk.MVCControlBase<<%CamelCaseClassNa
 }
 
 @ccclass("<%CamelCaseClassName%>View")
-class <%CamelCaseClassName%>View extends mk.MVCViewBase {
+class <%CamelCaseClassName%>View extends mk.MVCViewBase<<%CamelCaseClassName%>Model> {
 	static new<T extends new (...argsList_: any[]) => any>(this: T): Promise<InstanceType<T> | null> {
 		mk.uiManage.regis(<%CamelCaseClassName%>View, "db://xxx.prefab", null);
 
