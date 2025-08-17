@@ -3,10 +3,10 @@ import * as cc from "cc";
 import GlobalConfig from "GlobalConfig";
 const { ccclass, property } = cc._decorator;
 
-class Control extends mk.MVCControlBase<Model, View> {
+class ResourcesModuleMVCControl extends mk.MVCControlBase<ResourcesModuleMVCModel, ResourcesModuleMVCView> {
 	protected async open(): Promise<void> {
-		this._model = await Model.new();
-		this._view = (await View.new())!;
+		this._model = await ResourcesModuleMVCModel.new();
+		this._view = (await ResourcesModuleMVCView.new())!;
 		this._view.event.once("close", () => {
 			this.close();
 		});
@@ -19,7 +19,7 @@ class Control extends mk.MVCControlBase<Model, View> {
 	}
 }
 
-class Model extends mk.MVCModelBase {
+class ResourcesModuleMVCModel extends mk.MVCModelBase {
 	test = 0;
 
 	open(): void {
@@ -31,11 +31,11 @@ class Model extends mk.MVCModelBase {
 	}
 }
 
-export class View extends mk.MVCViewBase<Model> {
+export class ResourcesModuleMVCView extends mk.MVCViewBase<ResourcesModuleMVCModel> {
 	static new<T extends new (...argsList: any[]) => any>(this: T, ...argsList_: ConstructorParameters<T>): Promise<InstanceType<T> | null> {
-		mk.uiManage.regis(View, "db://assets/resources/Module/Module/MVC/ResourcesModuleMVC.prefab", null);
+		mk.uiManage.regis(ResourcesModuleMVCView, "db://assets/resources/Module/Module/MVC/ResourcesModuleMVC.prefab", null);
 
-		return mk.uiManage.open(View);
+		return mk.uiManage.open(ResourcesModuleMVCView);
 	}
 
 	layerTypeNum = GlobalConfig.View.LayerType.窗口;
@@ -53,8 +53,8 @@ export class View extends mk.MVCViewBase<Model> {
 
 	close(): void {
 		console.log("mvc_view_base-close");
-		this.event.emit("close");
+		mk.uiManage.unregis(ResourcesModuleMVCView);
 	}
 }
 
-export default Control;
+export default ResourcesModuleMVCControl;

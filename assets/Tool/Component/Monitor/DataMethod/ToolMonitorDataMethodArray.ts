@@ -10,7 +10,7 @@ export function checkType(data_: any): boolean {
 	return Array.isArray(data_);
 }
 
-export namespace 默认 {
+export namespace Default {
 	/** 初始化数据 */
 	class ArrayInitConfig {
 		constructor(init_?: ArrayInitConfig) {

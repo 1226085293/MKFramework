@@ -9,8 +9,8 @@ export function checkType(data_: any): boolean {
 	return typeof data_ === "string" || typeof data_ === "number";
 }
 
-export namespace 默认 {
-	@ccclass("DataMethodString/默认")
+export namespace Label {
+	@ccclass("DataMethodString/Label")
 	export class CCClassParams extends ToolMonitorTriggerEvent {
 		@property({ displayName: "前缀" })
 		headStr = "";
@@ -32,32 +32,6 @@ export namespace 默认 {
 					} else {
 						mk.N(node_).label.string = params_.headStr + String(value) + params_.tailStr;
 					}
-				},
-				target_
-			)
-			?.call(target_, target_[key_]);
-	}
-}
-
-export namespace 多余省略 {
-	@ccclass("DataMethodString/多余省略")
-	export class CCClassParams extends ToolMonitorTriggerEvent {
-		@property({ displayName: "最大字符数量" })
-		maxNum = 5;
-
-		@property({ displayName: "超出替换字符" })
-		replaceStr = "...";
-	}
-
-	export function on<T, T2 extends keyof T>(target_: T, key_: T2, node_: cc.Node, params_: CCClassParams): void {
-		mk.monitor
-			.on(
-				target_,
-				key_,
-				(value) => {
-					const valueStr = String(value);
-
-					mk.N(node_).label.string = valueStr.length <= params_.maxNum ? valueStr : valueStr.slice(0, params_.maxNum) + params_.replaceStr;
 				},
 				target_
 			)
@@ -107,8 +81,8 @@ export namespace 远程图片 {
 	}
 }
 
-export namespace 编辑框 {
-	@ccclass("DataMethodString/编辑框")
+export namespace EditBox {
+	@ccclass("DataMethodString/EditBox")
 	export class CCClassParams extends ToolMonitorTriggerEvent {
 		@property({ displayName: "同步修改" })
 		isSyncModify = true;
