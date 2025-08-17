@@ -6,9 +6,10 @@ import { ResourcesModuleLifeCycle } from "./LifeCycle/ResourcesModuleLifeCycle";
 import { ResourcesModuleShowAlone } from "./ShowAlone/ResourcesModuleShowAlone";
 import { ResourcesModuleUIStack } from "./UIStack/ResourcesModuleUIStack";
 import { ResourcesModuleWindow } from "./Window/ResourcesModuleWindow";
-import resources_module_mvc from "./MVC/ResourcesModuleMVC";
+import ResourcesModuleMVC from "./MVC/ResourcesModuleMVC";
 import tool from "db://assets/Tool/Tool";
 import { ResourcesModuleItem } from "./Item/ResourcesModuleItem";
+import { ResourcesModuleMVVM } from "./MVVM/ResourcesModuleMVVM";
 
 const { ccclass, property } = _decorator;
 
@@ -49,7 +50,13 @@ export class ResourcesModule extends mk.ViewBase {
 			{
 				nameStr: "MVC",
 				view: () => {
-					const mvc = new resources_module_mvc();
+					const mvc = new ResourcesModuleMVC();
+				},
+			},
+			{
+				nameStr: "MVVM",
+				view: () => {
+					const mvvm = new ResourcesModuleMVVM();
 				},
 			},
 		];
