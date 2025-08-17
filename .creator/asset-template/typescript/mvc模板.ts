@@ -2,23 +2,23 @@ import mk from "mk";
 import { _decorator } from "cc";
 const { ccclass, property } = _decorator;
 
-export class <%UnderscoreCaseClassName%>_m extends mk.mvc_model_base {}
+export class <%CamelCaseClassName%>Model extends mk.MVCModelBase {}
 
-export class <%UnderscoreCaseClassName%> extends mk.mvc_control_base<<%UnderscoreCaseClassName%>_m, <%UnderscoreCaseClassName%>_v> {
+export class <%CamelCaseClassName%> extends mk.MVCControlBase<<%CamelCaseClassName%>Model, <%CamelCaseClassName%>View> {
 	/* ------------------------------- segmentation ------------------------------- */
 	async open(): Promise<void> {
-		this._model = await <%UnderscoreCaseClassName%>_m.new();
-		this._view = (await <%UnderscoreCaseClassName%>_v.new())!;
+		this._model = await <%CamelCaseClassName%>Model.new();
+		this._view = (await <%CamelCaseClassName%>View.new())!;
 	}
 }
 
-@ccclass("<%UnderscoreCaseClassName%>_v")
-class <%UnderscoreCaseClassName%>_v extends mk.mvc_view_base {
-	static new<T extends new (...args_as: any[]) => any>(this: T): Promise<InstanceType<T> | null> {
-		mk.ui_manage.regis(<%UnderscoreCaseClassName%>_v, "db://xxx.prefab", null);
+@ccclass("<%CamelCaseClassName%>View")
+class <%CamelCaseClassName%>View extends mk.MVCViewBase {
+	static new<T extends new (...argsList_: any[]) => any>(this: T): Promise<InstanceType<T> | null> {
+		mk.uiManage.regis(<%CamelCaseClassName%>View, "db://xxx.prefab", null);
 
-		return mk.ui_manage.open(<%UnderscoreCaseClassName%>_v);
+		return mk.uiManage.open(<%CamelCaseClassName%>View);
 	}
 }
 
-export default <%UnderscoreCaseClassName%>_v;
+export default <%CamelCaseClassName%>View;
