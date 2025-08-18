@@ -2,7 +2,7 @@
 "use strict";
 module.exports = {
 	名字: "MKFramework",
-	说明: "3.x 游戏框架",
+	说明: "3.x 游戏开发框架",
 	安装框架: "安装框架",
 	本地版本: "本地版本",
 	构建dts: "构建 d.ts",
