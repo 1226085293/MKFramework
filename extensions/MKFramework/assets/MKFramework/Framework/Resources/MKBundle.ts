@@ -80,7 +80,7 @@ export class MKBundle extends MKInstanceBase {
 			Director.EVENT_BEFORE_SCENE_LAUNCH,
 			async (scene: Scene) => {
 				if (!scene.name) {
-					this._log.warn("未选择启动场景");
+					this._log.warn("未选择启动场景，不能获取到场景数据");
 					this._initTask.finish(true);
 
 					return;

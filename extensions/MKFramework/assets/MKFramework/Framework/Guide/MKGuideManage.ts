@@ -284,7 +284,10 @@ class MKGuideManage {
 		} else {
 			this._isPause = true;
 			this.event.emit(this.event.key.break);
-			this._log.warn(`当前步骤 ${this._stepNum} 未注册，引导中断`);
+
+			if (this._stepNum !== this._initConfig.endStepNum) {
+				this._log.warn(`当前步骤 ${this._stepNum} 未注册，引导中断`);
+			}
 
 			return false;
 		}
