@@ -10,7 +10,7 @@ module.exports = {
 	确认安装: "确定覆盖旧框架进行安装？",
 	确认: "确认",
 	取消: "取消",
-	帮助内容: ["示例项目：https://gitee.com/muzzik/MKFramework", "QQ 交流群：348096019", "微信：_muzzik"].join("\n"),
+	帮助内容: ["示例项目(github)：https://github.com/1226085293/MKFramework", "示例项目(gitee)：https://gitee.com/muzzik/MKFramework", "QQ 交流群：348096019", "微信：_muzzik"].join("\n"),
 	安全检查: "安全检查",
 	获取版本: "获取版本",
 	下载框架: "下载框架",
