@@ -83,15 +83,7 @@ export default async function install(versionStr_?: string): Promise<void> {
 			latestStableVersionStr = tags[0];
 			nextVersionStr = "v" + (Number(latestStableVersionStr.match(/\d+/g)!.join("")) + 1).toString().replace(/(\d)(?=\d)/g, "$1.");
 
-			if (versionStr_) {
-				if (tags.includes(versionStr_)) {
-					version = versionStr_;
-				} else {
-					return Promise.reject("未找到指定分支");
-				}
-			} else {
-				version = tags[0];
-			}
+			version = versionStr_ || tags[0];
 		})
 		.then(async () => {
 			console.log(Editor.I18n.t("mk-framework.下载框架") + `(${version})`);

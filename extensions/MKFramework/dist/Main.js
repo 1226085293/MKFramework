@@ -53,7 +53,7 @@ exports.methods = {
     async installDev() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
         if ((0, RunCheck_1.default)()) {
-            await (await Promise.resolve().then(() => __importStar(require("./Install")))).default();
+            await (await Promise.resolve().then(() => __importStar(require("./Install")))).default("main");
         }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },
@@ -62,7 +62,7 @@ exports.methods = {
             await (await Promise.resolve().then(() => __importStar(require("./LocalVersion")))).default();
         }
     },
-    async build() {
+    async buildDTS() {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
         if ((0, RunCheck_1.default)()) {
             await (await Promise.resolve().then(() => __importStar(require("./BuildDTS")))).default();
@@ -78,6 +78,7 @@ exports.methods = {
         console.log(Editor.I18n.t("mk-framework.任务开始"));
         if ((0, RunCheck_1.default)()) {
             await (await Promise.resolve().then(() => __importStar(require("./TreeShaking")))).default();
+            await (await Promise.resolve().then(() => __importStar(require("./BuildDTS")))).default();
         }
         console.log(Editor.I18n.t("mk-framework.任务结束"));
     },

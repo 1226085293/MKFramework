@@ -28,7 +28,7 @@ export const methods: Record<string, (...any: any) => any> = {
 	async installDev() {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
-			await (await import("./Install")).default();
+			await (await import("./Install")).default("main");
 		}
 
 		console.log(Editor.I18n.t("mk-framework.任务结束"));
@@ -40,7 +40,7 @@ export const methods: Record<string, (...any: any) => any> = {
 		}
 	},
 
-	async build() {
+	async buildDTS() {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
 			await (await import("./BuildDTS")).default();
@@ -59,6 +59,7 @@ export const methods: Record<string, (...any: any) => any> = {
 		console.log(Editor.I18n.t("mk-framework.任务开始"));
 		if (run_check()) {
 			await (await import("./TreeShaking")).default();
+			await (await import("./BuildDTS")).default();
 		}
 		console.log(Editor.I18n.t("mk-framework.任务结束"));
 	},

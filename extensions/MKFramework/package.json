@@ -2,9 +2,9 @@
 	"$schema": "./@types/schema/package/index.json",
 	"package_version": 2,
 	"name": "mk-framework",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"author": "_muzzik",
-	"editor": ">=3.3.2",
+	"editor": ">=3.8.0",
 	"scripts": {
 		"build": "tsc",
 		"watch": "tsc -w"
@@ -28,9 +28,9 @@
 					"localVersion"
 				]
 			},
-			"build": {
+			"buildDTS": {
 				"methods": [
-					"build"
+					"buildDTS"
 				]
 			},
 			"treeShaking": {
@@ -63,7 +63,7 @@
 			{
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",
 				"label": "i18n:mk-framework.构建dts",
-				"message": "build"
+				"message": "buildDTS"
 			},
 			{
 				"path": "i18n:menu.extension/i18n:mk-framework.名字",
