@@ -42,10 +42,22 @@ class MKLogger extends MKInstanceBase {
 
 		// 替换日志函数
 		if (MKLogger._config.logObjectType === GlobalConfig.Log.LogObjectType.Console) {
-			this.debug = this._logFuncTab[MKLogger._config.logObjectType].debug;
-			this.log = this._logFuncTab[MKLogger._config.logObjectType].log;
-			this.warn = this._logFuncTab[MKLogger._config.logObjectType].warn;
-			this.error = this._logFuncTab[MKLogger._config.logObjectType].error;
+			this.debug =
+				MKLogger._config.levelNum & GlobalConfig.Log.Level.Debug
+					? this._logFuncTab[MKLogger._config.logObjectType].debug
+					: (...argsList_: any[]) => {};
+			this.log =
+				MKLogger._config.levelNum & GlobalConfig.Log.Level.Log
+					? this._logFuncTab[MKLogger._config.logObjectType].log
+					: (...argsList_: any[]) => {};
+			this.warn =
+				MKLogger._config.levelNum & GlobalConfig.Log.Level.Warn
+					? this._logFuncTab[MKLogger._config.logObjectType].warn
+					: (...argsList_: any[]) => {};
+			this.error =
+				MKLogger._config.levelNum & GlobalConfig.Log.Level.Error
+					? this._logFuncTab[MKLogger._config.logObjectType].error
+					: (...argsList_: any[]) => {};
 		}
 
 		// 错误监听
