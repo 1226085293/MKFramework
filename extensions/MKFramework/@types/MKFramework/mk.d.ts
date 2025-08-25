@@ -1,6 +1,7 @@
 //@ts-nocheck
 // 框架源码位于 项目根目录\extensions\MKFramework\assets\MKFramework 下，你也可以在资源管理器下方的 MKFramework 查看
 import GlobalConfig from "../../assets/MKFramework/Config/GlobalConfig";
+
 import { __private } from "cc";
 import { Asset } from "cc";
 import { AssetManager } from "cc";
@@ -286,7 +287,8 @@ declare namespace mk {
 			pause(): void;
 			/**
 			 * 停止
-			 * @param isStop_ 停止状态
+			 * @param isStop_
+			 * 默认为 true，true: 停止当前并阻止后续音频播放；false: 恢复播放能力
 			 * @remarks
 			 * - 停止后续播放音频将不会执行播放逻辑
 			 */
