@@ -3,7 +3,7 @@ import MKLifeCycle from "./MKLifeCycle";
 const { ccclass, property } = _decorator;
 
 /**
- * 场景基类
+ * 静态视图基类
  * @remarks
  * 继承于 MKLifeCycle，屏蔽了多余 inspector 展示
  */
