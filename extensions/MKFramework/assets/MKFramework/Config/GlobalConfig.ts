@@ -79,7 +79,8 @@ namespace GlobalConfig {
 		/** 初始设计尺寸 */
 		export const originalDesignSize: Omit<Readonly<Size>, "set"> = size();
 		/** 阻塞警告时间（毫秒，生命周期函数执行时间超出设定值时警告，0 为关闭）
-		 * @remarks 此方法可用来排除生命周期阻塞位置，但如果节点 active 为 false 也将阻塞生命周期执行
+		 * @remarks
+		 * 可用来排除生命周期阻塞位置，但如果节点 active 为 false 也将阻塞生命周期执行
 		 */
 		export const blockingWarningTimeMsNum = 0;
 		/** 默认遮罩 */
@@ -198,14 +199,12 @@ namespace GlobalConfig {
 
 	/** 网络 */
 	export namespace Network {
-		/** 消息头 */
+		/** 消息头
+		 * @remarks
+		 * 收/发时网络消息类型时，必须包含的属性
+		 */
 		// eslint-disable-next-line @typescript-eslint/no-empty-interface
-		export interface ProtoHead {
-			// /** 消息 id */
-			// __idNum: number;
-			// /** 消息序列号 */
-			// __sequenceNum?: number;
-		}
+		export interface ProtoHead {}
 
 		/** 消息头键 */
 		export const protoHeadKeyTab: { [key in keyof ProtoHead]: key } = new Proxy(Object.create(null), {

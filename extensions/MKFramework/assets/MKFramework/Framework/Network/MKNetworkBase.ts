@@ -55,17 +55,21 @@ namespace _MKNetworkBase {
 		on<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
-			this_?: any,
+			target_?: any,
 			isOnce_?: boolean
 		): typeof callback_ | null {
 			if (typeof type_ === "function") {
 				const messageId = this._network.config.parseMessageIdFunc(type_.prototype);
 
 				if (messageId !== undefined) {
-					return super.on(messageId, callback_, this_, isOnce_);
+					// 录入事件对象
+					target_?.eventTargetList?.push(this);
+					return super.on(messageId, callback_, target_, isOnce_);
 				}
 			} else {
-				return super.on(type_, callback_, this_, isOnce_);
+				// 录入事件对象
+				target_?.eventTargetList?.push(this);
+				return super.on(type_, callback_, target_, isOnce_);
 			}
 
 			return null;

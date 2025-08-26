@@ -604,7 +604,8 @@ export namespace MKAudioBase_ {
 
 		/**
 		 * 停止
-		 * @param isStop_ 停止状态
+		 * @param isStop_
+		 * 默认为 true，true: 停止当前并阻止后续音频播放；false: 恢复播放能力
 		 * @remarks
 		 * - 停止后续播放音频将不会执行播放逻辑
 		 */
