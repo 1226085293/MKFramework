@@ -98,6 +98,10 @@ class MKStorage<CT extends Object> {
 
 		// 不存在则创建新数据
 		if (storageStr === null) {
+			if (this._initConfig.data[key_] === undefined) {
+				return null;
+			}
+
 			this.set(key_, this._initConfig.data[key_]);
 
 			return JSON.parse(this._cache[keyStr]);
