@@ -77,7 +77,7 @@ export namespace MKDataSharer_ {
 		 */
 		source: T;
 		/** 数据键 */
-		key: { [k in keyof T]: k };
+		key: { [k in keyof T]-?: k };
 
 		/**
 		 * 请求数据

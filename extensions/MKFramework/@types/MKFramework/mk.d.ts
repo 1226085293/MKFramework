@@ -1337,7 +1337,7 @@ declare namespace mk {
 			source: T;
 			/** 数据键 */
 			key: {
-				[k in keyof T]: k;
+				[k in keyof T]-?: k;
 			};
 			/**
 			 * 请求数据
@@ -2166,7 +2166,7 @@ declare namespace mk {
 			on<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
 				type_: T,
 				callback_: T2,
-				this_?: any,
+				target_?: any,
 				isOnce_?: boolean
 			): typeof callback_ | null;
 			once<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
