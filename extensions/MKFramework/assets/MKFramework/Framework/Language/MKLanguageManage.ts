@@ -101,7 +101,7 @@ export class MKLanguageManage extends MKInstanceBase {
 	async getTexture(
 		type_: _MKLanguageManage.TypeType,
 		markStr_: string,
-		target_: MKAsset_.TypeFollowReleaseObject,
+		target_: MKAsset_.TypeFollowReleaseObject | null,
 		language_: keyof typeof GlobalConfig.Language.typeTab = this._languageStr
 	): Promise<SpriteFrame | null> {
 		const pathStr = this.textureDataTab[type_]?.[markStr_]?.[GlobalConfig.Language.types[language_]];
