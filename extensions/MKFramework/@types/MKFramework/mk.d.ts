@@ -2097,6 +2097,7 @@ declare namespace mk {
 		close(): void;
 		/* Excluded from this release type: _send */
 		/* Excluded from this release type: _wait */
+		/* Excluded from this release type: _triggerWaitTask */
 		/** socket 准备完成 */
 		protected _open(event_: any): void;
 		/** socket 消息 */
@@ -2115,12 +2116,6 @@ declare namespace mk {
 		 * @returns
 		 */
 		protected _cancelReconnect(isStatus_: boolean): void;
-		/**
-		 * 触发等待任务
-		 * @param data_ 收到的消息
-		 * @returns
-		 */
-		protected _triggerWaitTask(data_: any): void;
 		/** 初始化心跳 */
 		protected _startHeartbeat(): void;
 		protected _setIsWriteSleep(value_: boolean): void;
@@ -2202,7 +2197,7 @@ declare namespace mk {
 			/**
 			 * 请求
 			 * @param data_ 发送数据
-			 * @param timeoutMsNum_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 waitTimeoutMsNum
+			 * @param timeoutMsNum_ 超时时间，-1:无超时时间；0-n:等待时间(毫秒)；不填则为构造配置中的 waitTimeoutMsNum
 			 * @returns
 			 * @remarks
 			 * 等待事件回调返回
