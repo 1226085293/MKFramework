@@ -16,11 +16,11 @@
 
 ## 🛠️ 安装框架
 
-https://github.com/1226085293/MKFramework/wiki/%E5%AE%89%E8%A3%85%E6%A1%86%E6%9E%B6
+https://mkframework.muzzik.cc/docs/getting-started/install
 
 ## 📗 文档教程
 
-https://github.com/1226085293/MKFramework/wiki
+https://mkframework.muzzik.cc/docs/introduce
 
 
 ## 😀 仓库说明
