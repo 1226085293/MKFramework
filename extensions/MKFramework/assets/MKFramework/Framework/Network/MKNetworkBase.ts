@@ -130,6 +130,8 @@ namespace _MKNetworkBase {
 
 			if (type_ !== undefined) {
 				super.emit(type_, data_);
+				// 触发等待消息
+				this._network._triggerWaitTask(data_);
 			} else {
 				const messageId = this._network.config.parseMessageIdFunc(args_);
 
@@ -140,6 +142,8 @@ namespace _MKNetworkBase {
 				}
 
 				super.emit(messageId, args_);
+				// 触发等待消息
+				this._network._triggerWaitTask(args_);
 			}
 		}
 
@@ -155,7 +159,7 @@ namespace _MKNetworkBase {
 		/**
 		 * 请求
 		 * @param data_ 发送数据
-		 * @param timeoutMsNum_ 超时时间，-1：不设置，0-n：不填则为初始化配置中的 waitTimeoutMsNum
+		 * @param timeoutMsNum_ 超时时间，-1:无超时时间；0-n:等待时间(毫秒)；不填则为构造配置中的 waitTimeoutMsNum
 		 * @returns
 		 * @remarks
 		 * 等待事件回调返回
@@ -351,6 +355,37 @@ abstract class MKNetworkBase<CT extends MKCodecBase = MKCodecBase> extends MKIns
 		return waitTask.task;
 	}
 
+	/**
+	 * 触发等待任务
+	 * @param data_ 收到的消息
+	 * @returns
+	 * @internal
+	 */
+	_triggerWaitTask(data_: any): void {
+		/** 消息 id */
+		const messageId = this.config.parseMessageIdFunc(data_);
+		/** 消息序列号 */
+		const messageSequence = this.config.parseMessageSequenceFunc(data_);
+
+		if (messageId === undefined) {
+			this._log.error("消息 id 解析错误");
+
+			return;
+		}
+
+		// 触发等待任务
+		if (messageSequence !== undefined) {
+			const waitTask = this._waitTaskMap.get(messageSequence);
+
+			if (!waitTask) {
+				return;
+			}
+
+			this._waitTaskMap.delete(messageSequence);
+			waitTask.finish(true, data_);
+		}
+	}
+
 	/** socket 准备完成 */
 	protected _open(event_: any): void {
 		this._state = MKNetworkBase_.Status.Open;
@@ -486,36 +521,6 @@ abstract class MKNetworkBase<CT extends MKCodecBase = MKCodecBase> extends MKIns
 			clearInterval(this._reconnectTimer);
 			this._reconnectTimer = null;
 			this._reconnectCountNum = 0;
-		}
-	}
-
-	/**
-	 * 触发等待任务
-	 * @param data_ 收到的消息
-	 * @returns
-	 */
-	protected _triggerWaitTask(data_: any): void {
-		/** 消息 id */
-		const messageId = this.config.parseMessageIdFunc(data_);
-		/** 消息序列号 */
-		const messageSequence = this.config.parseMessageSequenceFunc(data_);
-
-		if (messageId === undefined) {
-			this._log.error("消息 id 解析错误");
-
-			return;
-		}
-
-		// 触发等待任务
-		if (messageSequence !== undefined) {
-			const waitTask = this._waitTaskMap.get(messageSequence);
-
-			if (!waitTask) {
-				return;
-			}
-
-			this._waitTaskMap.delete(messageSequence);
-			waitTask.finish(true, data_);
 		}
 	}
 
