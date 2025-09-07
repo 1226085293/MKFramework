@@ -657,38 +657,27 @@ export namespace MKNetworkBase_ {
 		/** 编解码器 */
 		codec?: CT;
 		/**
-		 * 发送间隔
-		 * @remarks
-		 * 单位：毫秒
+		 * 发送间隔（毫秒）
+		 * @defaultValue 0
 		 */
 		sendIntervalMsNum = 0;
-		/**
-		 * 重连间隔
-		 * @remarks
-		 * 单位：毫秒
+		/** 重连间隔（毫秒）
+		 * @defaultValue 1000
 		 */
 		reconnectIntervalMsNum = 1000;
-		/** 最大重连次数 */
+		/** 最大重连次数
+		 * @defaultValue 5
+		 */
 		maxReconnectNum = 5;
-		/**
-		 * 等待消息超时时间
-		 * @remarks
-		 * 单位：毫秒
+		/** 等待消息超时时间（毫秒）
+		 * @defaultValue 5000
 		 */
 		waitTimeoutMsNum = 5000;
 		/** 心跳配置 */
 		heartbeatConfig?: {
-			/**
-			 * 发送间隔
-			 * @remarks
-			 * 单位：毫秒
-			 */
+			/** 发送间隔（毫秒） */
 			intervalMsN?: number;
-			/**
-			 * 超时时间
-			 * @remarks
-			 * 单位：毫秒
-			 */
+			/** 超时时间（毫秒） */
 			timeoutMsN: number;
 			/**
 			 * 初始化
