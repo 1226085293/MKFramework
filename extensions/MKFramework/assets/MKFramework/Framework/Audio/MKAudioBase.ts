@@ -117,7 +117,7 @@ abstract class MKAudioBase {
 				return;
 			}
 
-			this._add(v, config_?.groupNumList);
+			this._add(v, config_?.groupIdNumList);
 		});
 
 		if (target_?.followRelease) {
@@ -130,7 +130,7 @@ abstract class MKAudioBase {
 					// 删除音频组内的音频单元
 					{
 						this.getGroup(v.type).delAudio(v);
-						v.groupNumList.forEach((v2Num) => {
+						v.groupIdNumList.forEach((v2Num) => {
 							this.getGroup(v2Num).delAudio(v);
 						});
 					}
@@ -170,10 +170,10 @@ abstract class MKAudioBase {
 			}
 
 			// 添加音频
-			this._add(audio, audio.groupNumList);
+			this._add(audio, audio.groupIdNumList);
 		}
 
-		if (audio.stopGroupNum !== null) {
+		if (audio.groupIdNumList.some((vNum) => this.getGroup(vNum).isStop)) {
 			return false;
 		}
 
@@ -212,12 +212,12 @@ abstract class MKAudioBase {
 	/**
 	 * 添加音频单元
 	 * @param audio_ 音频单元
-	 * @param groupNumList_ 音频组
+	 * @param groupIdNumList_ 音频组
 	 * @returns 成功状态
 	 * @internal
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	_add(audio_: MKAudioBase_.PrivateUnit, groupNumList_?: ReadonlyArray<number>): boolean {
+	_add(audio_: MKAudioBase_.PrivateUnit, groupIdNumList_?: ReadonlyArray<number>): boolean {
 		// 参数安检
 		if (!audio_ || audio_.isInit || !audio_.clip) {
 			return false;
@@ -225,7 +225,7 @@ abstract class MKAudioBase {
 
 		/** 包含类型数量 */
 		const numTypesIncludedNum =
-			groupNumList_?.reduce((pre, curr) => {
+			groupIdNumList_?.reduce((pre, curr) => {
 				return pre + (curr < 0 ? 1 : 0);
 			}, 0) ?? 0;
 
@@ -237,7 +237,7 @@ abstract class MKAudioBase {
 		}
 
 		// 添加分组音频
-		[audio_.type].concat(groupNumList_ ?? []).forEach((vNum) => {
+		[audio_.type].concat(groupIdNumList_ ?? []).forEach((vNum) => {
 			/** 组音频列表 */
 			let audioGroup = this._groupMap.get(vNum);
 
@@ -276,7 +276,7 @@ export namespace MKAudioBase_ {
 	/** 安全音频单元 */
 	export interface Unit {
 		/** 分组 */
-		readonly groupNumList: ReadonlyArray<number>;
+		readonly groupIdNumList: ReadonlyArray<number>;
 		/** 播放状态 */
 		readonly state: State;
 		/**
@@ -324,7 +324,7 @@ export namespace MKAudioBase_ {
 		/** 类型 */
 		type?: GlobalConfig.Audio.Type;
 		/** 分组 */
-		groupNumList?: number[];
+		groupIdNumList?: number[];
 		/** 文件夹 */
 		isDir?: T;
 		/** 加载配置 */
@@ -382,13 +382,7 @@ export namespace MKAudioBase_ {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		_event?: MKEventTarget<EventProtocol>;
 		/** 分组 */
-		groupNumList: number[] = [];
-		/**
-		 * 当前停止分组
-		 * @remarks
-		 * 停止时优先级最大的分组
-		 */
-		stopGroupNum: number | null = null;
+		groupIdNumList: number[] = [];
 		/** 播放状态 */
 		state = State.Stop;
 		/**
@@ -502,18 +496,14 @@ export namespace MKAudioBase_ {
 
 	/** 音频组 */
 	export class Group {
-		constructor(init_: MKAudioBase, priorityNum_: number) {
+		constructor(init_: MKAudioBase, idNum_: number) {
 			this._audioManage = init_;
-			this.priorityNum = priorityNum_;
+			this.idNum = idNum_;
 		}
 
 		/* --------------- public --------------- */
-		/**
-		 * 优先级
-		 * @remarks
-		 * 值越小优先级越大
-		 */
-		readonly priorityNum: number;
+		/** 分组 ID */
+		readonly idNum: number;
 		/** 音频列表 */
 		audioUnitList: ReadonlyArray<PrivateUnit> = [];
 
@@ -587,8 +577,6 @@ export namespace MKAudioBase_ {
 					return;
 				}
 
-				// 更新音频停止组
-				this._updateStopGroup(v, false);
 				// 播放音频
 				this._audioManage.play(v);
 			});
@@ -616,13 +604,6 @@ export namespace MKAudioBase_ {
 			if (isStop_) {
 				this.audioUnitList.forEach((v) => {
 					this._audioManage.stop(v);
-					// 更新音频停止组
-					this._updateStopGroup(v, true);
-				});
-			} else {
-				this.audioUnitList.forEach((v) => {
-					// 更新音频停止组
-					this._updateStopGroup(v, false);
 				});
 			}
 		}
@@ -643,7 +624,7 @@ export namespace MKAudioBase_ {
 					// 不能重复添加
 					this.audioUnitList.includes(v) ||
 					// 已存在当前分组
-					v.groupNumList.includes(this.priorityNum)
+					v.groupIdNumList.includes(this.idNum)
 				) {
 					return;
 				}
@@ -651,11 +632,7 @@ export namespace MKAudioBase_ {
 				// 添加到音频列表
 				(this.audioUnitList as PrivateUnit[]).push(v);
 				// 添加到音频分组
-				v.groupNumList.push(this.priorityNum);
-				// 升序排列
-				v.groupNumList.sort((vaNum, vbNum) => vaNum - vbNum);
-				// 更新音频停止组
-				this._updateStopGroup(v, true);
+				v.groupIdNumList.push(this.idNum);
 			});
 		}
 
@@ -681,15 +658,12 @@ export namespace MKAudioBase_ {
 					}
 				}
 
-				// 更新音频停止组
-				this._updateStopGroup(v, false);
-
 				// 删除分组
 				{
-					const indexNum = v.groupNumList.indexOf(this.priorityNum);
+					const indexNum = v.groupIdNumList.indexOf(this.idNum);
 
 					if (indexNum !== -1) {
-						v.groupNumList.splice(indexNum, 1);
+						v.groupIdNumList.splice(indexNum, 1);
 					}
 				}
 			});
@@ -700,42 +674,17 @@ export namespace MKAudioBase_ {
 			const selfAudioUnitList = this.audioUnitList as PrivateUnit[];
 
 			selfAudioUnitList.forEach((v) => {
-				// 更新音频停止组
-				this._updateStopGroup(v, false);
-
 				// 删除分组
 				{
-					const indexNum = v.groupNumList.indexOf(this.priorityNum);
+					const indexNum = v.groupIdNumList.indexOf(this.idNum);
 
 					if (indexNum !== -1) {
-						v.groupNumList.splice(indexNum, 1);
+						v.groupIdNumList.splice(indexNum, 1);
 					}
 				}
 			});
 
 			return selfAudioUnitList.splice(0, selfAudioUnitList.length);
-		}
-
-		/**
-		 * 更新音频停止组
-		 * @param audio_ 音频单元
-		 * @param isAddOrStop_ 添加或停止状态
-		 */
-		private _updateStopGroup(audio_: PrivateUnit, isAddOrStop_: boolean): void {
-			// 添加 | 停止
-			if (isAddOrStop_) {
-				if (this.isStop && (audio_.stopGroupNum === null || this.priorityNum < audio_.stopGroupNum)) {
-					audio_.stopGroupNum = this.priorityNum;
-				}
-			}
-			// 移除 | 播放
-			else {
-				if (audio_.stopGroupNum === this.priorityNum) {
-					const stopGroupNum = audio_.groupNumList.find((vNum) => this._audioManage.getGroup(vNum).isStop);
-
-					audio_.stopGroupNum = stopGroupNum !== undefined ? stopGroupNum : null;
-				}
-			}
 		}
 	}
 

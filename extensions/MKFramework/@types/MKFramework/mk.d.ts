@@ -1,6 +1,7 @@
 //@ts-nocheck
 // 框架源码位于 项目根目录\extensions\MKFramework\assets\MKFramework 下，你也可以在资源管理器下方的 MKFramework 查看
 import GlobalConfig from "../../assets/MKFramework/Config/GlobalConfig";
+
 import { __private } from "cc";
 import { Asset } from "cc";
 import { AssetManager } from "cc";
@@ -175,7 +176,7 @@ declare namespace mk {
 		/** 安全音频单元 */
 		export interface Unit {
 			/** 分组 */
-			readonly groupNumList: ReadonlyArray<number>;
+			readonly groupIdNumList: ReadonlyArray<number>;
 			/** 播放状态 */
 			readonly state: State;
 			/**
@@ -221,7 +222,7 @@ declare namespace mk {
 			/** 类型 */
 			type?: GlobalConfig.Audio.Type;
 			/** 分组 */
-			groupNumList?: number[];
+			groupIdNumList?: number[];
 			/** 文件夹 */
 			isDir?: T;
 			/** 加载配置 */
@@ -252,13 +253,9 @@ declare namespace mk {
 		/* Excluded from this release type: PrivateUnit */
 		/** 音频组 */
 		export class Group {
-			constructor(init_: MKAudioBase, priorityNum_: number);
-			/**
-			 * 优先级
-			 * @remarks
-			 * 值越小优先级越大
-			 */
-			readonly priorityNum: number;
+			constructor(init_: MKAudioBase, idNum_: number);
+			/** 分组 ID */
+			readonly idNum: number;
 			/** 音频列表 */
 			audioUnitList: ReadonlyArray<PrivateUnit>;
 			/** 播放状态 */
@@ -298,12 +295,6 @@ declare namespace mk {
 			delAudio(audio_: Unit | Unit[]): void;
 			/** 清理所有音频 */
 			clear(): Unit[];
-			/**
-			 * 更新音频停止组
-			 * @param audio_ 音频单元
-			 * @param isAddOrStop_ 添加或停止状态
-			 */
-			private _updateStopGroup;
 		}
 		const Unit: Omit<Unit, keyof Function> & (new (init_?: Partial<Unit>) => Omit<Unit, keyof Function>);
 	}
