@@ -320,7 +320,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 			// 清理音频组内的音频单元
 			if (this[nameStr] instanceof MKAudio_.PrivateUnit) {
 				mkAudio.getGroup(this[nameStr].type).delAudio(this[nameStr]);
-				this[nameStr].groupNumList.forEach((v2Num) => {
+				this[nameStr].groupIdNumList.forEach((v2Num) => {
 					mkAudio.getGroup(v2Num).delAudio(this[nameStr]);
 				});
 			}

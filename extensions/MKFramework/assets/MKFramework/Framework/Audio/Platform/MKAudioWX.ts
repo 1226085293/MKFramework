@@ -82,8 +82,8 @@ class MKAudioWX extends MKAudioBase {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	_add(audio_: MKAudioWX_.PrivateUnit, groupNumList_?: number[]): boolean {
-		const isResult = super._add(audio_, groupNumList_);
+	_add(audio_: MKAudioWX_.PrivateUnit, groupIdNumList_?: number[]): boolean {
+		const isResult = super._add(audio_, groupIdNumList_);
 
 		// 初始化完成
 		audio_.isInit = true;
@@ -185,7 +185,7 @@ export namespace MKAudioWX_ {
 			newAudio._volumeNum = this._volumeNum;
 			newAudio._isLoop = this._isLoop;
 			newAudio._isInit = this._isInit;
-			this.groupNumList.forEach((vNum) => {
+			this.groupIdNumList.forEach((vNum) => {
 				MKAudioWX._instance.getGroup(vNum).addAudio(newAudio);
 			});
 
@@ -225,7 +225,7 @@ export namespace MKAudioWX_ {
 				}
 
 				// 更新真实音量
-				this.realVolumeNum = this.groupNumList.reduce(
+				this.realVolumeNum = this.groupIdNumList.reduce(
 					(preNum, currNum) => preNum * MKAudioWX._instance.getGroup(currNum).volumeNum,
 					this._volumeNum
 				);

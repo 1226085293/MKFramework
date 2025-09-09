@@ -94,8 +94,8 @@ class MKAudioCommon extends MKAudioBase {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	_add(audio_: MKAudioCommon_.PrivateUnit, groupNumList_?: number[]): boolean {
-		if (!super._add(audio_, groupNumList_)) {
+	_add(audio_: MKAudioCommon_.PrivateUnit, groupIdNumList_?: number[]): boolean {
+		if (!super._add(audio_, groupIdNumList_)) {
 			return false;
 		}
 
@@ -352,7 +352,7 @@ export namespace MKAudioCommon_ {
 			newAudio._volumeNum = this._volumeNum;
 			newAudio._isLoop = this._isLoop;
 			newAudio._isInit = this._isInit;
-			this.groupNumList.forEach((vNum) => {
+			this.groupIdNumList.forEach((vNum) => {
 				MKAudioCommon._instance.getGroup(vNum).addAudio(newAudio);
 			});
 
@@ -383,7 +383,7 @@ export namespace MKAudioCommon_ {
 			}
 
 			// 更新真实音量
-			this.realVolumeNum = this.groupNumList.reduce(
+			this.realVolumeNum = this.groupIdNumList.reduce(
 				(preNum, currNum) => preNum * MKAudioCommon._instance.getGroup(currNum).volumeNum,
 				this._volumeNum
 			);
