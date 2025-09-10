@@ -175,7 +175,12 @@ class NodeExtends {
 				const vbOrder = vbInfo?._orderNum ?? 0;
 
 				if (vaOrder === vbOrder) {
-					return (vaInfo?._orderTimestampNum ?? 0) - (vbInfo?._orderTimestampNum ?? 0);
+					// 如果其中任一节点数据为空，则保持原本的节点下标
+					if (!vaInfo || !vbInfo) {
+						return va.getSiblingIndex() - vb.getSiblingIndex();
+					}
+
+					return vaInfo._orderTimestampNum - vbInfo._orderTimestampNum;
 				} else {
 					return vaOrder - vbOrder;
 				}
