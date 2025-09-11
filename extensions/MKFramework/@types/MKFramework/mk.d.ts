@@ -1232,14 +1232,14 @@ declare namespace mk {
 		constructor();
 		/** 事件 */
 		event: EventTarget_2<_MKBundle.EventProtocol>;
-		/** 上个场景bundle */
-		preBundleStr?: string;
-		/** 上个场景名 */
-		preSceneStr: string;
 		/** bundle列表 */
 		bundleMap: Map<string, Bundle_.BundleData>;
+		/** 当前场景bundle */
+		get preBundleStr(): string | undefined;
+		/** 当前场景名 */
+		get preSceneStr(): string;
 		/** 切换场景状态 */
-		isSwitchScene: boolean;
+		get isSwitchScene(): boolean;
 		/** 当前场景bundle */
 		get bundleStr(): string;
 		/** 当前场景名 */
@@ -1254,6 +1254,12 @@ declare namespace mk {
 		private _bundleStr;
 		/** 当前场景名 */
 		private _sceneStr;
+		/** 上个场景bundle */
+		private _preBundleStr?;
+		/** 上个场景名 */
+		private _preSceneStr;
+		/** 切换场景状态 */
+		private _isSwitchScene;
 		/**
 		 * 设置 bundle 数据
 		 * @param bundleInfo_ bundle 信息
