@@ -1242,10 +1242,8 @@ declare namespace mk {
 		isSwitchScene: boolean;
 		/** 当前场景bundle */
 		get bundleStr(): string;
-		set bundleStr(valueStr_: string);
 		/** 当前场景名 */
 		get sceneStr(): string;
-		set sceneStr(valueStr_: string);
 		/** 初始化任务 */
 		private _initTask;
 		/** 引擎初始化任务 */

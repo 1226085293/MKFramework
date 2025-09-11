@@ -63,7 +63,7 @@ export class MKBundle extends MKInstanceBase {
 		super();
 
 		if (EDITOR) {
-			this.bundleStr = "main";
+			this._setBundleStr("main");
 			this._engineInitTask.finish(true);
 			this._initTask.finish(true);
 
@@ -89,7 +89,7 @@ export class MKBundle extends MKInstanceBase {
 				// init
 				await this.bundleMap.get("main")?.manage?.init?.();
 				// open
-				this.bundleStr = "main";
+				this._setBundleStr("main");
 				this._sceneStr = scene.name;
 				this._initTask.finish(true);
 			},
@@ -114,17 +114,9 @@ export class MKBundle extends MKInstanceBase {
 		return this._bundleStr;
 	}
 
-	set bundleStr(valueStr_) {
-		this._setBundleStr(valueStr_);
-	}
-
 	/** 当前场景名 */
 	get sceneStr(): string {
 		return this._sceneStr;
-	}
-
-	set sceneStr(valueStr_: string) {
-		this._setSceneStr(valueStr_);
 	}
 
 	/* --------------- private --------------- */
@@ -322,9 +314,9 @@ export class MKBundle extends MKInstanceBase {
 					director.runScene(sceneAsset, config?.beforeLoadCallbackFunc, (error, scene) => {
 						// 更新数据
 						if (!error) {
-							this.bundleStr = bundle.name;
+							this._setBundleStr(bundle.name);
 							this.preSceneStr = this.sceneStr;
-							this.sceneStr = sceneStr_;
+							this._setSceneStr(sceneStr_);
 						} else if (manage) {
 							manage.close();
 						}
