@@ -384,10 +384,9 @@ declare namespace mk {
 			nodePoolTab: Record<string, NodePool>;
 			/** 事件对象 */
 			event?: EventTarget_2<any>;
-			/** 网络对象 */
-			network?: MKNetworkBase;
-			/** 数据获取器 */
+			/** 数据共享器 */
 			data?: MKDataSharer_.Api<any>;
+			/* Excluded from this release type: eventTargetList */
 			/** 释放管理器 */
 			protected _releaseManage: Release;
 			/**

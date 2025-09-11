@@ -1,7 +1,6 @@
 import MKInstanceBase from "../MKInstanceBase";
 import MKLogger, { mkLog } from "../MKLogger";
 import MKEventTarget from "../MKEventTarget";
-import MKNetworkBase from "../Network/MKNetworkBase";
 import { EDITOR, PREVIEW } from "cc/env";
 import MKStatusTask from "../Task/MKStatusTask";
 /** @weak */
@@ -654,12 +653,15 @@ export namespace MKBundle_ {
 		nodePoolTab!: Record<string, NodePool>;
 		/** 事件对象 */
 		event?: MKEventTarget<any>;
-		/** 网络对象 */
-		network?: MKNetworkBase;
-		/** 数据获取器 */
+		/** 数据共享器 */
 		// @weak-start-include-MKDataSharer
 		data?: MKDataSharer_.Api<any>;
 		// @weak-end
+		/**
+		 * 事件对象列表
+		 * @internal
+		 */
+		eventTargetList: { targetOff?(target: any): any }[] = [];
 		/* --------------- protected --------------- */
 		/** 释放管理器 */
 		protected _releaseManage = new MKRelease();
@@ -713,8 +715,9 @@ export namespace MKBundle_ {
 
 			// 清理事件
 			this.event?.clear();
-			// 清理网络事件
-			this.network?.event.clear();
+			this.eventTargetList.splice(0, this.eventTargetList.length).forEach((v) => {
+				v.targetOff?.(this);
+			});
 			// 清理数据
 			// @weak-start-include-MKDataSharer
 			this.data?.reset();
