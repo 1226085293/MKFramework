@@ -100,14 +100,23 @@ export class MKBundle extends MKInstanceBase {
 	/* --------------- public --------------- */
 	/** 事件 */
 	event = new MKEventTarget<_MKBundle.EventProtocol>();
-	/** 上个场景bundle */
-	preBundleStr?: string;
-	/** 上个场景名 */
-	preSceneStr!: string;
 	/** bundle列表 */
 	bundleMap = new Map<string, MKBundle_.BundleData>();
+
+	/** 当前场景bundle */
+	get preBundleStr(): string | undefined {
+		return this._preBundleStr;
+	}
+
+	/** 当前场景名 */
+	get preSceneStr(): string {
+		return this._preSceneStr;
+	}
+
 	/** 切换场景状态 */
-	isSwitchScene = false;
+	get isSwitchScene(): boolean {
+		return this._isSwitchScene;
+	}
 
 	/** 当前场景bundle */
 	get bundleStr(): string {
@@ -130,7 +139,12 @@ export class MKBundle extends MKInstanceBase {
 	private _bundleStr!: string;
 	/** 当前场景名 */
 	private _sceneStr!: string;
-
+	/** 上个场景bundle */
+	private _preBundleStr?: string;
+	/** 上个场景名 */
+	private _preSceneStr!: string;
+	/** 切换场景状态 */
+	private _isSwitchScene = false;
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 设置 bundle 数据
@@ -276,7 +290,7 @@ export class MKBundle extends MKInstanceBase {
 
 		// 加载场景
 		if (!config.isPreload) {
-			this.isSwitchScene = true;
+			this._isSwitchScene = true;
 			// 切换 bundle 事件
 			if (bundle.name !== this._bundleStr) {
 				await this.event.request(this.event.key.beforeBundleSwitch, {
@@ -315,7 +329,7 @@ export class MKBundle extends MKInstanceBase {
 						// 更新数据
 						if (!error) {
 							this._setBundleStr(bundle.name);
-							this.preSceneStr = this.sceneStr;
+							this._preSceneStr = this.sceneStr;
 							this._setSceneStr(sceneStr_);
 						} else if (manage) {
 							manage.close();
@@ -327,7 +341,7 @@ export class MKBundle extends MKInstanceBase {
 					});
 				});
 			}).then((isSuccess) => {
-				this.isSwitchScene = false;
+				this._isSwitchScene = false;
 
 				return isSuccess;
 			});
@@ -461,15 +475,15 @@ export class MKBundle extends MKInstanceBase {
 
 	/* ------------------------------- get/set ------------------------------- */
 	private async _setBundleStr(valueStr_: string): Promise<void> {
-		this.preBundleStr = this._bundleStr;
+		this._preBundleStr = this._bundleStr;
 		this._bundleStr = valueStr_;
 
 		// bundle 切换事件通知
-		if (this._bundleStr !== this.preBundleStr) {
+		if (this._bundleStr !== this._preBundleStr) {
 			// 执行 bundle 生命周期
 			{
 				/** 上个 bundle */
-				const preBundleInfo = this.bundleMap.get(this.preBundleStr);
+				const preBundleInfo = this.bundleMap.get(this._preBundleStr);
 				/** 当前 bundle */
 				const bundleInfo = this.bundleMap.get(this._bundleStr);
 
@@ -483,20 +497,20 @@ export class MKBundle extends MKInstanceBase {
 
 			this.event.emit(this.event.key.afterBundleSwitch, {
 				currBundleStr: this._bundleStr,
-				preBundleStr: this.preBundleStr,
+				preBundleStr: this._preBundleStr,
 			});
 		}
 	}
 
 	private _setSceneStr(valueStr_: string): void {
-		this.preSceneStr = this._sceneStr;
+		this._preSceneStr = this._sceneStr;
 		this._sceneStr = valueStr_;
 
 		// 场景切换事件通知
-		if (this._sceneStr !== this.preSceneStr) {
+		if (this._sceneStr !== this._preSceneStr) {
 			this.event.emit(this.event.key.afterSceneSwitch, {
 				currSceneStr: this._sceneStr,
-				preSceneStr: this.preSceneStr,
+				preSceneStr: this._preSceneStr,
 			});
 		}
 	}
