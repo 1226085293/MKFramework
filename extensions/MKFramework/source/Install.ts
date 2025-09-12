@@ -5,17 +5,6 @@ import cjson from "cjson";
 import prettier from "prettier";
 import axios from "axios";
 import glob from "fast-glob";
-
-// 修改模块让其正常加载
-[path.join(__dirname, "../node_modules/isomorphic-git/index"), path.join(__dirname, "../node_modules/isomorphic-git/http/node/index")].forEach(
-	(p) => {
-		if (fs.existsSync(p + ".js") && fs.existsSync(p + ".cjs")) {
-			fs.renameSync(p + ".js", p + ".temp");
-			fs.renameSync(p + ".cjs", p + ".js");
-		}
-	}
-);
-
 import isomorphicGit from "isomorphic-git";
 import http from "isomorphic-git/http/node";
 

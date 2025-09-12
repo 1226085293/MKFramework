@@ -2,7 +2,7 @@
 "use strict";
 module.exports = {
 	名字: "MKFramework",
-	说明: "3.x 游戏开发框架",
+	说明: "MK 游戏框架，官网：https://mkframework.muzzik.cc",
 	安装框架: "安装框架",
 	本地版本: "本地版本",
 	构建dts: "构建 d.ts",
@@ -10,7 +10,7 @@ module.exports = {
 	确认安装: "确定覆盖旧框架进行安装？",
 	确认: "确认",
 	取消: "取消",
-	帮助内容: ["示例项目(github)：https://github.com/1226085293/MKFramework", "示例项目(gitee)：https://gitee.com/muzzik/MKFramework", "QQ 交流群：348096019", "微信：_muzzik"].join("\n"),
+	帮助内容: ["展开查看更多：官网：https://mkframework.muzzik.cc", "示例项目(github)：https://github.com/1226085293/MKFramework", "示例项目(gitee)：https://gitee.com/muzzik/MKFramework", "QQ 交流群：348096019", "微信：_muzzik"].join("\n"),
 	安全检查: "安全检查",
 	获取版本: "获取版本",
 	下载框架: "下载框架",
