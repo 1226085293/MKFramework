@@ -10,6 +10,13 @@ const cjson_1 = __importDefault(require("cjson"));
 const prettier_1 = __importDefault(require("prettier"));
 const axios_1 = __importDefault(require("axios"));
 const fast_glob_1 = __importDefault(require("fast-glob"));
+// 修改模块让其正常加载
+[path_1.default.join(__dirname, "../node_modules/isomorphic-git/index"), path_1.default.join(__dirname, "../node_modules/isomorphic-git/http/node/index")].forEach((p) => {
+    if (fs_extra_1.default.existsSync(p + ".js") && fs_extra_1.default.existsSync(p + ".cjs")) {
+        fs_extra_1.default.renameSync(p + ".js", p + "-old.js");
+        fs_extra_1.default.copyFileSync(p + ".cjs", p + ".js");
+    }
+});
 const isomorphic_git_1 = __importDefault(require("isomorphic-git"));
 const node_1 = __importDefault(require("isomorphic-git/http/node"));
 async function install(versionStr_) {
