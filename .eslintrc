@@ -142,7 +142,7 @@
 				"leadingUnderscore": "require",
 				"filter": {
 					"match": true,
-					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)]"
+					"regex": "[^(onLoad)(onEnable)(onDisable)(onDestroy)(targetOff)(displayName)(update)(create)(open)(lateClose)]"
 				}
 			},
 			// public 成员 _camelCase
