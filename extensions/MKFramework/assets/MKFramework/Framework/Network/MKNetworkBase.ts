@@ -64,11 +64,13 @@ namespace _MKNetworkBase {
 				if (messageId !== undefined) {
 					// 录入事件对象
 					target_?.eventTargetList?.push(this);
+
 					return super.on(messageId, callback_, target_, isOnce_);
 				}
 			} else {
 				// 录入事件对象
 				target_?.eventTargetList?.push(this);
+
 				return super.on(type_, callback_, target_, isOnce_);
 			}
 
@@ -361,6 +363,7 @@ abstract class MKNetworkBase<CT extends MKCodecBase = MKCodecBase> extends MKIns
 	 * @returns
 	 * @internal
 	 */
+	// eslint-disable-next-line @typescript-eslint/naming-convention
 	_triggerWaitTask(data_: any): void {
 		/** 消息 id */
 		const messageId = this.config.parseMessageIdFunc(data_);

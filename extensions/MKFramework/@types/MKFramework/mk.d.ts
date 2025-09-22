@@ -999,14 +999,14 @@ declare namespace mk {
 		 * 只限模块打印
 		 * @param moduleStrList_ 模块名列表
 		 * @remarks
-		 * 调用时会覆盖 {@link MKLogger.limit} 的规则
+		 * 调用时会覆盖 {@link Logger.limit} 的规则
 		 */
 		static only(moduleStrList_: string[]): void;
 		/**
 		 * 限制模块打印
 		 * @param moduleStrList_ 模块名列表
 		 * @remarks
-		 * 调用时会覆盖 {@link MKLogger.only} 的规则
+		 * 调用时会覆盖 {@link Logger.only} 的规则
 		 */
 		static limit(moduleStrList_: string[]): void;
 		/**

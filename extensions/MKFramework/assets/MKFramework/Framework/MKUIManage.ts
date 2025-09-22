@@ -878,4 +878,5 @@ export namespace MKUIManage_ {
 }
 
 const mkUIManage = MKUIManage.instance();
+
 export default mkUIManage;

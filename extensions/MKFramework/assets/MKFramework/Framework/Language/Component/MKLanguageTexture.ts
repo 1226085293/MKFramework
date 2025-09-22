@@ -105,6 +105,7 @@ class MKLanguageTexture extends MKLanguageBase {
 			// 释放上个纹理资源
 			this._previousSpriteFrame?.decRef();
 			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, null);
+
 			this._previousSpriteFrame = asset;
 
 			if (!asset?.uuid) {
@@ -131,6 +132,7 @@ class MKLanguageTexture extends MKLanguageBase {
 				// 释放上个纹理资源
 				this._previousSpriteFrame?.decRef();
 				const asset = await mkAsset.get(pathStr, SpriteFrame, null);
+
 				this._previousSpriteFrame = this._sprite.spriteFrame = asset;
 
 				if (!asset) {
