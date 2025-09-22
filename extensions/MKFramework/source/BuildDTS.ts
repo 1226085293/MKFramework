@@ -72,7 +72,7 @@ export default async function buildDTS(): Promise<void> {
 	// 禁止错误检查
 	dtsFile = "//@ts-nocheck\n" + dtsFile;
 	// @link 链接处理
-	dtsFile = dtsFile.replace(/@link mk_/g, "@link ");
+	dtsFile = dtsFile.replace(/@link MK/g, "@link ");
 
 	// 格式化
 	{
