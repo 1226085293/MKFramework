@@ -45,19 +45,22 @@ class MKLogger extends MKInstanceBase {
 			this.debug =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Debug
 					? this._logFuncTab[MKLogger._config.logObjectType].debug
-					: (...argsList_: any[]) => {};
+					: (...argsList_: any[]) => null;
+
 			this.log =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Log
 					? this._logFuncTab[MKLogger._config.logObjectType].log
-					: (...argsList_: any[]) => {};
+					: (...argsList_: any[]) => null;
+
 			this.warn =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Warn
 					? this._logFuncTab[MKLogger._config.logObjectType].warn
-					: (...argsList_: any[]) => {};
+					: (...argsList_: any[]) => null;
+
 			this.error =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Error
 					? this._logFuncTab[MKLogger._config.logObjectType].error
-					: (...argsList_: any[]) => {};
+					: (...argsList_: any[]) => null;
 		}
 
 		// 错误监听

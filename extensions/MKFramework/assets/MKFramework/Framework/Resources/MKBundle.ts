@@ -718,6 +718,7 @@ export namespace MKBundle_ {
 			this.eventTargetList.splice(0, this.eventTargetList.length).forEach((v) => {
 				v.targetOff?.(this);
 			});
+
 			// 清理数据
 			// @weak-start-include-MKDataSharer
 			this.data?.reset();
