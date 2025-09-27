@@ -138,7 +138,7 @@ class MKLanguageNode extends Component {
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 更新节点展示 */
 	private _updateView(): void {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			this.nodeList.forEach((v) => {
 				v.node.active = v.language === this.language;
 			});

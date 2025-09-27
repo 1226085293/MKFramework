@@ -62,14 +62,14 @@ class MKLanguageLabel extends MKLanguageBase {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
 		super.onEnable();
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			mkLanguageManage.event.on(mkLanguageManage.event.key.labelDataChange, this._onLabelDataChange, this)?.call(this);
 		}
 	}
 
 	protected onDisable(): void {
 		super.onDisable();
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			mkLanguageManage.event.targetOff(this);
 		}
 	}
@@ -79,7 +79,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	protected _resetData(): void {
 		// 更新类型数据
 		this._data = mkLanguageManage.labelDataTab[this._typeStr];
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 更新标记枚举
 			this._markEnum = mkToolEnum.objToEnum(this._data);
 			// 默认标记
@@ -114,7 +114,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	}
 
 	protected _setTypeStr(valueStr_: string): void {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			const typeStr = mkToolString.fuzzyMatch(MKLanguageLabel._typeStrList, valueStr_);
 			const typeNum = MKLanguageLabel._typeEnum[typeStr ?? ""];
 
@@ -137,7 +137,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 		// 初始化类型
 		if (!this._typeStr) {
-			if (!EDITOR) {
+			if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 				this._log.error("当前节点缺少多语言类型", this.node[" INFO "]);
 				this._typeStr = MKLanguageLabel._typeStrList[0];
 			}
@@ -161,7 +161,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 					this._typeStr = mkLanguageManage.labelDataTab[js.getClassName(userComp)]
 						? js.getClassName(userComp)
-						: MKLanguageLabel._typeStrList[0] ?? "";
+						: (MKLanguageLabel._typeStrList[0] ?? "");
 				})();
 			}
 		}
@@ -184,7 +184,7 @@ class MKLanguageLabel extends MKLanguageBase {
 		// 注册类型
 		MKLanguageLabel._typeEnum = mkToolEnum.objToEnum(mkLanguageManage.labelDataTab);
 
-		if (!EDITOR) {
+		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 			return;
 		}
 
@@ -196,7 +196,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 	/** 更新编辑器 */
 	private _updateEditor(): void {
-		if (!EDITOR) {
+		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 			return;
 		}
 

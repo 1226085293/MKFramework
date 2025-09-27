@@ -36,7 +36,7 @@ class MKLogger extends MKInstanceBase {
 		this._nameStr = nameStr_;
 		MKLogger._logMap.set(nameStr_, this);
 
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return;
 		}
 

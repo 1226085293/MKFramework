@@ -61,7 +61,7 @@ export class MKBundle extends MKInstanceBase {
 	constructor() {
 		super();
 
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			this._setBundleStr("main");
 			this._engineInitTask.finish(true);
 			this._initTask.finish(true);
@@ -614,7 +614,7 @@ export namespace MKBundle_ {
 		constructor() {
 			// 添加至 bundle 数据
 			setTimeout(async () => {
-				if (EDITOR && this.nameStr === MKBundle.instance().bundleStr) {
+				if (EDITOR && !window["cc"].GAME_VIEW && this.nameStr === MKBundle.instance().bundleStr) {
 					await this.init?.();
 					this.open();
 				}
@@ -625,7 +625,7 @@ export namespace MKBundle_ {
 				} as any);
 			}, 0);
 
-			if (EDITOR) {
+			if (EDITOR && !window["cc"].GAME_VIEW) {
 				return;
 			}
 
@@ -674,7 +674,7 @@ export namespace MKBundle_ {
 		init?(): void | Promise<void> {
 			if (
 				// 编辑器模式下只能运行 main bundle 的生命周期
-				(EDITOR && this.nameStr !== "main") ||
+				(EDITOR && !window["cc"].GAME_VIEW && this.nameStr !== "main") ||
 				// bundle 已经加载
 				this.isValid
 			) {
@@ -691,7 +691,7 @@ export namespace MKBundle_ {
 		 */
 		open(): void | Promise<void> {
 			// 编辑器模式下只能运行 main bundle 的生命周期
-			if (EDITOR && this.nameStr !== "main") {
+			if (EDITOR && !window["cc"].GAME_VIEW && this.nameStr !== "main") {
 				throw "中断";
 			}
 		}

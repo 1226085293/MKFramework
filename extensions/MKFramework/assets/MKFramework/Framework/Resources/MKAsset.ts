@@ -66,7 +66,7 @@ export class MKAsset extends MKInstanceBase {
 	constructor() {
 		super();
 
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return;
 		}
 
@@ -169,7 +169,7 @@ export class MKAsset extends MKInstanceBase {
 				pathStr_ = pathStr_.slice(12);
 
 				// 裁剪 pathStr_, 补齐 bundle 名
-				if (!EDITOR && pathStr_.includes("/")) {
+				if (!(EDITOR && !window["cc"].GAME_VIEW) && pathStr_.includes("/")) {
 					const dirStr = pathStr_.slice(0, pathStr_.indexOf("/"));
 
 					pathStr_ = pathStr_.slice(dirStr.length + 1);
@@ -178,7 +178,7 @@ export class MKAsset extends MKInstanceBase {
 			}
 
 			// 删除路径后缀
-			if (!EDITOR && !isRemote) {
+			if (!(EDITOR && !window["cc"].GAME_VIEW) && !isRemote) {
 				const indexNum = pathStr_.lastIndexOf(".");
 
 				if (indexNum !== -1) {
@@ -199,7 +199,7 @@ export class MKAsset extends MKInstanceBase {
 		}
 
 		// 填充 bundle 名
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			getConfig.bundleStr = getConfig.bundleStr || "resources";
 		} else {
 			getConfig.bundleStr = getConfig.bundleStr || (mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
@@ -218,7 +218,7 @@ export class MKAsset extends MKInstanceBase {
 					this._log.debug(`get ${pathStr_} 完成`);
 				}
 
-				if (EDITOR) {
+				if (EDITOR && !window["cc"].GAME_VIEW) {
 					getConfig.completedFunc?.(error, asset);
 					resolveFunc(asset);
 
@@ -262,7 +262,7 @@ export class MKAsset extends MKInstanceBase {
 				);
 			}
 			// 编辑器
-			else if (EDITOR) {
+			else if (EDITOR && !window["cc"].GAME_VIEW) {
 				/** 资源配置 */
 				let assetConfig: _MKAsset.LoadAnyRequestType;
 
@@ -368,7 +368,7 @@ export class MKAsset extends MKInstanceBase {
 				pathStr_ = pathStr_.slice(12);
 
 				// 裁剪 pathStr_, 补齐 bundle 名
-				if (!EDITOR) {
+				if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 					const dirStr = pathStr_.slice(0, pathStr_.indexOf("/"));
 
 					pathStr_ = pathStr_.slice(dirStr.length + 1);
@@ -418,7 +418,7 @@ export class MKAsset extends MKInstanceBase {
 			};
 
 			// 编辑器
-			if (EDITOR) {
+			if (EDITOR && !window["cc"].GAME_VIEW) {
 				this._log.error("不支持获取编辑器文件夹资源");
 				getConfig.completedFunc?.([new Error("不支持获取编辑器文件夹资源")], null!);
 				resolveFunc(null);

@@ -151,7 +151,7 @@ class MKAudioCommon extends MKAudioBase {
 
 	/** 构造 */
 	private async _constructor(): Promise<void> {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return;
 		}
 

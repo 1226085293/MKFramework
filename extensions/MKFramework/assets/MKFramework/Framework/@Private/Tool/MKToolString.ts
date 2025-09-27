@@ -11,7 +11,7 @@ class MKToolString extends MKInstanceBase {
 	 * 编辑距离算法
 	 */
 	similarityEditDist(vStr_: string, v2Str_: string): number {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			const vLenNum = vStr_.length;
 			const v2LenNum = v2Str_.length;
 
@@ -75,7 +75,7 @@ class MKToolString extends MKInstanceBase {
 	 * 多个源字符串时返回相似度最高的字符串
 	 */
 	fuzzyMatch(args_: string | string[], keyStr_: string, minSimileNum_ = 0): string | null {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			if (!keyStr_) {
 				return null;
 			}

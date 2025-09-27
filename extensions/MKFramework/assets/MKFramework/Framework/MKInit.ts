@@ -1,12 +1,11 @@
 import * as mk from "./MKExport";
 import GlobalConfig from "../Config/GlobalConfig";
-import { DEBUG, EDITOR } from "cc/env";
+import { EDITOR, DEBUG } from "cc/env";
 import globalEvent from "../Config/GlobalEvent";
-import * as env from "cc/env";
 import { Director, director, profiler, screen, Size, view } from "cc";
 
 // 初始化逻辑
-if (!EDITOR) {
+if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 	// 保存初始设计分辨率
 	director.once(Director.EVENT_BEFORE_SCENE_LAUNCH, () => {
 		(GlobalConfig.View.originalDesignSize as Size).set(view.getDesignResolutionSize());
@@ -25,11 +24,6 @@ if (!EDITOR) {
 	screen.on("window-resize", () => {
 		globalEvent.emit(globalEvent.key.resize);
 	});
-} else {
-	// 编辑器预览模式
-	if (window["cc"].GAME_VIEW) {
-		(env as any).EDITOR = false;
-	}
 }
 
 // 注册到全局

@@ -246,7 +246,7 @@ export class MKViewBase extends MKLifeCycle {
 				}
 
 				// 更新编辑器
-				if (EDITOR) {
+				if (EDITOR && !window["cc"].GAME_VIEW) {
 					CCClass.Attr.setClassAttr(
 						_MKViewBase.AnimationConfig,
 						"openAnimationNum",
@@ -265,7 +265,7 @@ export class MKViewBase extends MKLifeCycle {
 				}
 
 				// 更新编辑器
-				if (EDITOR) {
+				if (EDITOR && !window["cc"].GAME_VIEW) {
 					CCClass.Attr.setClassAttr(
 						_MKViewBase.AnimationConfig,
 						"closeAnimationNum",
@@ -279,7 +279,7 @@ export class MKViewBase extends MKLifeCycle {
 
 	/* ------------------------------- get/set ------------------------------- */
 	private _getIsAutoMask(): boolean {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			if (!this.node.children.length) {
 				return false;
 			}
@@ -291,7 +291,7 @@ export class MKViewBase extends MKLifeCycle {
 	}
 
 	private async _setIsAutoMask(value_: boolean): Promise<void> {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 添加遮罩
 			if (value_) {
 				if (!GlobalConfig.View.maskDataTab.prefabPathStr) {
@@ -324,7 +324,7 @@ export class MKViewBase extends MKLifeCycle {
 	}
 
 	private _setIsAutoWidget(value_: boolean): void {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			if (value_) {
 				const widget = this.addComponent(Widget)!;
 
@@ -337,7 +337,7 @@ export class MKViewBase extends MKLifeCycle {
 	}
 
 	private _setIsAutoBlockInput(value_: boolean): void {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			if (value_) {
 				this.addComponent(BlockInputEvents);
 			} else {
