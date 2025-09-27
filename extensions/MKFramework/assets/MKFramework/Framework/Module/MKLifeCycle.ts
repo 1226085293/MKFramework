@@ -87,7 +87,7 @@ export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseOb
 	constructor(...argsList: any[]) {
 		// @ts-ignore
 		super(...argsList);
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return;
 		}
 

@@ -91,7 +91,7 @@ class MKLayer extends Component {
 		}
 
 		// 更新编辑器
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 层类型
 			CCClass.Attr.setClassAttr(MKLayer, "layerTypeNum", "enumList", Enum.getList(Enum(GlobalConfig.View.LayerType)));
 		}
@@ -99,7 +99,7 @@ class MKLayer extends Component {
 
 	/** 更新渲染顺序 */
 	private _updateLayer(): void {
-		if (EDITOR || !this._isUseLayer || !this.node.parent) {
+		if ((EDITOR && !window["cc"].GAME_VIEW) || !this._isUseLayer || !this.node.parent) {
 			return;
 		}
 

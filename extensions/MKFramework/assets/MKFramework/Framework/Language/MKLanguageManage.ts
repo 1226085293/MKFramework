@@ -112,7 +112,7 @@ export class MKLanguageManage extends MKInstanceBase {
 			return null;
 		}
 
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, target_);
 
 			if (asset) {

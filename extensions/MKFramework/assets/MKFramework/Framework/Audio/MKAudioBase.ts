@@ -59,7 +59,7 @@ abstract class MKAudioBase {
 		target_: MKRelease_.TypeFollowReleaseObject,
 		config_?: MKAudioBase_.AddConfig<T2>
 	): Promise<T2 extends true ? (MKAudioBase_.Unit | null)[] : T extends string ? MKAudioBase_.Unit | null : (MKAudioBase_.Unit | null)[]> {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return null!;
 		}
 

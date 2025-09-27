@@ -1,7 +1,7 @@
 import { EDITOR } from "cc/env";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import globalEvent from "../../../Config/GlobalEvent";
-import { _decorator, Component, director, Canvas, view, ResolutionPolicy, Director, screen } from "cc";
+import { _decorator, Component, director, Canvas, view, ResolutionPolicy, Director, screen, game, Game } from "cc";
 
 const { ccclass, disallowMultiple } = _decorator;
 
@@ -59,12 +59,20 @@ export default class MKAdaptationCanvas extends Component {
 }
 
 // 自动添加至场景节点
-if (!EDITOR && GlobalConfig.View.adaptationType !== GlobalConfig.View.AdaptationMode.None) {
-	director.on(Director.EVENT_AFTER_SCENE_LAUNCH, () => {
+if (!(EDITOR && !window["cc"].GAME_VIEW) && GlobalConfig.View.adaptationType !== GlobalConfig.View.AdaptationMode.None) {
+	let addToSceneNodeFunc = () => {
 		const canvasNode = director.getScene()?.getComponentInChildren(Canvas)?.node;
 
 		if (canvasNode && !canvasNode.getComponent(MKAdaptationCanvas)) {
 			canvasNode.addComponent(MKAdaptationCanvas);
 		}
+	};
+
+	// 防止编辑器预览报错，编辑器预览会触发两次 EVENT_AFTER_SCENE_LAUNCH 导致首次调用 setDesignResolutionSize 引擎内部报错
+	director.once(Director.EVENT_AFTER_SCENE_LAUNCH, () => {
+		setTimeout(() => {
+			addToSceneNodeFunc();
+			director.on(Director.EVENT_AFTER_SCENE_LAUNCH, addToSceneNodeFunc);
+		}, game.frameTime);
 	});
 }

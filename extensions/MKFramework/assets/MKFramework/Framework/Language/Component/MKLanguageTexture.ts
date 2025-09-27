@@ -45,14 +45,14 @@ class MKLanguageTexture extends MKLanguageBase {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
 		super.onEnable();
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			language.event.on(language.event.key.textureDataChange, this._onTextureDataChange, this)?.call(this);
 		}
 	}
 
 	protected onDisable(): void {
 		super.onDisable();
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			language.event.targetOff(this);
 		}
 	}
@@ -67,7 +67,7 @@ class MKLanguageTexture extends MKLanguageBase {
 	protected _resetData(): void {
 		// 更新类型数据
 		this._data = language.textureDataTab[this._typeStr];
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 更新标记枚举
 			this._markEnum = mkToolEnum.objToEnum(this._data);
 			// 默认标记
@@ -78,7 +78,7 @@ class MKLanguageTexture extends MKLanguageBase {
 		this._updateContent();
 
 		// 更新编辑器
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			if (Object.keys(MKLanguageTexture._typeEnum).length) {
 				CCClass.Attr.setClassAttr(MKLanguageTexture, "type", "enumList", Enum.getList(Enum(MKLanguageTexture._typeEnum)));
 			}
@@ -101,7 +101,7 @@ class MKLanguageTexture extends MKLanguageBase {
 			return;
 		}
 
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 释放上个纹理资源
 			this._previousSpriteFrame?.decRef();
 			const asset = await mkAsset.get(pathStr + ".png", ImageAsset, null);
@@ -152,7 +152,7 @@ class MKLanguageTexture extends MKLanguageBase {
 	}
 
 	protected _setTypeStr(valueStr_: string): void {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			const typeStr = mkToolString.fuzzyMatch(MKLanguageTexture._typeStrList, valueStr_);
 			const typeNum = MKLanguageTexture._typeEnum[typeStr ?? ""];
 
@@ -179,7 +179,7 @@ class MKLanguageTexture extends MKLanguageBase {
 	private _initComponent(): void {
 		/** 注册类型 */
 		MKLanguageTexture._typeEnum = mkToolEnum.objToEnum(language.textureDataTab);
-		if (!EDITOR) {
+		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 			return;
 		}
 

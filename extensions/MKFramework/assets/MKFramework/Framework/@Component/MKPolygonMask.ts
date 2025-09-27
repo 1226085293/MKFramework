@@ -153,7 +153,7 @@ export class MKPolygonMask extends Component {
 
 		// 更新视图
 		{
-			if (EDITOR) {
+			if (EDITOR && !window["cc"].GAME_VIEW) {
 				// 初始化遮罩
 				if (this.mask) {
 					this.mask.type = Mask.Type.GRAPHICS_STENCIL;
@@ -194,7 +194,7 @@ export class MKPolygonMask extends Component {
 	}
 
 	protected onEnable(): void {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return;
 		}
 
@@ -251,7 +251,7 @@ export class MKPolygonMask extends Component {
 		}
 
 		// 编辑器更新初始坐标
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			this._trackNodeStartPosV3 = !this._trackNode ? v3() : this._trackNode.worldPosition.clone();
 		}
 		// 更新遮罩坐标
@@ -302,7 +302,7 @@ export class MKPolygonMask extends Component {
 	private _updateMask(): void {
 		if (
 			// 编辑器且节点隐藏
-			(EDITOR && !this.node.active) ||
+			(EDITOR && !window["cc"].GAME_VIEW && !this.node.active) ||
 			// 遮罩类型不一致
 			this.mask?.type !== Mask.Type.GRAPHICS_STENCIL ||
 			// 依赖数据不存在
@@ -333,7 +333,7 @@ export class MKPolygonMask extends Component {
 
 	/** 更新调试绘制 */
 	private _updateGraphics(): void {
-		if (EDITOR || !this._isDebug || !this._graphics || !this._currentPolygonLocalPointV2List) {
+		if ((EDITOR && !window["cc"].GAME_VIEW) || !this._isDebug || !this._graphics || !this._currentPolygonLocalPointV2List) {
 			return;
 		}
 
@@ -378,7 +378,7 @@ export class MKPolygonMask extends Component {
 	private _setIsDebug(value_: boolean): void {
 		this._isDebug = value_;
 
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			return;
 		}
 

@@ -69,7 +69,7 @@ class MKSceneDrive extends MKLifeCycle {
 }
 
 // 自动添加至场景节点
-if (!EDITOR) {
+if (!(EDITOR && !window["cc"].GAME_VIEW)) {
 	director.on(
 		Director.EVENT_AFTER_SCENE_LAUNCH,
 		() => {

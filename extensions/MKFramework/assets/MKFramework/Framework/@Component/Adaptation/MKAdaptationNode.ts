@@ -192,7 +192,7 @@ export default class MKAdaptationNode extends Component {
 	private _isEditorPreview = false;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	onLoad() {
-		if (EDITOR) {
+		if (EDITOR && !window["cc"].GAME_VIEW) {
 			if (this.originalSize.equals(size())) {
 				this.originalSize = this.node.getComponent(UITransform)!.contentSize.clone();
 			}
@@ -346,7 +346,7 @@ export default class MKAdaptationNode extends Component {
 
 	/** 更新适配 */
 	updateAdaptation(): void {
-		if (EDITOR && !this.isEditorPreview) {
+		if (EDITOR && !window["cc"].GAME_VIEW && !this.isEditorPreview) {
 			return;
 		}
 
