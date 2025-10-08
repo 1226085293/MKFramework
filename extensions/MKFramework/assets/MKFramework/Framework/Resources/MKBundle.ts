@@ -11,14 +11,21 @@ import { game, Game, director, Director, Scene, AssetManager, assetManager, js, 
 
 namespace _MKBundle {
 	export interface EventProtocol {
-		/** bundle 切换前事件 */
+		/** bundle 准备切换事件（准备从此 Bundle 场景切换到其他 Bundle 场景，先于 loadBundle 触发） */
+		bundleReadySwitch(event: {
+			/** 当前 bundle  */
+			currBundleStr: string;
+			/** 下个 bundle  */
+			nextBundleStr: string;
+		});
+		/** bundle 切换前事件（从此 Bundle 场景切换到其他 Bundle 场景前） */
 		beforeBundleSwitch(event: {
 			/** 当前 bundle  */
 			currBundleStr: string;
 			/** 下个 bundle  */
 			nextBundleStr: string;
 		}): void;
-		/** bundle 切换后事件 */
+		/** bundle 切换后事件（从此 Bundle 场景切换到其他 Bundle 场景后） */
 		afterBundleSwitch(event: {
 			/** 当前 bundle  */
 			currBundleStr: string;
@@ -236,12 +243,20 @@ export class MKBundle extends MKInstanceBase {
 		await this._initTask.task;
 
 		const config = new MKBundle_.SwitchSceneConfig(config_);
-
 		const bundleInfo =
 			this.bundleMap.get(config.bundleStr) ??
 			new MKBundle_.BundleInfo({
 				bundleStr: config.bundleStr,
 			});
+
+		if (config.bundleStr !== this._bundleStr && !config.isPreload) {
+			await Promise.all(
+				this.event.request(this.event.key.bundleReadySwitch, {
+					currBundleStr: this._bundleStr,
+					nextBundleStr: config.bundleStr,
+				})
+			);
+		}
 
 		const bundle = await this.load(bundleInfo);
 
@@ -286,10 +301,12 @@ export class MKBundle extends MKInstanceBase {
 			this._isSwitchScene = true;
 			// 切换 bundle 事件
 			if (bundle.name !== this._bundleStr) {
-				await this.event.request(this.event.key.beforeBundleSwitch, {
-					currBundleStr: this._bundleStr,
-					nextBundleStr: config.bundleStr,
-				});
+				await Promise.all(
+					this.event.request(this.event.key.beforeBundleSwitch, {
+						currBundleStr: this._bundleStr,
+						nextBundleStr: config.bundleStr,
+					})
+				);
 			}
 
 			// 切换场景事件
@@ -359,12 +376,6 @@ export class MKBundle extends MKInstanceBase {
 
 		if (!bundleInfo_.versionStr) {
 			this._log.error("不存在版本号");
-
-			return null;
-		}
-
-		if (this.bundleStr === bundleInfo_.bundleStr) {
-			this._log.error("不能在重载 bundle 的场景内进行重载");
 
 			return null;
 		}
@@ -440,10 +451,10 @@ export class MKBundle extends MKInstanceBase {
 				});
 		}
 
-		// 清理 bundle 资源
-		{
+		let afterUpdateFunc = () => {
 			const bundle = assetManager.getBundle(bundleInfo_.bundleStr);
 
+			// 清理 bundle 资源
 			if (bundle) {
 				if (bundleInfo_.bundleStr !== "main") {
 					bundle.releaseAll();
@@ -451,19 +462,36 @@ export class MKBundle extends MKInstanceBase {
 
 				assetManager.removeBundle(bundle);
 			}
-		}
 
-		// 更新版本号
-		{
-			if (!assetManager.downloader.bundleVers) {
-				assetManager.downloader.bundleVers = {};
+			// 更新版本号
+			{
+				if (!assetManager.downloader.bundleVers) {
+					assetManager.downloader.bundleVers = {};
+				}
+
+				assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
 			}
+		};
 
-			assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
+		if (this.bundleStr === bundleInfo_.bundleStr) {
+			this.event.once(
+				this.event.key.bundleReadySwitch,
+				() => {
+					// 清理资源引用
+					director.getScene()!.destroyAllChildren();
+					director.getScene()!.removeAllChildren();
+
+					// 清理资源
+					afterUpdateFunc();
+				},
+				this
+			);
+
+			return null;
+		} else {
+			// 加载 bundle
+			return this.load(bundleInfo_);
 		}
-
-		// 加载 bundle
-		return this.load(bundleInfo_);
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
