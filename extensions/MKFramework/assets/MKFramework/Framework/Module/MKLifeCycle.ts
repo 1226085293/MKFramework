@@ -7,7 +7,7 @@ import MKStatusTask from "../Task/MKStatusTask";
 import MKLayer from "./MKLayer";
 /** @weak */
 import { mkAudio, MKAudio_ } from "../Audio/MKAudioExport";
-import MKRelease, { MKRelease_ } from "../MKRelease";
+import MKRelease, { MKRelease_ } from "../Resources/MKRelease";
 import { MKAsset_ } from "../Resources/MKAsset";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { _decorator, js, CCClass, isValid, Node } from "cc";

@@ -6,7 +6,7 @@ import MKStatusTask from "../Task/MKStatusTask";
 /** @weak */
 import type { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
-import MKRelease, { MKRelease_ } from "../MKRelease";
+import MKRelease, { MKRelease_ } from "./MKRelease";
 import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, NodePool } from "cc";
 
 namespace _MKBundle {

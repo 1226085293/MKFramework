@@ -1,5 +1,5 @@
 import { Asset, Node } from "cc";
-import { mkLog } from "./MKLogger";
+import { mkLog } from "../MKLogger";
 
 /**
  * 对象释放器

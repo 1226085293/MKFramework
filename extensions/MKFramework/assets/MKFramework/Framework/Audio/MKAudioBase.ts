@@ -4,7 +4,7 @@ import MKEventTarget from "../MKEventTarget";
 import MKLogger from "../MKLogger";
 import globalEvent from "../../Config/GlobalEvent";
 import GlobalConfig from "../../Config/GlobalConfig";
-import MKRelease, { MKRelease_ } from "../MKRelease";
+import MKRelease, { MKRelease_ } from "../Resources/MKRelease";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, AudioClip, AudioSource, Enum } from "cc";
 import mkToolObject from "../@Private/Tool/MKToolObject";

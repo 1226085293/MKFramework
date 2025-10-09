@@ -5,7 +5,7 @@ import MKLogger from "../MKLogger";
 import mkBundle from "./MKBundle";
 import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
-import { MKRelease_ } from "../MKRelease";
+import { MKRelease_ } from "./MKRelease";
 import { Asset, Constructor, DynamicAtlasManager, SpriteFrame, Texture2D, assetManager } from "cc";
 
 namespace _MKAsset {

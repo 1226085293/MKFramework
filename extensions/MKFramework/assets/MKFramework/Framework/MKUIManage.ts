@@ -5,7 +5,7 @@ import MKViewBase from "./Module/MKViewBase";
 import MKObjectPool from "./MKObjectPool";
 import MKAsset, { MKAsset_ } from "./Resources/MKAsset";
 import MKStatusTask from "./Task/MKStatusTask";
-import { MKRelease_ } from "./MKRelease";
+import { MKRelease_ } from "./Resources/MKRelease";
 import MKEventTarget from "./MKEventTarget";
 import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node } from "cc";
 import mkToolObject from "./@Private/Tool/MKToolObject";
