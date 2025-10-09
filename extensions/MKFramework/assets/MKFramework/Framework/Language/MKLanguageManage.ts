@@ -4,7 +4,7 @@ import MKEventTarget from "../MKEventTarget";
 import MKInstanceBase from "../MKInstanceBase";
 import MKLogger from "../MKLogger";
 import mkAsset, { MKAsset_ } from "../Resources/MKAsset";
-import { SpriteFrame, ImageAsset } from "cc";
+import { SpriteFrame, ImageAsset, sys } from "cc";
 
 namespace _MKLanguageManage {
 	/** 多语言类型类型 */
@@ -43,7 +43,7 @@ export class MKLanguageManage extends MKInstanceBase {
 
 	/** 当前语言类型 */
 	get typeStr(): keyof typeof GlobalConfig.Language.typeTab {
-		return this._languageStr;
+		return this._getTypeStr();
 	}
 
 	set typeStr(value_) {
@@ -59,7 +59,7 @@ export class MKLanguageManage extends MKInstanceBase {
 	/** 日志 */
 	private _log = new MKLogger("MKLanguage");
 	/** 当前语言类型 */
-	private _languageStr = GlobalConfig.Language.defaultTypeStr;
+	private _languageStr: keyof typeof GlobalConfig.Language.typeTab = null!;
 
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
@@ -154,6 +154,36 @@ export class MKLanguageManage extends MKInstanceBase {
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
+	private _getTypeStr(): keyof typeof GlobalConfig.Language.typeTab {
+		if (this._languageStr === null) {
+			if (GlobalConfig.Language.defaultTypeStr !== "auto") {
+				this._languageStr = GlobalConfig.Language.defaultTypeStr;
+			}
+			// 根据地区设置默认语言
+			else {
+				let keyStrList = Object.keys(GlobalConfig.Language.typeTab);
+				let targetIndexNum = keyStrList.findIndex((vStr) =>
+					(GlobalConfig.Language.typeTab[vStr] as GlobalConfig.Language.TypeData).supportStrList?.includes(sys.languageCode)
+				);
+
+				if (targetIndexNum === -1 && sys.languageCode.includes("-")) {
+					let languageStr = sys.languageCode.split("-")[0];
+					targetIndexNum = keyStrList.findIndex((vStr) =>
+						(GlobalConfig.Language.typeTab[vStr] as GlobalConfig.Language.TypeData).supportStrList?.includes(languageStr)
+					);
+				}
+
+				if (targetIndexNum === -1) {
+					this._log.warn(`没有和 sys.languageCode 匹配的语种，设置默认语言为 ${keyStrList[0]}`);
+					this._languageStr = keyStrList[0] as any;
+				} else {
+					this._languageStr = keyStrList[targetIndexNum] as any;
+				}
+			}
+		}
+		return this._languageStr;
+	}
+
 	private _setTypeStr(value_: keyof typeof GlobalConfig.Language.types): void {
 		if (this._languageStr === value_) {
 			return;

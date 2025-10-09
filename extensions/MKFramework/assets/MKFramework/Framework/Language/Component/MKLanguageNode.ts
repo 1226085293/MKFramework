@@ -32,7 +32,7 @@ namespace _MKLanguageNode {
 
 		/** 语言 */
 		@property({ visible: false })
-		languageStr: keyof typeof GlobalConfig.Language.typeTab = GlobalConfig.Language.defaultTypeStr;
+		languageStr: keyof typeof GlobalConfig.Language.typeTab = Object.keys(GlobalConfig.Language.typeTab)[0] as any;
 
 		/** 节点 */
 		@property({ displayName: "节点", type: Node })
@@ -49,7 +49,7 @@ class MKLanguageNode extends Component {
 	/* --------------- 属性 --------------- */
 	/** 语言 */
 	@property({ visible: false })
-	languageStr: keyof typeof GlobalConfig.Language.typeTab = GlobalConfig.Language.defaultTypeStr;
+	languageStr: keyof typeof GlobalConfig.Language.typeTab = Object.keys(GlobalConfig.Language.typeTab)[0] as any;
 
 	/** 语言 */
 	@property({
