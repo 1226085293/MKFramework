@@ -5,7 +5,7 @@ import MKLogger from "../MKLogger";
 import mkBundle from "./MKBundle";
 import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
-import { MKRelease_ } from "../MKRelease";
+import MKRelease, { MKRelease_ } from "./MKRelease";
 import { Asset, Constructor, DynamicAtlasManager, SpriteFrame, Texture2D, assetManager } from "cc";
 
 namespace _MKAsset {
@@ -58,9 +58,9 @@ namespace _MKAsset {
  *
  * - 增加强制性资源跟随释放对象
  *
- * - （3.8.6 已修复）修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
+ * - （3.8.6 引擎已修复）修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
  *
- * - （3.8.6 已修复）修复同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
+ * - （3.8.6 引擎已修复）修复同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
  */
 export class MKAsset extends MKInstanceBase {
 	constructor() {
@@ -151,7 +151,7 @@ export class MKAsset extends MKInstanceBase {
 	get<T extends Asset>(
 		pathStr_: string,
 		type_: Constructor<T>,
-		target_: MKAsset_.TypeFollowReleaseObject | null,
+		target_: MKRelease_.TypeFollowReleaseSupport,
 		config_?: MKAsset_.GetConfig<T>
 	): Promise<T | null> {
 		/** 获取配置 */
@@ -246,7 +246,7 @@ export class MKAsset extends MKInstanceBase {
 				// 执行回调
 				getConfig.completedFunc?.(error, asset);
 				// 跟随释放
-				target_?.followRelease(asset);
+				MKRelease.followRelease(target_, asset);
 				resolveFunc(asset);
 			};
 
@@ -350,7 +350,7 @@ export class MKAsset extends MKInstanceBase {
 	getDir<T extends Asset>(
 		pathStr_: string,
 		type_: Constructor<T>,
-		target_: MKAsset_.TypeFollowReleaseObject | null,
+		target_: MKRelease_.TypeFollowReleaseSupport,
 		config_?: MKAsset_.GetDirConfig<T>
 	): Promise<T[] | null> {
 		/** 获取配置 */
@@ -408,9 +408,9 @@ export class MKAsset extends MKInstanceBase {
 				getConfig.completedFunc?.(errorList, dirAssetList);
 
 				// 跟随释放
-				if (target_?.followRelease) {
+				if (target_) {
 					dirAssetList.forEach((v) => {
-						target_.followRelease(v);
+						MKRelease.followRelease(target_, v);
 					});
 				}
 
@@ -640,9 +640,6 @@ export namespace MKAsset_ {
 		 */
 		retryNum?: number;
 	}
-
-	/** 跟随释放对象 */
-	export type TypeFollowReleaseObject = MKRelease_.TypeFollowReleaseObject<Asset>;
 }
 
 const mkAsset = MKAsset.instance();
