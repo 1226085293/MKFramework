@@ -44,8 +44,6 @@ export type { MKAsset_ as Asset_ } from "./Resources/MKAsset";
 // 对象释放器
 export { default as Release } from "./Resources/MKRelease";
 export type { MKRelease_ as Release_ } from "./Resources/MKRelease";
-// 跟随节点释放器
-export { default as NodeRelease } from "./Resources/MKNodeRelease";
 /* ------------------------------- 数据 ------------------------------- */
 // 数据共享
 export { default as dataSharer } from "./MKDataSharer";

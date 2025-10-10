@@ -1,22 +1,25 @@
-import { _decorator, Component } from "cc";
+import { _decorator, Asset, Component, Node } from "cc";
 import { MKAudio_ } from "../Audio/MKAudioExport";
-import { MKAsset_ } from "./MKAsset";
 import MKRelease, { MKRelease_ } from "./MKRelease";
 const { ccclass, property } = _decorator;
 
 /** 跟随节点释放 */
 @ccclass
-export default class MKNodeRelease extends Component implements MKAsset_.TypeFollowReleaseObject {
-	/**
-	 * 释放管理器
-	 * @internal
-	 */
-	protected _releaseManage = new MKRelease();
+class MKFollowNodeRelease extends Component implements MKRelease_.TypeFollowReleaseObject<Asset> {
+	/** 初始化状态 */
+	private _isInit = false;
+	/** 释放管理器 */
+	private _releaseManage = new MKRelease();
 
 	// @weak-start-content-MKAudioExport
 	// @position:/(?<=TypeReleaseParamType)/
 	// @import: & MKAudio_.PrivateUnit
 	followRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
+		if (!this._isInit) {
+			this._isInit = true;
+			this.node.once(Node.EventType.NODE_DESTROYED, this._onDestroy, this);
+		}
+
 		// @weak-end
 		if (!object_) {
 			return;
@@ -71,7 +74,9 @@ export default class MKNodeRelease extends Component implements MKAsset_.TypeFol
 		return;
 	}
 
-	protected onDestroy(): void {
+	private _onDestroy(): void {
 		this._releaseManage.releaseAll();
 	}
 }
+
+export default MKFollowNodeRelease;

@@ -143,8 +143,6 @@ declare namespace mk {
 			 */
 			retryNum?: number;
 		}
-		/** 跟随释放对象 */
-		export type TypeFollowReleaseObject = Release_.TypeFollowReleaseObject<Asset>;
 	}
 
 	/**
@@ -848,7 +846,7 @@ declare namespace mk {
 	 * @remarks
 	 * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
 	 */
-	export declare class LifeCycle extends Layer implements Asset_.TypeFollowReleaseObject {
+	export declare class LifeCycle extends Layer implements Release_.TypeFollowReleaseObject<Asset> {
 		constructor(...argsList: any[]);
 		/** 初始化数据 */
 		initData?: any;
@@ -1072,9 +1070,9 @@ declare namespace mk {
 	 *
 	 * - 增加强制性资源跟随释放对象
 	 *
-	 * - （3.8.6 已修复）修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
+	 * - （3.8.6 引擎已修复）修复了释放后立即加载同一资源导致加载的资源是已释放后的问题
 	 *
-	 * - （3.8.6 已修复）修复同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
+	 * - （3.8.6 引擎已修复）修复同时加载同一资源多次导致返回的资源对象不一致（对象不一致会导致引用计数不一致）
 	 */
 	declare class MKAsset extends InstanceBase {
 		constructor();
@@ -1099,7 +1097,7 @@ declare namespace mk {
 		get<T extends Asset>(
 			pathStr_: string,
 			type_: Constructor<T>,
-			target_: Asset_.TypeFollowReleaseObject | null,
+			target_: Release_.TypeFollowReleaseSupport,
 			config_?: Asset_.GetConfig<T>
 		): Promise<T | null>;
 		/**
@@ -1113,7 +1111,7 @@ declare namespace mk {
 		getDir<T extends Asset>(
 			pathStr_: string,
 			type_: Constructor<T>,
-			target_: Asset_.TypeFollowReleaseObject | null,
+			target_: Release_.TypeFollowReleaseSupport,
 			config_?: Asset_.GetDirConfig<T>
 		): Promise<T[] | null>;
 		/**
@@ -1190,7 +1188,7 @@ declare namespace mk {
 		 */
 		add<T extends string | string[], T2 extends true | false = false>(
 			url_: T,
-			target_: Release_.TypeFollowReleaseObject,
+			target_: Release_.TypeFollowReleaseSupport,
 			config_?: Audio_.AddConfig<T2>
 		): Promise<T2 extends true ? (Audio_.Unit | null)[] : T extends string ? Audio_.Unit | null : (Audio_.Unit | null)[]>;
 		/**
@@ -1584,7 +1582,7 @@ declare namespace mk {
 		getTexture(
 			type_: _MKLanguageManage.TypeType,
 			markStr_: string,
-			target_: Asset_.TypeFollowReleaseObject | null,
+			target_: Release_.TypeFollowReleaseSupport,
 			language_?: keyof typeof GlobalConfig.Language.typeTab
 		): Promise<SpriteFrame | null>;
 		/**
@@ -2560,7 +2558,7 @@ declare namespace mk {
 		regis<T extends Constructor<ViewBase>>(
 			key_: T,
 			source_: _MKUIManage.TypeRegisSource<T>,
-			target_: Release_.TypeFollowReleaseObject<Release_.TypeReleaseCallBack> | null,
+			target_: Release_.TypeFollowReleaseSupport,
 			config_?: Partial<UIManage_.RegisConfig<T>>
 		): Promise<void>;
 		/**
@@ -2842,14 +2840,6 @@ declare namespace mk {
 		private _setOrderNum;
 	}
 
-	/** 跟随节点释放 */
-	export declare class NodeRelease extends Component implements Asset_.TypeFollowReleaseObject {
-		/* Excluded from this release type: _releaseManage */
-		followRelease<T = Release_.TypeReleaseParamType & Audio_.PrivateUnit>(object_: T): void;
-		cancelRelease<T = Release_.TypeReleaseParamType & Audio_.PrivateUnit>(object_: T): void;
-		protected onDestroy(): void;
-	}
-
 	/** 异步对象池 */
 	export declare class ObjectPool<CT> {
 		constructor(init_: _MKObjectPool.Config<CT>);
@@ -3014,6 +3004,18 @@ declare namespace mk {
 		 */
 		static release(object_?: Release_.TypeReleaseParamType): Promise<void>;
 		/**
+		 * 跟随释放
+		 * @param object_ 跟随释放对象
+		 * @param releaseObject_ 释放对象
+		 */
+		static followRelease(object_: Release_.TypeFollowReleaseSupport, releaseObject_: Release_.TypeReleaseParamType): void;
+		/**
+		 * 取消跟随释放
+		 * @param object_ 跟随释放对象
+		 * @param releaseObject_ 释放对象
+		 */
+		static cancelRelease(object_: Release_.TypeFollowReleaseSupport, releaseObject_: Release_.TypeReleaseParamType): void;
+		/**
 		 * 添加释放对象
 		 * @param object_ 要跟随模块释放的对象或列表
 		 */
@@ -3041,7 +3043,7 @@ declare namespace mk {
 		export type TypeReleaseCallBack = () => any | Promise<any>;
 		/** 释放参数类型 */
 		export type TypeReleaseParamType = Node_2 | Asset | TypeReleaseObject | TypeReleaseCallBack;
-		/** 跟随释放类型 */
+		/** 跟随释放对象类型 */
 		export type TypeFollowReleaseObject<CT = TypeReleaseParamType> = {
 			/**
 			 * 跟随释放
@@ -3054,6 +3056,8 @@ declare namespace mk {
 			 */
 			cancelRelease<T extends CT>(object_: T): void;
 		};
+		/** 跟随释放支持类型 */
+		export type TypeFollowReleaseSupport = Node_2 | TypeFollowReleaseObject | null;
 	}
 
 	/**

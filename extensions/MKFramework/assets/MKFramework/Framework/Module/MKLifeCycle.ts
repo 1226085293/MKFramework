@@ -8,9 +8,8 @@ import MKLayer from "./MKLayer";
 /** @weak */
 import { mkAudio, MKAudio_ } from "../Audio/MKAudioExport";
 import MKRelease, { MKRelease_ } from "../Resources/MKRelease";
-import { MKAsset_ } from "../Resources/MKAsset";
 import GlobalConfig from "../../Config/GlobalConfig";
-import { _decorator, js, CCClass, isValid, Node } from "cc";
+import { _decorator, js, CCClass, isValid, Node, Asset } from "cc";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import mkToolObject from "../@Private/Tool/MKToolObject";
 // @weak-start-include-MKUIManage
@@ -83,7 +82,7 @@ export namespace _MKLifeCycle {
  * 用于模块生命周期控制，注意所有生命周期函数 onLoad、open ... 等都会自动执行父类函数再执行子类函数，不必手动 super.xxx 调用
  */
 @ccclass
-export class MKLifeCycle extends MKLayer implements MKAsset_.TypeFollowReleaseObject {
+export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowReleaseObject<Asset> {
 	constructor(...argsList: any[]) {
 		// @ts-ignore
 		super(...argsList);

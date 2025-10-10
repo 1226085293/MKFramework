@@ -3,8 +3,9 @@ import GlobalConfig from "../../Config/GlobalConfig";
 import MKEventTarget from "../MKEventTarget";
 import MKInstanceBase from "../MKInstanceBase";
 import MKLogger from "../MKLogger";
-import mkAsset, { MKAsset_ } from "../Resources/MKAsset";
+import mkAsset from "../Resources/MKAsset";
 import { SpriteFrame, ImageAsset, sys } from "cc";
+import { MKRelease_ } from "../Resources/MKRelease";
 
 namespace _MKLanguageManage {
 	/** 多语言类型类型 */
@@ -101,7 +102,7 @@ export class MKLanguageManage extends MKInstanceBase {
 	async getTexture(
 		type_: _MKLanguageManage.TypeType,
 		markStr_: string,
-		target_: MKAsset_.TypeFollowReleaseObject | null,
+		target_: MKRelease_.TypeFollowReleaseSupport,
 		language_: keyof typeof GlobalConfig.Language.typeTab = this._languageStr
 	): Promise<SpriteFrame | null> {
 		const pathStr = this.textureDataTab[type_]?.[markStr_]?.[GlobalConfig.Language.types[language_]];
@@ -161,13 +162,15 @@ export class MKLanguageManage extends MKInstanceBase {
 			}
 			// 根据地区设置默认语言
 			else {
-				let keyStrList = Object.keys(GlobalConfig.Language.typeTab);
+				const keyStrList = Object.keys(GlobalConfig.Language.typeTab);
+
 				let targetIndexNum = keyStrList.findIndex((vStr) =>
 					(GlobalConfig.Language.typeTab[vStr] as GlobalConfig.Language.TypeData).supportStrList?.includes(sys.languageCode)
 				);
 
 				if (targetIndexNum === -1 && sys.languageCode.includes("-")) {
-					let languageStr = sys.languageCode.split("-")[0];
+					const languageStr = sys.languageCode.split("-")[0];
+
 					targetIndexNum = keyStrList.findIndex((vStr) =>
 						(GlobalConfig.Language.typeTab[vStr] as GlobalConfig.Language.TypeData).supportStrList?.includes(languageStr)
 					);
@@ -181,6 +184,7 @@ export class MKLanguageManage extends MKInstanceBase {
 				}
 			}
 		}
+
 		return this._languageStr;
 	}
 
