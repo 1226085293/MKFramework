@@ -7,40 +7,45 @@ const { ccclass, property } = _decorator;
 @ccclass("HotUpdateDefault")
 export class HotUpdateDefault extends mk.ViewBase {
 	/* --------------- 属性 --------------- */
-	@property({ displayName: "远程地址", type: cc.EditBox })
+	@property({ displayName: "http 服务器地址", type: cc.EditBox })
 	remoteUrlEditBox: cc.EditBox = null!;
-
-	@property({ displayName: "Config 地址", type: cc.EditBox })
-	configUrlEditBox: cc.EditBox = null!;
-
-	@property({ displayName: "Main 地址", type: cc.EditBox })
-	mainUrlEditBox: cc.EditBox = null!;
-
-	/* ------------------------------- 生命周期 ------------------------------- */
-	// create(): void {}
-	// init(init_?: typeof this.init_data): void {}
-	// open(): void {}
-	// close(): void {}
 
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	/** 关闭 */
 	clickClose(): void {
-		mk.bundle.loadScene("main", { bundleStr: GlobalConfig.Asset.bundle.main });
+		mk.bundle.loadScene("Main", { bundleStr: GlobalConfig.Asset.bundle.main });
 	}
 
 	/** 确认 */
 	async clickConfirm(): Promise<void> {
-		await mk.bundle.reload({
-			bundleStr: GlobalConfig.Asset.bundle.Config,
-			originStr: this.remoteUrlEditBox.string + "/" + GlobalConfig.Asset.bundle.Config,
-			versionStr: this.configUrlEditBox.string,
+		let versionTab: Record<string, string> = await mk.network.http.get(`${this.remoteUrlEditBox.string}/version.json`, {
+			returnType: "json",
 		});
 
-		await mk.bundle.reload({
-			bundleStr: GlobalConfig.Asset.bundle.main,
-			originStr: this.remoteUrlEditBox.string + "/" + GlobalConfig.Asset.bundle.main,
-			versionStr: this.mainUrlEditBox.string,
-		});
+		let needUpdateBundleStrList = [
+			GlobalConfig.Asset.bundle.Config,
+			GlobalConfig.Asset.bundle.Framework,
+			GlobalConfig.Asset.bundle.main,
+			GlobalConfig.Asset.bundle.resources,
+			"HotUpdate",
+		];
+
+		for (let vStr of needUpdateBundleStrList) {
+			// 不需要更新
+			if (!versionTab[vStr] || cc.assetManager.downloader.bundleVers[vStr] === versionTab[vStr]) {
+				continue;
+			}
+
+			let task = mk.bundle.reload({
+				bundleStr: vStr,
+				originStr: `${this.remoteUrlEditBox.string}/${vStr}`,
+				versionStr: versionTab[vStr],
+			});
+
+			if (vStr !== "HotUpdate") {
+				await task;
+			}
+		}
 
 		this._log.log("热更完成");
 	}

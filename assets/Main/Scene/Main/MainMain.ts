@@ -17,9 +17,6 @@ export class MainMain extends mk.StaticViewBase {
 	@property({ displayName: "列表", type: cc.Node })
 	listNode: cc.Node = null!;
 
-	@property({ displayName: "版本号", type: cc.Node })
-	versionNode: cc.Node = null!;
-
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected open(): void {
 		mk.uiManage.regis(ResourcesAudio, "db://assets/resources/Module/Audio/ResourcesAudio.prefab", MainBundle);
@@ -52,7 +49,7 @@ export class MainMain extends mk.StaticViewBase {
 			{
 				labelStr: "热更",
 				view: () => {
-					mk.bundle.loadScene("default", { bundleStr: "HotUpdate" });
+					mk.bundle.loadScene("HotUpdate", { bundleStr: "HotUpdate" });
 				},
 			},
 		];
