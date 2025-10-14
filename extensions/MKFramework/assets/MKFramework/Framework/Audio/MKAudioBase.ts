@@ -126,18 +126,7 @@ abstract class MKAudioBase {
 					return;
 				}
 
-				// 删除音频组内的音频单元
-				{
-					this.getGroup(v.type).delAudio(v);
-					v.groupIdNumList.forEach((v2Num) => {
-						this.getGroup(v2Num).delAudio(v);
-					});
-				}
-
-				// 清理音频资源
-				if (v.clip) {
-					MKRelease.release(v.clip);
-				}
+				v.release();
 			});
 		});
 
@@ -272,7 +261,7 @@ export namespace MKAudioBase_ {
 	}
 
 	/** 安全音频单元 */
-	export interface Unit {
+	export interface Unit extends MKRelease_.TypeReleaseObject {
 		/** 分组 */
 		readonly groupIdNumList: ReadonlyArray<number>;
 		/** 播放状态 */
@@ -358,11 +347,10 @@ export namespace MKAudioBase_ {
 	 * @internal
 	 */
 	@ccclass("MKAudioBase/Unit")
-	export abstract class PrivateUnit {
+	export abstract class PrivateUnit implements MKRelease_.TypeReleaseObject {
 		constructor(init_?: Partial<PrivateUnit>) {
 			Object.assign(this, init_);
 		}
-
 		/* --------------- 属性 --------------- */
 		/** 音频资源 */
 		@property({ displayName: "音频资源", type: AudioClip ?? null })
@@ -407,7 +395,7 @@ export namespace MKAudioBase_ {
 		}
 
 		set volumeNum(valueNum_) {
-			throw "未实现";
+			throw "子类实现";
 		}
 
 		/** 循环 */
@@ -416,7 +404,7 @@ export namespace MKAudioBase_ {
 		}
 
 		set isLoop(value_) {
-			throw "未实现";
+			throw "子类实现";
 		}
 
 		/** 总时长（秒） */
@@ -430,7 +418,7 @@ export namespace MKAudioBase_ {
 		}
 
 		set currentTimeSNum(valueNum_) {
-			throw "未实现";
+			throw "子类实现";
 		}
 
 		/** 事件对象 */
@@ -457,7 +445,7 @@ export namespace MKAudioBase_ {
 		}
 
 		set audioSource(value_) {
-			throw "未实现";
+			throw "子类实现";
 		}
 
 		/* --------------- protected --------------- */
@@ -489,6 +477,10 @@ export namespace MKAudioBase_ {
 			}
 
 			return audioList;
+		}
+
+		release(): void {
+			throw "子类实现";
 		}
 	}
 
