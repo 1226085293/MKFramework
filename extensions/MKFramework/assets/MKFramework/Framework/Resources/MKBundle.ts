@@ -78,7 +78,6 @@ export class MKBundle extends MKInstanceBase {
 		director.once(
 			Director.EVENT_BEFORE_SCENE_LAUNCH,
 			async (scene: Scene) => {
-				this._log.warn("未选择启动场景，不能获取到场景数据");
 				// init
 				await this.bundleMap.get("main")?.manage?.init?.();
 				// open
