@@ -7,7 +7,6 @@ const { ccclass, property } = _decorator;
 @ccclass("ResourcesAudio")
 export class ResourcesAudio extends mk.ViewBase {
 	/* --------------- 属性 --------------- */
-	// 编辑器资源使用 play 接口播放只会有一个音频生效
 	@property({ displayName: "音乐", type: mk.Audio_.Unit })
 	music = new mk.Audio_.Unit();
 

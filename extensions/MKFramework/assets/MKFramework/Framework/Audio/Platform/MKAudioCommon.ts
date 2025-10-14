@@ -3,6 +3,7 @@ import MKLogger from "../../MKLogger";
 import MKAudioBase, { MKAudioBase_ } from "../MKAudioBase";
 import MKObjectPool from "../../MKObjectPool";
 import { _decorator, AudioSource, director, Director, Node } from "cc";
+import MKRelease from "../../Resources/MKRelease";
 
 const { ccclass } = _decorator;
 
@@ -341,6 +342,21 @@ export namespace MKAudioCommon_ {
 		updateVolume(): void {
 			// 更新音量
 			this.volumeNum = this._volumeNum;
+		}
+
+		release(): void {
+			// 删除音频组内的音频单元
+			{
+				MKAudioCommon._instance.getGroup(this.type).delAudio(this);
+				this.groupIdNumList.forEach((v2Num) => {
+					MKAudioCommon._instance.getGroup(v2Num).delAudio(this);
+				});
+			}
+
+			// 清理音频资源
+			if (this.clip) {
+				MKRelease.release(this.clip);
+			}
 		}
 
 		/** 克隆 */
