@@ -118,17 +118,23 @@ namespace GlobalConfig {
 			/** 中文(中华人民共和国) */
 			zhCn: {
 				dire: Layout.HorizontalDirection.LEFT_TO_RIGHT,
+				supportStrList: ["zh", "zh-tw"],
 			},
 			/** 英语(美国) */
 			enUs: {
 				dire: Layout.HorizontalDirection.LEFT_TO_RIGHT,
+				supportStrList: ["en"],
 			},
 		};
 
 		/** 语种信息 */
 		export interface TypeData {
-			/** 方向（Layout.HorizontalDirection） */
+			/** 文字方向（Layout.HorizontalDirection） */
 			dire: number;
+			/** 支持语种（sys.languageCode 的值） */
+			supportStrList?: string[];
+			/** 展示名称 */
+			displayNameStr?: string;
 		}
 
 		/** 语种表 */
@@ -144,8 +150,12 @@ namespace GlobalConfig {
 			}
 		) as any;
 
-		/** 默认语言 */
-		export const defaultTypeStr: keyof typeof typeTab = types.zhCn;
+		/** 默认语言
+		 * @remarks
+		 * 指定默认语言：types.xxx
+		 * 自动匹配默认语言：auto，框架内根据 sys.languageCode 和 TypeData.supportStrList 匹配对应的语种
+		 */
+		export const defaultTypeStr: keyof typeof types | "auto" = "auto";
 		/** 参数标识前缀 */
 		export const argsHeadStr = "{";
 		/** 参数标识后缀 */

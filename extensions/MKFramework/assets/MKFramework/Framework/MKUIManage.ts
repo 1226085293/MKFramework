@@ -5,7 +5,7 @@ import MKViewBase from "./Module/MKViewBase";
 import MKObjectPool from "./MKObjectPool";
 import MKAsset, { MKAsset_ } from "./Resources/MKAsset";
 import MKStatusTask from "./Task/MKStatusTask";
-import { MKRelease_ } from "./MKRelease";
+import MKRelease, { MKRelease_ } from "./Resources/MKRelease";
 import MKEventTarget from "./MKEventTarget";
 import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node } from "cc";
 import mkToolObject from "./@Private/Tool/MKToolObject";
@@ -99,7 +99,7 @@ export class MKUIManage extends MKInstanceBase {
 	async regis<T extends Constructor<MKViewBase>>(
 		key_: T,
 		source_: _MKUIManage.TypeRegisSource<T>,
-		target_: MKRelease_.TypeFollowReleaseObject<MKRelease_.TypeReleaseCallBack> | null,
+		target_: MKRelease_.TypeFollowReleaseSupport,
 		config_?: Partial<MKUIManage_.RegisConfig<T>>
 	): Promise<void> {
 		/** 模块注册任务 */
@@ -116,7 +116,7 @@ export class MKUIManage extends MKInstanceBase {
 		}
 
 		// 跟随对象释放
-		target_?.followRelease(async () => {
+		MKRelease.followRelease(target_, async () => {
 			await this.unregis(key_);
 		});
 

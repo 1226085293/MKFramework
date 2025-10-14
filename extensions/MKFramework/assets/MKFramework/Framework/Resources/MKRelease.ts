@@ -1,5 +1,6 @@
 import { Asset, Node } from "cc";
-import { mkLog } from "./MKLogger";
+import { mkLog } from "../MKLogger";
+import MKFollowNodeRelease from "./MKFollowNodeRelease";
 
 /**
  * 对象释放器
@@ -37,6 +38,46 @@ class MKRelease {
 			await object_();
 		} else if (object_) {
 			await object_!.release();
+		}
+	}
+
+	/**
+	 * 跟随释放
+	 * @param object_ 跟随释放对象
+	 * @param releaseObject_ 释放对象
+	 */
+	static followRelease(object_: MKRelease_.TypeFollowReleaseSupport, releaseObject_: MKRelease_.TypeReleaseParamType): void {
+		if (!object_ || !releaseObject_) {
+			return;
+		}
+
+		if (object_ instanceof Node) {
+			if (!object_.isValid) {
+				this.release(releaseObject_);
+			} else {
+				(object_.getComponent(MKFollowNodeRelease) || object_.addComponent(MKFollowNodeRelease)).followRelease(releaseObject_);
+			}
+		} else {
+			object_.followRelease(releaseObject_);
+		}
+	}
+
+	/**
+	 * 取消跟随释放
+	 * @param object_ 跟随释放对象
+	 * @param releaseObject_ 释放对象
+	 */
+	static cancelRelease(object_: MKRelease_.TypeFollowReleaseSupport, releaseObject_: MKRelease_.TypeReleaseParamType): void {
+		if (!object_ || !releaseObject_) {
+			return;
+		}
+
+		if (object_ instanceof Node) {
+			if (object_.isValid) {
+				(object_.getComponent(MKFollowNodeRelease) || object_.addComponent(MKFollowNodeRelease)).cancelRelease(releaseObject_);
+			}
+		} else {
+			object_.cancelRelease(releaseObject_);
 		}
 	}
 
@@ -155,7 +196,7 @@ export namespace MKRelease_ {
 	/** 释放参数类型 */
 	export type TypeReleaseParamType = Node | Asset | TypeReleaseObject | TypeReleaseCallBack;
 
-	/** 跟随释放类型 */
+	/** 跟随释放对象类型 */
 	export type TypeFollowReleaseObject<CT = TypeReleaseParamType> = {
 		/**
 		 * 跟随释放
@@ -169,6 +210,8 @@ export namespace MKRelease_ {
 		 */
 		cancelRelease<T extends CT>(object_: T): void;
 	};
+	/** 跟随释放支持类型 */
+	export type TypeFollowReleaseSupport = Node | TypeFollowReleaseObject | null;
 }
 
 export default MKRelease;

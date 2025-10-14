@@ -4,7 +4,7 @@ import MKEventTarget from "../MKEventTarget";
 import MKLogger from "../MKLogger";
 import globalEvent from "../../Config/GlobalEvent";
 import GlobalConfig from "../../Config/GlobalConfig";
-import MKRelease, { MKRelease_ } from "../MKRelease";
+import MKRelease, { MKRelease_ } from "../Resources/MKRelease";
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { _decorator, AudioClip, AudioSource, Enum } from "cc";
 import mkToolObject from "../@Private/Tool/MKToolObject";
@@ -56,7 +56,7 @@ abstract class MKAudioBase {
 	 */
 	async add<T extends string | string[], T2 extends true | false = false>(
 		url_: T,
-		target_: MKRelease_.TypeFollowReleaseObject,
+		target_: MKRelease_.TypeFollowReleaseSupport,
 		config_?: MKAudioBase_.AddConfig<T2>
 	): Promise<T2 extends true ? (MKAudioBase_.Unit | null)[] : T extends string ? MKAudioBase_.Unit | null : (MKAudioBase_.Unit | null)[]> {
 		if (EDITOR && !window["cc"].GAME_VIEW) {
@@ -120,28 +120,26 @@ abstract class MKAudioBase {
 			this._add(v, config_?.groupIdNumList);
 		});
 
-		if (target_?.followRelease) {
-			target_.followRelease(() => {
-				audioList.forEach((v) => {
-					if (!v) {
-						return;
-					}
+		MKRelease.followRelease(target_, () => {
+			audioList.forEach((v) => {
+				if (!v) {
+					return;
+				}
 
-					// 删除音频组内的音频单元
-					{
-						this.getGroup(v.type).delAudio(v);
-						v.groupIdNumList.forEach((v2Num) => {
-							this.getGroup(v2Num).delAudio(v);
-						});
-					}
+				// 删除音频组内的音频单元
+				{
+					this.getGroup(v.type).delAudio(v);
+					v.groupIdNumList.forEach((v2Num) => {
+						this.getGroup(v2Num).delAudio(v);
+					});
+				}
 
-					// 清理音频资源
-					if (v.clip) {
-						MKRelease.release(v.clip);
-					}
-				});
+				// 清理音频资源
+				if (v.clip) {
+					MKRelease.release(v.clip);
+				}
 			});
-		}
+		});
 
 		return result as any;
 	}
