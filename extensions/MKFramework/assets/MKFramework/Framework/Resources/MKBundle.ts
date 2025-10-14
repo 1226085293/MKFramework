@@ -242,6 +242,7 @@ export class MKBundle extends MKInstanceBase {
 		await this._initTask.task;
 
 		const config = new MKBundle_.SwitchSceneConfig(config_);
+
 		const bundleInfo =
 			this.bundleMap.get(config.bundleStr) ??
 			new MKBundle_.BundleInfo({
@@ -371,12 +372,21 @@ export class MKBundle extends MKInstanceBase {
 			return null;
 		}
 
-		await this._engineInitTask.task;
-
 		if (!bundleInfo_.versionStr) {
 			this._log.error("不存在版本号");
 
 			return null;
+		}
+
+		await this._engineInitTask.task;
+
+		if (this.bundleStr === bundleInfo_.bundleStr) {
+			await new Promise<void>((resolveFunc) => {
+				this.event.once(this.event.key.bundleReadySwitch, () => resolveFunc(), this);
+			});
+
+			director.getScene()!.destroyAllChildren();
+			director.getScene()!.removeAllChildren();
 		}
 
 		/** bundle 脚本表 */
@@ -443,54 +453,35 @@ export class MKBundle extends MKInstanceBase {
 			// 清理名称匹配的 ccclass
 			const reg = bundleInfo_.ccclassRegexp ?? new RegExp(`${bundleInfo_.bundleStr}(_|/)`);
 
-			Object.keys((js as any)._registeredClassNames)
+			Object.keys((js as any)._registeredClassNames || (js as any)._nameToClass)
 				.filter((vStr) => vStr.match(reg) !== null)
 				.forEach((vStr) => {
 					js.unregisterClass(js.getClassByName(vStr));
 				});
 		}
 
-		let afterUpdateFunc = () => {
-			const bundle = assetManager.getBundle(bundleInfo_.bundleStr);
+		const bundle = assetManager.getBundle(bundleInfo_.bundleStr);
 
-			// 清理 bundle 资源
-			if (bundle) {
-				if (bundleInfo_.bundleStr !== "main") {
-					bundle.releaseAll();
-				}
-
-				assetManager.removeBundle(bundle);
+		// 清理 bundle 资源
+		if (bundle) {
+			if (bundleInfo_.bundleStr !== "main") {
+				bundle.releaseAll();
 			}
 
-			// 更新版本号
-			{
-				if (!assetManager.downloader.bundleVers) {
-					assetManager.downloader.bundleVers = {};
-				}
-
-				assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
-			}
-		};
-
-		if (this.bundleStr === bundleInfo_.bundleStr) {
-			this.event.once(
-				this.event.key.bundleReadySwitch,
-				() => {
-					// 清理资源引用
-					director.getScene()!.destroyAllChildren();
-					director.getScene()!.removeAllChildren();
-
-					// 清理资源
-					afterUpdateFunc();
-				},
-				this
-			);
-
-			return null;
-		} else {
-			// 加载 bundle
-			return this.load(bundleInfo_);
+			assetManager.removeBundle(bundle);
 		}
+
+		// 更新版本号
+		{
+			if (!assetManager.downloader.bundleVers) {
+				assetManager.downloader.bundleVers = {};
+			}
+
+			assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
+		}
+
+		// 加载 bundle
+		return this.load(bundleInfo_);
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
