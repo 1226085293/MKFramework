@@ -172,7 +172,7 @@ declare namespace mk {
 			Play = 4,
 		}
 		/** 安全音频单元 */
-		export interface Unit {
+		export interface Unit extends Release_.TypeReleaseObject {
 			/** 分组 */
 			readonly groupIdNumList: ReadonlyArray<number>;
 			/** 播放状态 */
@@ -947,8 +947,8 @@ declare namespace mk {
 		protected lateClose?(): void;
 		/** 驱动生命周期运行（用于动态添加的组件） */
 		drive(initData_?: this["initData"]): Promise<void>;
-		followRelease<T = Release_.TypeReleaseParamType & Audio_.PrivateUnit>(object_: T): void;
-		cancelRelease<T = Release_.TypeReleaseParamType & Audio_.PrivateUnit>(object_: T): void;
+		followRelease<T = Release_.TypeReleaseParamType>(object_: T): void;
+		cancelRelease<T = Release_.TypeReleaseParamType>(object_: T): void;
 		/* Excluded from this release type: _open */
 		/* Excluded from this release type: _close */
 		/** 递归 open */

@@ -55,8 +55,6 @@ export class MKDynamicModule extends MKInstanceBase {
 	all<T extends Promise<any>>(module_: T): Awaited<T> {
 		/** 模块导出表 */
 		let moduleExportTab: any;
-		/** 模块导出代理表 */
-		const moduleExportProxyTab = {};
 
 		module_.then((v) => {
 			moduleExportTab = v;
@@ -64,32 +62,13 @@ export class MKDynamicModule extends MKInstanceBase {
 
 		return new Proxy(Object.create(null), {
 			get: (target, key) => {
-				if (moduleExportProxyTab[key] === undefined) {
-					moduleExportProxyTab[key] = new Proxy(Object.create(null), {
-						get: (target2, key2) => {
-							if (moduleExportTab) {
-								return moduleExportTab[key][key2];
-							}
+				if (!moduleExportTab[key]) {
+					mkLog.error("模块未加载完成");
 
-							mkLog.error("模块未加载完成");
-
-							return null;
-						},
-						set: (target2, key2, value) => {
-							if (moduleExportTab) {
-								moduleExportTab[key][key2] = value;
-
-								return true;
-							}
-
-							mkLog.error("模块未加载完成");
-
-							return false;
-						},
-					});
+					return null;
 				}
 
-				return moduleExportProxyTab[key];
+				return moduleExportTab[key];
 			},
 		});
 	}

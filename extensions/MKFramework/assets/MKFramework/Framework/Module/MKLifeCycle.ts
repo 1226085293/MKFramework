@@ -359,11 +359,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		return this._open({ isFirst: true, init: initData_ });
 	}
 
-	// @weak-start-content-MKAudioExport
-	// @position:/(?<=TypeReleaseParamType)/
-	// @import: & MKAudio_.PrivateUnit
-	followRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
-		// @weak-end
+	followRelease<T = MKRelease_.TypeReleaseParamType>(object_: T): void {
 		if (!object_) {
 			return;
 		}
@@ -374,53 +370,23 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			return;
 		}
 
-		// @weak-start-include-MKAudioExport
-		// 添加释放对象
-		if (MKAudio_ && object_ instanceof MKAudio_.PrivateUnit) {
-			if (object_.clip) {
-				// 如果模块已经关闭则直接释放
-				if (this._state === _MKLifeCycle.RunState.Close) {
-					this._log.debug("在模块关闭后跟随释放资源会被立即释放");
-					MKRelease.release(object_.clip);
-				} else {
-					this._releaseManage.add(object_.clip);
-				}
-			}
+		// 如果模块已经关闭则直接释放
+		if (this._state === _MKLifeCycle.RunState.Close) {
+			this._log.debug("在模块关闭后跟随释放资源会被立即释放");
+			MKRelease.release(object_ as any);
 		} else {
-			// @weak-end
-			// 如果模块已经关闭则直接释放
-			if (this._state === _MKLifeCycle.RunState.Close) {
-				this._log.debug("在模块关闭后跟随释放资源会被立即释放");
-				MKRelease.release(object_ as any);
-			} else {
-				this._releaseManage.add(object_ as any);
-			}
-			// @weak-start-include-MKAudioExport
+			// 添加释放对象
+			this._releaseManage.add(object_ as any);
 		}
-		// @weak-end
 	}
 
-	// @weak-start-content-MKAudioExport
-	// @import: & MKAudio_.PrivateUnit
-	// @position:/(?<=TypeReleaseParamType)/
-	cancelRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
-		// @weak-end
+	cancelRelease<T = MKRelease_.TypeReleaseParamType>(object_: T): void {
 		if (!object_) {
 			return;
 		}
 
-		// @weak-start-include-MKAudioExport
 		// 删除释放对象
-		if (object_ instanceof MKAudio_.PrivateUnit) {
-			if (object_.clip) {
-				this._releaseManage.delete(object_.clip);
-			}
-		} else {
-			// @weak-end
-			this._releaseManage.delete(object_ as any);
-			// @weak-start-include-MKAudioExport
-		}
-		// @weak-end
+		this._releaseManage.delete(object_ as any);
 
 		return;
 	}

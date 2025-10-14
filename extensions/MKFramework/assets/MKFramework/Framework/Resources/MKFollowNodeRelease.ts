@@ -1,6 +1,8 @@
 import { _decorator, Asset, Component, Node } from "cc";
-import { MKAudio_ } from "../Audio/MKAudioExport";
-import MKRelease, { MKRelease_ } from "./MKRelease";
+import type MKRelease from "./MKRelease";
+import type { MKRelease_ } from "./MKRelease";
+import mkDynamicModule from "../MKDynamicModule";
+const mkReleaseExport = mkDynamicModule.all(import("./MKRelease"));
 const { ccclass, property } = _decorator;
 
 /** 跟随节点释放 */
@@ -9,67 +11,34 @@ class MKFollowNodeRelease extends Component implements MKRelease_.TypeFollowRele
 	/** 初始化状态 */
 	private _isInit = false;
 	/** 释放管理器 */
-	private _releaseManage = new MKRelease();
+	private _releaseManage!: MKRelease;
 
-	// @weak-start-content-MKAudioExport
-	// @position:/(?<=TypeReleaseParamType)/
-	// @import: & MKAudio_.PrivateUnit
-	followRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
+	followRelease<T = MKRelease_.TypeReleaseParamType>(object_: T): void {
 		if (!this._isInit) {
 			this._isInit = true;
+			this._releaseManage = new mkReleaseExport.default();
 			this.node.once(Node.EventType.NODE_DESTROYED, this._onDestroy, this);
 		}
 
-		// @weak-end
 		if (!object_) {
 			return;
 		}
 
-		// @weak-start-include-MKAudioExport
-		// 添加释放对象
-		if (MKAudio_ && object_ instanceof MKAudio_.PrivateUnit) {
-			if (object_.clip) {
-				// 如果模块已经关闭则直接释放
-				if (!this.isValid) {
-					MKRelease.release(object_.clip);
-				} else {
-					this._releaseManage.add(object_.clip);
-				}
-			}
+		// 如果节点无效则直接释放
+		if (!this.isValid) {
+			mkReleaseExport.default.release(object_ as any);
 		} else {
-			// @weak-end
-			// 如果模块已经关闭则直接释放
-			if (!this.isValid) {
-				MKRelease.release(object_ as any);
-			} else {
-				this._releaseManage.add(object_ as any);
-			}
-			// @weak-start-include-MKAudioExport
+			this._releaseManage.add(object_ as any);
 		}
-		// @weak-end
 	}
 
-	// @weak-start-content-MKAudioExport
-	// @import: & MKAudio_.PrivateUnit
-	// @position:/(?<=TypeReleaseParamType)/
-	cancelRelease<T = MKRelease_.TypeReleaseParamType & MKAudio_.PrivateUnit>(object_: T): void {
-		// @weak-end
+	cancelRelease<T = MKRelease_.TypeReleaseParamType>(object_: T): void {
 		if (!object_) {
 			return;
 		}
 
-		// @weak-start-include-MKAudioExport
 		// 删除释放对象
-		if (object_ instanceof MKAudio_.PrivateUnit) {
-			if (object_.clip) {
-				this._releaseManage.delete(object_.clip);
-			}
-		} else {
-			// @weak-end
-			this._releaseManage.delete(object_ as any);
-			// @weak-start-include-MKAudioExport
-		}
-		// @weak-end
+		this._releaseManage.delete(object_ as any);
 
 		return;
 	}
