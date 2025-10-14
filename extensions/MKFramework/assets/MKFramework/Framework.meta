@@ -9,7 +9,6 @@
     "bundleName": "Framework",
     "isBundle": true,
     "priority": 20,
-    "bundleFilterConfig": [],
-    "bundleConfigID": "auto_dcht4PSZ9Kub/sYyE7Digl"
+    "bundleFilterConfig": []
   }
 }
