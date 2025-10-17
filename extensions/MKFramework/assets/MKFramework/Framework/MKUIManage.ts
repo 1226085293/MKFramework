@@ -509,7 +509,7 @@ export class MKUIManage extends MKInstanceBase {
 					isFirst: true,
 				});
 
-				if (parent?.isValid) {
+				if (parent?.isValid && parent.active) {
 					await openTask;
 				}
 			}
