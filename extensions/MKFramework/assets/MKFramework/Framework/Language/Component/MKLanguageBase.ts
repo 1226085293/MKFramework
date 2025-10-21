@@ -123,14 +123,14 @@ abstract class MKLanguageBase extends Component {
 	}
 
 	protected onEnable(): void {
-		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
+		if (!EDITOR) {
 			this._onSwitchLanguage();
 			this._initEvent(true);
 		}
 	}
 
 	protected onDisable(): void {
-		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
+		if (!EDITOR) {
 			this._initEvent(false);
 		}
 	}
@@ -174,7 +174,7 @@ abstract class MKLanguageBase extends Component {
 
 	/* ------------------------------- get/set ------------------------------- */
 	protected _setMarkStr(valueStr_: string): void {
-		if (EDITOR && !window["cc"].GAME_VIEW) {
+		if (EDITOR) {
 			const typeStr = mkToolString.fuzzyMatch(Object.keys(this._data ?? {}), valueStr_);
 
 			if (typeStr) {

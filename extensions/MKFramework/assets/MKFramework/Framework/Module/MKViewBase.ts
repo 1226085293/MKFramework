@@ -246,7 +246,7 @@ export class MKViewBase extends MKLifeCycle {
 				}
 
 				// 更新编辑器
-				if (EDITOR && !window["cc"].GAME_VIEW) {
+				if (EDITOR) {
 					CCClass.Attr.setClassAttr(
 						_MKViewBase.AnimationConfig,
 						"openAnimationNum",
@@ -265,7 +265,7 @@ export class MKViewBase extends MKLifeCycle {
 				}
 
 				// 更新编辑器
-				if (EDITOR && !window["cc"].GAME_VIEW) {
+				if (EDITOR) {
 					CCClass.Attr.setClassAttr(
 						_MKViewBase.AnimationConfig,
 						"closeAnimationNum",
