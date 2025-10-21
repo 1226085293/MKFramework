@@ -521,7 +521,7 @@ export class MKUIManage extends MKInstanceBase {
 					return isParentActiveFunc(node.parent);
 				};
 
-				if (!isParentActiveFunc(parent)) {
+				if (isParentActiveFunc(parent)) {
 					await openTask;
 				}
 			}
