@@ -62,14 +62,14 @@ class MKLanguageLabel extends MKLanguageBase {
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onEnable(): void {
 		super.onEnable();
-		if (EDITOR && !window["cc"].GAME_VIEW) {
+		if (EDITOR) {
 			mkLanguageManage.event.on(mkLanguageManage.event.key.labelDataChange, this._onLabelDataChange, this)?.call(this);
 		}
 	}
 
 	protected onDisable(): void {
 		super.onDisable();
-		if (EDITOR && !window["cc"].GAME_VIEW) {
+		if (EDITOR) {
 			mkLanguageManage.event.targetOff(this);
 		}
 	}
@@ -79,7 +79,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	protected _resetData(): void {
 		// 更新类型数据
 		this._data = mkLanguageManage.labelDataTab[this._typeStr];
-		if (EDITOR && !window["cc"].GAME_VIEW) {
+		if (EDITOR) {
 			// 更新标记枚举
 			this._markEnum = mkToolEnum.objToEnum(this._data);
 			// 默认标记
@@ -114,7 +114,7 @@ class MKLanguageLabel extends MKLanguageBase {
 	}
 
 	protected _setTypeStr(valueStr_: string): void {
-		if (EDITOR && !window["cc"].GAME_VIEW) {
+		if (EDITOR) {
 			const typeStr = mkToolString.fuzzyMatch(MKLanguageLabel._typeStrList, valueStr_);
 			const typeNum = MKLanguageLabel._typeEnum[typeStr ?? ""];
 
@@ -161,7 +161,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 					this._typeStr = mkLanguageManage.labelDataTab[js.getClassName(userComp)]
 						? js.getClassName(userComp)
-						: (MKLanguageLabel._typeStrList[0] ?? "");
+						: MKLanguageLabel._typeStrList[0] ?? "";
 				})();
 			}
 		}
@@ -184,7 +184,7 @@ class MKLanguageLabel extends MKLanguageBase {
 		// 注册类型
 		MKLanguageLabel._typeEnum = mkToolEnum.objToEnum(mkLanguageManage.labelDataTab);
 
-		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
+		if (!EDITOR) {
 			return;
 		}
 
@@ -196,7 +196,7 @@ class MKLanguageLabel extends MKLanguageBase {
 
 	/** 更新编辑器 */
 	private _updateEditor(): void {
-		if (!(EDITOR && !window["cc"].GAME_VIEW)) {
+		if (!EDITOR) {
 			return;
 		}
 
