@@ -371,7 +371,7 @@ export class MKUIManage extends MKInstanceBase {
 
 		/** 父节点 */
 		const parentData = config_.parent !== undefined ? config_.parent : regisData.parent;
-		let parent = parentData instanceof Function ? parentData() : parentData;
+		let parent = (parentData instanceof Function ? parentData() : parentData) ?? null;
 
 		if (parent && !parent.isValid) {
 			parent = null;
@@ -509,7 +509,19 @@ export class MKUIManage extends MKInstanceBase {
 					isFirst: true,
 				});
 
-				if (parent?.isValid && parent.active) {
+				const isParentActiveFunc = (node: Node | Scene | null): boolean => {
+					if (node instanceof Scene) {
+						return true;
+					}
+
+					if (!node?.isValid || !node.active) {
+						return false;
+					}
+
+					return isParentActiveFunc(node.parent);
+				};
+
+				if (!isParentActiveFunc(parent)) {
 					await openTask;
 				}
 			}
