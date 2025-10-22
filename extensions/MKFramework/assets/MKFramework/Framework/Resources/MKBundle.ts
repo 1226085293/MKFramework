@@ -347,7 +347,7 @@ export class MKBundle extends MKInstanceBase {
 
 						config.unloadedCallbackFunc?.();
 						config.launchedCallbackFunc?.(error, scene);
-						resolveFunc(!scene);
+						resolveFunc(!error);
 					});
 				});
 			}).then((isSuccess) => {
