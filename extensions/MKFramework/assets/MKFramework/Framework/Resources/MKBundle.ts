@@ -85,6 +85,13 @@ export class MKBundle extends MKInstanceBase {
 		director.once(
 			Director.EVENT_BEFORE_SCENE_LAUNCH,
 			async (scene: Scene) => {
+				// 编辑器预览模式会触发两次 EVENT_BEFORE_SCENE_LAUNCH，首次场景数据无效
+				if (window["cc"].GAME_VIEW) {
+					await new Promise<void>((resolveFunc) => {
+						director.once(Director.EVENT_BEFORE_SCENE_LAUNCH, resolveFunc);
+					});
+				}
+
 				// init
 				await this.bundleMap.get("main")?.manage?.init?.();
 				// open
