@@ -134,7 +134,7 @@ class MKRelease {
 			valueList = this._objectList;
 		}
 
-		let indexNum = valueList.indexOf(object_);
+		const indexNum = valueList.indexOf(object_);
 
 		if (indexNum !== -1) {
 			valueList.splice(indexNum, 1);
