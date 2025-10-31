@@ -99,7 +99,8 @@ class MKToolString extends MKInstanceBase {
 					if (vStr.indexOf(keyStrList[k2Num]) < 0) {
 						break;
 					} else {
-						const reg = RegExp(`${keyStrList[k2Num]}`, "g");
+						// replace 防止特殊字符报错
+						const reg = RegExp(`${keyStrList[k2Num].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "g");
 						let execResult: RegExpExecArray | null;
 
 						while ((execResult = reg.exec(vStr)) !== null) {
