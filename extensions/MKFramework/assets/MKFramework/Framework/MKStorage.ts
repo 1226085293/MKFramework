@@ -97,7 +97,7 @@ class MKStorage<CT extends Object> {
 		let storageStr = !this._initConfig.nameStr ? null : sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(keyStr)}`);
 
 		// 不存在则创建新数据
-		if (storageStr === null) {
+		if (storageStr === null || storageStr === "") {
 			if (this._initConfig.data[key_] === undefined) {
 				return null;
 			}
@@ -202,9 +202,9 @@ class MKStorage<CT extends Object> {
 		// 迁移本地到本地
 		else {
 			Object.keys(this._initConfig.data).forEach((vStr) => {
-				const dataStr = sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(vStr)}`);
+				const storageStr = sys.localStorage.getItem(`${this._initConfig.nameStr}-${String(vStr)}`);
 
-				if (dataStr === null) {
+				if (storageStr === null || storageStr === "") {
 					return;
 				}
 
@@ -212,7 +212,7 @@ class MKStorage<CT extends Object> {
 				const oldKeyStr = `${this._initConfig.nameStr}-${String(vStr)}`;
 
 				this._writePipeline.add(() => {
-					sys.localStorage.setItem(newKeyStr, dataStr);
+					sys.localStorage.setItem(newKeyStr, storageStr);
 					sys.localStorage.removeItem(oldKeyStr);
 				});
 			});
