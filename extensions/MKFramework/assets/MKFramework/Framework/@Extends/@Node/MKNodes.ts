@@ -1,4 +1,20 @@
-import { director, Director, EditBox, Label, Layout, Node, ProgressBar, RichText, Slider, Sprite, Toggle, UIOpacity, UITransform, Vec2 } from "cc";
+import {
+	Animation,
+	director,
+	Director,
+	EditBox,
+	Label,
+	Layout,
+	Node,
+	ProgressBar,
+	RichText,
+	Slider,
+	Sprite,
+	Toggle,
+	UIOpacity,
+	UITransform,
+	Vec2,
+} from "cc";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import globalEvent from "../../../Config/GlobalEvent";
 

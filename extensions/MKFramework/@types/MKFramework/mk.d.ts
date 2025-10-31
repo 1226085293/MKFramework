@@ -3,6 +3,7 @@
 import GlobalConfig from "../../assets/MKFramework/Config/GlobalConfig";
 
 import { __private } from "cc";
+import { Animation as Animation_2 } from "cc";
 import { Asset } from "cc";
 import { AssetManager } from "cc";
 import { AudioClip } from "cc";
@@ -813,6 +814,7 @@ declare namespace mk {
 			layerRefreshIntervalMsNum: number;
 			windowAnimationTab: Readonly<{
 				open: Record<string, (value: Node_2) => void | Promise<void>>;
+				/** 当前层 */
 				close: Record<string, (value: Node_2) => void | Promise<void>>;
 			}>;
 		};
@@ -1287,14 +1289,21 @@ declare namespace mk {
 
 	declare namespace _MKBundle {
 		interface EventProtocol {
-			/** bundle 切换前事件 */
+			/** bundle 准备切换事件（准备从此 Bundle 场景切换到其他 Bundle 场景，先于 loadBundle 触发） */
+			bundleReadySwitch(event: {
+				/** 当前 bundle  */
+				currBundleStr: string;
+				/** 下个 bundle  */
+				nextBundleStr: string;
+			}): any;
+			/** bundle 切换前事件（从此 Bundle 场景切换到其他 Bundle 场景前） */
 			beforeBundleSwitch(event: {
 				/** 当前 bundle  */
 				currBundleStr: string;
 				/** 下个 bundle  */
 				nextBundleStr: string;
 			}): void;
-			/** bundle 切换后事件 */
+			/** bundle 切换后事件（从此 Bundle 场景切换到其他 Bundle 场景后） */
 			afterBundleSwitch(event: {
 				/** 当前 bundle  */
 				currBundleStr: string;
@@ -2806,7 +2815,7 @@ declare namespace mk {
 		label: Label;
 		sprite: Sprite;
 		transform: UITransform;
-		animation: Animation;
+		animation: Animation_2;
 		editBox: EditBox;
 		richText: RichText;
 		layout: Layout;
@@ -2991,13 +3000,13 @@ declare namespace mk {
 	 */
 	export declare class Release {
 		/** 节点集合 */
-		private _nodeSet;
+		private _nodeList;
 		/** 资源集合 */
-		private _assetSet;
+		private _assetList;
 		/** 对象集合 */
-		private _objectSet;
+		private _objectList;
 		/** 回调集合 */
-		private _callbackSet;
+		private _callbackList;
 		/**
 		 * 释放对象
 		 * @param object_ 指定对象
@@ -3024,7 +3033,7 @@ declare namespace mk {
 		 * 删除释放对象
 		 * @param object_ 删除跟随模块释放的对象或列表
 		 */
-		delete<T extends Release_.TypeReleaseParamType>(object_: T): void;
+		delete<T extends Release_.TypeReleaseParamType>(object_: T): boolean;
 		/**
 		 * 释放对象
 		 * @param object_ 指定对象
