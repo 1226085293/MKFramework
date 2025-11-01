@@ -1166,6 +1166,8 @@ declare namespace mk {
 	 */
 	declare abstract class MKAudioBase {
 		constructor();
+		/** 音频组 */
+		get groupMap(): ReadonlyMap<number, Audio_.Group>;
 		/** 日志 */
 		protected abstract _log: Logger;
 		/** 音频组 */
@@ -1197,17 +1199,21 @@ declare namespace mk {
 		 * 播放音效
 		 * @param audio_ 音频单元
 		 * @param config_ 播放配置
-		 * @returns
+		 * @returns 返回 null 则代表当前音频单元无效，
 		 * @remarks
 		 * 使用通用音频系统时，当播放数量超过 AudioSource.maxAudioChannel 时会导致播放失败
 		 */
-		play(audio_: Audio_.Unit, config_?: Partial<Audio_.PlayConfig>): boolean;
+		play(audio_: Audio_.Unit | string, config_?: Partial<Audio_.PlayConfig>): Promise<Audio_.Unit | null>;
 		/** 暂停所有音频 */
 		pauseAll(): void;
-		/** 恢复所有音频 */
+		/** 恢复所有暂停的音频 */
 		resumeAll(): void;
-		/** 停止所有音频 */
-		stopAll(): void;
+		/**
+		 * 停止所有音频
+		 * @param isPreventPlay_ 阻止后续播放，恢复后续播放则执行对应分组的 stop(false)
+		 * @defaultValue false
+		 */
+		stopAll(isPreventPlay_?: boolean): void;
 		/* Excluded from this release type: _add */
 		protected _eventRestart(): void;
 	}

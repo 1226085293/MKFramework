@@ -42,12 +42,12 @@ class MKAudioCommon extends MKAudioBase {
 	/** 倒计时集合 */
 	private _timerSet = new Set<any>();
 	/* ------------------------------- 功能 ------------------------------- */
-	play(audio_: MKAudioBase_.Unit, config_?: Partial<MKAudioBase_.PlayConfig>): boolean {
-		const audio = audio_ as MKAudioCommon_.PrivateUnit;
+	async play(audio_: MKAudioBase_.Unit | string, config_?: Partial<MKAudioBase_.PlayConfig>): Promise<MKAudioCommon_.PrivateUnit | null> {
+		const audio = (await super.play(audio_, config_)) as MKAudioCommon_.PrivateUnit;
 
 		// 安检
-		if (!super.play(audio, config_)) {
-			return false;
+		if (!audio) {
+			return null;
 		}
 
 		if (audio.state === MKAudioBase_.State.Play) {
@@ -55,7 +55,7 @@ class MKAudioCommon extends MKAudioBase {
 			if (audio.waitPlayNum !== -1) {
 				++audio.waitPlayNum;
 
-				return true;
+				return audio;
 			}
 
 			// 正常播放
@@ -64,7 +64,7 @@ class MKAudioCommon extends MKAudioBase {
 			this._play(audio);
 		}
 
-		return true;
+		return audio;
 	}
 
 	pause(audio_: MKAudioCommon_.PrivateUnit): void {
