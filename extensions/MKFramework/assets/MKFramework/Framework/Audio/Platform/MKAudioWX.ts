@@ -23,40 +23,42 @@ class MKAudioWX extends MKAudioBase {
 	/** 日志 */
 	protected _log = new MKLogger("MKAudioWX");
 	/* ------------------------------- 功能 ------------------------------- */
-	play(audio_: MKAudioWX_.PrivateUnit, config_?: Partial<MKAudioBase_.PlayConfig>): boolean {
+	async play(audio_: MKAudioWX_.PrivateUnit | string, config_?: Partial<MKAudioBase_.PlayConfig>): Promise<MKAudioWX_.PrivateUnit | null> {
+		const audio = (await super.play(audio_, config_)) as MKAudioWX_.PrivateUnit;
+
 		// 安检
-		if (!super.play(audio_, config_) || !audio_.clip) {
-			return false;
+		if (!audio) {
+			return null;
 		}
 
-		if (audio_.state === MKAudioBase_.State.Play) {
+		if (audio.state === MKAudioBase_.State.Play) {
 			// 等待播放
-			if (audio_.waitPlayNum !== -1) {
-				++audio_.waitPlayNum;
+			if (audio.waitPlayNum !== -1) {
+				++audio.waitPlayNum;
 
-				return true;
+				return audio;
 			}
 
-			audio_.context.play();
+			audio.context.play();
 		}
 		// 恢复播放
-		else if (audio_.state === MKAudioBase_.State.Pause) {
-			audio_.context.play();
-			audio_._event?.emit(audio_._event?.key.resume);
+		else if (audio.state === MKAudioBase_.State.Pause) {
+			audio.context.play();
+			audio._event?.emit(audio._event?.key.resume);
 		}
 		// 播放
 		else {
-			audio_.context.src = audio_.clip.nativeUrl;
-			audio_.playFinishFunc = this._onAudioEnded.bind(this, audio_);
-			audio_.context.onEnded(audio_.playFinishFunc);
-			audio_.context.play();
-			audio_._event?.emit(audio_._event?.key.play);
+			audio.context.src = audio.clip!.nativeUrl;
+			audio.playFinishFunc = this._onAudioEnded.bind(this, audio);
+			audio.context.onEnded(audio.playFinishFunc);
+			audio.context.play();
+			audio._event?.emit(audio._event?.key.play);
 		}
 
 		// 更新状态
-		audio_.state = MKAudioBase_.State.Play;
+		audio.state = MKAudioBase_.State.Play;
 
-		return true;
+		return audio;
 	}
 
 	pause(audio_: MKAudioWX_.PrivateUnit): void {

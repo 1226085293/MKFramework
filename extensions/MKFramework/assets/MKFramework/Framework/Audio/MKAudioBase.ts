@@ -6,7 +6,7 @@ import globalEvent from "../../Config/GlobalEvent";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKRelease, { MKRelease_ } from "../Resources/MKRelease";
 // eslint-disable-next-line unused-imports/no-unused-imports
-import { _decorator, AudioClip, AudioSource, Enum } from "cc";
+import { _decorator, AudioClip, AudioSource, director, Enum, find, Node } from "cc";
 import mkToolObject from "../@Private/Tool/MKToolObject";
 
 const { ccclass, property } = _decorator;
@@ -20,6 +20,10 @@ abstract class MKAudioBase {
 		globalEvent.on(globalEvent.key.restart, this._eventRestart, this);
 	}
 
+	/** 音频组 */
+	get groupMap(): ReadonlyMap<number, MKAudioBase_.Group> {
+		return this._groupMap;
+	}
 	/* --------------- protected --------------- */
 	/** 日志 */
 	protected abstract _log: MKLogger;
@@ -137,34 +141,45 @@ abstract class MKAudioBase {
 	 * 播放音效
 	 * @param audio_ 音频单元
 	 * @param config_ 播放配置
-	 * @returns
+	 * @returns 返回 null 则代表当前音频单元无效，
 	 * @remarks
 	 * 使用通用音频系统时，当播放数量超过 AudioSource.maxAudioChannel 时会导致播放失败
 	 */
-	play(audio_: MKAudioBase_.Unit, config_?: Partial<MKAudioBase_.PlayConfig>): boolean {
-		const audio = audio_ as MKAudioBase_.PrivateUnit;
+	async play(audio_: MKAudioBase_.Unit | string, config_?: Partial<MKAudioBase_.PlayConfig>): Promise<MKAudioBase_.Unit | null> {
+		let audio: MKAudioBase_.Unit | null;
 
-		// 参数安检
-		if (!audio_?.clip) {
-			return false;
-		}
+		if (typeof audio_ === "string") {
+			const node = find("音频跟随释放节点") || new Node("音频跟随释放节点");
 
-		// 初始化音频
-		{
-			// 更新配置
-			if (config_) {
-				Object.assign(audio, config_);
+			if (!node.parent) {
+				node.parent = director.getScene();
 			}
 
-			// 添加音频
-			this._add(audio, audio.groupIdNumList);
+			audio = await this.add(audio_, node, {
+				type: GlobalConfig.Audio.Type.Effect,
+			});
+		} else {
+			audio = audio_;
 		}
+
+		// 参数安检
+		if (!audio?.clip) {
+			return null;
+		}
+
+		// 更新配置
+		if (config_) {
+			Object.assign(audio, config_);
+		}
+
+		// 添加音频
+		this._add(audio as MKAudioBase_.PrivateUnit, audio.groupIdNumList);
 
 		if (audio.groupIdNumList.some((vNum) => this.getGroup(vNum).isStop)) {
-			return false;
+			return null;
 		}
 
-		return true;
+		return audio;
 	}
 
 	/** 暂停所有音频 */
@@ -176,7 +191,7 @@ abstract class MKAudioBase {
 		});
 	}
 
-	/** 恢复所有音频 */
+	/** 恢复所有暂停的音频 */
 	resumeAll(): void {
 		this._groupMap.forEach((v) => {
 			v.audioUnitList.forEach((v2) => {
@@ -187,13 +202,25 @@ abstract class MKAudioBase {
 		});
 	}
 
-	/** 停止所有音频 */
-	stopAll(): void {
-		this._groupMap.forEach((v) => {
-			v.audioUnitList.forEach((v2) => {
-				this.stop(v2);
-			});
-		});
+	/**
+	 * 停止所有音频
+	 * @param isPreventPlay_ 阻止后续播放，恢复后续播放则执行对应分组的 stop(false)
+	 * @defaultValue false
+	 */
+	stopAll(isPreventPlay_ = false): void {
+		for (const kStr in GlobalConfig.Audio.Type) {
+			if (isNaN(Number(kStr))) {
+				continue;
+			}
+
+			if (isPreventPlay_) {
+				this._groupMap.get(Number(kStr))!.stop();
+			} else {
+				this._groupMap.get(Number(kStr))!.audioUnitList.forEach((v2) => {
+					this.stop(v2);
+				});
+			}
+		}
 	}
 
 	/**

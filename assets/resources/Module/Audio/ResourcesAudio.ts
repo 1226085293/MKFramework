@@ -33,7 +33,6 @@ export class ResourcesAudio extends mk.ViewBase {
 	async open(): Promise<void> {
 		await this._initData();
 		await this._initView();
-		this._initEvent();
 	}
 
 	close(config_?: Omit<mk.UIManage_.CloseConfig<any>, "type" | "isAll">): void | Promise<void> {
@@ -72,15 +71,21 @@ export class ResourcesAudio extends mk.ViewBase {
 
 	/** 初始化视图 */
 	private _initView(): void {
-		mk.audio.play(this.music);
-		mk.audio.play(this.effect);
+		// mk.audio.play(this.music);
+		// mk.audio.play(this.effect);
+
+		mk.audio.play("db://assets/resources/Module/Audio/Audio/龙卷风声音_耳聆网_[声音ID：36225].mp3").then((v) => {
+			console.log(v);
+		});
+	}
+	/* ------------------------------- 进度条事件 ------------------------------- */
+	onAudioProgressChange(slider_: cc.Slider): void {
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Music).volumeNum = slider_.progress;
 	}
 
-	/** 初始化事件 */
-	private _initEvent(): void {
-		// ...
+	onEffectProgressChange(slider_: cc.Slider): void {
+		mk.audio.getGroup(GlobalConfig.Audio.Type.Effect).volumeNum = slider_.progress;
 	}
-
 	/* ------------------------------- 按钮事件 ------------------------------- */
 	clickClose(): void {
 		this.close({
