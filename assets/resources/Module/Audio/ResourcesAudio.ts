@@ -71,12 +71,8 @@ export class ResourcesAudio extends mk.ViewBase {
 
 	/** 初始化视图 */
 	private _initView(): void {
-		// mk.audio.play(this.music);
-		// mk.audio.play(this.effect);
-
-		mk.audio.play("db://assets/resources/Module/Audio/Audio/龙卷风声音_耳聆网_[声音ID：36225].mp3").then((v) => {
-			console.log(v);
-		});
+		mk.audio.play(this.music);
+		mk.audio.play(this.effect);
 	}
 	/* ------------------------------- 进度条事件 ------------------------------- */
 	onAudioProgressChange(slider_: cc.Slider): void {
