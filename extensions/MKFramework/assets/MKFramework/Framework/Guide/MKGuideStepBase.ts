@@ -1,3 +1,5 @@
+import { EDITOR } from "cc/env";
+import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import { mkLog } from "../MKLogger";
 import type MKGuideManage from "./MKGuideManage";
 import type { MKGuideManage_ } from "./MKGuideManage";
@@ -10,6 +12,14 @@ const { ccclass, property } = _decorator;
  */
 @ccclass("MkGuideStepBase")
 abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateCell> = any> extends Component {
+	constructor() {
+		super();
+		if (EDITOR && !window["cc"].GAME_VIEW) {
+			return;
+		}
+
+		mkToolFunc.runParentFunc(this, ["unload"] as (keyof MKGuideStepBase)[]);
+	}
 	/** 步骤序号 */
 	abstract stepNum: number;
 	/**
@@ -43,13 +53,18 @@ abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateC
 	 * - length > 1：预加载
 	 */
 	nextStepNumList?: number[];
+	/**
+	 * 事件对象列表
+	 * @internal
+	 */
+	eventTargetList: { targetOff?(target: any): any }[] = [];
 	/* ------------------------------- 生命周期 ------------------------------- */
 	/**
 	 * 预加载
 	 * @remarks
 	 * 上个步骤 load 后执行
 	 */
-	preLoad?(): void | Promise<void>;
+	preLoad?(): void;
 
 	/**
 	 * 加载
@@ -57,14 +72,19 @@ abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateC
 	 * @remarks
 	 * 进入当前步骤
 	 */
-	abstract load(isJump_: boolean): void | Promise<void>;
+	abstract load(isJump_: boolean): void;
 
 	/**
 	 * 卸载
 	 * @remarks
 	 * 退出当前步骤
 	 */
-	unload?(): void | Promise<void>;
+	unload(): void {
+		// 清理事件
+		this.eventTargetList.splice(0, this.eventTargetList.length).forEach((v) => {
+			v.targetOff?.(this);
+		});
+	}
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 跳转到下个步骤
