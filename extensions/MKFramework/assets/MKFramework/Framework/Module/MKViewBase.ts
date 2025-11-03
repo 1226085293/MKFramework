@@ -179,7 +179,7 @@ export class MKViewBase extends MKLifeCycle {
 	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected open(): void | Promise<void>;
+	protected open(): void;
 	protected async open(): Promise<void> {
 		/** 打开动画函数 */
 		const openAnimationFunc = MKViewBase._config.windowAnimationTab?.open?.[this.animationConfig?.openAnimationStr];
@@ -201,7 +201,7 @@ export class MKViewBase extends MKLifeCycle {
 	// @weak-start-content-MKUIManage
 	// @position:/(?<=close\()/g
 	// @import:config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">
-	close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): void | Promise<void>;
+	close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): void;
 	async close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): Promise<void> {
 		// @weak-end
 		// 不在关闭中或者已经关闭代表外部调用
@@ -213,7 +213,7 @@ export class MKViewBase extends MKLifeCycle {
 		}
 	}
 
-	protected lateClose?(): void | Promise<void>;
+	protected lateClose?(): void;
 	protected async lateClose?(): Promise<void> {
 		/** 关闭动画函数 */
 		const closeAnimationFunc = MKViewBase._config.windowAnimationTab?.close?.[this.animationConfig?.closeAnimationStr];

@@ -393,19 +393,19 @@ declare namespace mk {
 			 * @remarks
 			 * 从其他 bundle 的场景切换到此 bundle 的场景之前调用
 			 */
-			init?(): void | Promise<void>;
+			init?(): void;
 			/**
 			 * 打开回调
 			 * @remarks
 			 * 从其他 bundle 的场景切换到此 bundle 的场景时调用
 			 */
-			open(): void | Promise<void>;
+			open(): void;
 			/**
 			 * 关闭回调
 			 * @remarks
 			 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
 			 */
-			close(): void | Promise<void>;
+			close(): void;
 			followRelease<T = Release_.TypeReleaseParamType>(object_: T): T;
 			cancelRelease<T = Release_.TypeReleaseParamType>(object_: T): void;
 		}
@@ -688,6 +688,7 @@ declare namespace mk {
 	 * @noInheritDoc
 	 */
 	export declare abstract class GuideStepBase<CT extends Record<string, GuideManage_.OperateCell> = any> extends Component {
+		constructor();
 		/** 步骤序号 */
 		abstract stepNum: number;
 		/**
@@ -723,25 +724,26 @@ declare namespace mk {
 		 * - length > 1：预加载
 		 */
 		nextStepNumList?: number[];
+		/* Excluded from this release type: eventTargetList */
 		/**
 		 * 预加载
 		 * @remarks
 		 * 上个步骤 load 后执行
 		 */
-		preLoad?(): void | Promise<void>;
+		preLoad?(): void;
 		/**
 		 * 加载
 		 * @param isJump_ 跳转状态
 		 * @remarks
 		 * 进入当前步骤
 		 */
-		abstract load(isJump_: boolean): void | Promise<void>;
+		abstract load(isJump_: boolean): void;
 		/**
 		 * 卸载
 		 * @remarks
 		 * 退出当前步骤
 		 */
-		unload?(): void | Promise<void>;
+		unload(): void;
 		/**
 		 * 跳转到下个步骤
 		 * @param initData_ 下个步骤初始化数据
@@ -813,9 +815,8 @@ declare namespace mk {
 			layerSpacingNum: number;
 			layerRefreshIntervalMsNum: number;
 			windowAnimationTab: Readonly<{
-				open: Record<string, (value: Node_2) => void | Promise<void>>;
-				/** 当前层 */
-				close: Record<string, (value: Node_2) => void | Promise<void>>;
+				open: Record<string, (value: Node_2) => void>;
+				close: Record<string, (value: Node_2) => void>;
 			}>;
 		};
 		/** 初始化编辑器 */
@@ -858,15 +859,7 @@ declare namespace mk {
 		 * 如果是 class 类型数据会在 close 后自动重置，根据 this._isResetData 控制
 		 */
 		data?: any;
-		/**
-		 * 事件对象列表
-		 * @readonly
-		 * @remarks
-		 * 模块关闭后自动清理事件
-		 */
-		eventTargetList: {
-			targetOff?(target: any): any;
-		}[];
+		/* Excluded from this release type: eventTargetList */
 		/**
 		 * 有效状态
 		 * @remarks
@@ -2331,9 +2324,9 @@ declare namespace mk {
 			 */
 			resetFunc?: (object: CT, isCreate: boolean) => CT | Promise<CT>;
 			/** 释放回调 */
-			clearFunc?: (objectList: CT[]) => void | Promise<void>;
+			clearFunc?: (objectList: CT[]) => void;
 			/** 销毁回调 */
-			destroyFunc?: () => void | Promise<void>;
+			destroyFunc?: () => void;
 			/**
 			 * 最小保留数量
 			 * @remarks
@@ -3270,13 +3263,13 @@ declare namespace mk {
 		typeStr: string;
 		/** 模块配置 */
 		set config(config_: _MKViewBase.CreateConfig);
-		protected open(): void | Promise<void>;
+		protected open(): void;
 		/**
 		 * 关闭
 		 * @param config_ 关闭配置
 		 */
-		close(config_?: Omit<UIManage_.CloseConfig<any>, "type" | "isAll">): void | Promise<void>;
-		protected lateClose?(): void | Promise<void>;
+		close(config_?: Omit<UIManage_.CloseConfig<any>, "type" | "isAll">): void;
+		protected lateClose?(): void;
 		/** 初始化编辑器 */
 		protected _initEditor(): void;
 		private _getIsAutoMask;

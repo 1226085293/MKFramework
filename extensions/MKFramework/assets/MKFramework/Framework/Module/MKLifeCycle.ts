@@ -129,7 +129,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	data?: any;
 	/**
 	 * 事件对象列表
-	 * @readonly
+	 * @internal
 	 * @remarks
 	 * 模块关闭后自动清理事件
 	 */
