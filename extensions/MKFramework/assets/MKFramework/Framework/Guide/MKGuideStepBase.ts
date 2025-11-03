@@ -58,6 +58,11 @@ abstract class MKGuideStepBase<CT extends Record<string, MKGuideManage_.OperateC
 	 * @internal
 	 */
 	eventTargetList: { targetOff?(target: any): any }[] = [];
+	/**
+	 * 步骤是否执行完成
+	 * @internal
+	 */
+	isFinish = false;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	/**
 	 * 预加载
