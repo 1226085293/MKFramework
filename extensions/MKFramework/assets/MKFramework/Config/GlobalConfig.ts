@@ -97,9 +97,9 @@ namespace GlobalConfig {
 			/** 窗口打开动画 */
 			windowAnimationTab: Readonly<{
 				/** 打开动画 */
-				open: Record<string, (value: Node) => void | Promise<void>>;
+				open: Record<string, (value: Node) => void>;
 				/** 关闭动画 */
-				close: Record<string, (value: Node) => void | Promise<void>>;
+				close: Record<string, (value: Node) => void>;
 			}> = {
 				open: {
 					无: null!,

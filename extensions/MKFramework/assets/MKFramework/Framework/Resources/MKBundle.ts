@@ -690,7 +690,7 @@ export namespace MKBundle_ {
 		 * @remarks
 		 * 从其他 bundle 的场景切换到此 bundle 的场景之前调用
 		 */
-		init?(): void | Promise<void> {
+		init?(): void {
 			if (
 				// 编辑器模式下只能运行 main bundle 的生命周期
 				(EDITOR && !window["cc"].GAME_VIEW && this.nameStr !== "main") ||
@@ -708,7 +708,7 @@ export namespace MKBundle_ {
 		 * @remarks
 		 * 从其他 bundle 的场景切换到此 bundle 的场景时调用
 		 */
-		open(): void | Promise<void> {
+		open(): void {
 			// 编辑器模式下只能运行 main bundle 的生命周期
 			if (EDITOR && !window["cc"].GAME_VIEW && this.nameStr !== "main") {
 				throw "中断";
@@ -720,7 +720,7 @@ export namespace MKBundle_ {
 		 * @remarks
 		 * 从此 bundle 的场景切换到其他 bundle 的场景时调用
 		 */
-		close(): void | Promise<void> {
+		close(): void {
 			if (!this.isValid) {
 				mkLog.error("bundle 已经卸载");
 				throw "中断";

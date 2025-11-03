@@ -17,9 +17,9 @@ namespace _MKObjectPool {
 		 */
 		resetFunc?: (object: CT, isCreate: boolean) => CT | Promise<CT>;
 		/** 释放回调 */
-		clearFunc?: (objectList: CT[]) => void | Promise<void>;
+		clearFunc?: (objectList: CT[]) => void;
 		/** 销毁回调 */
-		destroyFunc?: () => void | Promise<void>;
+		destroyFunc?: () => void;
 		/**
 		 * 最小保留数量
 		 * @remarks

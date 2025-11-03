@@ -136,7 +136,7 @@ class MKGuideManage {
 					return;
 				}
 
-				this._stepPreloadMap.set(v.stepNum, v.preLoad() ?? null);
+				this._stepPreloadMap.set(v.stepNum, (v.preLoad() as any) ?? null);
 			});
 
 			// 加载场景
