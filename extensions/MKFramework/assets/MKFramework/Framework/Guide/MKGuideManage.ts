@@ -95,10 +95,6 @@ class MKGuideManage {
 	 */
 	run(): Promise<void> {
 		return this._taskPipeline.add(async () => {
-			if (this._preStepNum === this._stepNum) {
-				return;
-			}
-
 			/** 上次引导步骤 */
 			const preStep = this._preStepNum === undefined ? null : this.stepMap.get(this._preStepNum);
 			/** 当前引导步骤 */
@@ -185,10 +181,6 @@ class MKGuideManage {
 	 */
 	setStep(stepNum_: number, initData_?: any): Promise<void> {
 		return this._taskPipeline.add(async () => {
-			if (this._stepNum === stepNum_) {
-				return;
-			}
-
 			// 重启引导
 			if (this._isFinish && this.isPause) {
 				this.isPause = false;

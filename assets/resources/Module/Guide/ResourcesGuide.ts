@@ -11,7 +11,7 @@ export class ResourcesGuide extends mk.ViewBase {
 	create(): void {
 		const guideManage = new mk.GuideManage({
 			operateTab: operate.tab,
-			endStepNum: 4,
+			endStepNum: 999,
 			stepUpdateCallbackFunc: () => true,
 		});
 
