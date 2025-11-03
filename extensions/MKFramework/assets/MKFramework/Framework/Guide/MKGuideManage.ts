@@ -152,29 +152,7 @@ class MKGuideManage {
 			}
 
 			// (加载/卸载/重置)操作
-			if (this._initConfig.operateTab) {
-				/** 当前步骤操作 */
-				const currentOperateStrList = currentStep.operateStrList;
-				/** 上次步骤操作 */
-				const preOperateStrList = preStep?.operateStrList ?? ([] as any as typeof currentOperateStrList);
-
-				for (const vStr of preOperateStrList) {
-					// 重置操作，当前步骤和上次步骤都存在的操作
-					if (currentOperateStrList.includes(vStr)) {
-						await this._initConfig.operateTab[vStr].reset?.();
-						currentStep.operateTab[vStr] = preStep?.operateTab[vStr];
-					}
-					// 卸载操作，上次步骤存在，当前步骤不存在的操作
-					else {
-						await this._initConfig.operateTab[vStr].unload?.();
-					}
-				}
-
-				// 加载操作，当前步骤存在，上次步骤不存在的操作
-				for (const vStr of currentOperateStrList.filter((v) => !preOperateStrList.includes(v))) {
-					currentStep.operateTab[vStr] = await this._initConfig.operateTab[vStr].load();
-				}
-			}
+			this._updateOperate(currentStep, preStep);
 
 			// 确认预加载完成
 			{
@@ -183,13 +161,7 @@ class MKGuideManage {
 			}
 
 			// 卸载步骤
-			if (preStep) {
-				// 执行上个步骤 unload
-				await preStep.unload();
-				// 卸载步骤事件
-				await Promise.all(this.event.request(this.event.key.afterUnloadStep, preStep));
-			}
-
+			await this._uninstallStep(preStep);
 			// 更新上个步骤
 			this._preStepNum = currentStep.stepNum;
 			// 执行步骤 load
@@ -227,6 +199,7 @@ class MKGuideManage {
 			// 更新初始化数据
 			if (currentStep) {
 				currentStep.initData = initData_;
+				currentStep.isFinish = false;
 			}
 
 			this._log.log("切换到步骤", this._stepNum, currentStep?.describeStr ?? "");
@@ -256,10 +229,62 @@ class MKGuideManage {
 	}
 
 	/** 完成引导 */
-	finish(): void {
-		this._log.log("引导完成");
+	async finish(): Promise<void> {
+		/** 上次引导步骤 */
+		const preStep = this._preStepNum === undefined ? null : this.stepMap.get(this._preStepNum);
+
+		if (preStep && !preStep.isFinish) {
+			// (加载/卸载/重置)操作
+			await this._updateOperate(null, preStep);
+			// 卸载步骤
+			await this._uninstallStep(preStep);
+		}
+
 		this.isPause = true;
 		this.event.emit(this.event.key.finish);
+		this._log.log("引导完成");
+	}
+
+	/** 更新操作 */
+	private async _updateOperate(currentStep_: MKGuideStepBase<any> | null, preStep_?: MKGuideStepBase<any> | null): Promise<void> {
+		// (加载/卸载/重置)操作
+		if (this._initConfig.operateTab) {
+			/** 当前步骤操作 */
+			const currentOperateStrList = currentStep_?.operateStrList ?? [];
+			/** 上次步骤操作 */
+			const preOperateStrList = preStep_?.operateStrList ?? ([] as any as typeof currentOperateStrList);
+
+			for (const vStr of preOperateStrList) {
+				// 重置操作，当前步骤和上次步骤都存在的操作
+				if (currentOperateStrList.includes(vStr)) {
+					await this._initConfig.operateTab[vStr].reset?.();
+					currentStep_!.operateTab[vStr] = preStep_?.operateTab[vStr];
+				}
+				// 卸载操作，上次步骤存在，当前步骤不存在的操作
+				else {
+					await this._initConfig.operateTab[vStr].unload?.();
+				}
+			}
+
+			// 加载操作，当前步骤存在，上次步骤不存在的操作
+			for (const vStr of currentOperateStrList.filter((v) => !preOperateStrList.includes(v))) {
+				currentStep_!.operateTab[vStr] = await this._initConfig.operateTab[vStr].load();
+			}
+		}
+	}
+
+	/** 卸载步骤 */
+	private async _uninstallStep(step_?: MKGuideStepBase<any> | null): Promise<void> {
+		if (!step_) {
+			return;
+		}
+
+		// 更新状态
+		step_.isFinish = true;
+		// 执行上个步骤 unload
+		await step_.unload();
+		// 卸载步骤事件
+		await Promise.all(this.event.request(this.event.key.afterUnloadStep, step_));
 	}
 
 	/** 更新步骤数据 */
