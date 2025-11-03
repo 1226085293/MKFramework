@@ -10,12 +10,17 @@ class ResourcesGuideStep1 extends ResourcesGuideStepBase {
 	sceneStr = "main.Main";
 	operateStrList = [resources_guide_operate.key.隐藏所有按钮, resources_guide_operate.key.按钮1];
 	/* ------------------------------- 生命周期 ------------------------------- */
-	load(): void | Promise<void> {
+	load(): void {
+		console.log("ResourcesGuideStep1 - load");
 		const button = this.operateTab[resources_guide_operate.key.按钮1];
 
 		button?.once(cc.Button.EventType.CLICK, async () => {
 			this._next();
 		});
+	}
+
+	unload(): void {
+		console.log("ResourcesGuideStep1 - unload");
 	}
 }
 

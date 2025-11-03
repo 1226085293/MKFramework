@@ -22,6 +22,9 @@ const tab = {
 
 			return cc.find("Canvas/ResourcesGuide/按钮")!.children[0];
 		},
+		reset() {
+			this.load();
+		},
 	},
 	按钮2: {
 		load() {
@@ -30,6 +33,9 @@ const tab = {
 
 			return cc.find("Canvas/ResourcesGuide/按钮")!.children[1];
 		},
+		reset() {
+			this.load();
+		},
 	},
 	按钮3: {
 		load() {
@@ -37,6 +43,9 @@ const tab = {
 			cc.find("Canvas/ResourcesGuide/遮罩")!.children[2].active = true;
 
 			return cc.find("Canvas/ResourcesGuide/按钮")!.children[2];
+		},
+		reset() {
+			this.load();
 		},
 	},
 };
