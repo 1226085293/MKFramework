@@ -574,6 +574,8 @@ declare namespace mk {
 		private _taskPipeline;
 		/** 步骤预加载任务表 */
 		private _stepPreloadMap;
+		/** 是否完成 */
+		private _isFinish;
 		/**
 		 * 注册步骤
 		 * @param step_ 步骤实例
@@ -599,7 +601,11 @@ declare namespace mk {
 		/** 获取步骤 */
 		getStep(): number;
 		/** 完成引导 */
-		finish(): void;
+		finish(): Promise<void>;
+		/** 更新操作 */
+		private _updateOperate;
+		/** 卸载步骤 */
+		private _uninstallStep;
 		/** 更新步骤数据 */
 		private _updateStepData;
 		private _setIsPause;
@@ -725,6 +731,7 @@ declare namespace mk {
 		 */
 		nextStepNumList?: number[];
 		/* Excluded from this release type: eventTargetList */
+		/* Excluded from this release type: isFinish */
 		/**
 		 * 预加载
 		 * @remarks
