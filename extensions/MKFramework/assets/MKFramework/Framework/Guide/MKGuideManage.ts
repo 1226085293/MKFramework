@@ -46,7 +46,7 @@ class MKGuideManage {
 
 	/** 完成状态 */
 	get isFinish(): boolean {
-		return this._stepNum === this._initConfig.endStepNum;
+		return this._isFinish;
 	}
 
 	/** 结束步骤 */
@@ -64,11 +64,13 @@ class MKGuideManage {
 	/** 上次步骤序号 */
 	private _preStepNum?: number;
 	/** 当前步骤序号 */
-	private _stepNum!: number;
+	private _stepNum = -1;
 	/** 任务管线 */
 	private _taskPipeline = new MKTaskPipeline();
 	/** 步骤预加载任务表 */
 	private _stepPreloadMap = new Map<number, null | Promise<any>>();
+	/** 是否完成 */
+	private _isFinish = false;
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 注册步骤
@@ -187,6 +189,11 @@ class MKGuideManage {
 				return;
 			}
 
+			// 重启引导
+			if (this._isFinish && this.isPause) {
+				this.isPause = false;
+			}
+
 			// 切换前事件
 			await Promise.all(this.event.request(this.event.key.beforeSwitch, stepNum_));
 
@@ -211,7 +218,7 @@ class MKGuideManage {
 
 			// 步骤完成
 			if (this._stepNum === this._initConfig.endStepNum) {
-				this.finish();
+				await this.finish();
 
 				return;
 			}
@@ -230,6 +237,13 @@ class MKGuideManage {
 
 	/** 完成引导 */
 	async finish(): Promise<void> {
+		// 跳转到最后一步
+		if (this._initConfig.endStepNum !== undefined && this._stepNum !== this._initConfig.endStepNum) {
+			this.setStep(this._initConfig.endStepNum);
+
+			return;
+		}
+
 		/** 上次引导步骤 */
 		const preStep = this._preStepNum === undefined ? null : this.stepMap.get(this._preStepNum);
 
@@ -241,6 +255,9 @@ class MKGuideManage {
 		}
 
 		this.isPause = true;
+		this._isFinish = true;
+		this._stepNum = -1;
+		this._preStepNum = undefined;
 		this.event.emit(this.event.key.finish);
 		this._log.log("引导完成");
 	}
