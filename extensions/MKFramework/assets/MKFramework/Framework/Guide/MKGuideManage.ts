@@ -174,10 +174,9 @@ class MKGuideManage {
 	 * @param stepNum_ 步骤
 	 * @param initData_ 初始化数据
 	 * @remarks
-	 *
-	 * - 暂停状态：更新步骤数据
-	 *
-	 * - 正常状态：更新步骤数据，执行步骤生命周期
+	 * - 正常状态下：执行完整步骤切换流程
+	 * - 暂停状态下：仅更新步骤数据，不执行生命周期
+	 * - 完成状态下：重置完成状态为 `false`，重新执行引导
 	 */
 	setStep(stepNum_: number, initData_?: any): Promise<void> {
 		return this._taskPipeline.add(async () => {
