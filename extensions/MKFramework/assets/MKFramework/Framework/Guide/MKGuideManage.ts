@@ -185,7 +185,7 @@ class MKGuideManage {
 			// 卸载步骤
 			if (preStep) {
 				// 执行上个步骤 unload
-				await preStep.unload?.();
+				await preStep.unload();
 				// 卸载步骤事件
 				await Promise.all(this.event.request(this.event.key.afterUnloadStep, preStep));
 			}

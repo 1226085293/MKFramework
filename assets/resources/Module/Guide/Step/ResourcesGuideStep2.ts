@@ -7,7 +7,7 @@ const { ccclass, property } = cc._decorator;
 class ResourcesGuideStep2 extends ResourcesGuideStepBase {
 	stepNum = 2;
 	nextStepNumList = [3];
-	sceneStr = "main.main";
+	sceneStr = "main.Main";
 	operateStrList = [resources_guide_operate.key.隐藏所有按钮, resources_guide_operate.key.按钮2];
 	/* ------------------------------- 生命周期 ------------------------------- */
 	load(): void | Promise<void> {
