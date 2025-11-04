@@ -182,30 +182,35 @@ abstract class MKAudioBase {
 		return audio;
 	}
 
-	/** 暂停所有音频 */
+	/**
+	 * 暂停所有音频
+	 * @remarks
+	 * 不会阻止后续音频播放
+	 */
 	pauseAll(): void {
-		this._groupMap.forEach((v) => {
-			v.audioUnitList.forEach((v2) => {
-				this.pause(v2);
-			});
-		});
+		for (const kStr in GlobalConfig.Audio.Type) {
+			if (isNaN(Number(kStr))) {
+				continue;
+			}
+
+			this._groupMap.get(Number(kStr))?.pause();
+		}
 	}
 
 	/** 恢复所有暂停的音频 */
 	resumeAll(): void {
-		this._groupMap.forEach((v) => {
-			v.audioUnitList.forEach((v2) => {
-				if (v2.state === MKAudioBase_.State.Pause) {
-					this.play(v2);
-				}
-			});
-		});
+		for (const kStr in GlobalConfig.Audio.Type) {
+			if (isNaN(Number(kStr))) {
+				continue;
+			}
+
+			this._groupMap.get(Number(kStr))?.play(MKAudioBase_.State.Pause);
+		}
 	}
 
 	/**
 	 * 停止所有音频
-	 * @param isPreventPlay_ 阻止后续播放，恢复后续播放则执行对应分组的 stop(false)
-	 * @defaultValue false
+	 * @param isPreventPlay_ 阻止后续播放，恢复后续播放则执行对应分组的 stop(false)；默认值 false
 	 */
 	stopAll(isPreventPlay_ = false): void {
 		for (const kStr in GlobalConfig.Audio.Type) {
@@ -214,9 +219,9 @@ abstract class MKAudioBase {
 			}
 
 			if (isPreventPlay_) {
-				this._groupMap.get(Number(kStr))!.stop();
+				this._groupMap.get(Number(kStr))?.stop();
 			} else {
-				this._groupMap.get(Number(kStr))!.audioUnitList.forEach((v2) => {
+				this._groupMap.get(Number(kStr))?.audioUnitList.forEach((v2) => {
 					this.stop(v2);
 				});
 			}
@@ -573,8 +578,8 @@ export namespace MKAudioBase_ {
 		/* ------------------------------- 功能 ------------------------------- */
 		/**
 		 * 播放
-		 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放，例：`mk.Audio_.State.Pause | mk.Audio_.State.Stop`
-		 * @defaultValue `State.Pause | State.Stop`
+		 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放；
+		 * 默认值 `mk.Audio_.State.Pause | mk.Audio_.State.Stop`
 		 */
 		play(containsStateNum_ = State.Pause | State.Stop): void {
 			// 停止状态没有暂停的音乐
@@ -610,7 +615,7 @@ export namespace MKAudioBase_ {
 		/**
 		 * 停止
 		 * @param isStop_
-		 * 默认为 true，true: 停止当前并阻止后续音频播放；false: 恢复播放能力
+		 * true: 停止当前并阻止后续音频播放；false: 恢复播放能力；默认值 true
 		 * @remarks
 		 * - 停止后续播放音频将不会执行播放逻辑
 		 */
@@ -625,7 +630,10 @@ export namespace MKAudioBase_ {
 			}
 		}
 
-		/** 添加音频 */
+		/**
+		 * 添加音频
+		 * @param audio_ 音频单元或音频单元列表
+		 */
 		addAudio(audio_: Unit | Unit[]): void {
 			let audioUnitList: PrivateUnit[];
 
@@ -653,7 +661,10 @@ export namespace MKAudioBase_ {
 			});
 		}
 
-		/** 删除音频 */
+		/**
+		 * 删除音频
+		 * @param audio_ 音频单元或音频单元列表
+		 */
 		delAudio(audio_: Unit | Unit[]): void {
 			const selfAudioUnitList = this.audioUnitList as PrivateUnit[];
 			let audioUnitList: PrivateUnit[];
