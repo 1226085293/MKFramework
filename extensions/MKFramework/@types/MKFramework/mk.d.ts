@@ -274,8 +274,8 @@ declare namespace mk {
 			private _isStop;
 			/**
 			 * 播放
-			 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放，例：`mk.Audio_.State.Pause | mk.Audio_.State.Stop`
-			 * @defaultValue `State.Pause | State.Stop`
+			 * @param containsStateNum_ 包含状态，处于这些状态中的音频将被播放；
+			 * 默认值 `mk.Audio_.State.Pause | mk.Audio_.State.Stop`
 			 */
 			play(containsStateNum_?: number): void;
 			/** 暂停 */
@@ -283,14 +283,20 @@ declare namespace mk {
 			/**
 			 * 停止
 			 * @param isStop_
-			 * 默认为 true，true: 停止当前并阻止后续音频播放；false: 恢复播放能力
+			 * true: 停止当前并阻止后续音频播放；false: 恢复播放能力；默认值 true
 			 * @remarks
 			 * - 停止后续播放音频将不会执行播放逻辑
 			 */
 			stop(isStop_?: boolean): void;
-			/** 添加音频 */
+			/**
+			 * 添加音频
+			 * @param audio_ 音频单元或音频单元列表
+			 */
 			addAudio(audio_: Unit | Unit[]): void;
-			/** 删除音频 */
+			/**
+			 * 删除音频
+			 * @param audio_ 音频单元或音频单元列表
+			 */
 			delAudio(audio_: Unit | Unit[]): void;
 			/** 清理所有音频 */
 			clear(): Unit[];
@@ -1204,14 +1210,17 @@ declare namespace mk {
 		 * 使用通用音频系统时，当播放数量超过 AudioSource.maxAudioChannel 时会导致播放失败
 		 */
 		play(audio_: Audio_.Unit | string, config_?: Partial<Audio_.PlayConfig>): Promise<Audio_.Unit | null>;
-		/** 暂停所有音频 */
+		/**
+		 * 暂停所有音频
+		 * @remarks
+		 * 不会阻止后续音频播放
+		 */
 		pauseAll(): void;
 		/** 恢复所有暂停的音频 */
 		resumeAll(): void;
 		/**
 		 * 停止所有音频
-		 * @param isPreventPlay_ 阻止后续播放，恢复后续播放则执行对应分组的 stop(false)
-		 * @defaultValue false
+		 * @param isPreventPlay_ 阻止后续播放，恢复后续播放则执行对应分组的 stop(false)；默认值 false
 		 */
 		stopAll(isPreventPlay_?: boolean): void;
 		/* Excluded from this release type: _add */
