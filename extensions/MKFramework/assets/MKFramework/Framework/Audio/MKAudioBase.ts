@@ -189,22 +189,26 @@ abstract class MKAudioBase {
 	 */
 	pauseAll(): void {
 		for (const kStr in GlobalConfig.Audio.Type) {
-			if (isNaN(Number(kStr))) {
+			if (!isNaN(Number(kStr))) {
 				continue;
 			}
 
-			this._groupMap.get(Number(kStr))?.pause();
+			const v = GlobalConfig.Audio.Type[kStr] as unknown as GlobalConfig.Audio.Type;
+
+			this._groupMap.get(v)?.pause();
 		}
 	}
 
 	/** 恢复所有暂停的音频 */
 	resumeAll(): void {
 		for (const kStr in GlobalConfig.Audio.Type) {
-			if (isNaN(Number(kStr))) {
+			if (!isNaN(Number(kStr))) {
 				continue;
 			}
 
-			this._groupMap.get(Number(kStr))?.play(MKAudioBase_.State.Pause);
+			const v = GlobalConfig.Audio.Type[kStr] as unknown as GlobalConfig.Audio.Type;
+
+			this._groupMap.get(v)?.play(MKAudioBase_.State.Pause);
 		}
 	}
 
@@ -214,14 +218,16 @@ abstract class MKAudioBase {
 	 */
 	stopAll(isPreventPlay_ = false): void {
 		for (const kStr in GlobalConfig.Audio.Type) {
-			if (isNaN(Number(kStr))) {
+			if (!isNaN(Number(kStr))) {
 				continue;
 			}
 
+			const v = GlobalConfig.Audio.Type[kStr] as unknown as GlobalConfig.Audio.Type;
+
 			if (isPreventPlay_) {
-				this._groupMap.get(Number(kStr))?.stop();
+				this._groupMap.get(v)?.stop();
 			} else {
-				this._groupMap.get(Number(kStr))?.audioUnitList.forEach((v2) => {
+				this._groupMap.get(v)?.audioUnitList.forEach((v2) => {
 					this.stop(v2);
 				});
 			}
