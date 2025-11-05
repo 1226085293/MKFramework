@@ -91,7 +91,7 @@ class reference_data {
         try {
             let encode_data_tab = JSON.parse(json_s);
             let encode_data_key_ss = Object.keys(encode_data_tab);
-            let uuid_ss = (await tool_1.default.call_scene_script("get_uuid_by_path", encode_data_key_ss));
+            let uuid_ss = (await tool_1.default.call_scene_script("get_uuid_by_path", encode_data_key_ss.map((v_s) => `${this.target.path}/${v_s}`)));
             let node_reference_tab = {};
             uuid_ss.forEach((v_s, k_n) => {
                 if (!v_s) {
@@ -108,22 +108,17 @@ class reference_data {
     }
     async encode(target_script_path_s_) {
         target_script_path_s_ = target_script_path_s_.replaceAll("\\", "/");
-        let { dir_path_s, file_name_s, class_name_s, script_path_s, script_db_path_s, } = this.parse(target_script_path_s_);
+        let { dir_path_s, file_name_s, class_name_s, script_path_s, script_db_path_s } = this.parse(target_script_path_s_);
         let host_script_s = fs.readFileSync(target_script_path_s_, "utf-8");
         let import_s = `import ${class_name_s} from "./${class_name_s}";`;
         let member_s = `nodes = new ${class_name_s}(this);`;
-        let varname_f = plugin_config_1.default.code_style_s === "驼峰"
-            ? varname.camelback
-            : varname.underscore;
+        let varname_f = plugin_config_1.default.code_style_s === "驼峰" ? varname.camelback : varname.underscore;
         // 如果成员为空则删除
-        if (!Object.keys(this.node_reference_tab).length &&
-            fs.existsSync(script_path_s)) {
+        if (!Object.keys(this.node_reference_tab).length && fs.existsSync(script_path_s)) {
             Editor.Message.send("asset-db", "delete-asset", script_db_path_s);
             Editor.Message.send("asset-db", "create-asset", this._convert_to_db_path(target_script_path_s_), host_script_s
                 .replace(new RegExp(`${import_s}((\r\n)|(\n))`), "")
-                .replace(new RegExp(`((\r\n)|(\n))\t${member_s
-                .replace("(", "\\(")
-                .replace(")", "\\)")}`), ""), {
+                .replace(new RegExp(`((\r\n)|(\n))\t${member_s.replace("(", "\\(").replace(")", "\\)")}`), ""), {
                 overwrite: true,
             });
             return;
@@ -242,11 +237,7 @@ export default class 类名 {
                 return;
             }
             let insert_index_n = host_script_s.indexOf("{", match_result.index) + 1;
-            host_script_s =
-                `${import_s}\n` +
-                    host_script_s.slice(0, insert_index_n) +
-                    `\n\t${member_s}` +
-                    host_script_s.slice(insert_index_n);
+            host_script_s = `${import_s}\n` + host_script_s.slice(0, insert_index_n) + `\n\t${member_s}` + host_script_s.slice(insert_index_n);
             Editor.Message.send("asset-db", "create-asset", this._convert_to_db_path(target_script_path_s_), host_script_s, {
                 overwrite: true,
             });
@@ -254,8 +245,7 @@ export default class 类名 {
     }
     _convert_to_db_path(fs_path_s_) {
         fs_path_s_ = fs_path_s_.replaceAll("\\", "/");
-        return ("db:/" +
-            fs_path_s_.slice(Editor.Project.path.length).replaceAll("\\", "/"));
+        return "db:/" + fs_path_s_.slice(Editor.Project.path.length).replaceAll("\\", "/");
     }
 }
 exports.default = new reference_data();

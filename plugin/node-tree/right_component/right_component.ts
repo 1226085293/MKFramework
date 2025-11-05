@@ -28,17 +28,14 @@ class right_component {
 					(data) => {
 						/** 用户组件 */
 						let user_component_as: { type: string }[] = data.node.components.filter((v: any) => !v.type.startsWith("cc"));
-
 						return user_component_as.length > 0;
 					},
 					(data) => {
 						let icon_div = document.createElement("ui-icon");
 						let button_div = document.createElement("div");
-
 						icon_div.setAttribute("color", "");
 						icon_div.setAttribute("value", "typescript");
 						button_div.appendChild(icon_div);
-
 						return button_div;
 					}
 				);

@@ -5,6 +5,7 @@ import tool from "../tool";
 import { EventData, MenuData } from "../types";
 import reference_data from "./reference_data";
 import variable_name from "./variable_name";
+import plugin_config from "../plugin_config";
 
 class node_reference {
 	/**
@@ -16,19 +17,39 @@ class node_reference {
 	 * - unload: 主进程卸载
 	 */
 	event: EventData[] = [
-		{
-			trigger_ss: ["asset-db:asset-change"],
-			callback_f: (uuid_s_: string, data_: { name: string }) => {
-				// console.log("资源变更", ...args_as);
-				// if (data_.name.endsWith(".scene") || data_.name.endsWith(".prefab")) {
-				// 	tool.call_scene_script("update_script");
-				// }
-			},
-		},
+		// {
+		// 	trigger_ss: ["scene:ready"],
+		// 	callback_f: (uuid_s_: string) => {
+		// 		console.log("场景变更", uuid_s_);
+		// 		// Editor.Message.send(plugin_config.plugin_name_s, "scene:ready", uuid_s_);
+		// 	},
+		// },
 	];
 
 	/** 菜单触发器（渲染进程） */
 	menu: MenuData[] = [
+		{
+			trigger_ss: ["load"],
+			callback_f: () => {
+				window["node-tree-render-event"] = window["node-tree-render-event"] ?? {};
+
+				// 取消事件
+				if (window["node-tree-render-event"]["scene:ready"]) {
+					Editor.Message.removeBroadcastListener("scene:ready", window["node-tree-render-event"]["scene:ready"]);
+				}
+				let last_uuid_s = "";
+				Editor.Message.addBroadcastListener(
+					"scene:ready",
+					(window["node-tree-render-event"]["scene:ready"] = (uuid_s_: string) => {
+						if (last_uuid_s && last_uuid_s !== uuid_s_) {
+							lib_node_tree.del(lib_node_tree_.extension_type.tail_left, "node-reference-name");
+							reference_data.target = null;
+						}
+						last_uuid_s = uuid_s_;
+					})
+				);
+			},
+		},
 		{
 			trigger_ss: ["node/关闭节点引用展示"],
 			priority_n: 999,
@@ -38,13 +59,15 @@ class node_reference {
 			callback_f: async () => {
 				lib_node_tree.del(lib_node_tree_.extension_type.tail_left, "node-reference-name");
 
-				/** 挂载脚本 */
-				let script_path_s: string = await tool.call_scene_script(
-					"get_component_path",
-					reference_data.target!.path,
-					reference_data.target!.components.findIndex((v) => !v.type.startsWith("cc."))
-				);
-				await reference_data.encode(script_path_s);
+				if (reference_data.target) {
+					/** 挂载脚本 */
+					let script_path_s: string = await tool.call_scene_script(
+						"get_component_path",
+						reference_data.target!.path,
+						reference_data.target!.components.findIndex((v) => !v.type.startsWith("cc."))
+					);
+					await reference_data.encode(script_path_s);
+				}
 
 				reference_data.target = null;
 			},
@@ -56,6 +79,10 @@ class node_reference {
 				return node.components.filter((v) => !v.type.startsWith("cc.")).length > 0 && reference_data.target?.uuid !== node.uuid;
 			},
 			callback_f: async (node: { uuid: string }) => {
+				if (!node) {
+					return;
+				}
+
 				// 打开现在的开关
 				reference_data.target = node as any;
 				/** 挂载脚本 */
@@ -263,9 +290,14 @@ class node_reference {
 					return [];
 				}
 
-				if (cc.director.getScene()?.name === "New Node") {
-					root_node = cc.director.getScene()!.children[0];
+				if (root_node.name === "New Node") {
+					root_node = root_node.children[0];
 				}
+
+				if (root_node.children[0]?.name === "should_hide_in_hierarchy") {
+					root_node = root_node.children[0].children[1];
+				}
+
 				return path_ss_.map((v_s) => root_node.getChildByPath(v_s)?.uuid ?? "");
 			},
 		},

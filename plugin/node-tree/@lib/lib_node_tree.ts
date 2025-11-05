@@ -211,13 +211,14 @@ class lib_node_tree {
 				return;
 			}
 
+			let ui_rename_div = node_div.getElementsByTagName("ui-rename-input")[0] as HTMLElement;
+
 			// 更新内容
 			{
-				let name = node_div.getElementsByTagName("ui-rename-input")[0] as HTMLElement;
 				element.style.display = "flex";
 				node_div.style.width = "-webkit-fill-available";
-				if (name) {
-					name.style.flex = "none";
+				if (ui_rename_div && this._tail_left_extension_as.length) {
+					ui_rename_div.style.flex = "none";
 				}
 			}
 
@@ -246,8 +247,9 @@ class lib_node_tree {
 				tail_extend_left_div.style.flexDirection = "row";
 				tail_extend_left_div.style.float = "left";
 				tail_extend_left_div.style.gap = "4px";
+				tail_extend_left_div.style.flex = "1";
 
-				node_div.appendChild(tail_extend_left_div);
+				ui_rename_div.insertAdjacentElement("afterend", tail_extend_left_div);
 			}
 
 			// 尾右侧扩展
@@ -258,8 +260,6 @@ class lib_node_tree {
 				tail_extend_right_div.style.paddingRight = "5px";
 				tail_extend_right_div.style.flexDirection = "row-reverse";
 				tail_extend_right_div.style.gap = "4px";
-				tail_extend_right_div.style.position = "absolute";
-				tail_extend_right_div.style.right = "0px";
 
 				node_div.appendChild(tail_extend_right_div);
 			}

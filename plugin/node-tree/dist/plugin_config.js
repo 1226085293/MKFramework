@@ -10,6 +10,6 @@ class plugin_config {
     /** 插件路径 */
     static plugin_path_s = path_1.default.join(__dirname, "..");
     /** 代码风格 */
-    static code_style_s = "蛇形";
+    static code_style_s = "驼峰";
 }
 exports.default = plugin_config;

@@ -1,7 +1,6 @@
 import lib_node_tree, { lib_node_tree_ } from "./@lib/lib_node_tree";
 import plugin_config from "./plugin_config";
 import { EventData, MenuData, TreeNode } from "./types";
-import { pinyin } from "pinyin-pro";
 import path from "path";
 import plugin_data from "./plugin_data";
 import tool from "./tool";

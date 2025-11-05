@@ -6,7 +6,7 @@ class plugin_config {
 	/** 插件路径 */
 	static readonly plugin_path_s = path.join(__dirname, "..");
 	/** 代码风格 */
-	static readonly code_style_s: "驼峰" | "蛇形" = "蛇形";
+	static readonly code_style_s: "驼峰" | "蛇形" = "驼峰";
 }
 
 export default plugin_config;
