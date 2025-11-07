@@ -115,6 +115,10 @@ export class MKAsset extends MKInstanceBase {
 			};
 		}
 
+		if (DynamicAtlasManager?.instance?.enabled) {
+			let oldFunc = DynamicAtlasManager.instance.insertSpriteFrame;
+		}
+
 		// 定时自动释放资源
 		if (MKAsset._config.cacheLifetimeMsNum !== 0) {
 			this._releaseTimer = setInterval(this._autoReleaseAsset.bind(this), MKAsset._config.cacheLifetimeMsNum);
