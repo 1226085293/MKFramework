@@ -8,28 +8,29 @@ import type { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "./MKRelease";
 import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, NodePool } from "cc";
+import globalEvent from "../../Config/GlobalEvent";
 
 namespace _MKBundle {
 	export interface EventProtocol {
 		/** bundle 准备切换事件（准备从此 Bundle 场景切换到其他 Bundle 场景，先于 loadBundle 触发） */
 		bundleReadySwitch(event: {
-			/** 当前 bundle  */
+			/** 当前 bundle 名  */
 			currBundleStr: string;
-			/** 下个 bundle  */
+			/** 下个 bundle 名  */
 			nextBundleStr: string;
 		});
 		/** bundle 切换前事件（从此 Bundle 场景切换到其他 Bundle 场景前） */
 		beforeBundleSwitch(event: {
-			/** 当前 bundle  */
+			/** 当前 bundle 名  */
 			currBundleStr: string;
-			/** 下个 bundle  */
+			/** 下个 bundle 名  */
 			nextBundleStr: string;
 		}): void;
 		/** bundle 切换后事件（从此 Bundle 场景切换到其他 Bundle 场景后） */
 		afterBundleSwitch(event: {
-			/** 当前 bundle  */
+			/** 当前 bundle 名  */
 			currBundleStr: string;
-			/** 上个 bundle  */
+			/** 上个 bundle 名  */
 			preBundleStr: string;
 		}): void;
 		/** 场景切换前事件 */
@@ -45,6 +46,16 @@ namespace _MKBundle {
 			currSceneStr: string;
 			/** 上个场景 */
 			preSceneStr: string;
+		}): void;
+		/** bundle 重载前事件 */
+		beforeBundleReload(event: {
+			/** 重载 bundle 名  */
+			bundleStr: string;
+		}): void;
+		/** bundle 重载后事件 */
+		afterBundleReload(event: {
+			/** 重载 bundle 名  */
+			bundleStr: string;
 		}): void;
 	}
 }
@@ -396,6 +407,13 @@ export class MKBundle extends MKInstanceBase {
 			director.getScene()!.removeAllChildren();
 		}
 
+		// 重载前事件
+		await Promise.all(
+			this.event.request(this.event.key.beforeBundleReload, {
+				bundleStr: bundleInfo_.bundleStr,
+			})
+		);
+
 		/** bundle 脚本表 */
 		const bundleScriptTab: Record<string, any> = {};
 		/** js 系统 */
@@ -488,7 +506,14 @@ export class MKBundle extends MKInstanceBase {
 		}
 
 		// 加载 bundle
-		return this.load(bundleInfo_);
+		const loadTask = await this.load(bundleInfo_);
+
+		// 重载后事件
+		this.event.emit(this.event.key.afterBundleReload, {
+			bundleStr: bundleInfo_.bundleStr,
+		});
+
+		return loadTask;
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
@@ -642,6 +667,29 @@ export namespace MKBundle_ {
 					bundleStr: this.nameStr,
 					manage: this,
 				} as any);
+
+				// main bundle close 回调控制
+				if (this.nameStr === "main") {
+					// 重载
+					MKBundle.instance().event.once(
+						MKBundle.instance().event.key.beforeBundleReload,
+						() => {
+							this._isForceClose = true;
+							this.close();
+						},
+						this
+					);
+
+					// 重启游戏
+					globalEvent.once(
+						globalEvent.key.restart,
+						() => {
+							this._isForceClose = true;
+							this.close();
+						},
+						this
+					);
+				}
 			}, 0);
 
 			if (EDITOR && !window["cc"].GAME_VIEW) {
@@ -684,6 +732,9 @@ export namespace MKBundle_ {
 		/* --------------- protected --------------- */
 		/** 释放管理器 */
 		protected _releaseManage = new MKRelease();
+		/* --------------- private --------------- */
+		/** 强制关闭 */
+		private _isForceClose = false;
 		/* ------------------------------- 生命周期 ------------------------------- */
 		/**
 		 * 初始化
@@ -726,11 +777,12 @@ export namespace MKBundle_ {
 				throw "中断";
 			}
 
-			if (this.nameStr === "main") {
+			if (this.nameStr === "main" && !this._isForceClose) {
 				throw "中断";
 			}
 
 			this.isValid = false;
+			this._isForceClose = false;
 
 			// 清理事件
 			this.event?.clear();
@@ -788,5 +840,3 @@ export namespace MKBundle_ {
 const mkBundle = MKBundle.instance();
 
 export default mkBundle;
-
-// ...需要在 main bundle reload 时执行 MainBundleManage.close
