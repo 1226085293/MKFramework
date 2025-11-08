@@ -6,7 +6,7 @@ import mkBundle from "./MKBundle";
 import mkGame from "../MKGame";
 import GlobalConfig from "../../Config/GlobalConfig";
 import MKRelease, { MKRelease_ } from "./MKRelease";
-import { Asset, Constructor, DynamicAtlasManager, SpriteFrame, Texture2D, assetManager } from "cc";
+import { Asset, Constructor, DynamicAtlasManager, ImageAsset, SpriteFrame, Texture2D, assetManager } from "cc";
 
 namespace _MKAsset {
 	/** loadRemote 配置类型 */
@@ -117,6 +117,22 @@ export class MKAsset extends MKInstanceBase {
 
 		if (DynamicAtlasManager?.instance?.enabled) {
 			let oldFunc = DynamicAtlasManager.instance.insertSpriteFrame;
+
+			DynamicAtlasManager.instance.insertSpriteFrame = (spriteFrame: SpriteFrame): ReturnType<typeof oldFunc> => {
+				let uuidStr = (spriteFrame?.texture as Texture2D)?.image?.uuid ?? "";
+
+				if (uuidStr.startsWith("http")) {
+					let associationList = this._remoteImageAssociationResourceMap.get(uuidStr);
+
+					if (!associationList) {
+						this._remoteImageAssociationResourceMap.set(uuidStr, (associationList = []));
+					}
+
+					associationList.push(spriteFrame);
+				}
+
+				return oldFunc.call(DynamicAtlasManager.instance, spriteFrame);
+			};
 		}
 
 		// 定时自动释放资源
@@ -143,6 +159,8 @@ export class MKAsset extends MKInstanceBase {
 	private _assetReleaseMap = new Map<string, _MKAsset.ReleaseInfo>();
 	/** 释放定时器 */
 	private _releaseTimer: any;
+	/** 远程图片关联资源表 */
+	private _remoteImageAssociationResourceMap = new Map<string, SpriteFrame[]>();
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 获取资源
@@ -511,6 +529,16 @@ export class MKAsset extends MKInstanceBase {
 					DynamicAtlasManager.instance.deleteAtlasSpriteFrame(v);
 				} else if (v instanceof Texture2D) {
 					DynamicAtlasManager.instance.deleteAtlasTexture(v);
+				} else if (v instanceof ImageAsset) {
+					let associationList = this._remoteImageAssociationResourceMap.get(v.uuid);
+
+					if (associationList) {
+						associationList.forEach((v) => {
+							// deleteAtlasSpriteFrame 内部会释放 Texture
+							DynamicAtlasManager.instance.deleteAtlasSpriteFrame(v);
+						});
+						this._remoteImageAssociationResourceMap.delete(v.uuid);
+					}
 				}
 			}
 
