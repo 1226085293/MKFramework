@@ -677,5 +677,3 @@ export namespace MKAsset_ {
 const mkAsset = MKAsset.instance();
 
 export default mkAsset;
-
-// ...需要增加远程图片释放时释放对应的合图
