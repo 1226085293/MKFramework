@@ -224,7 +224,7 @@ export class MKAsset extends MKInstanceBase {
 		if (EDITOR && !window["cc"].GAME_VIEW) {
 			getConfig.bundleStr = getConfig.bundleStr || "resources";
 		} else {
-			getConfig.bundleStr = getConfig.bundleStr || (mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
+			getConfig.bundleStr = getConfig.bundleStr || (mkBundle.bundleStr && mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
 		}
 
 		return new Promise<T | null>(async (resolveFunc) => {
@@ -405,7 +405,7 @@ export class MKAsset extends MKInstanceBase {
 				}
 
 				assetConfig = getConfig.remoteOption as any;
-				assetConfig.bundle = getConfig.bundleStr || (mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
+				assetConfig.bundle = getConfig.bundleStr || (mkBundle.bundleStr && mkBundle.bundleStr !== "main" ? mkBundle.bundleStr : "resources");
 				assetConfig.type = type_;
 				assetConfig.dir = pathStr_;
 			}
