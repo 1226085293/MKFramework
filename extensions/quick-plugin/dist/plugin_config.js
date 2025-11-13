@@ -13,7 +13,9 @@ var plugin_config;
     plugin_config.plugin_path_s = path_1.default.join(__dirname, "..");
     /** 插件文件夹 */
     plugin_config.plugin_dir_s = path_1.default.basename(plugin_config.plugin_path_s);
+    /** 用户插件目录名 */
+    plugin_config.user_plugin_dir_s = "plugin";
     /** 用户插件路径 */
-    plugin_config.user_plugin_path_s = path_1.default.join(Editor.Project.path, "plugin");
+    plugin_config.user_plugin_path_s = path_1.default.join(Editor.Project.path, plugin_config.user_plugin_dir_s);
 })(plugin_config || (plugin_config = {}));
 exports.default = plugin_config;

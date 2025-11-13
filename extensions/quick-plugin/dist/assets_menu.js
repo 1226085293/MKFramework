@@ -9,6 +9,7 @@ const fs_extra_1 = __importDefault(require("fs-extra"));
 const child_process_1 = __importDefault(require("child_process"));
 const plugin_data_1 = __importDefault(require("./plugin_data"));
 const plugin_config_1 = __importDefault(require("./plugin_config"));
+//@ts-ignore
 const super_menu_1 = __importDefault(require("./super_menu"));
 const plugin_tool_1 = __importDefault(require("./plugin_tool"));
 // 安装插件
@@ -178,5 +179,16 @@ super_menu_1.default.update(super_menu_1.default.type.asset, "删除", {
             new plugin_data_1.default(v.name).delete();
             plugin_tool_1.default.log(`删除插件 ${v.name} 成功`);
         });
+    },
+}, false);
+super_menu_1.default.update(super_menu_1.default.type.asset, "输出独立包", {
+    run_f(asset) {
+        return asset.url.startsWith(`db://${plugin_config_1.default.package_name_s}/`);
+    },
+    async callback_f(asset) {
+        const success_b = await new plugin_data_1.default(asset.name).build();
+        if (success_b) {
+            plugin_tool_1.default.log("输出独立包完成，插件位于 extensions 下");
+        }
     },
 }, false);
