@@ -20,6 +20,11 @@ abstract class MKAudioBase {
 		globalEvent.on(globalEvent.key.restart, this._eventRestart, this);
 	}
 
+	/**
+	 * 音频播放间隔限制表
+	 * key:音频资源名，value:间隔毫秒，在间隔毫秒内播放同一音频不会生效
+	 */
+	playIntervalLimitMap = new Map<AudioClip, number>();
 	/** 音频组 */
 	get groupMap(): ReadonlyMap<number, MKAudioBase_.Group> {
 		return this._groupMap;
@@ -29,6 +34,8 @@ abstract class MKAudioBase {
 	protected abstract _log: MKLogger;
 	/** 音频组 */
 	protected _groupMap = new Map<number, MKAudioBase_.Group>();
+	/** 播放时间戳表 */
+	protected _playTimestampTab: Record<string, number> = {};
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 暂停 */
 	abstract pause(audio_: MKAudioBase_.Unit): void;
@@ -89,6 +96,7 @@ abstract class MKAudioBase {
 						clip: v2,
 					});
 
+					audio.assetPathStr = `db://${vStr.replace("db://", "")}/${v2.name}`;
 					audio.type = config_.type ?? audio.type;
 					audioList.push(audio);
 				});
@@ -108,6 +116,7 @@ abstract class MKAudioBase {
 					clip: asset,
 				});
 
+				audio.assetPathStr = `db://${vStr.replace("db://", "")}`;
 				audio.type = config_?.type ?? audio.type;
 				audioList.push(audio);
 			}
@@ -175,7 +184,11 @@ abstract class MKAudioBase {
 		// 添加音频
 		this._add(audio as MKAudioBase_.PrivateUnit, audio.groupIdNumList);
 
-		if (audio.groupIdNumList.some((vNum) => this.getGroup(vNum).isStop)) {
+		if (
+			// 分组停止播放状态
+			audio.groupIdNumList.some((vNum) => this.getGroup(vNum).isStop)
+			// 小于间隔
+		) {
 			return null;
 		}
 
@@ -417,6 +430,8 @@ export namespace MKAudioBase_ {
 		waitPlayNum = -1;
 		/** 真实音量 */
 		realVolumeNum = 0;
+		/** 资源路径 (非动态加载为 nativeUrl) */
+		assetPathStr = "";
 
 		/** 初始化状态 */
 		get isInit(): boolean {

@@ -25,7 +25,6 @@ export class ResourcesAudio extends mk.ViewBase {
 	/* --------------- private --------------- */
 	/** 重叠音频数组 */
 	private _overlapEffectList!: mk.Audio_.Unit[];
-	/**  */
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// @ts-ignore
 	// init(init_?: typeof this.init_data): void {}
@@ -73,6 +72,7 @@ export class ResourcesAudio extends mk.ViewBase {
 	private _initView(): void {
 		mk.audio.play(this.music);
 		mk.audio.play(this.effect);
+		console.log(this.effect.clip!.nativeUrl);
 	}
 	/* ------------------------------- 进度条事件 ------------------------------- */
 	onAudioProgressChange(slider_: cc.Slider): void {
