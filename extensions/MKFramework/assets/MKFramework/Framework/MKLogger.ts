@@ -44,22 +44,22 @@ class MKLogger extends MKInstanceBase {
 		if (MKLogger._config.logObjectType === GlobalConfig.Log.LogObjectType.Console) {
 			this.debug =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Debug
-					? this._logFuncTab[MKLogger._config.logObjectType].debug
+					? this._logFuncTab[MKLogger._config.logObjectType].Debug
 					: (...argsList_: any[]) => null;
 
 			this.log =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Log
-					? this._logFuncTab[MKLogger._config.logObjectType].log
+					? this._logFuncTab[MKLogger._config.logObjectType].Log
 					: (...argsList_: any[]) => null;
 
 			this.warn =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Warn
-					? this._logFuncTab[MKLogger._config.logObjectType].warn
+					? this._logFuncTab[MKLogger._config.logObjectType].Warn
 					: (...argsList_: any[]) => null;
 
 			this.error =
 				MKLogger._config.levelNum & GlobalConfig.Log.Level.Error
-					? this._logFuncTab[MKLogger._config.logObjectType].error
+					? this._logFuncTab[MKLogger._config.logObjectType].Error
 					: (...argsList_: any[]) => null;
 		}
 
@@ -141,24 +141,24 @@ class MKLogger extends MKInstanceBase {
 	private _logFuncTab = {
 		[GlobalConfig.Log.LogObjectType.MK]: {
 			target: console,
-			debug: console.debug,
-			log: console.log,
-			warn: console.warn,
-			error: console.error,
+			Debug: console.debug,
+			Log: console.log,
+			Warn: console.warn,
+			Error: console.error,
 		},
 		[GlobalConfig.Log.LogObjectType.Console]: {
 			target: console,
-			debug: console.debug,
-			log: console.log,
-			warn: console.warn,
-			error: console.error,
+			Debug: console.debug,
+			Log: console.log,
+			Warn: console.warn,
+			Error: console.error,
 		},
 		[GlobalConfig.Log.LogObjectType.CC]: {
 			target: cc,
-			debug: debug,
-			log: log,
-			warn: warn,
-			error: error,
+			Debug: debug,
+			Log: log,
+			Warn: warn,
+			Error: error,
 		},
 	};
 
