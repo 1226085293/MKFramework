@@ -94,6 +94,8 @@ class MKObjectPool<CT> {
 			this._add(this.config.initFillNum).then(() => {
 				this.initTask.finish(true);
 			});
+		} else {
+			this.initTask.finish(true);
 		}
 	}
 
