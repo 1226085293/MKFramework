@@ -43,7 +43,6 @@ class MKSceneDrive extends MKLifeCycle {
 
 		await this._close({
 			isFirst: true,
-			isForce: true,
 		});
 
 		this._closeTask.finish(true);
