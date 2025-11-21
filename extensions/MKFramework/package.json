@@ -98,7 +98,7 @@
 		"cjson": "^0.5.0",
 		"fast-glob": "^3.3.2",
 		"fs-extra": "^11.2.0",
-		"glob": "^11.0.3",
+		"glob": "^11.1.0",
 		"isomorphic-git": "^1.25.9",
 		"micromatch": "^4.0.8",
 		"prettier": "^3.2.5",
