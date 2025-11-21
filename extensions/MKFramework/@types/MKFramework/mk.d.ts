@@ -394,6 +394,8 @@ declare namespace mk {
 			/* Excluded from this release type: eventTargetList */
 			/** 释放管理器 */
 			protected _releaseManage: Release;
+			/** 强制关闭 */
+			private _isForceClose;
 			/**
 			 * 初始化
 			 * @remarks
@@ -598,10 +600,9 @@ declare namespace mk {
 		 * @param stepNum_ 步骤
 		 * @param initData_ 初始化数据
 		 * @remarks
-		 *
-		 * - 暂停状态：更新步骤数据
-		 *
-		 * - 正常状态：更新步骤数据，执行步骤生命周期
+		 * - 正常状态下：执行完整步骤切换流程
+		 * - 暂停状态下：仅更新步骤数据，不执行生命周期
+		 * - 完成状态下：重置完成状态为 `false`，重新执行引导
 		 */
 		setStep(stepNum_: number, initData_?: any): Promise<void>;
 		/** 获取步骤 */
@@ -1094,6 +1095,8 @@ declare namespace mk {
 		private _assetReleaseMap;
 		/** 释放定时器 */
 		private _releaseTimer;
+		/** 远程图片关联资源表 */
+		private _remoteImageAssociationResourceMap;
 		/**
 		 * 获取资源
 		 * @param pathStr_ 资源路径
@@ -1172,12 +1175,21 @@ declare namespace mk {
 	 */
 	declare abstract class MKAudioBase {
 		constructor();
+		/**
+		 * 音频间隔限制表
+		 * @remarks
+		 * - key: AudioClip 资源的 uuid
+		 * - value: 限制间隔时间（毫秒）
+		 */
+		audioIntervalMsLimitTab: Record<string, number>;
 		/** 音频组 */
 		get groupMap(): ReadonlyMap<number, Audio_.Group>;
 		/** 日志 */
 		protected abstract _log: Logger;
 		/** 音频组 */
 		protected _groupMap: Map<number, Audio_.Group>;
+		/** 音频播放时间戳表 */
+		private _audioPlayTimestampTab;
 		/** 暂停 */
 		abstract pause(audio_: Audio_.Unit): void;
 		/** 停止 */
@@ -1306,23 +1318,23 @@ declare namespace mk {
 		interface EventProtocol {
 			/** bundle 准备切换事件（准备从此 Bundle 场景切换到其他 Bundle 场景，先于 loadBundle 触发） */
 			bundleReadySwitch(event: {
-				/** 当前 bundle  */
+				/** 当前 bundle 名  */
 				currBundleStr: string;
-				/** 下个 bundle  */
+				/** 下个 bundle 名  */
 				nextBundleStr: string;
 			}): any;
 			/** bundle 切换前事件（从此 Bundle 场景切换到其他 Bundle 场景前） */
 			beforeBundleSwitch(event: {
-				/** 当前 bundle  */
+				/** 当前 bundle 名  */
 				currBundleStr: string;
-				/** 下个 bundle  */
+				/** 下个 bundle 名  */
 				nextBundleStr: string;
 			}): void;
 			/** bundle 切换后事件（从此 Bundle 场景切换到其他 Bundle 场景后） */
 			afterBundleSwitch(event: {
-				/** 当前 bundle  */
+				/** 当前 bundle 名  */
 				currBundleStr: string;
-				/** 上个 bundle  */
+				/** 上个 bundle 名  */
 				preBundleStr: string;
 			}): void;
 			/** 场景切换前事件 */
@@ -1338,6 +1350,16 @@ declare namespace mk {
 				currSceneStr: string;
 				/** 上个场景 */
 				preSceneStr: string;
+			}): void;
+			/** bundle 重载前事件 */
+			beforeBundleReload(event: {
+				/** 重载 bundle 名  */
+				bundleStr: string;
+			}): void;
+			/** bundle 重载后事件 */
+			afterBundleReload(event: {
+				/** 重载 bundle 名  */
+				bundleStr: string;
 			}): void;
 		}
 	}

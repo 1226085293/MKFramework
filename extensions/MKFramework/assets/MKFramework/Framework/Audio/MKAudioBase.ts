@@ -20,6 +20,13 @@ abstract class MKAudioBase {
 		globalEvent.on(globalEvent.key.restart, this._eventRestart, this);
 	}
 
+	/**
+	 * 音频间隔限制表
+	 * @remarks
+	 * - key: AudioClip 资源的 uuid
+	 * - value: 限制间隔时间（毫秒）
+	 */
+	audioIntervalMsLimitTab: Record<string, number> = {};
 	/** 音频组 */
 	get groupMap(): ReadonlyMap<number, MKAudioBase_.Group> {
 		return this._groupMap;
@@ -29,6 +36,9 @@ abstract class MKAudioBase {
 	protected abstract _log: MKLogger;
 	/** 音频组 */
 	protected _groupMap = new Map<number, MKAudioBase_.Group>();
+	/* --------------- private --------------- */
+	/** 音频播放时间戳表 */
+	private _audioPlayTimestampTab: Record<string, number> = {};
 	/* ------------------------------- 功能 ------------------------------- */
 	/** 暂停 */
 	abstract pause(audio_: MKAudioBase_.Unit): void;
@@ -177,6 +187,16 @@ abstract class MKAudioBase {
 
 		if (audio.groupIdNumList.some((vNum) => this.getGroup(vNum).isStop)) {
 			return null;
+		}
+
+		// 间隔限制
+		if (this.audioIntervalMsLimitTab[audio.clip.uuid]) {
+			// 超过限制时间
+			if (Date.now() - (this._audioPlayTimestampTab[audio.clip.uuid] ?? 0) < this.audioIntervalMsLimitTab[audio.clip.uuid]) {
+				return null;
+			}
+
+			this._audioPlayTimestampTab[audio.clip.uuid] = Date.now();
 		}
 
 		return audio;
