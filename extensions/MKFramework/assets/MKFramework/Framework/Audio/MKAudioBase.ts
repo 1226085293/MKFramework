@@ -425,6 +425,12 @@ export namespace MKAudioBase_ {
 		/** 事件对象 */
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		_event?: MKEventTarget<EventProtocol>;
+		/**
+		 * 跟随释放对象
+		 * @internal
+		 */
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		_followReleaseTarget: MKRelease_.TypeFollowReleaseSupport = null!;
 		/** 分组 */
 		groupIdNumList: number[] = [];
 		/** 播放状态 */

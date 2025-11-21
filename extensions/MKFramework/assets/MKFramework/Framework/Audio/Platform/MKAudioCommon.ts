@@ -368,6 +368,9 @@ export namespace MKAudioCommon_ {
 			newAudio._volumeNum = this._volumeNum;
 			newAudio._isLoop = this._isLoop;
 			newAudio._isInit = this._isInit;
+			newAudio._followReleaseTarget = this._followReleaseTarget;
+			this.clip!.addRef();
+			MKRelease.followRelease(newAudio._followReleaseTarget, newAudio);
 			this.groupIdNumList.forEach((vNum) => {
 				MKAudioCommon._instance.getGroup(vNum).addAudio(newAudio);
 			});
