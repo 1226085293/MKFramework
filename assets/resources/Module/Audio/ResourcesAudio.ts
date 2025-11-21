@@ -25,7 +25,6 @@ export class ResourcesAudio extends mk.ViewBase {
 	/* --------------- private --------------- */
 	/** 重叠音频数组 */
 	private _overlapEffectList!: mk.Audio_.Unit[];
-	/**  */
 	/* ------------------------------- 生命周期 ------------------------------- */
 	// @ts-ignore
 	// init(init_?: typeof this.init_data): void {}
