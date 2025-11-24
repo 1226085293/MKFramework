@@ -131,6 +131,7 @@ abstract class MKAudioBase {
 				return;
 			}
 
+			v._followReleaseTarget = target_;
 			this._add(v, config_?.groupIdNumList);
 		});
 
