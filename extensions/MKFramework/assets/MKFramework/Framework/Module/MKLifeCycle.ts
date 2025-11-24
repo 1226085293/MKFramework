@@ -70,8 +70,20 @@ export namespace _MKLifeCycle {
 		isFirst?: boolean;
 		/** 销毁动态子节点 */
 		isDestroyChildren?: boolean;
-		/** 强制关闭（无需等待模块 open 完成） */
-		isForce?: boolean;
+	}
+
+	export interface OpenShareData {
+		/** 有效计数 */
+		validCountNum: number;
+		/** 来源组件 uuid */
+		originUuidStr: string;
+	}
+
+	export interface OpenData {
+		/** 当前计数 */
+		currentCountNum: number;
+		/** 共享数据 */
+		shareData: OpenShareData;
 	}
 }
 
@@ -189,6 +201,14 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	private _log2!: MKLogger;
 	/** 初始化计数（防止 onLoad 前多次初始化调用多次 init） */
 	private _waitInitNum = 0;
+	/** open 信息 */
+	private _openData: _MKLifeCycle.OpenData = {
+		currentCountNum: 0,
+		shareData: {
+			validCountNum: 1,
+			originUuidStr: "",
+		},
+	};
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void;
 	protected async onLoad(): Promise<void> {
@@ -399,68 +419,103 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	 * @internal
 	 */
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	async _open(config_?: _MKLifeCycle.OpenConfig): Promise<void> {
-		// 状态安检
-		if (this._state & (_MKLifeCycle.RunState.Opening | _MKLifeCycle.RunState.Open)) {
-			return;
-		}
-
-		// 状态更新
-		this._state = _MKLifeCycle.RunState.Opening;
-
-		// create
-		if (this.isStatic) {
-			await this._createTask.task;
-		} else {
-			if (this.create) {
-				await this.create();
+	async _open(config_?: _MKLifeCycle.OpenConfig, openData_?: _MKLifeCycle.OpenData): Promise<void> {
+		try {
+			// 状态安检
+			if (this._state & (_MKLifeCycle.RunState.Opening | _MKLifeCycle.RunState.Open)) {
+				return;
 			}
 
-			this._createTask.finish(true);
-		}
+			let currentCountNum = !openData_ ? ++this._openData.currentCountNum : openData_.currentCountNum;
+			let checkBreakFunc = (): void => {
+				if (currentCountNum !== this._openData.shareData.validCountNum) {
+					throw "中断";
+				}
+			};
 
-		// 已销毁或已关闭
-		if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
-			return;
-		}
+			this._openData.currentCountNum = currentCountNum;
+			this._openData.shareData = openData_ ? openData_.shareData : this._openData.shareData;
 
-		/** 配置 */
-		const config: _MKLifeCycle.OpenConfig = config_ ?? Object.create(null);
+			if (openData_) {
+				checkBreakFunc();
+			} else {
+				this._openData.shareData.originUuidStr = this.uuid;
+			}
 
-		// 生命周期
-		if (config.isFirst) {
-			await this._recursiveOpen({
-				target: this.node,
-				isActive: this.node.active,
-			});
+			// 状态更新
+			this._state = _MKLifeCycle.RunState.Opening;
+
+			// create
+			if (this.isStatic) {
+				await this._createTask.task;
+				checkBreakFunc();
+			} else {
+				if (this.create) {
+					await this.create();
+					checkBreakFunc();
+				}
+
+				this._createTask.finish(true);
+			}
 
 			// 已销毁或已关闭
 			if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
 				return;
 			}
-		}
 
-		if (config.init !== undefined) {
-			await this.init(config.init);
+			/** 配置 */
+			const config: _MKLifeCycle.OpenConfig = config_ ?? Object.create(null);
 
-			// 已销毁或已关闭
-			if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
+			// 生命周期
+			if (config.isFirst) {
+				await this._recursiveOpen(
+					{
+						target: this.node,
+						isActive: this.node.active,
+					},
+					{
+						currentCountNum: currentCountNum,
+						shareData: this._openData.shareData,
+					}
+				);
+				checkBreakFunc();
+
+				// 已销毁或已关闭
+				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
+					return;
+				}
+			}
+
+			if (config.init !== undefined) {
+				await this.init(config.init);
+				checkBreakFunc();
+
+				// 已销毁或已关闭
+				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
+					return;
+				}
+			}
+
+			if (this.open) {
+				await this.open();
+				checkBreakFunc();
+
+				// 已销毁或已关闭
+				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
+					return;
+				}
+			}
+
+			// 状态更新
+			this._state = _MKLifeCycle.RunState.Open;
+			this._openTask.finish(true);
+		} catch (error) {
+			if (error === "中断") {
 				return;
 			}
+
+			this._log.error(error);
 		}
-
-		if (this.open) {
-			await this.open();
-
-			// 已销毁或已关闭
-			if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
-				return;
-			}
-		}
-
-		// 状态更新
-		this._state = _MKLifeCycle.RunState.Open;
-		this._openTask.finish(true);
 	}
 
 	/**
@@ -484,11 +539,6 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		/** 配置参数 */
 		const config = config_ ?? (Object.create(null) as _MKLifeCycle.CloseConfig);
 
-		// 等待模块 open 完成
-		if (!config.isForce && !this._openTask.isFinish) {
-			await this._openTask.task;
-		}
-
 		// 已销毁
 		if (!this.isValid) {
 			return;
@@ -496,6 +546,10 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 
 		// 状态更新
 		this._state = _MKLifeCycle.RunState.Closing;
+		// 更新有效标记
+		if (this._openData.shareData.originUuidStr === this.uuid) {
+			this._openData.shareData.validCountNum++;
+		}
 
 		// 生命周期
 		{
@@ -555,7 +609,11 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	}
 
 	/** 递归 open */
-	private async _recursiveOpen(config_: _MKLifeCycle.RecursiveOpenConfig): Promise<void> {
+	private async _recursiveOpen(config_: _MKLifeCycle.RecursiveOpenConfig, openData_: _MKLifeCycle.OpenData): Promise<void> {
+		if (openData_.currentCountNum !== openData_.shareData.validCountNum) {
+			throw "中断";
+		}
+
 		if (!config_.target?.isValid) {
 			return;
 		}
@@ -563,10 +621,13 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		const isActive = config_.target.active;
 
 		for (const v of config_.target.children) {
-			await this._recursiveOpen({
-				target: v,
-				isActive: config_.isActive && isActive,
-			});
+			await this._recursiveOpen(
+				{
+					target: v,
+					isActive: config_.isActive && isActive,
+				},
+				openData_
+			);
 		}
 
 		if (!config_.target?.isValid) {
@@ -582,9 +643,9 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			// 跳过当前ui组件
 			if (v.enabled && v.uuid !== this.uuid && isValid(v, true)) {
 				if (isActive && config_.isActive) {
-					await v._open(openConfig);
+					await v._open(openConfig, openData_);
 				} else {
-					v._open(openConfig);
+					v._open(openConfig, openData_);
 				}
 			}
 		}
