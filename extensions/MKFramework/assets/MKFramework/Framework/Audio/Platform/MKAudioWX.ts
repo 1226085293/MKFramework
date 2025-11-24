@@ -203,12 +203,14 @@ export namespace MKAudioWX_ {
 			newAudio._volumeNum = this._volumeNum;
 			newAudio._isLoop = this._isLoop;
 			newAudio._isInit = this._isInit;
-			this.clip!.addRef();
-			newAudio._followReleaseTarget = this._followReleaseTarget;
-			MKRelease.followRelease(newAudio._followReleaseTarget, newAudio);
 			this.groupIdNumList.forEach((vNum) => {
 				MKAudioWX._instance.getGroup(vNum).addAudio(newAudio);
 			});
+
+			// 更新引用和跟随释放
+			newAudio.clip!.addRef();
+			newAudio._followReleaseTarget = this._followReleaseTarget;
+			MKRelease.followRelease(newAudio._followReleaseTarget, newAudio);
 
 			return newAudio;
 		}
