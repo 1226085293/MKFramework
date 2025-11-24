@@ -59,7 +59,11 @@ class MKLayer extends Component {
 		this._childLayerNum = valueNum_;
 		this._updateLayer();
 	}
-
+	/* --------------- paragraph --------------- */
+	/** 真实渲染次序 */
+	get orderNum(): number {
+		return this.layerTypeNum * MKLayer._config.layerSpacingNum + this._childLayerNum;
+	}
 	/* --------------- protected --------------- */
 	/**
 	 * 使用 layer
@@ -103,11 +107,8 @@ class MKLayer extends Component {
 			return;
 		}
 
-		/** 当前层 */
-		const layerNum = this.layerTypeNum * MKLayer._config.layerSpacingNum + this._childLayerNum;
-
 		// 更新渲染顺序
-		MKN(this.node).orderNum = layerNum;
+		MKN(this.node).orderNum = this.orderNum;
 	}
 }
 

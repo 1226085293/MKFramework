@@ -468,7 +468,7 @@ export class MKUIManage extends MKInstanceBase {
 		// 更新单独展示
 		if (viewComp.isShowAlone) {
 			this._uiShowList.slice(this._uiHiddenLengthN, this._uiShowList.length).forEach((v) => {
-				if (v.valid && v.node.active) {
+				if (v.valid && v.node.active && v.orderNum < viewComp.orderNum) {
 					this._uiHiddenSet.add(v);
 					v.node.active = false;
 				}
