@@ -211,6 +211,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 
 			// 初始化音频单元
 			if (this[nameStr] instanceof MKAudio_.PrivateUnit) {
+				this[nameStr]._followReleaseTarget = this;
 				mkAudio._add(this[nameStr]);
 			}
 		});

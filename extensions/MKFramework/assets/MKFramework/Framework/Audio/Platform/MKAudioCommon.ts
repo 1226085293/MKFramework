@@ -372,6 +372,11 @@ export namespace MKAudioCommon_ {
 				MKAudioCommon._instance.getGroup(vNum).addAudio(newAudio);
 			});
 
+			// 更新引用和跟随释放
+			newAudio.clip!.addRef();
+			newAudio._followReleaseTarget = this._followReleaseTarget;
+			MKRelease.followRelease(newAudio._followReleaseTarget, newAudio);
+
 			return newAudio;
 		}
 
