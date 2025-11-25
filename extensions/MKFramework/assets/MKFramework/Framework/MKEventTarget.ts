@@ -116,7 +116,7 @@ class MKEventTarget<CT> extends EventTarget {
 	}
 
 	/** 清空所有事件 */
-	declare clear: () => void;
+	clear(): void;
 
 	/**
 	 * 请求事件

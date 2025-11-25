@@ -517,7 +517,7 @@ declare namespace mk {
 		 */
 		has<T extends keyof CT, T2 extends (...argsList: Parameters<CT[T]>) => void>(type_: T, callback_?: T2, target_?: any): boolean;
 		/** 清空所有事件 */
-		clear: () => void;
+		clear(): void;
 		/**
 		 * 请求事件
 		 * @param type_ 事件类型
@@ -840,6 +840,8 @@ declare namespace mk {
 		/** 层级 */
 		get childLayerNum(): number;
 		set childLayerNum(valueNum_: number);
+		/** 真实渲染次序 */
+		get orderNum(): number;
 		/**
 		 * 使用 layer
 		 * @defaultValue
@@ -907,6 +909,8 @@ declare namespace mk {
 		private _log2;
 		/** 初始化计数（防止 onLoad 前多次初始化调用多次 init） */
 		private _waitInitNum;
+		/** open 信息 */
+		private _openData;
 		protected onLoad(): void;
 		/**
 		 * 创建
@@ -1786,8 +1790,18 @@ declare namespace mk {
 			isFirst?: boolean;
 			/** 销毁动态子节点 */
 			isDestroyChildren?: boolean;
-			/** 强制关闭（无需等待模块 open 完成） */
-			isForce?: boolean;
+		}
+		interface OpenShareData {
+			/** 有效计数 */
+			validCountNum: number;
+			/** 来源组件 uuid */
+			originUuidStr: string;
+		}
+		interface OpenData {
+			/** 当前计数 */
+			currentCountNum: number;
+			/** 共享数据 */
+			shareData: OpenShareData;
 		}
 	}
 
