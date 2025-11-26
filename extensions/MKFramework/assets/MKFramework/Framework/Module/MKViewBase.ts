@@ -3,11 +3,9 @@ import { MKLifeCycle, _MKLifeCycle } from "./MKLifeCycle";
 import mkDynamicModule from "../MKDynamicModule";
 /** @weak */
 import type { MKUIManage_ } from "../MKUIManage";
-import mkAsset from "../Resources/MKAsset";
 import mkGame from "../MKGame";
-import GlobalConfig from "../../Config/GlobalConfig";
 import mkBundle from "../Resources/MKBundle";
-import { _decorator, Enum, Widget, BlockInputEvents, CCClass, Prefab, instantiate } from "cc";
+import { _decorator, Enum, Widget, BlockInputEvents, CCClass, Sprite, Node } from "cc";
 import mkToolEnum from "../@Private/Tool/MKToolEnum";
 
 // @weak-start-include-MKUIManage
@@ -280,11 +278,7 @@ export class MKViewBase extends MKLifeCycle {
 	/* ------------------------------- get/set ------------------------------- */
 	private _getIsAutoMask(): boolean {
 		if (EDITOR && !window["cc"].GAME_VIEW) {
-			if (!this.node.children.length) {
-				return false;
-			}
-
-			return Boolean(this.node.children[0].name === GlobalConfig.View.maskDataTab.nodeNameStr);
+			return this.node.children[0]?.name === "遮罩";
 		}
 
 		return false;
@@ -294,27 +288,80 @@ export class MKViewBase extends MKLifeCycle {
 		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 添加遮罩
 			if (value_) {
-				if (!GlobalConfig.View.maskDataTab.prefabPathStr) {
-					return;
-				}
+				const node = new Node("遮罩");
+				const sprite = node.addComponent(Sprite);
+				const widget = node.addComponent(Widget);
 
-				const prefab = await mkAsset.get(GlobalConfig.View.maskDataTab.prefabPathStr, Prefab, this);
-
-				if (!prefab) {
-					return;
-				}
-
-				const node = instantiate(prefab);
-
-				// 设置节点名
-				if (GlobalConfig.View.maskDataTab.nodeNameStr) {
-					node.name = GlobalConfig.View.maskDataTab.nodeNameStr;
-				}
-
-				// 添加到父节点
 				this.node.addChild(node);
-				// 更新层级
+				node.layer = this.node.layer;
 				node.setSiblingIndex(0);
+				widget.isAlignTop = widget.isAlignBottom = widget.isAlignLeft = widget.isAlignRight = true;
+
+				// 设置图片
+				Editor.Message.send("scene", "set-property", {
+					uuid: node.uuid,
+					path: `__comps__.${node.components.indexOf(sprite)}.spriteFrame`,
+					dump: {
+						type: "cc.SpriteFrame",
+						value: {
+							uuid: "7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca@f9941",
+						},
+					},
+				});
+
+				// 设置颜色
+				Editor.Message.send("scene", "set-property", {
+					uuid: node.uuid,
+					path: `__comps__.${node.components.indexOf(sprite)}.color`,
+					dump: {
+						type: "cc.Color",
+						value: {
+							r: 0,
+							g: 0,
+							b: 0,
+							a: 170,
+						},
+					},
+				});
+
+				// 设置边距
+				Editor.Message.send("scene", "set-property", {
+					uuid: node.uuid,
+					path: `__comps__.${node.components.indexOf(widget)}.editorLeft`,
+					dump: {
+						type: "Number",
+						value: 0,
+					},
+				});
+
+				Editor.Message.send("scene", "set-property", {
+					uuid: node.uuid,
+					path: `__comps__.${node.components.indexOf(widget)}.editorRight`,
+					dump: {
+						type: "Number",
+						value: 0,
+					},
+				});
+
+				Editor.Message.send("scene", "set-property", {
+					uuid: node.uuid,
+					path: `__comps__.${node.components.indexOf(widget)}.editorTop`,
+					dump: {
+						type: "Number",
+						value: 0,
+					},
+				});
+
+				Editor.Message.send("scene", "set-property", {
+					uuid: node.uuid,
+					path: `__comps__.${node.components.indexOf(widget)}.editorBottom`,
+					dump: {
+						type: "Number",
+						value: 0,
+					},
+				});
+
+				return;
 			}
 			// 销毁遮罩
 			else if (this._getIsAutoMask()) {

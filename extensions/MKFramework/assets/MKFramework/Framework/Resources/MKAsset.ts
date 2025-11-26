@@ -299,7 +299,9 @@ export class MKAsset extends MKInstanceBase {
 					assetConfig.type = type_;
 					// uuid
 					{
-						pathStr_ = "db://assets/" + pathStr_;
+						if (!pathStr_.startsWith("db://internal/")) {
+							pathStr_ = "db://assets/" + pathStr_;
+						}
 
 						// @ts-ignore
 						let uuidStr = await Editor.Message.request("asset-db", "query-uuid", pathStr_);

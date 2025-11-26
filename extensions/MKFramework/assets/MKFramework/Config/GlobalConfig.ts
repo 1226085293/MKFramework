@@ -83,11 +83,6 @@ namespace GlobalConfig {
 		 * 可用来排除生命周期阻塞位置，但如果节点 active 为 false 也将阻塞生命周期执行
 		 */
 		export const blockingWarningTimeMsNum = 0;
-		/** 默认遮罩 */
-		export const maskDataTab = {
-			nodeNameStr: "遮罩",
-			prefabPathStr: "db://assets/resources/Module/@Common/Mask/ResourcesCommonMask.prefab",
-		};
 
 		export const config = new (class {
 			/** 层间隔 */
