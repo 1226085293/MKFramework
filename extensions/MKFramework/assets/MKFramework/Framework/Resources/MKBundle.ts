@@ -7,7 +7,7 @@ import MKStatusTask from "../Task/MKStatusTask";
 import type { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "./MKRelease";
-import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, NodePool } from "cc";
+import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, NodePool, settings, SettingsCategory, sys } from "cc";
 import globalEvent from "../../Config/GlobalEvent";
 
 namespace _MKBundle {
@@ -101,6 +101,16 @@ export class MKBundle extends MKInstanceBase {
 					scene = await new Promise<Scene>((resolveFunc) => {
 						director.once(Director.EVENT_BEFORE_SCENE_LAUNCH, resolveFunc);
 					});
+				}
+
+				// 同步 bundle 版本
+				{
+					let versionTab = sys.localStorage.getItem("mk.bundleVers") || null;
+
+					if (versionTab) {
+						assetManager.downloader.bundleVers = JSON.parse(versionTab);
+						settings.overrideSettings(SettingsCategory.ASSETS, "bundleVers", assetManager.downloader.bundleVers);
+					}
 				}
 
 				// init
@@ -503,6 +513,8 @@ export class MKBundle extends MKInstanceBase {
 			}
 
 			assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
+			settings.overrideSettings(SettingsCategory.ASSETS, "bundleVers", assetManager.downloader.bundleVers);
+			sys.localStorage.setItem("mk.bundleVers", JSON.stringify(assetManager.downloader.bundleVers));
 		}
 
 		// 加载 bundle

@@ -18,11 +18,11 @@ export class HotUpdateDefault extends mk.ViewBase {
 
 	/** 确认 */
 	async clickConfirm(): Promise<void> {
-		let versionTab: Record<string, string> = await mk.network.http.get(`${this.remoteUrlEditBox.string}/version.json`, {
+		const versionTab: Record<string, string> = await mk.network.http.get(`${this.remoteUrlEditBox.string}/version.json`, {
 			returnType: "json",
 		});
 
-		let needUpdateBundleStrList = [
+		const needUpdateBundleStrList = [
 			GlobalConfig.Asset.bundle.Config,
 			GlobalConfig.Asset.bundle.Framework,
 			GlobalConfig.Asset.bundle.main,
@@ -30,13 +30,13 @@ export class HotUpdateDefault extends mk.ViewBase {
 			"HotUpdate",
 		];
 
-		for (let vStr of needUpdateBundleStrList) {
+		for (const vStr of needUpdateBundleStrList) {
 			// 不需要更新
 			if (!versionTab[vStr] || cc.assetManager.downloader.bundleVers[vStr] === versionTab[vStr]) {
 				continue;
 			}
 
-			let task = mk.bundle.reload({
+			const task = mk.bundle.reload({
 				bundleStr: vStr,
 				originStr: `${this.remoteUrlEditBox.string}/${vStr}`,
 				versionStr: versionTab[vStr],
