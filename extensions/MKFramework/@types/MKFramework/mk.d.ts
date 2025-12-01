@@ -1314,6 +1314,19 @@ declare namespace mk {
 		 * @returns
 		 */
 		reload(bundleInfo_: ConstructorParameters<typeof Bundle_.ReloadBundleInfo>[0]): Promise<AssetManager.Bundle | null>;
+		/**
+		 * 获取 bundle 缓存信息
+		 * @param bundleStr_ Bundle 名
+		 * @returns
+		 * * null 不存在缓存
+		 * * 有数据: 上次加载的 bundle 信息
+		 */
+		getCache(bundleStr_: string): null | {
+			/** 版本号 */
+			versionStr: string;
+			/** bundle url */
+			urlStr: string;
+		};
 		private _setBundleStr;
 		private _setSceneStr;
 	}
