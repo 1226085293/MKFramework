@@ -1,47 +1,45 @@
 window.loadBundleStrList = window.loadBundleStrList ?? (window.loadBundleStrList = []);
 {
 	/** 原函数 */
-	let oldLoadFunc = window.cc.assetManager.loadBundle;
-	/** 初始化任务 */
-	let initTask = null;
+	let oldLoadFunc = window.cc.game._loadProjectBundles;
 
-	// 拦截首次加载
-	if (window.cc.assetManager.loadBundle) {
-		window.cc.assetManager.loadBundle = async function (...argsList) {
-			if (initTask) {
-				await initTask;
+	window.cc.game._loadProjectBundles = async function (...argsList) {
+		let bundleList = window.cc.settings.querySettings("assets", 'preloadBundles') ?? [];
+		let loadBundleList = ["Config", "Framework", ...window.loadBundleStrList].map(vStr => {
+			return {
+				bundle: vStr
 			}
-			// 加载框架
-			else {
-				/** 加载 bundle */
-				let loadBundleStrList = ["Config", "Framework"];
+		});
 
-				// 添加其他需要加载的 bundle
-				loadBundleStrList.push(...window.loadBundleStrList);
-				window.loadBundleStrList = undefined;
+		bundleList.unshift(...loadBundleList);
+		bundleList.forEach(v => {
+			let bundleStr = v.bundle;
+			let data = null;
+			let keyStr = "";
 
-				initTask = loadBundleStrList
-					.reduce((pre, name) => {
-						return pre.then(() => {
-							return new Promise((resolve, reject) => {
-								oldLoadFunc.call(window.cc.assetManager, name, (err, bundle) => {
-									if (err) {
-										return reject(err);
-									}
+			cc.assetManager.cacheManager.cachedFiles.forEach((v2, k2Str) => {
+				if (k2Str.includes(`/${bundleStr}/index.`) && (!data || data.lastTime < v2.lastTime)) {
+					keyStr = k2Str;
+					data = v2;
+				}
+			})
 
-									resolve(bundle);
-								});
-							});
-						});
-					}, Promise.resolve())
-					.then((pre) => {
-						// 还原 loadBundle
-						window.cc.assetManager.loadBundle = oldLoadFunc;
-					});
+			let versionStr = !data ? "" : keyStr.split(".").slice(-2)[0];
+			let urlStr = !data ? bundleStr : keyStr.slice(0, keyStr.indexOf("/index."));
+
+			v.bundle = urlStr;
+			if (versionStr) {
+				v.version = versionStr;
+				window.cc.assetManager.downloader.bundleVers[bundleStr] = versionStr;
 			}
+		})
 
-			// 恢复加载步骤
-			window.cc.assetManager.loadBundle(...argsList);
-		};
+
+
+		window.cc.settings.overrideSettings("assets", "bundleVers", window.cc.assetManager.downloader.bundleVers);
+		window.cc.settings.overrideSettings("assets", "preloadBundles", bundleList);
+
+		window.cc.game._loadProjectBundles = oldLoadFunc;
+		return oldLoadFunc.call(window.cc.game, ...argsList);
 	}
 }

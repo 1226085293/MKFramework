@@ -103,16 +103,6 @@ export class MKBundle extends MKInstanceBase {
 					});
 				}
 
-				// 同步 bundle 版本
-				{
-					let versionTab = sys.localStorage.getItem("mk.bundleVers") || null;
-
-					if (versionTab) {
-						assetManager.downloader.bundleVers = JSON.parse(versionTab);
-						settings.overrideSettings(SettingsCategory.ASSETS, "bundleVers", assetManager.downloader.bundleVers);
-					}
-				}
-
 				// init
 				await this.bundleMap.get("main")?.manage?.init?.();
 				// open
@@ -506,19 +496,14 @@ export class MKBundle extends MKInstanceBase {
 			assetManager.removeBundle(bundle);
 		}
 
-		// 更新版本号
-		{
-			if (!assetManager.downloader.bundleVers) {
-				assetManager.downloader.bundleVers = {};
-			}
-
-			assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
-			settings.overrideSettings(SettingsCategory.ASSETS, "bundleVers", assetManager.downloader.bundleVers);
-			sys.localStorage.setItem("mk.bundleVers", JSON.stringify(assetManager.downloader.bundleVers));
-		}
-
 		// 加载 bundle
 		const loadTask = await this.load(bundleInfo_);
+
+		// 更新版本号
+		if (loadTask) {
+			assetManager.downloader.bundleVers[bundleInfo_.bundleStr] = bundleInfo_.versionStr;
+			settings.overrideSettings(SettingsCategory.ASSETS, "bundleVers", assetManager.downloader.bundleVers);
+		}
 
 		// 重载后事件
 		this.event.emit(this.event.key.afterBundleReload, {
@@ -526,6 +511,44 @@ export class MKBundle extends MKInstanceBase {
 		});
 
 		return loadTask;
+	}
+
+	/**
+	 * 获取 bundle 缓存信息
+	 * @param bundleStr_ Bundle 名
+	 * @returns
+	 * * null 不存在缓存
+	 * * 有数据: 上次加载的 bundle 信息
+	 */
+	getCache(bundleStr_: string): null | {
+		/** 版本号 */
+		versionStr: string;
+		/** bundle url */
+		urlStr: string;
+	} {
+		if (!assetManager.cacheManager) {
+			return null;
+		}
+
+		let data: ReturnType<typeof assetManager.cacheManager.cachedFiles.get> = null;
+		let keyStr = "";
+
+		assetManager.cacheManager.cachedFiles.forEach((v2, k2Str) => {
+			if (k2Str.includes(`/${bundleStr_}/index.`) && (!data || data.lastTime < v2.lastTime)) {
+				keyStr = k2Str;
+				data = v2;
+			}
+		});
+
+		let versionStr = !data ? "" : keyStr.split(".").slice(-2)[0];
+		let urlStr = !data ? bundleStr_ : keyStr.slice(0, keyStr.indexOf("/index."));
+
+		return !data
+			? null
+			: {
+					versionStr: versionStr,
+					urlStr: urlStr,
+				};
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
