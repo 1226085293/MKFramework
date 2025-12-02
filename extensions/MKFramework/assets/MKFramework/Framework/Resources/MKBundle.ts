@@ -7,7 +7,7 @@ import MKStatusTask from "../Task/MKStatusTask";
 import type { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "./MKRelease";
-import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, NodePool, settings, SettingsCategory, sys } from "cc";
+import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, settings, SettingsCategory } from "cc";
 import globalEvent from "../../Config/GlobalEvent";
 
 namespace _MKBundle {
@@ -540,8 +540,8 @@ export class MKBundle extends MKInstanceBase {
 			}
 		});
 
-		let versionStr = !data ? "" : keyStr.split(".").slice(-2)[0];
-		let urlStr = !data ? bundleStr_ : keyStr.slice(0, keyStr.indexOf("/index."));
+		const versionStr = !data ? "" : keyStr.split(".").slice(-2)[0];
+		const urlStr = !data ? bundleStr_ : keyStr.slice(0, keyStr.indexOf("/index."));
 
 		return !data
 			? null

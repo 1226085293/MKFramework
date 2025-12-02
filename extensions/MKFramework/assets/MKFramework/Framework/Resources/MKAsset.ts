@@ -116,10 +116,10 @@ export class MKAsset extends MKInstanceBase {
 		}
 
 		if (DynamicAtlasManager?.instance?.enabled) {
-			let oldFunc = DynamicAtlasManager.instance.insertSpriteFrame;
+			const oldFunc = DynamicAtlasManager.instance.insertSpriteFrame;
 
 			DynamicAtlasManager.instance.insertSpriteFrame = (spriteFrame: SpriteFrame): ReturnType<typeof oldFunc> => {
-				let uuidStr = (spriteFrame?.texture as Texture2D)?.image?.uuid ?? "";
+				const uuidStr = (spriteFrame?.texture as Texture2D)?.image?.uuid ?? "";
 
 				if (uuidStr.startsWith("http")) {
 					let associationList = this._remoteImageAssociationResourceMap.get(uuidStr);
@@ -532,13 +532,14 @@ export class MKAsset extends MKInstanceBase {
 				} else if (v instanceof Texture2D) {
 					DynamicAtlasManager.instance.deleteAtlasTexture(v);
 				} else if (v instanceof ImageAsset) {
-					let associationList = this._remoteImageAssociationResourceMap.get(v.uuid);
+					const associationList = this._remoteImageAssociationResourceMap.get(v.uuid);
 
 					if (associationList) {
 						associationList.forEach((v) => {
 							// deleteAtlasSpriteFrame 内部会释放 Texture
 							DynamicAtlasManager.instance.deleteAtlasSpriteFrame(v);
 						});
+
 						this._remoteImageAssociationResourceMap.delete(v.uuid);
 					}
 				}

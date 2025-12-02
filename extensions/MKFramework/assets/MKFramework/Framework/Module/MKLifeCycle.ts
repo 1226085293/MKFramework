@@ -426,8 +426,9 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 				return;
 			}
 
-			let currentCountNum = !openData_ ? ++this._openData.currentCountNum : openData_.currentCountNum;
-			let checkBreakFunc = (): void => {
+			const currentCountNum = !openData_ ? ++this._openData.currentCountNum : openData_.currentCountNum;
+
+			const checkBreakFunc = (): void => {
 				if (currentCountNum !== this._openData.shareData.validCountNum) {
 					throw "中断";
 				}
@@ -478,6 +479,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 						shareData: this._openData.shareData,
 					}
 				);
+
 				checkBreakFunc();
 
 				// 已销毁或已关闭
