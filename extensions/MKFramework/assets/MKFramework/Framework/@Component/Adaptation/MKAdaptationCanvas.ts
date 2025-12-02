@@ -1,7 +1,7 @@
 import { EDITOR } from "cc/env";
 import GlobalConfig from "../../../Config/GlobalConfig";
 import globalEvent from "../../../Config/GlobalEvent";
-import { _decorator, Component, director, Canvas, view, ResolutionPolicy, Director, screen, game, Game } from "cc";
+import { _decorator, Component, director, Canvas, view, ResolutionPolicy, Director, screen, game } from "cc";
 
 const { ccclass, disallowMultiple } = _decorator;
 
@@ -60,7 +60,7 @@ export default class MKAdaptationCanvas extends Component {
 
 // 自动添加至场景节点
 if (!(EDITOR && !window["cc"].GAME_VIEW) && GlobalConfig.View.adaptationType !== GlobalConfig.View.AdaptationMode.None) {
-	let addToSceneNodeFunc = () => {
+	const addToSceneNodeFunc = (): void => {
 		const canvasNode = director.getScene()?.getComponentInChildren(Canvas)?.node;
 
 		if (canvasNode && !canvasNode.getComponent(MKAdaptationCanvas)) {

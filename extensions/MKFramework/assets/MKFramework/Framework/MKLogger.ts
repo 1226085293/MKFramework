@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { EDITOR } from "cc/env";
 import MKInstanceBase from "./MKInstanceBase";
 import MKHttp from "./Network/MKHttp";
