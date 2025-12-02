@@ -731,17 +731,6 @@ export namespace MKBundle_ {
 				return;
 			}
 
-			// 对象池
-			this.nodePoolTab = new Proxy(js.createMap(true), {
-				get: (target_, key_) => {
-					if (!target_[key_]) {
-						target_[key_] = new NodePool(key_ as string);
-					}
-
-					return target_[key_];
-				},
-			}) as any;
-
 			// 自动执行生命周期
 			mkToolFunc.runParentFunc(this, ["init", "open", "close"]);
 		}
@@ -751,8 +740,6 @@ export namespace MKBundle_ {
 		abstract nameStr: string;
 		/** 管理器有效状态 */
 		isValid = false;
-		/** 节点池表 */
-		nodePoolTab!: Record<string, NodePool>;
 		/** 事件对象 */
 		event?: MKEventTarget<any>;
 		/** 数据共享器 */
@@ -829,14 +816,6 @@ export namespace MKBundle_ {
 			// @weak-start-include-MKDataSharer
 			this.data?.reset();
 			// @weak-end
-
-			// 清理对象池
-			for (const kStr in this.nodePoolTab) {
-				if (Object.prototype.hasOwnProperty.call(this.nodePoolTab, kStr)) {
-					this.nodePoolTab[kStr].clear();
-					delete this.nodePoolTab[kStr];
-				}
-			}
 
 			// 释放对象
 			this._releaseManage.releaseAll();
