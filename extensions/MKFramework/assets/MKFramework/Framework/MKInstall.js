@@ -17,7 +17,7 @@ window.loadBundleStrList = window.loadBundleStrList ?? (window.loadBundleStrList
 			let data = null;
 			let keyStr = "";
 
-			cc.assetManager.cacheManager.cachedFiles.forEach((v2, k2Str) => {
+			window.cc.assetManager.cacheManager?.cachedFiles?.forEach((v2, k2Str) => {
 				if (k2Str.includes(`/${bundleStr}/index.`) && (!data || data.lastTime < v2.lastTime)) {
 					keyStr = k2Str;
 					data = v2;
