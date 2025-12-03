@@ -89,6 +89,13 @@ namespace GlobalConfig {
 			layerSpacingNum = 100;
 			/** 渲染层级刷新间隔 */
 			layerRefreshIntervalMsNum = game.frameTime;
+			/** 遮罩配置 */
+			maskInfo = {
+				/** 遮罩节点名 */
+				nodeNameStr: "遮罩",
+				/** 遮罩颜色 */
+				color: { r: 0, g: 0, b: 0, a: 170 },
+			};
 			/** 窗口打开动画 */
 			windowAnimationTab: Readonly<{
 				/** 打开动画 */

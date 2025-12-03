@@ -278,7 +278,7 @@ export class MKViewBase extends MKLifeCycle {
 	/* ------------------------------- get/set ------------------------------- */
 	private _getIsAutoMask(): boolean {
 		if (EDITOR && !window["cc"].GAME_VIEW) {
-			return this.node.children[0]?.name === "遮罩";
+			return this.node.children[0]?.name === MKViewBase._config.maskInfo.nodeNameStr;
 		}
 
 		return false;
@@ -288,7 +288,7 @@ export class MKViewBase extends MKLifeCycle {
 		if (EDITOR && !window["cc"].GAME_VIEW) {
 			// 添加遮罩
 			if (value_) {
-				const node = new Node("遮罩");
+				const node = new Node(MKViewBase._config.maskInfo.nodeNameStr);
 				const sprite = node.addComponent(Sprite);
 				const widget = node.addComponent(Widget);
 
@@ -315,12 +315,7 @@ export class MKViewBase extends MKLifeCycle {
 					path: `__comps__.${node.components.indexOf(sprite)}.color`,
 					dump: {
 						type: "cc.Color",
-						value: {
-							r: 0,
-							g: 0,
-							b: 0,
-							a: 170,
-						},
+						value: MKViewBase._config.maskInfo.color,
 					},
 				});
 
