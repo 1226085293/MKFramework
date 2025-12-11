@@ -210,8 +210,12 @@ export class MKBundle extends MKInstanceBase {
 		}
 
 		return new Promise<AssetManager.Bundle | null>((resolveFunc) => {
-			if (!bundleInfo) {
-				return;
+			const cacheInfo = this.getCache(bundleInfo.bundleStr);
+
+			// 不填版本号默认使用缓存中最新的版本
+			if (!bundleInfo.versionStr && cacheInfo) {
+				bundleInfo.originStr = cacheInfo.urlStr;
+				bundleInfo.versionStr = cacheInfo.versionStr;
 			}
 
 			assetManager.loadBundle(
@@ -548,7 +552,7 @@ export class MKBundle extends MKInstanceBase {
 			: {
 					versionStr: versionStr,
 					urlStr: urlStr,
-				};
+			  };
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
