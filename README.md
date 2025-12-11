@@ -1,47 +1,24 @@
-<div style="text-align:left">
-    <img src="./home/logo.png" alt="Image" />
-</div>
-
 # Cocos Creator 3.x 游戏开发框架
 
-## 📣 功能简介
+## 📗 框架介绍
 
-> 游戏开发必备功能配齐，满足大部分游戏开发场景
+MKFramework 是一个专为 Cocos Creator 3.x 设计的综合游戏开发框架。它提供了一系列集成系统，用于处理常见的游戏开发任务，例如资源管理、UI 管理、音频播放、本地化和网络。本文档概述了该框架、其架构及其核心系统。
 
-<div style="text-align:center">
-    <img src="./home/功能简介.png" alt="Image" />
-</div>
-
----
+> 注意：当前仓库为框架的功能示例，对框架功能有疑惑可参考此项目代码学习使用，安装框架可点击下方链接
 
 ## 🛠️ 安装框架
 
 https://mkframework.muzzik.cc/docs/getting-started/install
 
-## 📗 文档教程
+## 📣 仓库说明
 
-https://mkframework.muzzik.cc/docs/introduce
+当前仓库为框架的功能示例集合，对框架功能有疑惑可参考此项目代码学习使用
 
-
-## 😀 仓库说明
-
-> 本仓库为 MKFramework 的功能示例项目，如果对框架模块有疑惑可参考此项目代码使用，如果示例不存在请联系开发人员补充
-
-### 项目初始化
+### ⚙️ 1. 项目初始化
 
 1. 控制台执行 `npm i`
 
-## 📭 联系方式
-
-- QQ 群：200351945
-
-- 微信：_muzzik
-
-## 🧩 示例集合
-
-https://github.com/1226085293/MKDemo
-
-## 🚩 仓库导航
+### 🚩 2. 项目导航
 
 > 小提示：参考文档同时查看会更快理解
 
