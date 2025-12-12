@@ -371,6 +371,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		if (this.data && this._isResetData) {
 			mkToolObject.reset(this.data, true);
 		}
+		// 重置初始化数据
+		this.initData = undefined;
 	}
 
 	/* ------------------------------- 功能 ------------------------------- */
