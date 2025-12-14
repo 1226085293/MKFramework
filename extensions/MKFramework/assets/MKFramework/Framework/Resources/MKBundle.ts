@@ -103,9 +103,16 @@ export class MKBundle extends MKInstanceBase {
 					});
 				}
 
-				// init
+				// 更新已加载脚本缓存
+				((settings.querySettings("assets", "preloadBundles") ?? []) as { bundle: string; version?: string }[]).forEach((v) => {
+					if (v.version) {
+						this._loadedScriptCache[`${v.bundle.replaceAll("/", "")}-${v.version}`] = true;
+					}
+				});
+
+				// 初始化 Bundle 管理器
 				await this.bundleMap.get("main")?.manage?.init?.();
-				// open
+				// 初始化当前信息
 				this._setBundleStr("main");
 				this._sceneStr = scene.name ?? "";
 				this._initTask.finish(true);
@@ -162,6 +169,8 @@ export class MKBundle extends MKInstanceBase {
 	private _preSceneStr!: string;
 	/** 切换场景状态 */
 	private _isSwitchScene = false;
+	/** 已加载脚本缓存 */
+	private _loadedScriptCache: Record<string, boolean> = {};
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 设置 bundle 数据
@@ -230,6 +239,11 @@ export class MKBundle extends MKInstanceBase {
 						resolveFunc(null);
 
 						return;
+					}
+
+					// 更新已加载脚本缓存
+					if (bundleInfo.originStr?.startsWith("http")) {
+						this._loadedScriptCache[`${bundleInfo.originStr.replaceAll("/", "")}-${bundleInfo.versionStr}`] = true;
 					}
 
 					// 非远程 bundle 需要模拟进度回调
@@ -402,6 +416,12 @@ export class MKBundle extends MKInstanceBase {
 
 		await this._engineInitTask.task;
 
+		// 脚本不可重复加载（引擎内限制，否则二次加载报错）
+		if (this._loadedScriptCache[`${bundleInfo_.originStr.replaceAll("/", "")}-${bundleInfo_.versionStr}`]) {
+			this._log.error("不可重复加载相同路径和版本的 bundle");
+			return null;
+		}
+
 		if (this.bundleStr === bundleInfo_.bundleStr) {
 			await new Promise<void>((resolveFunc) => {
 				this.event.once(this.event.key.bundleReadySwitch, () => resolveFunc(), this);
@@ -537,7 +557,7 @@ export class MKBundle extends MKInstanceBase {
 		let data: ReturnType<typeof assetManager.cacheManager.cachedFiles.get> = null;
 		let keyStr = "";
 
-		assetManager.cacheManager.cachedFiles.forEach((v2, k2Str) => {
+		assetManager.cacheManager?.cachedFiles?.forEach((v2, k2Str) => {
 			if (k2Str.includes(`/${bundleStr_}/index.`) && (!data || data.lastTime < v2.lastTime)) {
 				keyStr = k2Str;
 				data = v2;
@@ -552,7 +572,7 @@ export class MKBundle extends MKInstanceBase {
 			: {
 					versionStr: versionStr,
 					urlStr: urlStr,
-			  };
+				};
 	}
 
 	/* ------------------------------- get/set ------------------------------- */
@@ -614,7 +634,7 @@ export namespace MKBundle_ {
 		/** 版本 */
 		versionStr?: string;
 		/**
-		 * 资源路径
+		 * bundle 远程 URL
 		 * @defaultValue
 		 * this.bundleStr
 		 * @remarks
