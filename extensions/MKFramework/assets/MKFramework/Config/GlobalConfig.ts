@@ -8,8 +8,6 @@ import { DEBUG } from "cc/env";
 namespace GlobalConfig {
 	/** 常量 */
 	export namespace Constant {
-		/** 游戏版本 */
-		export const versionStr = "1.0.0";
 		/** 显示左下角调试信息 */
 		export const isShowDebugInfo = false;
 	}
