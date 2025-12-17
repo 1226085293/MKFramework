@@ -6,12 +6,13 @@ import mkMonitor from "../MKMonitor";
 import MKStatusTask from "../Task/MKStatusTask";
 import MKLayer from "./MKLayer";
 /** @weak */
-import { mkAudio, MKAudio_ } from "../Audio/MKAudioExport";
+import mkAudio from "../Audio/MKAudio";
 import MKRelease, { MKRelease_ } from "../Resources/MKRelease";
 import GlobalConfig from "../../Config/GlobalConfig";
 import { _decorator, js, CCClass, isValid, Node, Asset } from "cc";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import mkToolObject from "../@Private/Tool/MKToolObject";
+import MKAudioUnit from "../Audio/MKAudioUnit";
 // @weak-start-include-MKUIManage
 const uiManage = mkDynamicModule.default(import("../MKUIManage"));
 // @weak-end
@@ -219,7 +220,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		/** 参数键列表 */
 		const attrKeyStrList = Object.keys(attrTab);
 
-		// @weak-start-include-MKAudioExport
+		// @weak-start-include-MKAudio
 		// 初始化音频单元
 		attrKeyStrList.forEach((vStr) => {
 			if (!vStr.endsWith("$_$ctor")) {
@@ -230,7 +231,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			const nameStr = vStr.slice(0, -7);
 
 			// 初始化音频单元
-			if (this[nameStr] instanceof MKAudio_.PrivateUnit) {
+			if (this[nameStr] instanceof MKAudioUnit) {
 				this[nameStr]._followReleaseTarget = this;
 				mkAudio._add(this[nameStr]);
 			}
@@ -327,7 +328,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		/** 参数键列表 */
 		const attrKeyStrList = Object.keys(attrTab);
 
-		// @weak-start-include-MKAudioExport
+		// @weak-start-include-MKAudio
 		// 删除音频单元
 		attrKeyStrList.forEach((vStr) => {
 			if (!vStr.endsWith("$_$ctor")) {
@@ -338,7 +339,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			const nameStr = vStr.slice(0, -7);
 
 			// 清理音频组内的音频单元
-			if (this[nameStr] instanceof MKAudio_.PrivateUnit) {
+			if (this[nameStr] instanceof MKAudioUnit) {
 				mkAudio.getGroup(this[nameStr].type).delAudio(this[nameStr]);
 				this[nameStr].groupIdNumList.forEach((v2Num) => {
 					mkAudio.getGroup(v2Num).delAudio(this[nameStr]);
@@ -371,6 +372,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		if (this.data && this._isResetData) {
 			mkToolObject.reset(this.data, true);
 		}
+
 		// 重置初始化数据
 		this.initData = undefined;
 	}
