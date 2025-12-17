@@ -60,19 +60,19 @@ export default class MKAdaptationCanvas extends Component {
 
 // 自动添加至场景节点
 if (!(EDITOR && !window["cc"].GAME_VIEW) && GlobalConfig.View.adaptationType !== GlobalConfig.View.AdaptationMode.None) {
-	const addToSceneNodeFunc = (): void => {
+	// 防止编辑器预览报错，编辑器预览会触发两次 EVENT_AFTER_SCENE_LAUNCH 导致首次调用 setDesignResolutionSize 引擎内部报错
+	director.once(Director.EVENT_AFTER_SCENE_LAUNCH, async () => {
+		// 版本适配(<=3.8.6)：编辑器预览模式会触发两次 EVENT_AFTER_SCENE_LAUNCH，首次场景数据无效
+		if (window["cc"].GAME_VIEW && window["cc"].ENGINE_VERSION && Number(window["cc"].ENGINE_VERSION.replaceAll(".", "")) < 387) {
+			await new Promise<void>((resolveFunc) => {
+				director.once(Director.EVENT_AFTER_SCENE_LAUNCH, resolveFunc);
+			});
+		}
+
 		const canvasNode = director.getScene()?.getComponentInChildren(Canvas)?.node;
 
 		if (canvasNode && !canvasNode.getComponent(MKAdaptationCanvas)) {
 			canvasNode.addComponent(MKAdaptationCanvas);
 		}
-	};
-
-	// 防止编辑器预览报错，编辑器预览会触发两次 EVENT_AFTER_SCENE_LAUNCH 导致首次调用 setDesignResolutionSize 引擎内部报错
-	director.once(Director.EVENT_AFTER_SCENE_LAUNCH, () => {
-		setTimeout(() => {
-			addToSceneNodeFunc();
-			director.on(Director.EVENT_AFTER_SCENE_LAUNCH, addToSceneNodeFunc);
-		}, game.frameTime);
 	});
 }
