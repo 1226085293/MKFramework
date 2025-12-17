@@ -419,6 +419,7 @@ export class MKBundle extends MKInstanceBase {
 		// 脚本不可重复加载（引擎内限制，否则二次加载报错）
 		if (this._loadedScriptCache[`${bundleInfo_.originStr.replaceAll("/", "")}-${bundleInfo_.versionStr}`]) {
 			this._log.error("不可重复加载相同路径和版本的 bundle");
+
 			return null;
 		}
 
@@ -572,7 +573,7 @@ export class MKBundle extends MKInstanceBase {
 			: {
 					versionStr: versionStr,
 					urlStr: urlStr,
-				};
+			  };
 	}
 
 	/* ------------------------------- get/set ------------------------------- */

@@ -53,7 +53,7 @@ export { default as monitor } from "./MKMonitor";
 export { default as CodecBase, MKCodecBase_ as CodecBase_ } from "./MKCodecBase";
 /* ------------------------------- 其他 ------------------------------- */
 // 音频
-export { mkAudio as audio, MKAudio_ as Audio_ } from "./Audio/MKAudioExport";
+export { default as audio, MKAudio_ as Audio_ } from "./Audio/MKAudio";
 // 多语言
 export { default as language, languageManage, LanguageManage_ as Language_ } from "./Language/MKLanguage";
 // 网络
