@@ -165,9 +165,10 @@ export class MKAudio {
 	 * @param config_ 播放配置
 	 * @returns 返回 null 则代表当前音频单元无效，
 	 * @remarks
-	 * 使用通用音频系统时，当播放数量超过 AudioSource.maxAudioChannel 时会导致播放失败
+	 * 当同时播放数量超过 AudioSource.maxAudioChannel 时根据 (config_?.isForce ?? GlobalConfig.Audio.isForce) 值决定是否播放
+	 * true: 播放当前音频并停止之前某个播放的音频; false: 阻止当前音频播放
 	 */
-	async play(audio_: MKAudio_.Unit | string, config_?: Partial<MKAudio_.PlayConfig>): Promise<MKAudio_.Unit | null> {
+	async play(audio_: MKAudio_.Unit | string, config_?: MKAudio_.PlayConfig): Promise<MKAudio_.Unit | null> {
 		let audio: MKAudioUnit | null;
 
 		if (typeof audio_ === "string") {
@@ -191,7 +192,8 @@ export class MKAudio {
 
 		// 更新配置
 		if (config_) {
-			Object.assign(audio, config_);
+			audio.isLoop = config_.isLoop ?? audio.isLoop;
+			audio.volumeNum = config_.volumeNum ?? audio.volumeNum;
 		}
 
 		// 添加音频
@@ -220,9 +222,9 @@ export class MKAudio {
 			}
 
 			// 正常播放
-			this._play(audio);
+			this._play(audio, config_);
 		} else {
-			this._play(audio);
+			this._play(audio, config_);
 		}
 
 		return audio;
@@ -372,7 +374,7 @@ export class MKAudio {
 		return new MKAudioUnit(init_);
 	}
 
-	private _play(audio_: MKAudioUnit): void {
+	private _play(audio_: MKAudioUnit, config_?: MKAudio_.PlayConfig): void {
 		/** 上次状态 */
 		const lastState = audio_.state;
 
@@ -396,16 +398,51 @@ export class MKAudio {
 			this._audioUnitMap.set(audio_.audioSource.uuid, audio_);
 		}
 
-		// 若超出 maxAudioChannel 继续播放则会停止之前播放的音频，故退出
+		// 引擎默认：若超出 AudioSource.maxAudioChannel 继续播放则会停止之前播放的音频
 		if (lastState === MKAudio_.State.Stop && this._currentPlayNum > AudioSource.maxAudioChannel) {
-			this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
-			this.stop(audio_);
+			const isForce = config_?.isForce ?? GlobalConfig.Audio.isForce;
 
-			return;
+			// 强制播放
+			if (isForce) {
+				const audioList: MKAudioUnit[] = [];
+
+				// 收集正在播放的音频单元
+				for (const kStr in GlobalConfig.Audio.Type) {
+					if (!isNaN(Number(kStr))) {
+						continue;
+					}
+
+					const v = GlobalConfig.Audio.Type[kStr] as unknown as GlobalConfig.Audio.Type;
+					const groupAudioList = this._groupMap.get(v)?.audioUnitList.filter((v) => v.state === MKAudioUnit_.State.Play) ?? [];
+
+					audioList.push(...(groupAudioList as MKAudioUnit[]));
+				}
+
+				// 剔除当前播放的音频单元
+				audioList.splice(audioList.indexOf(audio_), 1);
+
+				/** 停止音频单元 */
+				const stopAudio = audioList.sort((va, vb) => {
+					if (va.stopPriorityNum !== vb.stopPriorityNum) {
+						return vb.stopPriorityNum - va.stopPriorityNum;
+					} else {
+						return va.playTimestampNum - vb.playTimestampNum;
+					}
+				})[0];
+
+				this._log.warn(`音频数量超出 maxAudioChannel, 强制播放当前音频，停止音频：${stopAudio.clip?.name}`);
+				this.stop(stopAudio);
+			} else {
+				this._log.warn("音频数量超出 maxAudioChannel, 停止当前音频播放");
+				this.stop(audio_);
+
+				return;
+			}
 		}
 
 		// 播放音频
 		audio_.audioSource!.play();
+		audio_.playTimestampNum = Date.now();
 
 		if (lastState === MKAudio_.State.Stop) {
 			this._log.debug("当前播放数量", this._currentPlayNum, "播放", audio_.clip!.name);
@@ -563,9 +600,11 @@ export namespace MKAudio_ {
 	/** play 配置 */
 	export interface PlayConfig {
 		/** 音量 */
-		volumeNum: number;
+		volumeNum?: number;
 		/** 循环 */
-		isLoop: boolean;
+		isLoop?: boolean;
+		/** 强制播放（防止超出最大播放数量时被阻止） */
+		isForce?: boolean;
 	}
 
 	/** 音频组 */

@@ -29,15 +29,6 @@ class MKAudioUnit implements MKRelease_.TypeReleaseObject {
 	type = GlobalConfig.Audio.Type.Effect;
 
 	/* --------------- public --------------- */
-	/** 事件对象 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	_event?: MKEventTarget<MKAudioUnit_.EventProtocol>;
-	/**
-	 * 跟随释放对象
-	 * @internal
-	 */
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	_followReleaseTarget: MKRelease_.TypeFollowReleaseSupport = null!;
 	/** 分组 */
 	groupIdNumList: number[] = [];
 	/** 播放状态 */
@@ -50,6 +41,22 @@ class MKAudioUnit implements MKRelease_.TypeReleaseObject {
 	waitPlayNum = -1;
 	/** 真实音量 */
 	realVolumeNum = 0;
+	/**
+	 * 停止优先级
+	 * @remarks
+	 * 当超过最大播放数量限制且强制播放时，会选择优先级最大的音频停止，优先级相同时选择最先播放的停止
+	 * @defaultValue
+	 * Music: 0; Effect: 1
+	 */
+	stopPriorityNum = 0;
+	/** 播放时间戳 */
+	playTimestampNum = 0;
+	/** 事件对象 */
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	_event?: MKEventTarget<MKAudioUnit_.EventProtocol>;
+	/** 跟随释放对象 */
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	_followReleaseTarget: MKRelease_.TypeFollowReleaseSupport = null!;
 
 	/** 初始化状态 */
 	get isInit(): boolean {
@@ -201,6 +208,7 @@ class MKAudioUnit implements MKRelease_.TypeReleaseObject {
 
 		// 初始化完成
 		if (value_) {
+			this.stopPriorityNum = this.type === GlobalConfig.Audio.Type.Effect ? 1 : 0;
 			this._event?.emit(this._event.key.init);
 		}
 	}
@@ -337,6 +345,14 @@ export namespace MKAudioUnit_ {
 		currentTimeSNum: number;
 		/** 等待播放开关 */
 		isWaitPlay?: boolean;
+		/**
+		 * 停止优先级
+		 * @remarks
+		 * 当超过最大播放数量限制且强制播放时，会选择优先级最大的音频停止，优先级相同时选择最先播放的停止
+		 * @defaultValue
+		 * Music: 0; Effect: 1
+		 */
+		stopPriorityNum: number;
 		/* ------------------------------- 功能 ------------------------------- */
 		/** 克隆 */
 		clone<T extends this>(): T;
