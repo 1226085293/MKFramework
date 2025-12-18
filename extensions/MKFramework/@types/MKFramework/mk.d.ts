@@ -164,9 +164,11 @@ declare namespace mk {
 		/** play 配置 */
 		export interface PlayConfig {
 			/** 音量 */
-			volumeNum: number;
+			volumeNum?: number;
 			/** 循环 */
-			isLoop: boolean;
+			isLoop?: boolean;
+			/** 强制播放（防止超出最大播放数量时被阻止） */
+			isForce?: boolean;
 		}
 		/** 音频组 */
 		export class Group extends MKAudioGroup {}
@@ -1114,9 +1116,10 @@ declare namespace mk {
 		 * @param config_ 播放配置
 		 * @returns 返回 null 则代表当前音频单元无效，
 		 * @remarks
-		 * 使用通用音频系统时，当播放数量超过 AudioSource.maxAudioChannel 时会导致播放失败
+		 * 当同时播放数量超过 AudioSource.maxAudioChannel 时根据 (config_?.isForce ?? GlobalConfig.Audio.isForce) 值决定是否播放
+		 * true: 播放当前音频并停止之前某个播放的音频; false: 阻止当前音频播放
 		 */
-		play(audio_: Audio_.Unit | string, config_?: Partial<Audio_.PlayConfig>): Promise<Audio_.Unit | null>;
+		play(audio_: Audio_.Unit | string, config_?: Audio_.PlayConfig): Promise<Audio_.Unit | null>;
 		/**
 		 * 暂停音频单元
 		 * @param audio_
@@ -1270,6 +1273,14 @@ declare namespace mk {
 			currentTimeSNum: number;
 			/** 等待播放开关 */
 			isWaitPlay?: boolean;
+			/**
+			 * 停止优先级
+			 * @remarks
+			 * 当超过最大播放数量限制且强制播放时，会选择优先级最大的音频停止，优先级相同时选择最先播放的停止
+			 * @defaultValue
+			 * Music: 0; Effect: 1
+			 */
+			stopPriorityNum: number;
 			/** 克隆 */
 			clone<T extends this>(): T;
 			/**
