@@ -21,6 +21,9 @@ namespace GlobalConfig {
 			/** 音乐 */
 			Music,
 		}
+
+		/** 强制播放默认值（超出播放上限后是否停止之前的音频；true: 停止某个之前的音频播放当前音频；false: 阻止当前音频播放） */
+		export const isForce = false;
 	}
 
 	/** 资源 */
