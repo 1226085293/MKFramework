@@ -181,6 +181,10 @@ export class MKUIManage extends MKInstanceBase {
 			// 预制体/节点
 			if (typeof v !== "string" && v?.isValid) {
 				source = v;
+
+				if (v instanceof Node) {
+					v.removeFromParent();
+				}
 			}
 
 			if (!source?.isValid && !(typeof v === "string" && regisData.poolInitFillNum === 0)) {
@@ -211,9 +215,17 @@ export class MKUIManage extends MKInstanceBase {
 					});
 				},
 				destroyFunc: () => {
+					if (!source?.isValid) {
+						return;
+					}
+
 					// 动态加载的资源手动销毁
-					if (typeof v === "string" && source?.isValid) {
+					if (typeof v === "string") {
 						(source as Prefab).decRef();
+					}
+					// 销毁节点
+					else if (source instanceof Node) {
+						source.destroy();
 					}
 				},
 				maxHoldNum: regisData.poolMaxHoldNum,
