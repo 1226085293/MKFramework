@@ -174,8 +174,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	protected _isStatic = true;
 	/** onLoad 任务 */
 	protected _onLoadTask = new MKStatusTask(false);
-	/** create 任务 */
-	protected _createTask = new MKStatusTask(false);
+	/** start 任务 */
+	protected _startTask = new MKStatusTask(false);
 	/** open 任务 */
 	protected _openTask = new MKStatusTask(false);
 	/** 运行状态 */
@@ -210,11 +210,11 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			originUuidStr: "",
 		},
 	};
+	/** 当前任务 */
+	private _currentTask: any = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void;
 	protected async onLoad(): Promise<void> {
-		this._onLoadTask.finish(true);
-
 		/** 参数表 */
 		const attrTab = CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
 		/** 参数键列表 */
@@ -244,14 +244,13 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			if (this._state !== _MKLifeCycle.RunState.Opening) {
 				this._state = _MKLifeCycle.RunState.WaitOpen;
 			}
-
-			// 生命周期
-			if (this.create) {
-				await this.create();
-			}
-
-			this._createTask.finish(true);
 		}
+
+		this._onLoadTask.finish(true);
+	}
+
+	protected start(): void {
+		this._startTask.finish(true);
 	}
 	/* ------------------------------- 自定义生命周期 ------------------------------- */
 	/**
@@ -280,8 +279,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	init(data_?: this["initData"]): void;
 	async init(data_?: this["initData"]): Promise<void> {
 		this._waitInitNum++;
-		if (!this._onLoadTask.isFinish) {
-			await this._onLoadTask.task;
+		if (!this._startTask.isFinish) {
+			await this._startTask.task;
 		}
 
 		if (--this._waitInitNum !== 0) {
@@ -301,8 +300,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	 */
 	protected open?(): void;
 	protected async open?(): Promise<void> {
-		if (!this._onLoadTask.isFinish) {
-			await this._onLoadTask.task;
+		if (!this._startTask.isFinish) {
+			await this._startTask.task;
 		}
 	}
 
@@ -433,6 +432,14 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			const currentCountNum = !openData_ ? ++this._openData.currentCountNum : openData_.currentCountNum;
 
 			const checkBreakFunc = (): void => {
+				this._currentTask = null;
+
+				// 已销毁或已关闭
+				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
+					throw "中断";
+				}
+
+				// 当前任务计数非有效值
 				if (currentCountNum !== this._openData.shareData.validCountNum) {
 					throw "中断";
 				}
@@ -442,7 +449,10 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			this._openData.shareData = openData_ ? openData_.shareData : this._openData.shareData;
 
 			if (openData_) {
-				checkBreakFunc();
+				// 当前任务计数非有效值
+				if (currentCountNum !== this._openData.shareData.validCountNum) {
+					throw "中断";
+				}
 			} else {
 				this._openData.shareData.originUuidStr = this.uuid;
 			}
@@ -450,30 +460,27 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			// 状态更新
 			this._state = _MKLifeCycle.RunState.Opening;
 
-			// create
-			if (this.isStatic) {
-				await this._createTask.task;
-				checkBreakFunc();
-			} else {
-				if (this.create) {
-					await this.create();
-					checkBreakFunc();
-				}
-
-				this._createTask.finish(true);
-			}
-
-			// 已销毁或已关闭
-			if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
-				return;
-			}
-
 			/** 配置 */
 			const config: _MKLifeCycle.OpenConfig = config_ ?? Object.create(null);
 
-			// 生命周期
+			// create
+			if (this.isStatic) {
+				await this._onLoadTask.task;
+				checkBreakFunc();
+				if (this.create) {
+					await (this._currentTask = this.create());
+					checkBreakFunc();
+				}
+			} else {
+				if (this.create) {
+					await (this._currentTask = this.create());
+					checkBreakFunc();
+				}
+			}
+
+			// 子模块生命周期
 			if (config.isFirst) {
-				await this._recursiveOpen(
+				await (this._currentTask = this._recursiveOpen(
 					{
 						target: this.node,
 						isActive: this.node.active,
@@ -482,34 +489,26 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 						currentCountNum: currentCountNum,
 						shareData: this._openData.shareData,
 					}
-				);
+				));
 
 				checkBreakFunc();
-
-				// 已销毁或已关闭
-				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
-					return;
-				}
 			}
 
+			// init
 			if (config.init !== undefined) {
-				await this.init(config.init);
-				checkBreakFunc();
-
-				// 已销毁或已关闭
-				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
-					return;
+				if (!this._startTask.isFinish) {
+					await this.init(config.init);
+				} else {
+					await (this._currentTask = this.init(config.init));
 				}
+
+				checkBreakFunc();
 			}
 
+			// open
 			if (this.open) {
-				await this.open();
+				await (this._currentTask = this.open());
 				checkBreakFunc();
-
-				// 已销毁或已关闭
-				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
-					return;
-				}
 			}
 
 			// 状态更新
@@ -534,21 +533,20 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	async _close(config_?: _MKLifeCycle.CloseConfig): Promise<void> {
 		// 状态安检
 		if (
-			// 允许隐藏的模块执行 close
-			this._onLoadTask.isFinish &&
+			// 已销毁
+			!this.isValid ||
 			// 不在 close 中
 			this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close)
 		) {
 			return;
 		}
 
+		if (this.node.name === "Test-001") {
+			debugger;
+		}
+
 		/** 配置参数 */
 		const config = config_ ?? (Object.create(null) as _MKLifeCycle.CloseConfig);
-
-		// 已销毁
-		if (!this.isValid) {
-			return;
-		}
 
 		// 状态更新
 		this._state = _MKLifeCycle.RunState.Closing;
@@ -557,12 +555,17 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			this._openData.shareData.validCountNum++;
 		}
 
+		// 等待未完成用户任务
+		if (this._currentTask instanceof Promise) {
+			await this._currentTask;
+			this._currentTask = null;
+		}
+
 		// 生命周期
 		{
 			if (this.close) {
 				await this.close();
 
-				// 已销毁
 				if (!this.isValid) {
 					return;
 				}
@@ -575,7 +578,6 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 					parentConfig: config,
 				});
 
-				// 已销毁
 				if (!this.isValid) {
 					return;
 				}
@@ -584,7 +586,6 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			if (this.lateClose) {
 				await this.lateClose();
 
-				// 已销毁
 				if (!this.isValid) {
 					return;
 				}
