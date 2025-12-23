@@ -82,7 +82,7 @@ export class MKAsset extends MKInstanceBase {
 				const result = originFunc.call(this, ...argsList);
 
 				// 跳过未纳入管理资源
-				if (!self._joinTimeMsN.has(this.nativeUrl || this.uuid)) {
+				if (!self._joinTimeMsMap.has(this.nativeUrl || this.uuid)) {
 					return result;
 				}
 
@@ -154,7 +154,7 @@ export class MKAsset extends MKInstanceBase {
 	/** 日志 */
 	private _log = new MKLogger("MKAsset");
 	/** 管理表 */
-	private _joinTimeMsN = new Map<string, Asset>();
+	private _joinTimeMsMap = new Map<string, Asset>();
 	/** 释放表 */
 	private _assetReleaseMap = new Map<string, _MKAsset.ReleaseInfo>();
 	/** 释放定时器 */
@@ -553,7 +553,7 @@ export class MKAsset extends MKInstanceBase {
 			// 释放资源，禁止自动释放，否则会出现释放后立即加载当前资源导致加载返回资源是已释放后的
 			assetManager.releaseAsset(v);
 			// 更新资源管理表
-			this._joinTimeMsN.delete(v.nativeUrl || v.uuid);
+			this._joinTimeMsMap.delete(v.nativeUrl || v.uuid);
 
 			this._log.debug("释放资源", v.name, v.nativeUrl, v.uuid);
 		});
@@ -562,9 +562,9 @@ export class MKAsset extends MKInstanceBase {
 	/** 资源初始化 */
 	private _assetInit<T extends Asset>(asset_: T): T {
 		/** 已加载资源 */
-		const loadedAsset = this._joinTimeMsN.get(asset_.nativeUrl || asset_.uuid) as T;
+		const loadedAsset = this._joinTimeMsMap.get(asset_.nativeUrl || asset_.uuid) as T;
 
-		// 如果资源已经加载，则返回的资源是一个新资源，此时引用计数和前一个对象不一致，需要替换
+		// 如果资源已经加载，则返回的资源是一个新资源，此时引用计数和前一个对象不一致，需要替换（3.8.6 引擎已修复）
 		// 如果资源无效，则加载的资源绕过了框架释放，例如使用 bundle.releaseAll
 		if (loadedAsset?.isValid) {
 			// 引用计数更新
@@ -576,7 +576,7 @@ export class MKAsset extends MKInstanceBase {
 			asset_.addRef();
 			asset_.addRef();
 
-			this._joinTimeMsN.set(asset_.nativeUrl || asset_.uuid, asset_);
+			this._joinTimeMsMap.set(asset_.nativeUrl || asset_.uuid, asset_);
 
 			return asset_;
 		}
