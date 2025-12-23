@@ -771,8 +771,8 @@ declare namespace mk {
 		protected _isStatic: boolean;
 		/** onLoad 任务 */
 		protected _onLoadTask: MKStatusTask<void>;
-		/** create 任务 */
-		protected _createTask: MKStatusTask<void>;
+		/** start 任务 */
+		protected _startTask: MKStatusTask<void>;
 		/** open 任务 */
 		protected _openTask: MKStatusTask<void>;
 		/** 运行状态 */
@@ -792,7 +792,12 @@ declare namespace mk {
 		private _waitInitNum;
 		/** open 信息 */
 		private _openData;
+		/** 当前任务 */
+		private _currentTask;
+		/** create 任务 */
+		private _createTask;
 		protected onLoad(): void;
+		protected start(): void;
 		/**
 		 * 创建
 		 * @param config_ 创建配置
@@ -975,7 +980,7 @@ declare namespace mk {
 		/** 日志 */
 		private _log;
 		/** 管理表 */
-		private _joinTimeMsN;
+		private _joinTimeMsMap;
 		/** 释放表 */
 		private _assetReleaseMap;
 		/** 释放定时器 */
