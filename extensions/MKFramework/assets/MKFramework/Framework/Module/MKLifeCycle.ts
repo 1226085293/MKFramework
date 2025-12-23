@@ -212,6 +212,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	};
 	/** 当前任务 */
 	private _currentTask: any = null;
+	/** create 任务 */
+	private _createTask: any = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void;
 	protected async onLoad(): Promise<void> {
@@ -468,14 +470,10 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 				await this._onLoadTask.task;
 				checkBreakFunc();
 				if (this.create) {
-					await (this._currentTask = this.create());
-					checkBreakFunc();
+					this._createTask = this.create();
 				}
-			} else {
-				if (this.create) {
-					await (this._currentTask = this.create());
-					checkBreakFunc();
-				}
+			} else if (this.create) {
+				this._createTask = this.create();
 			}
 
 			// 子模块生命周期
@@ -494,14 +492,16 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 				checkBreakFunc();
 			}
 
+			// 等待 create 完成
+			if (this._createTask instanceof Promise) {
+				await this._createTask;
+				this._createTask = null;
+				checkBreakFunc();
+			}
+
 			// init
 			if (config.init !== undefined) {
-				if (!this._startTask.isFinish) {
-					await this.init(config.init);
-				} else {
-					await (this._currentTask = this.init(config.init));
-				}
-
+				await (this._currentTask = this.init(config.init));
 				checkBreakFunc();
 			}
 
