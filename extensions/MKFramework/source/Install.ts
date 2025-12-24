@@ -21,9 +21,7 @@ import http from "isomorphic-git/http/node";
 
 export default async function install(versionStr_?: string): Promise<void> {
 	/** 用户名 */
-	const giteeOwner = "muzzik";
-	/** 用户名 */
-	const githubOwner = "1226085293";
+	const owner = "muzzik";
 	/** 仓库路径 */
 	const repo = "MKFramework";
 	/** 临时路径 */
@@ -32,10 +30,8 @@ export default async function install(versionStr_?: string): Promise<void> {
 	const pluginPath = path.join(__dirname, "../").replace(/\\/g, "/");
 	/** 插件项目路径 */
 	const pluginProjectPath = pluginPath.slice(pluginPath.indexOf("/extensions/")).slice(1);
-	/** gitee 远程路径 */
-	const giteeRemoteUrl = `https://gitee.com/${giteeOwner}/${repo}.git`;
-	/** github 远程路径 */
-	const githubRemoteUrl = `https://github.com/${githubOwner}/${repo}.git`;
+	/** 远程路径 */
+	const remoteUrl = `https://gitee.com/${owner}/${repo}.git`;
 	/** 下载路径 */
 	const downloadPath = path.join(tempPath, "MKFramework");
 	/** 框架代码路径 */
@@ -73,7 +69,7 @@ export default async function install(versionStr_?: string): Promise<void> {
 		})
 		.then(async () => {
 			console.log(Editor.I18n.t("mk-framework.获取版本"));
-			const tagsUrl = `https://gitee.com/${giteeOwner}/${repo}/tags`;
+			const tagsUrl = `https://gitee.com/${owner}/${repo}/tags`;
 			const html = (await axios.get(tagsUrl)).data as string;
 			const tags = html.match(/(?<=(data-ref="))([^"]*)(?=")/g) as string[];
 
@@ -99,26 +95,14 @@ export default async function install(versionStr_?: string): Promise<void> {
 				return error;
 			}
 
-			try {
-				await isomorphicGit.clone({
-					fs: fs,
-					http,
-					dir: downloadPath,
-					url: giteeRemoteUrl,
-					depth: 1,
-					ref: version,
-				});
-			} catch (error) {
-				console.error("gitee 下载失败，使用 github 进行下载", error);
-				await isomorphicGit.clone({
-					fs: fs,
-					http,
-					dir: downloadPath,
-					url: githubRemoteUrl,
-					depth: 1,
-					ref: version,
-				});
-			}
+			await isomorphicGit.clone({
+				fs: fs,
+				http,
+				dir: downloadPath,
+				url: remoteUrl,
+				depth: 1,
+				ref: version,
+			});
 		})
 		// 注入框架
 		.then(async () => {
@@ -319,7 +303,7 @@ export default async function install(versionStr_?: string): Promise<void> {
 				return;
 			}
 
-			console.error(error);
 			console.error(Editor.I18n.t("mk-framework.安装失败"));
+			console.error(error);
 		});
 }
