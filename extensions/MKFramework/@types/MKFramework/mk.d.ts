@@ -717,7 +717,7 @@ declare namespace mk {
 		/** 初始化编辑器 */
 		get initEditor(): void;
 		/** 层类型 */
-		layerTypeNum: number;
+		layerTypeNum: GlobalConfig.View.LayerType;
 		/** 层级 */
 		get childLayerNum(): number;
 		set childLayerNum(valueNum_: number);

@@ -38,7 +38,7 @@ class MKLayer extends Component {
 			return this._isUseLayer;
 		},
 	})
-	layerTypeNum = 0;
+	layerTypeNum: GlobalConfig.View.LayerType = 0;
 
 	/** 层级 */
 	@property({
