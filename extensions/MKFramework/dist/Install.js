@@ -21,9 +21,7 @@ const isomorphic_git_1 = __importDefault(require("isomorphic-git"));
 const node_1 = __importDefault(require("isomorphic-git/http/node"));
 async function install(versionStr_) {
     /** 用户名 */
-    const giteeOwner = "muzzik";
-    /** 用户名 */
-    const githubOwner = "1226085293";
+    const gitcodeOwner = "muzzik";
     /** 仓库路径 */
     const repo = "MKFramework";
     /** 临时路径 */
@@ -32,10 +30,8 @@ async function install(versionStr_) {
     const pluginPath = path_1.default.join(__dirname, "../").replace(/\\/g, "/");
     /** 插件项目路径 */
     const pluginProjectPath = pluginPath.slice(pluginPath.indexOf("/extensions/")).slice(1);
-    /** gitee 远程路径 */
-    const giteeRemoteUrl = `https://gitee.com/${giteeOwner}/${repo}.git`;
-    /** github 远程路径 */
-    const githubRemoteUrl = `https://github.com/${githubOwner}/${repo}.git`;
+    /** 远程路径 */
+    const gitcodeRemoteUrl = `https://gitcode.com/${gitcodeOwner}/${repo}.git`;
     /** 下载路径 */
     const downloadPath = path_1.default.join(tempPath, "MKFramework");
     /** 框架代码路径 */
@@ -69,7 +65,7 @@ async function install(versionStr_) {
     })
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.获取版本"));
-        const tagsUrl = `https://gitee.com/${giteeOwner}/${repo}/tags`;
+        const tagsUrl = `https://gitee.com/${gitcodeOwner}/${repo}/tags`;
         const html = (await axios_1.default.get(tagsUrl)).data;
         const tags = html.match(/(?<=(data-ref="))([^"]*)(?=")/g);
         tags.sort((a, b) => {
@@ -90,27 +86,14 @@ async function install(versionStr_) {
         catch (error) {
             return error;
         }
-        try {
-            await isomorphic_git_1.default.clone({
-                fs: fs_extra_1.default,
-                http: node_1.default,
-                dir: downloadPath,
-                url: giteeRemoteUrl,
-                depth: 1,
-                ref: version,
-            });
-        }
-        catch (error) {
-            console.error("gitee 下载失败，使用 github 进行下载", error);
-            await isomorphic_git_1.default.clone({
-                fs: fs_extra_1.default,
-                http: node_1.default,
-                dir: downloadPath,
-                url: githubRemoteUrl,
-                depth: 1,
-                ref: version,
-            });
-        }
+        await isomorphic_git_1.default.clone({
+            fs: fs_extra_1.default,
+            http: node_1.default,
+            dir: downloadPath,
+            url: gitcodeRemoteUrl,
+            depth: 1,
+            ref: version,
+        });
     })
         // 注入框架
         .then(async () => {
