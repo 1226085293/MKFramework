@@ -52,7 +52,7 @@ namespace _MKNetworkBase {
 		private _log = new MKLogger(js.getClassName(this));
 		/* ------------------------------- 功能 ------------------------------- */
 		// @ts-ignore
-		on<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		on<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
 			target_?: any,
@@ -78,7 +78,7 @@ namespace _MKNetworkBase {
 		}
 
 		// @ts-ignore
-		once<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		once<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void>(
 			type_: T,
 			callback_: T2,
 			this_?: any
@@ -87,7 +87,7 @@ namespace _MKNetworkBase {
 		}
 
 		// @ts-ignore
-		off<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		off<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			this_?: any
@@ -173,7 +173,7 @@ namespace _MKNetworkBase {
 		}
 
 		// @ts-ignore
-		has<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
+		has<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void>(
 			type_: T,
 			callback_?: T2,
 			target_?: any
@@ -326,7 +326,7 @@ abstract class MKNetworkBase<CT extends MKCodecBase = MKCodecBase> extends MKIns
 	 */
 	// @ts-ignore
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	_wait<T, T2 = T["prototype"] extends Object ? T["prototype"] : any>(
+	_wait<T, T2 = T["prototype"] extends unknown ? any : T["prototype"]>(
 		key_: T,
 		timeoutMsNum_ = this.config.waitTimeoutMsNum
 		// @ts-ignore
