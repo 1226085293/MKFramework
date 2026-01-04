@@ -33,10 +33,10 @@ export default function mkDataSharer<T extends Object, T2 = T & MKDataSharer_.Ap
 		}
 	};
 
-	const resetFunc = (): void => {
+	const resetFunc = (newData_?: T): void => {
 		requestMap.forEach((v) => v.finish(true, null));
 		requestMap.clear();
-		data = new class_();
+		data = newData_ ?? new class_();
 		data["request"] = requestFunc;
 		data["reset"] = resetFunc;
 		data["source"] = data;
@@ -75,7 +75,7 @@ export namespace MKDataSharer_ {
 		 * @remarks
 		 * 可用于数据监听
 		 */
-		source: T;
+		readonly source: T;
 		/** 数据键 */
 		key: { [k in keyof T]-?: k };
 
@@ -90,7 +90,8 @@ export namespace MKDataSharer_ {
 
 		/**
 		 * 重置数据
+		 * @param data_ 新数据来源，不存在则为 new T() 的值
 		 */
-		reset(): void;
+		reset(data_?: T): void;
 	}
 }

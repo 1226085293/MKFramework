@@ -1446,7 +1446,7 @@ declare namespace mk {
 			 * @remarks
 			 * 可用于数据监听
 			 */
-			source: T;
+			readonly source: T;
 			/** 数据键 */
 			key: {
 				[k in keyof T]-?: k;
@@ -1460,8 +1460,9 @@ declare namespace mk {
 			request(key_: T2): Promise<T[T2]>;
 			/**
 			 * 重置数据
+			 * @param data_ 新数据来源，不存在则为 new T() 的值
 			 */
-			reset(): void;
+			reset(data_?: T): void;
 		}
 	}
 
