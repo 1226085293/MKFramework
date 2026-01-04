@@ -859,8 +859,8 @@ export namespace MKUIManage_ {
 		 * @defaultValue
 		 * Canvas 节点
 		 */
-		parent: Scene | Node | (() => Node | null) | undefined = (): Node | null => {
-			return director.getScene()?.getComponentInChildren(Canvas)?.node ?? null;
+		parent: Scene | Node | (() => Node | null) | undefined = (): Scene | Node | null => {
+			return director.getScene()?.getComponentInChildren(Canvas)?.node ?? director.getScene();
 		};
 		/** 加载配置 */
 		loadConfig?: MKAsset_.GetConfig<Prefab>;
