@@ -21,7 +21,7 @@ const isomorphic_git_1 = __importDefault(require("isomorphic-git"));
 const node_1 = __importDefault(require("isomorphic-git/http/node"));
 async function install(versionStr_) {
     /** 用户名 */
-    const gitcodeOwner = "muzzik";
+    const giteeOwner = "muzzik";
     /** 仓库路径 */
     const repo = "MKFramework";
     /** 临时路径 */
@@ -31,7 +31,7 @@ async function install(versionStr_) {
     /** 插件项目路径 */
     const pluginProjectPath = pluginPath.slice(pluginPath.indexOf("/extensions/")).slice(1);
     /** 远程路径 */
-    const gitcodeRemoteUrl = `https://gitcode.com/${gitcodeOwner}/${repo}.git`;
+    const giteeRemoteUrl = `https://gitee.com/${giteeOwner}/${repo}.git`;
     /** 下载路径 */
     const downloadPath = path_1.default.join(tempPath, "MKFramework");
     /** 框架代码路径 */
@@ -65,7 +65,7 @@ async function install(versionStr_) {
     })
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.获取版本"));
-        const tagsUrl = `https://gitee.com/${gitcodeOwner}/${repo}/tags`;
+        const tagsUrl = `https://gitee.com/${giteeOwner}/${repo}/tags`;
         const html = (await axios_1.default.get(tagsUrl)).data;
         const tags = html.match(/(?<=(data-ref="))([^"]*)(?=")/g);
         tags.sort((a, b) => {
@@ -90,7 +90,7 @@ async function install(versionStr_) {
             fs: fs_extra_1.default,
             http: node_1.default,
             dir: downloadPath,
-            url: gitcodeRemoteUrl,
+            url: giteeRemoteUrl,
             depth: 1,
             ref: version,
         });
