@@ -2282,22 +2282,18 @@ declare namespace mk {
 			private _network;
 			/** 日志 */
 			private _log;
-			on<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
-				type_: T,
-				callback_: T2,
-				target_?: any,
-				isOnce_?: boolean
-			): typeof callback_ | null;
-			once<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
-				type_: T,
-				callback_: T2,
-				this_?: any
-			): typeof callback_ | null;
-			off<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
-				type_: T,
-				callback_?: T2,
-				this_?: any
-			): void;
+			on<
+				T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number,
+				T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void,
+			>(type_: T, callback_: T2, target_?: any, isOnce_?: boolean): typeof callback_ | null;
+			once<
+				T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number,
+				T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void,
+			>(type_: T, callback_: T2, this_?: any): typeof callback_ | null;
+			off<
+				T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number,
+				T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void,
+			>(type_: T, callback_?: T2, this_?: any): void;
 			/**
 			 * 派发事件
 			 * @param data_ 消息数据
@@ -2328,11 +2324,10 @@ declare namespace mk {
 			 * 等待事件回调返回
 			 */
 			request<T extends Parameters<CT["encode"]>[0]>(data_: T, timeoutMsNum_?: number): Promise<any> | null;
-			has<T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number, T2 extends (event_: T["prototype"]) => void>(
-				type_: T,
-				callback_?: T2,
-				target_?: any
-			): boolean;
+			has<
+				T extends Constructor<GlobalConfig.Network.ProtoHead> | string | number,
+				T2 extends (event_: T["prototype"] extends unknown ? any : T["prototype"]) => void,
+			>(type_: T, callback_?: T2, target_?: any): boolean;
 			clear(): void;
 		}
 		{
