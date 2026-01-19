@@ -215,8 +215,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	/** create 任务 */
 	private _createTask: any = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected onLoad(): void;
-	protected async onLoad(): Promise<void> {
+	protected onLoad(): void {
 		/** 参数表 */
 		const attrTab = CCClass.Attr.getClassAttrs(this["__proto__"].constructor);
 		/** 参数键列表 */
