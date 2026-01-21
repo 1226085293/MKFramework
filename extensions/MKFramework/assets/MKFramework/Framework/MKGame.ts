@@ -1,4 +1,4 @@
-import { Animation, director, dragonBones, game, Node, sp, TweenSystem } from "cc";
+import { Animation, director, dragonBones, game, Node, Scene, sp, TweenSystem } from "cc";
 import globalEvent from "../Config/GlobalEvent";
 import MKInstanceBase from "./MKInstanceBase";
 
@@ -9,6 +9,14 @@ namespace _MKGame {
 		dragonBonesTimeScaleNum?: number;
 		/** spine 速率 */
 		spineTimeScaleNum?: number;
+	}
+
+	/** 暂停配置 */
+	export interface PauseConfig {
+		/** 是否递归执行 */
+		isRecursion?: boolean;
+		/** 排除列表 */
+		excludeList?: Node[];
 	}
 }
 
@@ -44,82 +52,93 @@ export class MKGame extends MKInstanceBase {
 
 	/**
 	 * 暂停节点
-	 * @param node_ 目标节点
-	 * @param isRecursion_ 是否递归子节点
+	 * @param target_ 目标节点或者场景
+	 * @param config_ 暂停配置
 	 */
-	pause(node_: Node, isRecursion_ = false): void {
-		/** 龙骨 */
-		const dragonBonesComp = !dragonBones ? null : node_.getComponent(dragonBones.ArmatureDisplay);
-		/** spine */
-		const spineComp = !sp ? null : node_.getComponent(sp.Skeleton);
-		/** 暂停数据 */
-		let pauseData = this._pauseDataMap.get(node_);
+	pause(target_: Node | Scene, config_?: _MKGame.PauseConfig): void {
+		if (!(target_ instanceof Scene)) {
+			if (config_?.excludeList?.includes(target_)) {
+				return;
+			}
 
-		if (!pauseData) {
-			this._pauseDataMap.set(node_, (pauseData = {}));
-		}
-
-		// 定时器
-		director.getScheduler().pauseTarget(node_);
-		// 动画
-		node_.getComponent(Animation)?.pause();
-		// 缓动
-		TweenSystem.instance.ActionManager.pauseTarget(node_);
-
-		// 龙骨
-		if (dragonBonesComp) {
-			pauseData.dragonBonesTimeScaleNum = dragonBonesComp.timeScale;
-			dragonBonesComp.timeScale = 0;
-		}
-
-		// spine
-		if (spineComp) {
-			pauseData.spineTimeScaleNum = spineComp.timeScale;
-			spineComp.timeScale = 0;
+			/** 龙骨 */
+			const dragonBonesComp = !dragonBones ? null : target_.getComponent(dragonBones.ArmatureDisplay);
+			/** spine */
+			const spineComp = !sp ? null : target_.getComponent(sp.Skeleton);
+			/** 暂停数据 */
+			let pauseData = this._pauseDataMap.get(target_);
+	
+			if (!pauseData) {
+				this._pauseDataMap.set(target_, (pauseData = {}));
+			}
+	
+			// 定时器
+			director.getScheduler().pauseTarget(target_);
+			// 动画
+			target_.getComponent(Animation)?.pause();
+			// 缓动
+			TweenSystem.instance.ActionManager.pauseTarget(target_);
+	
+			// 龙骨
+			if (dragonBonesComp) {
+				pauseData.dragonBonesTimeScaleNum = dragonBonesComp.timeScale;
+				dragonBonesComp.timeScale = 0;
+			}
+	
+			// spine
+			if (spineComp) {
+				pauseData.spineTimeScaleNum = spineComp.timeScale;
+				spineComp.timeScale = 0;
+			}
 		}
 
 		// 递归
-		if (isRecursion_) {
-			node_.children.forEach((v) => {
-				this.pause(v, isRecursion_);
+		if (config_?.isRecursion) {
+			target_.children.forEach((v) => {
+				this.pause(v, config_);
 			});
 		}
 	}
 
 	/**
 	 * 恢复节点
-	 * @param node_ 目标节点
-	 * @param isRecursion_ 是否递归子节点
+	 * @param target_ 目标节点或者场景
+	 * @param config_ 恢复配置
 	 */
-	resume(node_: Node, isRecursion_ = false): void {
-		/** 龙骨 */
-		const dragonBonesComp = !dragonBones ? null : node_.getComponent(dragonBones.ArmatureDisplay);
-		/** spine */
-		const spineComp = !sp ? null : node_.getComponent(sp.Skeleton);
-		/** 暂停数据 */
-		const pauseData = this._pauseDataMap.get(node_);
+	resume(target_: Node | Scene, config_?: _MKGame.PauseConfig): void {
+		if (!(target_ instanceof Scene)) {
+			if (config_?.excludeList?.includes(target_)) {
+				return;
+			}
+			/** 龙骨 */
+			const dragonBonesComp = !dragonBones ? null : target_.getComponent(dragonBones.ArmatureDisplay);
+			/** spine */
+			const spineComp = !sp ? null : target_.getComponent(sp.Skeleton);
+			/** 暂停数据 */
+			const pauseData = this._pauseDataMap.get(target_);
 
-		// 定时器
-		director.getScheduler().resumeTarget(node_);
-		// 动画
-		node_.getComponent(Animation)?.resume();
-		// 缓动
-		TweenSystem.instance.ActionManager.resumeTarget(node_);
+			// 定时器
+			director.getScheduler().resumeTarget(target_);
+			// 动画
+			target_.getComponent(Animation)?.resume();
+			// 缓动
+			TweenSystem.instance.ActionManager.resumeTarget(target_);
 
-		// 龙骨
-		if (dragonBonesComp) {
-			dragonBonesComp.timeScale = pauseData?.dragonBonesTimeScaleNum ?? 1;
-		}
+			// 龙骨
+			if (dragonBonesComp) {
+				dragonBonesComp.timeScale = pauseData?.dragonBonesTimeScaleNum ?? 1;
+			}
 
-		// spine
-		if (spineComp) {
-			spineComp.timeScale = pauseData?.spineTimeScaleNum ?? 1;
+			// spine
+			if (spineComp) {
+				spineComp.timeScale = pauseData?.spineTimeScaleNum ?? 1;
+			}
 		}
 
 		// 递归
-		if (isRecursion_) {
-			node_.children.forEach((v) => {
-				this.resume(v, isRecursion_);
+		if (config_?.isRecursion) {
+			target_.children.forEach((v) => {
+				this.resume(v, config_);
 			});
 		}
 	}

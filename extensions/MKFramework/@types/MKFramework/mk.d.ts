@@ -1506,16 +1506,33 @@ declare namespace mk {
 		restart(): Promise<void>;
 		/**
 		 * 暂停节点
-		 * @param node_ 目标节点
-		 * @param isRecursion_ 是否递归子节点
+		 * @param target_ 目标节点或者场景
+		 * @param config_ 暂停配置
 		 */
-		pause(node_: Node_2, isRecursion_?: boolean): void;
+		pause(target_: Node_2 | Scene, config_?: _MKGame.PauseConfig): void;
 		/**
 		 * 恢复节点
-		 * @param node_ 目标节点
-		 * @param isRecursion_ 是否递归子节点
+		 * @param target_ 目标节点或者场景
+		 * @param config_ 恢复配置
 		 */
-		resume(node_: Node_2, isRecursion_?: boolean): void;
+		resume(target_: Node_2 | Scene, config_?: _MKGame.PauseConfig): void;
+	}
+
+	declare namespace _MKGame {
+		/** 暂停数据 */
+		interface PauseData {
+			/** 龙骨速率 */
+			dragonBonesTimeScaleNum?: number;
+			/** spine 速率 */
+			spineTimeScaleNum?: number;
+		}
+		/** 暂停配置 */
+		interface PauseConfig {
+			/** 是否递归执行 */
+			isRecursion?: boolean;
+			/** 排除列表 */
+			excludeList?: Node_2[];
+		}
 	}
 
 	/**
