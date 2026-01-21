@@ -9,10 +9,22 @@ namespace _MKGame {
 		dragonBonesTimeScaleNum?: number;
 		/** spine 速率 */
 		spineTimeScaleNum?: number;
+		/** update 函数 */
+		updateFuncMap?: Map<any, Function>;
 	}
 
 	/** 暂停配置 */
 	export interface PauseConfig {
+		/** 是否递归执行 */
+		isRecursion?: boolean;
+		/** 排除列表 */
+		excludeList?: Node[];
+		/** 暂停 update */
+		isPauseUpdate?: boolean;
+	}
+
+	/** 恢复配置 */
+	export interface ResumeConfig {
 		/** 是否递归执行 */
 		isRecursion?: boolean;
 		/** 排除列表 */
@@ -67,28 +79,39 @@ export class MKGame extends MKInstanceBase {
 			const spineComp = !sp ? null : target_.getComponent(sp.Skeleton);
 			/** 暂停数据 */
 			let pauseData = this._pauseDataMap.get(target_);
-	
+
 			if (!pauseData) {
 				this._pauseDataMap.set(target_, (pauseData = {}));
 			}
-	
+
 			// 定时器
 			director.getScheduler().pauseTarget(target_);
 			// 动画
 			target_.getComponent(Animation)?.pause();
 			// 缓动
 			TweenSystem.instance.ActionManager.pauseTarget(target_);
-	
+
 			// 龙骨
 			if (dragonBonesComp) {
 				pauseData.dragonBonesTimeScaleNum = dragonBonesComp.timeScale;
 				dragonBonesComp.timeScale = 0;
 			}
-	
+
 			// spine
 			if (spineComp) {
 				pauseData.spineTimeScaleNum = spineComp.timeScale;
 				spineComp.timeScale = 0;
+			}
+
+			// update
+			if (config_?.isPauseUpdate) {
+				pauseData.updateFuncMap = new Map();
+				target_.components.forEach(v => {
+					if (v['update']) {
+						pauseData!.updateFuncMap!.set(v, v['update']);
+						v['update'] = () => { };
+					}
+				});
 			}
 		}
 
@@ -105,7 +128,7 @@ export class MKGame extends MKInstanceBase {
 	 * @param target_ 目标节点或者场景
 	 * @param config_ 恢复配置
 	 */
-	resume(target_: Node | Scene, config_?: _MKGame.PauseConfig): void {
+	resume(target_: Node | Scene, config_?: _MKGame.ResumeConfig): void {
 		if (!(target_ instanceof Scene)) {
 			if (config_?.excludeList?.includes(target_)) {
 				return;
@@ -132,6 +155,13 @@ export class MKGame extends MKInstanceBase {
 			// spine
 			if (spineComp) {
 				spineComp.timeScale = pauseData?.spineTimeScaleNum ?? 1;
+			}
+
+			// update
+			if (pauseData?.updateFuncMap) {
+				pauseData.updateFuncMap.forEach((func, comp) => {
+					comp['update'] = func;
+				});
 			}
 		}
 

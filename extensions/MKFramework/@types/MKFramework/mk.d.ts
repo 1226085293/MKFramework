@@ -1515,7 +1515,7 @@ declare namespace mk {
 		 * @param target_ 目标节点或者场景
 		 * @param config_ 恢复配置
 		 */
-		resume(target_: Node_2 | Scene, config_?: _MKGame.PauseConfig): void;
+		resume(target_: Node_2 | Scene, config_?: _MKGame.ResumeConfig): void;
 	}
 
 	declare namespace _MKGame {
@@ -1525,9 +1525,20 @@ declare namespace mk {
 			dragonBonesTimeScaleNum?: number;
 			/** spine 速率 */
 			spineTimeScaleNum?: number;
+			/** update 函数 */
+			updateFuncMap?: Map<any, Function>;
 		}
 		/** 暂停配置 */
 		interface PauseConfig {
+			/** 是否递归执行 */
+			isRecursion?: boolean;
+			/** 排除列表 */
+			excludeList?: Node_2[];
+			/** 暂停 update */
+			isPauseUpdate?: boolean;
+		}
+		/** 恢复配置 */
+		interface ResumeConfig {
 			/** 是否递归执行 */
 			isRecursion?: boolean;
 			/** 排除列表 */
