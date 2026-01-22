@@ -85,7 +85,9 @@ export class MKGame extends MKInstanceBase {
 			}
 
 			// 定时器
-			director.getScheduler().pauseTarget(target_);
+			target_.components.forEach((v) => {
+				director.getScheduler().pauseTarget(v as any);
+			});
 			// 动画
 			target_.getComponent(Animation)?.pause();
 			// 缓动
@@ -141,7 +143,9 @@ export class MKGame extends MKInstanceBase {
 			const pauseData = this._pauseDataMap.get(target_);
 
 			// 定时器
-			director.getScheduler().resumeTarget(target_);
+			target_.components.forEach((v) => {
+				director.getScheduler().resumeTarget(v as any);
+			});
 			// 动画
 			target_.getComponent(Animation)?.resume();
 			// 缓动
