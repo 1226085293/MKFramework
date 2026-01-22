@@ -10,7 +10,7 @@ namespace _MKGame {
 		/** spine 速率 */
 		spineTimeScaleNum?: number;
 		/** update 函数 */
-		updateFuncMap?: Map<any, Function>;
+		updateMap?: Map<any, (Function | undefined)[]>;
 	}
 
 	/** 暂停配置 */
@@ -63,7 +63,7 @@ export class MKGame extends MKInstanceBase {
 	}
 
 	/**
-	 * 暂停节点
+	 * 暂停节点上的龙骨、spine、定时器、动画、缓动等，update 和 lateUpdate 可选暂停
 	 * @param target_ 目标节点或者场景
 	 * @param config_ 暂停配置
 	 */
@@ -105,13 +105,22 @@ export class MKGame extends MKInstanceBase {
 				spineComp.timeScale = 0;
 			}
 
-			// update
 			if (config_?.isPauseUpdate) {
-				pauseData.updateFuncMap = new Map();
-				target_.components.forEach(v => {
+				pauseData.updateMap = new Map();
+				target_.components.forEach((v) => {
+					if (!v['update'] && !v['lateUpdate']) {
+						return;
+					}
+
+					pauseData!.updateMap!.set(v, [v['update'], v['lateUpdate']]);
+
+					// update
 					if (v['update']) {
-						pauseData!.updateFuncMap!.set(v, v['update']);
 						v['update'] = () => { };
+					}
+					// lateUpdate
+					if (v['lateUpdate']) {
+						v['lateUpdate'] = () => { };
 					}
 				});
 			}
@@ -161,10 +170,16 @@ export class MKGame extends MKInstanceBase {
 				spineComp.timeScale = pauseData?.spineTimeScaleNum ?? 1;
 			}
 
-			// update
-			if (pauseData?.updateFuncMap) {
-				pauseData.updateFuncMap.forEach((func, comp) => {
-					comp['update'] = func;
+			if (pauseData?.updateMap) {
+				pauseData.updateMap.forEach((vList, comp) => {
+					// update
+					if (vList[0]) {
+						comp['update'] = vList;
+					}
+					// lateUpdate
+					if (vList[1]) {
+						comp['lateUpdate'] = vList;
+					}
 				});
 			}
 		}

@@ -1505,7 +1505,7 @@ declare namespace mk {
 		 */
 		restart(): Promise<void>;
 		/**
-		 * 暂停节点
+		 * 暂停节点上的龙骨、spine、定时器、动画、缓动等，update 和 lateUpdate 可选暂停
 		 * @param target_ 目标节点或者场景
 		 * @param config_ 暂停配置
 		 */
@@ -1526,7 +1526,7 @@ declare namespace mk {
 			/** spine 速率 */
 			spineTimeScaleNum?: number;
 			/** update 函数 */
-			updateFuncMap?: Map<any, Function>;
+			updateMap?: Map<any, (Function | undefined)[]>;
 		}
 		/** 暂停配置 */
 		interface PauseConfig {
