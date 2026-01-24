@@ -214,6 +214,10 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	private _currentTask: any = null;
 	/** create 任务 */
 	private _createTask: any = null;
+	/** 原始 update 函数 */
+	private _originalUpdateFunc: typeof this.update | null = null;
+	/** 原始 lateUpdate 函数 */
+	private _originalLateUpdateFunc: typeof this.lateUpdate | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
 	protected onLoad(): void {
 		/** 参数表 */
@@ -245,6 +249,16 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			if (this._state !== _MKLifeCycle.RunState.Opening) {
 				this._state = _MKLifeCycle.RunState.WaitOpen;
 			}
+		}
+
+		if (this.update) {
+			this._originalUpdateFunc = this.update;
+			this.update = () => null;
+		}
+
+		if (this.lateUpdate) {
+			this._originalLateUpdateFunc = this.lateUpdate;
+			this.lateUpdate = () => null;
 		}
 
 		this._onLoadTask.finish(true);
@@ -303,6 +317,18 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	protected async open?(): Promise<void> {
 		if (!this._startTask.isFinish) {
 			await this._startTask.task;
+		}
+
+		// 恢复原始 update 函数
+		if (this._originalUpdateFunc) {
+			this.update = this._originalUpdateFunc;
+			this._originalUpdateFunc = null;
+		}
+
+		// 恢复原始 lateUpdate 函数
+		if (this._originalLateUpdateFunc) {
+			this.lateUpdate = this._originalLateUpdateFunc;
+			this._originalLateUpdateFunc = null;
 		}
 	}
 
@@ -538,10 +564,6 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close)
 		) {
 			return;
-		}
-
-		if (this.node.name === "Test-001") {
-			debugger;
 		}
 
 		/** 配置参数 */
