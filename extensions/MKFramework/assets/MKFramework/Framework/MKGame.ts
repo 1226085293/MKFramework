@@ -117,14 +117,12 @@ export class MKGame extends MKInstanceBase {
 
 					// update
 					if (v["update"]) {
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						v["update"] = () => {};
+						v["update"] = () => null;
 					}
 
 					// lateUpdate
 					if (v["lateUpdate"]) {
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						v["lateUpdate"] = () => {};
+						v["lateUpdate"] = () => null;
 					}
 				});
 			}
