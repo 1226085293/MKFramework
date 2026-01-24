@@ -48,6 +48,19 @@ abstract class MVCControlBase<CT extends MVCModelBase = MVCModelBase, CT2 extend
 	private _openTask = new MKStatusTask(false);
 	private _closeTask = new MKStatusTask(true);
 	/* ------------------------------- segmentation ------------------------------- */
+	/**
+	 * 创建当前类型实例
+	 * @remarks
+	 * 与 `new control()` 不同的是可以使用 `await control.new()` 等待 open 执行完成
+	 */
+	static async new<T extends new (...argsList: any[]) => any>(this: T, ...argsList_: ConstructorParameters<T>): Promise<InstanceType<T>> {
+		const control = new this(...argsList_);
+
+		await control._openTask.task;
+
+		return control;
+	}
+	/* ------------------------------- segmentation ------------------------------- */
 	/** 关闭回调
 	 * @remarks
 	 * 不使用此模块时手动调用，会顺序关闭 Model, View
