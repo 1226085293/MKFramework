@@ -88,6 +88,7 @@ export class MKGame extends MKInstanceBase {
 			target_.components.forEach((v) => {
 				director.getScheduler().pauseTarget(v as any);
 			});
+
 			// 动画
 			target_.getComponent(Animation)?.pause();
 			// 缓动
@@ -108,19 +109,22 @@ export class MKGame extends MKInstanceBase {
 			if (config_?.isPauseUpdate) {
 				pauseData.updateMap = new Map();
 				target_.components.forEach((v) => {
-					if (!v['update'] && !v['lateUpdate']) {
+					if (!v["update"] && !v["lateUpdate"]) {
 						return;
 					}
 
-					pauseData!.updateMap!.set(v, [v['update'], v['lateUpdate']]);
+					pauseData!.updateMap!.set(v, [v["update"], v["lateUpdate"]]);
 
 					// update
-					if (v['update']) {
-						v['update'] = () => { };
+					if (v["update"]) {
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						v["update"] = () => {};
 					}
+
 					// lateUpdate
-					if (v['lateUpdate']) {
-						v['lateUpdate'] = () => { };
+					if (v["lateUpdate"]) {
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						v["lateUpdate"] = () => {};
 					}
 				});
 			}
@@ -144,6 +148,7 @@ export class MKGame extends MKInstanceBase {
 			if (config_?.excludeList?.includes(target_)) {
 				return;
 			}
+
 			/** 龙骨 */
 			const dragonBonesComp = !dragonBones ? null : target_.getComponent(dragonBones.ArmatureDisplay);
 			/** spine */
@@ -155,6 +160,7 @@ export class MKGame extends MKInstanceBase {
 			target_.components.forEach((v) => {
 				director.getScheduler().resumeTarget(v as any);
 			});
+
 			// 动画
 			target_.getComponent(Animation)?.resume();
 			// 缓动
@@ -174,11 +180,12 @@ export class MKGame extends MKInstanceBase {
 				pauseData.updateMap.forEach((vList, comp) => {
 					// update
 					if (vList[0]) {
-						comp['update'] = vList;
+						comp["update"] = vList;
 					}
+
 					// lateUpdate
 					if (vList[1]) {
-						comp['lateUpdate'] = vList;
+						comp["lateUpdate"] = vList;
 					}
 				});
 			}
