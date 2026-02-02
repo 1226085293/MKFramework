@@ -3,6 +3,7 @@ import {
 	director,
 	Director,
 	EditBox,
+	game,
 	Label,
 	Layout,
 	Node,
@@ -215,14 +216,26 @@ class NodeExtends {
 
 		// 小于间隔时间更新
 		if (NodeExtends.orderUpdateTimer === null && timeSinceLastUpdateNum < NodeExtends._config.layerRefreshIntervalMsNum) {
-			NodeExtends.orderUpdateTimer = setTimeout(() => {
+			let updateFunc = () => {
 				// 清理定时器数据
 				NodeExtends.orderUpdateTimer = null;
 				// 更新时间
 				NodeExtends._orderUpdateTimeNum = Date.now();
 				// 更新渲染顺序
 				NodeExtends._orderUpdateTaskFuncList.splice(0, NodeExtends._orderUpdateTaskFuncList.length).forEach((vFunc) => vFunc());
-			}, NodeExtends._config.layerRefreshIntervalMsNum - timeSinceLastUpdateNum);
+			};
+
+			let intervalMsNum = NodeExtends._config.layerRefreshIntervalMsNum - timeSinceLastUpdateNum;
+
+			if (intervalMsNum) {
+				if (intervalMsNum <= game.frameTime) {
+					director.once(Director.EVENT_BEFORE_UPDATE, updateFunc);
+				} else {
+					NodeExtends.orderUpdateTimer = setTimeout(updateFunc, NodeExtends._config.layerRefreshIntervalMsNum - timeSinceLastUpdateNum);
+				}
+			} else {
+				updateFunc();
+			}
 
 			return;
 		}
