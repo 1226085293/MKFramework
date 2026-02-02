@@ -176,6 +176,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	protected _onLoadTask = new MKStatusTask(false);
 	/** start 任务 */
 	protected _startTask = new MKStatusTask(false);
+	/** 子模块 open 任务 */
+	protected _childrenOpenTask = new MKStatusTask(false);
 	/** open 任务 */
 	protected _openTask = new MKStatusTask(false);
 	/** 运行状态 */
@@ -515,6 +517,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 				));
 
 				checkBreakFunc();
+				this._childrenOpenTask.finish(true);
 			}
 
 			// 等待 create 完成
@@ -634,6 +637,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 
 		// 重置状态
 		this._openTask?.finish(false);
+		this._childrenOpenTask?.finish(false);
 	}
 
 	/** 递归 open */

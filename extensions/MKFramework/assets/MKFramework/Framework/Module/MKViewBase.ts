@@ -174,21 +174,22 @@ export class MKViewBase extends MKLifeCycle {
 		this.typeStr = config_.typeStr ?? "default";
 	}
 
-	/* --------------- protected --------------- */
 	/* --------------- private --------------- */
+	/** 打开动画任务 */
+	private _openAnimationTask: Promise<any> | null = null;
 	/* ------------------------------- 生命周期 ------------------------------- */
-	protected open(): void;
-	protected async open(): Promise<void> {
+	protected create(): void {
 		/** 打开动画函数 */
 		const openAnimationFunc = MKViewBase._config.windowAnimationTab?.open?.[this.animationConfig?.openAnimationStr];
 
 		// 打开动画
-		if (openAnimationFunc) {
-			if (this.animationConfig.isWaitAnimationComplete) {
-				await openAnimationFunc(this.node);
-			} else {
-				openAnimationFunc(this.node);
-			}
+		this._openAnimationTask = !openAnimationFunc ? null : openAnimationFunc(this.node, this);
+	}
+
+	protected open(): void;
+	protected async open(): Promise<void> {
+		if (this._openAnimationTask && this.animationConfig.isWaitAnimationComplete) {
+			await this._openAnimationTask;
 		}
 	}
 
@@ -224,7 +225,7 @@ export class MKViewBase extends MKLifeCycle {
 			!mkBundle.isSwitchScene &&
 			closeAnimationFunc
 		) {
-			await closeAnimationFunc(this.node);
+			await closeAnimationFunc(this.node, this);
 		}
 	}
 

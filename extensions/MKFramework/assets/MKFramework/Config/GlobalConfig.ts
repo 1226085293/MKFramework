@@ -1,4 +1,4 @@
-import { game, Layout, Node, Size, size } from "cc";
+import { Component, game, Layout, Node, Size, size } from "cc";
 import { DEBUG } from "cc/env";
 
 /**
@@ -100,9 +100,9 @@ namespace GlobalConfig {
 			/** 窗口打开动画 */
 			windowAnimationTab: Readonly<{
 				/** 打开动画 */
-				open: Record<string, (value: Node) => void>;
+				open: Record<string, (value: Node, component: Component) => any>;
 				/** 关闭动画 */
-				close: Record<string, (value: Node) => void>;
+				close: Record<string, (value: Node, component: Component) => any>;
 			}> = {
 				open: {
 					无: null!,
