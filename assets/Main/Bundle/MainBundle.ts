@@ -14,13 +14,17 @@ class MainBundle extends mk.Bundle_.BundleManageBase {
 
 	/* ------------------------------- 生命周期 ------------------------------- */
 	open(): void {
-		GlobalConfig.View.config.windowAnimationTab.open["默认"] = (node) => {
+		GlobalConfig.View.config.windowAnimationTab.open["默认"] = (node, component: cc.Component) => {
 			node = node.getChildByName("窗口") ?? node;
 			// 防止 widget 没有进行适配（3.6.3 - 3.7.0）
 			node.getComponentsInChildren(cc.Widget).forEach((v) => v.updateAlignment());
 			node.setScale(0, 0);
 
-			return new Promise<void>((resolveFunc) => {
+			return new Promise<void>(async (resolveFunc) => {
+				// 等待子组件加载完成
+				await (component as mk.ViewBase)["_childrenOpenTask"].task;
+
+				// 执行动画
 				cc.tween(node)
 					.to(0.2, { scale: cc.v3(1.1, 1.1) })
 					.to(0.1, { scale: cc.v3(0.95, 0.95) })

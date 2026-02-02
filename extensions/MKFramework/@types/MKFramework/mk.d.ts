@@ -701,6 +701,7 @@ declare namespace mk {
 			layerSpacingNum: number;
 			layerRefreshIntervalMsNum: number;
 			maskInfo: {
+				/** 初始化编辑器 */
 				nodeNameStr: string;
 				color: {
 					r: number;
@@ -710,8 +711,8 @@ declare namespace mk {
 				};
 			};
 			windowAnimationTab: Readonly<{
-				open: Record<string, (value: Node_2) => void>;
-				close: Record<string, (value: Node_2) => void>;
+				open: Record<string, (value: Node_2, component: Component) => any>;
+				close: Record<string, (value: Node_2, component: Component) => any>;
 			}>;
 		};
 		/** 初始化编辑器 */
@@ -773,6 +774,8 @@ declare namespace mk {
 		protected _onLoadTask: MKStatusTask<void>;
 		/** start 任务 */
 		protected _startTask: MKStatusTask<void>;
+		/** 子模块 open 任务 */
+		protected _childrenOpenTask: MKStatusTask<void>;
 		/** open 任务 */
 		protected _openTask: MKStatusTask<void>;
 		/** 运行状态 */
@@ -796,6 +799,10 @@ declare namespace mk {
 		private _currentTask;
 		/** create 任务 */
 		private _createTask;
+		/** 原始 update 函数 */
+		private _originalUpdateFunc;
+		/** 原始 lateUpdate 函数 */
+		private _originalLateUpdateFunc;
 		protected onLoad(): void;
 		protected start(): void;
 		/**
@@ -3416,6 +3423,9 @@ declare namespace mk {
 		typeStr: string;
 		/** 模块配置 */
 		set config(config_: _MKViewBase.CreateConfig);
+		/** 打开动画任务 */
+		private _openAnimationTask;
+		protected create(): void;
 		protected open(): void;
 		/**
 		 * 关闭
