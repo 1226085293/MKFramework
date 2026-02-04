@@ -216,7 +216,7 @@ class NodeExtends {
 
 		// 小于间隔时间更新
 		if (NodeExtends.orderUpdateTimer === null && timeSinceLastUpdateNum < NodeExtends._config.layerRefreshIntervalMsNum) {
-			let updateFunc = () => {
+			const updateFunc = (): void => {
 				// 清理定时器数据
 				NodeExtends.orderUpdateTimer = null;
 				// 更新时间
@@ -225,7 +225,7 @@ class NodeExtends {
 				NodeExtends._orderUpdateTaskFuncList.splice(0, NodeExtends._orderUpdateTaskFuncList.length).forEach((vFunc) => vFunc());
 			};
 
-			let intervalMsNum = NodeExtends._config.layerRefreshIntervalMsNum - timeSinceLastUpdateNum;
+			const intervalMsNum = NodeExtends._config.layerRefreshIntervalMsNum - timeSinceLastUpdateNum;
 
 			if (intervalMsNum) {
 				if (intervalMsNum <= game.frameTime) {

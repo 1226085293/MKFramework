@@ -7,8 +7,10 @@ import MKAsset, { MKAsset_ } from "./Resources/MKAsset";
 import MKStatusTask from "./Task/MKStatusTask";
 import MKRelease, { MKRelease_ } from "./Resources/MKRelease";
 import MKEventTarget from "./MKEventTarget";
-import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node } from "cc";
+import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node, Layers, UITransform, view, BlockInputEvents } from "cc";
 import mkToolObject from "./@Private/Tool/MKToolObject";
+import GlobalConfig from "../Config/GlobalConfig";
+import MKN from "./@Extends/@Node/MKNodes";
 
 namespace _MKUIManage {
 	/** 模块类型 */
@@ -87,6 +89,10 @@ export class MKUIManage extends MKInstanceBase {
 	private _uiShowList: MKViewBase[] = [];
 	/** 当前模块表 */
 	private _uiMap = new Map<any, MKViewBase[]>();
+	/** 打开中的层级计数表 */
+	private _openingLayerCountTab: Record<GlobalConfig.View.LayerType, number> = {} as any;
+	/** 屏蔽触摸节点 */
+	private _touchBlockNode: Node | null = null;
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 注册模块
@@ -352,6 +358,8 @@ export class MKUIManage extends MKInstanceBase {
 			return null;
 		}
 
+		/** 注册数据 */
+		let regisData = this._uiRegisMap.get(key_);
 		/** 模块注册任务 */
 		const uiRegisTask = this._uiRegisTaskMap.get(key_);
 
@@ -359,12 +367,8 @@ export class MKUIManage extends MKInstanceBase {
 		if (uiRegisTask) {
 			await uiRegisTask.task;
 		}
-
-		/** 注册数据 */
-		let regisData = this._uiRegisMap.get(key_);
-
 		// 自动注册
-		if (!regisData && this.getRegisDataFunc) {
+		else if (!regisData && this.getRegisDataFunc) {
 			regisData = await this.getRegisDataFunc(key_);
 
 			if (regisData) {
@@ -417,19 +421,27 @@ export class MKUIManage extends MKInstanceBase {
 			}
 		}
 
+		/** 注册任务 */
+		const regisTask = this._uiRegisTaskMap.get(key_);
+		/** 视图组件 */
+		let viewComp: MKViewBase;
+		/** 视图层级 */
+		let viewCompLayerTypeNum: number;
+		/** 已经更新层级计数 */
+		let isUpdatedOpeningLayerCount = false;
+
 		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 		/** 退出回调 */
 		const exitCallbackFunc = (isSuccess: boolean): T2 | null => {
 			// 更新加载状态
 			this._uiLoadMap.get(key_)?.finish(true);
+			// 更新打开层级计数和屏蔽层
+			if (isUpdatedOpeningLayerCount && --this._openingLayerCountTab[viewCompLayerTypeNum] === 0 && this._touchBlockNode) {
+				this._touchBlockNode.parent = null;
+			}
 
 			return isSuccess ? (viewComp as any) : null;
 		};
-
-		/** 注册任务 */
-		const regisTask = this._uiRegisTaskMap.get(key_);
-		/** 视图组件 */
-		let viewComp: MKViewBase;
 
 		// 等待模块注册
 		if (regisTask && !regisTask.isFinish) {
@@ -475,6 +487,33 @@ export class MKUIManage extends MKInstanceBase {
 
 			node.active = true;
 			viewComp = comp;
+			viewCompLayerTypeNum = comp.layerTypeNum;
+		}
+
+		// 打开层级数量及屏蔽层更新
+		{
+			const layerCountNum = this._openingLayerCountTab[viewCompLayerTypeNum] ?? 0;
+
+			// 增加屏蔽层
+			if (layerCountNum === 0 && GlobalConfig.View.config.openingTouchBlockLayerTypeList.includes(viewCompLayerTypeNum)) {
+				const parent = director.getScene();
+
+				if (parent) {
+					if (!this._touchBlockNode) {
+						this._touchBlockNode = new Node("触摸屏蔽节点-UIManage");
+						this._touchBlockNode.layer = Layers.Enum.UI_2D;
+						this._touchBlockNode.addComponent(UITransform).setContentSize(view.getVisibleSize());
+						this._touchBlockNode.addComponent(BlockInputEvents);
+					}
+
+					this._touchBlockNode.parent = parent;
+					this._touchBlockNode.setWorldPosition(view.getVisibleSize().x * 0.5, view.getVisibleSize().y * 0.5, 0);
+					MKN(this._touchBlockNode).orderNum = Infinity;
+				}
+			}
+
+			this._openingLayerCountTab[viewCompLayerTypeNum] = layerCountNum + 1;
+			isUpdatedOpeningLayerCount = true;
 		}
 
 		// 更新单独展示
