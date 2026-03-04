@@ -6,6 +6,8 @@ interface GlobalEventProtocol {
 	resize(): void;
 	/** 重启游戏 */
 	restart(): void;
+	/** 重启游戏完成 */
+	restartFinish(): void;
 	/** 等待关闭场景（当前场景所有模块生命周期执行完成） */
 	waitCloseScene(): void;
 }
