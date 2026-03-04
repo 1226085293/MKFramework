@@ -87,29 +87,13 @@ export class MKBundle extends MKInstanceBase {
 			return;
 		}
 
-		let initFunc = async (scene: Scene) => {
-			// 更新已加载脚本缓存
-			((settings.querySettings("assets", "preloadBundles") ?? []) as { bundle: string; version?: string }[]).forEach((v) => {
-				if (v.version) {
-					this._loadedScriptCache[`${v.bundle.replaceAll("/", "")}-${v.version}`] = true;
-				}
-			});
-
-			// 初始化 Bundle 管理器
-			await this.bundleMap.get("main")?.manage?.init?.();
-			// 初始化当前信息
-			this._setBundleStr("main");
-			this._sceneStr = scene.name ?? "";
-			this._initTask.finish(true);
-		};
-
 		// 引擎初始化事件
 		game.once(Game.EVENT_GAME_INITED, () => {
 			this._engineInitTask.finish(true);
 		});
 
-		// 模块初始化事件
-		director.once(
+		// 模块初始化事件，web 不会重载脚本所以用 on
+		(sys.isBrowser ? director.on : director.once).bind(director)(
 			Director.EVENT_BEFORE_SCENE_LAUNCH,
 			async (scene: Scene) => {
 				// 版本适配(<=3.8.6)：编辑器预览模式会触发两次 EVENT_BEFORE_SCENE_LAUNCH，首次场景数据无效
@@ -119,18 +103,19 @@ export class MKBundle extends MKInstanceBase {
 					});
 				}
 
-				initFunc(scene);
+				// 更新已加载脚本缓存
+				((settings.querySettings("assets", "preloadBundles") ?? []) as { bundle: string; version?: string }[]).forEach((v) => {
+					if (v.version) {
+						this._loadedScriptCache[`${v.bundle.replaceAll("/", "")}-${v.version}`] = true;
+					}
+				});
 
-				// web 不会重载脚本和触发事件
-				if (sys.isBrowser) {
-					globalEvent.on(
-						globalEvent.key.restartFinish,
-						() => {
-							initFunc(director.getScene()!);
-						},
-						this
-					);
-				}
+				// 初始化 Bundle 管理器
+				await this.bundleMap.get("main")?.manage?.init?.();
+				// 初始化当前信息
+				this._setBundleStr("main");
+				this._sceneStr = scene.name ?? "";
+				this._initTask.finish(true);
 			},
 			this
 		);
