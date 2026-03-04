@@ -7,7 +7,7 @@ import MKStatusTask from "../Task/MKStatusTask";
 import type { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "./MKRelease";
-import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, settings, SettingsCategory } from "cc";
+import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, settings, SettingsCategory, sys } from "cc";
 import globalEvent from "../../Config/GlobalEvent";
 
 namespace _MKBundle {
@@ -87,6 +87,22 @@ export class MKBundle extends MKInstanceBase {
 			return;
 		}
 
+		let initFunc = async (scene: Scene) => {
+			// 更新已加载脚本缓存
+			((settings.querySettings("assets", "preloadBundles") ?? []) as { bundle: string; version?: string }[]).forEach((v) => {
+				if (v.version) {
+					this._loadedScriptCache[`${v.bundle.replaceAll("/", "")}-${v.version}`] = true;
+				}
+			});
+
+			// 初始化 Bundle 管理器
+			await this.bundleMap.get("main")?.manage?.init?.();
+			// 初始化当前信息
+			this._setBundleStr("main");
+			this._sceneStr = scene.name ?? "";
+			this._initTask.finish(true);
+		};
+
 		// 引擎初始化事件
 		game.once(Game.EVENT_GAME_INITED, () => {
 			this._engineInitTask.finish(true);
@@ -103,19 +119,18 @@ export class MKBundle extends MKInstanceBase {
 					});
 				}
 
-				// 更新已加载脚本缓存
-				((settings.querySettings("assets", "preloadBundles") ?? []) as { bundle: string; version?: string }[]).forEach((v) => {
-					if (v.version) {
-						this._loadedScriptCache[`${v.bundle.replaceAll("/", "")}-${v.version}`] = true;
-					}
-				});
+				initFunc(scene);
 
-				// 初始化 Bundle 管理器
-				await this.bundleMap.get("main")?.manage?.init?.();
-				// 初始化当前信息
-				this._setBundleStr("main");
-				this._sceneStr = scene.name ?? "";
-				this._initTask.finish(true);
+				// web 不会重载脚本和触发事件
+				if (sys.isBrowser) {
+					globalEvent.on(
+						globalEvent.key.restartFinish,
+						() => {
+							initFunc(director.getScene()!);
+						},
+						this
+					);
+				}
 			},
 			this
 		);
@@ -573,7 +588,7 @@ export class MKBundle extends MKInstanceBase {
 			: {
 					versionStr: versionStr,
 					urlStr: urlStr,
-			  };
+				};
 	}
 
 	/* ------------------------------- get/set ------------------------------- */

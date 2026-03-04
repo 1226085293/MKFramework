@@ -59,6 +59,7 @@ export class MKGame extends MKInstanceBase {
 		await Promise.all(globalEvent.request(globalEvent.key.restart));
 		await Promise.all(globalEvent.request(globalEvent.key.waitCloseScene));
 		game.restart();
+		globalEvent.emit(globalEvent.key.restartFinish);
 		this._isRestarting = false;
 	}
 
