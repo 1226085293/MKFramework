@@ -143,14 +143,14 @@ export class MKUIManage extends MKInstanceBase {
 
 		/** 退出回调 */
 		const exitCallbackFunc = async (isSuccess: boolean): Promise<void> => {
-			if (!isSuccess) {
-				await this.unregis(key_);
-			}
-
 			// 删除注册任务
 			this._uiRegisTaskMap.delete(key_);
 			// 完成注册任务
 			uiRegisTask!.finish(true);
+
+			if (!isSuccess) {
+				await this.unregis(key_);
+			}
 		};
 
 		/** 来源表 */
