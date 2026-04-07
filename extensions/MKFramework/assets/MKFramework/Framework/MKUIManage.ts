@@ -143,14 +143,14 @@ export class MKUIManage extends MKInstanceBase {
 
 		/** 退出回调 */
 		const exitCallbackFunc = async (isSuccess: boolean): Promise<void> => {
+			if (!isSuccess) {
+				await this._cleanupRegis(key_, objectPoolMap);
+			}
+
 			// 删除注册任务
 			this._uiRegisTaskMap.delete(key_);
 			// 完成注册任务
 			uiRegisTask!.finish(true);
-
-			if (!isSuccess) {
-				await this.unregis(key_);
-			}
 		};
 
 		/** 来源表 */
@@ -255,6 +255,33 @@ export class MKUIManage extends MKInstanceBase {
 		return await exitCallbackFunc(true);
 	}
 
+	private async _cleanupRegis<T extends Constructor<MKViewBase>>(key_: T, objectPoolMap_?: Map<string, MKObjectPool<Node>>): Promise<void> {
+		if (this._uiRegisMap.has(key_)) {
+			// 清理当前 UI
+			await this.close(key_, {
+				isAll: true,
+				isDestroy: true,
+			});
+		}
+
+		// 清理当前模块表
+		this._uiMap.delete(key_);
+		// 清理模块加载表
+		this._uiLoadMap.delete(key_);
+		// 清理注册表
+		this._uiRegisMap.delete(key_);
+
+		const pool = objectPoolMap_ ?? this._uiPoolMap.get(key_);
+
+		if (pool) {
+			for (const [, v] of pool) {
+				await v.destroy();
+			}
+		}
+
+		this._uiPoolMap.delete(key_);
+	}
+
 	/**
 	 * 取消注册模块
 	 * @remarks
@@ -277,30 +304,7 @@ export class MKUIManage extends MKInstanceBase {
 			return;
 		}
 
-		// 清理当前 UI
-		await this.close(key_, {
-			isAll: true,
-			isDestroy: true,
-		});
-
-		// 清理当前模块表
-		this._uiMap.delete(key_);
-		// 清理模块加载表
-		this._uiLoadMap.delete(key_);
-		// 清理注册表
-		this._uiRegisMap.delete(key_);
-		// 清理节点池
-		{
-			const pool = this._uiPoolMap.get(key_);
-
-			if (pool) {
-				for (const [kStr, v] of pool) {
-					await v.destroy();
-				}
-
-				this._uiPoolMap.delete(key_);
-			}
-		}
+		await this._cleanupRegis(key_);
 	}
 
 	/** 获取所有模块 */
@@ -366,13 +370,15 @@ export class MKUIManage extends MKInstanceBase {
 		// 等待模块注册
 		if (uiRegisTask) {
 			await uiRegisTask.task;
+			regisData = this._uiRegisMap.get(key_);
 		}
 		// 自动注册
 		else if (!regisData && this.getRegisDataFunc) {
-			regisData = await this.getRegisDataFunc(key_);
+			const autoRegisData = await this.getRegisDataFunc(key_);
 
-			if (regisData) {
-				await this.regis(key_, regisData.source, regisData.target, regisData);
+			if (autoRegisData) {
+				await this.regis(key_, autoRegisData.source, autoRegisData.target, autoRegisData);
+				regisData = this._uiRegisMap.get(key_);
 			}
 		}
 
@@ -451,7 +457,14 @@ export class MKUIManage extends MKInstanceBase {
 		// 加载模块
 		{
 			/** 模块池 */
-			const uiPool = this._uiPoolMap.get(key_)!;
+			const uiPool = this._uiPoolMap.get(key_);
+
+			if (!uiPool) {
+				this._log.warn("模块对象池不存在", key_);
+
+				return exitCallbackFunc(false);
+			}
+
 			/** 节点池 */
 			const nodePool = uiPool.get(config_.type as any);
 
