@@ -93,8 +93,8 @@
 		"typescript": "^4.3.4"
 	},
 	"dependencies": {
-		"@microsoft/api-extractor": "^7.43.7",
-		"axios": "^1.13.5",
+		"@microsoft/api-extractor": "^7.57.7",
+		"axios": "^1.12.0",
 		"cjson": "^0.5.0",
 		"fast-glob": "^3.3.2",
 		"fs-extra": "^11.2.0",
