@@ -7,8 +7,10 @@ import MKAsset, { MKAsset_ } from "./Resources/MKAsset";
 import MKStatusTask from "./Task/MKStatusTask";
 import MKRelease, { MKRelease_ } from "./Resources/MKRelease";
 import MKEventTarget from "./MKEventTarget";
-import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node } from "cc";
+import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas, Node, Layers, UITransform, view, BlockInputEvents } from "cc";
 import mkToolObject from "./@Private/Tool/MKToolObject";
+import GlobalConfig from "../Config/GlobalConfig";
+import MKN from "./@Extends/@Node/MKNodes";
 
 namespace _MKUIManage {
 	/** 模块类型 */
@@ -87,6 +89,10 @@ export class MKUIManage extends MKInstanceBase {
 	private _uiShowList: MKViewBase[] = [];
 	/** 当前模块表 */
 	private _uiMap = new Map<any, MKViewBase[]>();
+	/** 打开中的层级计数表 */
+	private _openingLayerCountTab: Record<GlobalConfig.View.LayerType, number> = {} as any;
+	/** 屏蔽触摸节点 */
+	private _touchBlockNode: Node | null = null;
 	/* ------------------------------- 功能 ------------------------------- */
 	/**
 	 * 注册模块
@@ -138,7 +144,7 @@ export class MKUIManage extends MKInstanceBase {
 		/** 退出回调 */
 		const exitCallbackFunc = async (isSuccess: boolean): Promise<void> => {
 			if (!isSuccess) {
-				await this.unregis(key_);
+				await this._cleanupRegis(key_, objectPoolMap);
 			}
 
 			// 删除注册任务
@@ -249,6 +255,33 @@ export class MKUIManage extends MKInstanceBase {
 		return await exitCallbackFunc(true);
 	}
 
+	private async _cleanupRegis<T extends Constructor<MKViewBase>>(key_: T, objectPoolMap_?: Map<string, MKObjectPool<Node>>): Promise<void> {
+		if (this._uiRegisMap.has(key_)) {
+			// 清理当前 UI
+			await this.close(key_, {
+				isAll: true,
+				isDestroy: true,
+			});
+		}
+
+		// 清理当前模块表
+		this._uiMap.delete(key_);
+		// 清理模块加载表
+		this._uiLoadMap.delete(key_);
+		// 清理注册表
+		this._uiRegisMap.delete(key_);
+
+		const pool = objectPoolMap_ ?? this._uiPoolMap.get(key_);
+
+		if (pool) {
+			for (const [, v] of pool) {
+				await v.destroy();
+			}
+		}
+
+		this._uiPoolMap.delete(key_);
+	}
+
 	/**
 	 * 取消注册模块
 	 * @remarks
@@ -271,30 +304,7 @@ export class MKUIManage extends MKInstanceBase {
 			return;
 		}
 
-		// 清理当前 UI
-		await this.close(key_, {
-			isAll: true,
-			isDestroy: true,
-		});
-
-		// 清理当前模块表
-		this._uiMap.delete(key_);
-		// 清理模块加载表
-		this._uiLoadMap.delete(key_);
-		// 清理注册表
-		this._uiRegisMap.delete(key_);
-		// 清理节点池
-		{
-			const pool = this._uiPoolMap.get(key_);
-
-			if (pool) {
-				for (const [kStr, v] of pool) {
-					await v.destroy();
-				}
-
-				this._uiPoolMap.delete(key_);
-			}
-		}
+		await this._cleanupRegis(key_);
 	}
 
 	/** 获取所有模块 */
@@ -352,23 +362,23 @@ export class MKUIManage extends MKInstanceBase {
 			return null;
 		}
 
+		/** 注册数据 */
+		let regisData = this._uiRegisMap.get(key_);
 		/** 模块注册任务 */
 		const uiRegisTask = this._uiRegisTaskMap.get(key_);
 
 		// 等待模块注册
 		if (uiRegisTask) {
 			await uiRegisTask.task;
+			regisData = this._uiRegisMap.get(key_);
 		}
-
-		/** 注册数据 */
-		let regisData = this._uiRegisMap.get(key_);
-
 		// 自动注册
-		if (!regisData && this.getRegisDataFunc) {
-			regisData = await this.getRegisDataFunc(key_);
+		else if (!regisData && this.getRegisDataFunc) {
+			const autoRegisData = await this.getRegisDataFunc(key_);
 
-			if (regisData) {
-				await this.regis(key_, regisData.source, regisData.target, regisData);
+			if (autoRegisData) {
+				await this.regis(key_, autoRegisData.source, autoRegisData.target, autoRegisData);
+				regisData = this._uiRegisMap.get(key_);
 			}
 		}
 
@@ -417,19 +427,27 @@ export class MKUIManage extends MKInstanceBase {
 			}
 		}
 
+		/** 注册任务 */
+		const regisTask = this._uiRegisTaskMap.get(key_);
+		/** 视图组件 */
+		let viewComp: MKViewBase;
+		/** 视图层级 */
+		let viewCompLayerTypeNum: number;
+		/** 已经更新层级计数 */
+		let isUpdatedOpeningLayerCount = false;
+
 		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 		/** 退出回调 */
 		const exitCallbackFunc = (isSuccess: boolean): T2 | null => {
 			// 更新加载状态
 			this._uiLoadMap.get(key_)?.finish(true);
+			// 更新打开层级计数和屏蔽层
+			if (isUpdatedOpeningLayerCount && --this._openingLayerCountTab[viewCompLayerTypeNum] === 0 && this._touchBlockNode) {
+				this._touchBlockNode.parent = null;
+			}
 
 			return isSuccess ? (viewComp as any) : null;
 		};
-
-		/** 注册任务 */
-		const regisTask = this._uiRegisTaskMap.get(key_);
-		/** 视图组件 */
-		let viewComp: MKViewBase;
 
 		// 等待模块注册
 		if (regisTask && !regisTask.isFinish) {
@@ -439,7 +457,14 @@ export class MKUIManage extends MKInstanceBase {
 		// 加载模块
 		{
 			/** 模块池 */
-			const uiPool = this._uiPoolMap.get(key_)!;
+			const uiPool = this._uiPoolMap.get(key_);
+
+			if (!uiPool) {
+				this._log.warn("模块对象池不存在", key_);
+
+				return exitCallbackFunc(false);
+			}
+
 			/** 节点池 */
 			const nodePool = uiPool.get(config_.type as any);
 
@@ -475,6 +500,33 @@ export class MKUIManage extends MKInstanceBase {
 
 			node.active = true;
 			viewComp = comp;
+			viewCompLayerTypeNum = comp.layerTypeNum;
+		}
+
+		// 打开层级数量及屏蔽层更新
+		{
+			const layerCountNum = this._openingLayerCountTab[viewCompLayerTypeNum] ?? 0;
+
+			// 增加屏蔽层
+			if (layerCountNum === 0 && GlobalConfig.View.config.openingTouchBlockLayerTypeList.includes(viewCompLayerTypeNum)) {
+				const parent = director.getScene();
+
+				if (parent) {
+					if (!this._touchBlockNode) {
+						this._touchBlockNode = new Node("触摸屏蔽节点-UIManage");
+						this._touchBlockNode.layer = Layers.Enum.UI_2D;
+						this._touchBlockNode.addComponent(UITransform).setContentSize(view.getVisibleSize());
+						this._touchBlockNode.addComponent(BlockInputEvents);
+					}
+
+					this._touchBlockNode.parent = parent;
+					this._touchBlockNode.setWorldPosition(view.getVisibleSize().x * 0.5, view.getVisibleSize().y * 0.5, 0);
+					MKN(this._touchBlockNode).orderNum = Infinity;
+				}
+			}
+
+			this._openingLayerCountTab[viewCompLayerTypeNum] = layerCountNum + 1;
+			isUpdatedOpeningLayerCount = true;
 		}
 
 		// 更新单独展示

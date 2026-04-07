@@ -71,6 +71,8 @@ export namespace _MKLifeCycle {
 		isFirst?: boolean;
 		/** 销毁动态子节点 */
 		isDestroyChildren?: boolean;
+		/** 强制（重启时使用） */
+		isForce?: boolean;
 	}
 
 	export interface OpenShareData {
@@ -580,7 +582,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		}
 
 		// 等待未完成用户任务
-		if (this._currentTask instanceof Promise) {
+		if (!config.isForce && this._currentTask instanceof Promise) {
 			await this._currentTask;
 			this._currentTask = null;
 		}

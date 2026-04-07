@@ -7,7 +7,7 @@ import MKStatusTask from "../Task/MKStatusTask";
 import type { MKDataSharer_ } from "../MKDataSharer";
 import mkToolFunc from "../@Private/Tool/MKToolFunc";
 import MKRelease, { MKRelease_ } from "./MKRelease";
-import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, settings, SettingsCategory } from "cc";
+import { game, Game, director, Director, Scene, AssetManager, assetManager, js, Component, settings, SettingsCategory, sys } from "cc";
 import globalEvent from "../../Config/GlobalEvent";
 
 namespace _MKBundle {
@@ -92,8 +92,8 @@ export class MKBundle extends MKInstanceBase {
 			this._engineInitTask.finish(true);
 		});
 
-		// 模块初始化事件
-		director.once(
+		// 模块初始化事件，web 不会重载脚本所以用 on
+		(sys.isBrowser ? director.on : director.once).bind(director)(
 			Director.EVENT_BEFORE_SCENE_LAUNCH,
 			async (scene: Scene) => {
 				// 版本适配(<=3.8.6)：编辑器预览模式会触发两次 EVENT_BEFORE_SCENE_LAUNCH，首次场景数据无效
@@ -573,7 +573,7 @@ export class MKBundle extends MKInstanceBase {
 			: {
 					versionStr: versionStr,
 					urlStr: urlStr,
-			  };
+				};
 	}
 
 	/* ------------------------------- get/set ------------------------------- */

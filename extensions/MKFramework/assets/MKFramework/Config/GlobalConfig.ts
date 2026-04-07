@@ -90,6 +90,8 @@ namespace GlobalConfig {
 			layerSpacingNum = 100;
 			/** 渲染层级刷新间隔 */
 			layerRefreshIntervalMsNum = game.frameTime;
+			/** 打开中屏蔽触摸的层级类型列表 */
+			openingTouchBlockLayerTypeList = [LayerType.窗口];
 			/** 遮罩配置 */
 			maskInfo = {
 				/** 遮罩节点名 */
