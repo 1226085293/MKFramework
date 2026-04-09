@@ -700,8 +700,8 @@ declare namespace mk {
 		protected static _config: {
 			layerSpacingNum: number;
 			layerRefreshIntervalMsNum: number;
+			openingTouchBlockLayerTypeList: GlobalConfig.View.LayerType[];
 			maskInfo: {
-				/** 初始化编辑器 */
 				nodeNameStr: string;
 				color: {
 					r: number;
@@ -1897,6 +1897,8 @@ declare namespace mk {
 			isFirst?: boolean;
 			/** 销毁动态子节点 */
 			isDestroyChildren?: boolean;
+			/** 强制（重启时使用） */
+			isForce?: boolean;
 		}
 		interface OpenShareData {
 			/** 有效计数 */
@@ -2682,7 +2684,9 @@ declare namespace mk {
 		 * @remarks
 		 * open 未注册模块时会使用此函数获取注册数据自动注册
 		 */
-		getRegisDataFunc?: <T extends Constructor<ViewBase>>(key: T) => UIManage_.RegisData<T>;
+		getRegisDataFunc?: <T extends Constructor<ViewBase>>(
+			key: T
+		) => Omit<UIManage_.RegisData<T>, keyof UIManage_.RegisConfig<T>> & Partial<UIManage_.RegisConfig<T>>;
 		/** 日志 */
 		private _log;
 		/** 模块注册表 */
@@ -2709,6 +2713,10 @@ declare namespace mk {
 		private _uiShowList;
 		/** 当前模块表 */
 		private _uiMap;
+		/** 打开中的层级计数表 */
+		private _openingLayerCountTab;
+		/** 屏蔽触摸节点 */
+		private _touchBlockNode;
 		/**
 		 * 注册模块
 		 * @param key_ 模块键
@@ -2723,6 +2731,7 @@ declare namespace mk {
 			target_: Release_.TypeFollowReleaseSupport,
 			config_?: Partial<UIManage_.RegisConfig<T>>
 		): Promise<void>;
+		private _cleanupRegis;
 		/**
 		 * 取消注册模块
 		 * @remarks
@@ -3392,7 +3401,7 @@ declare namespace mk {
 			/** 来源 */
 			source: _MKUIManage.TypeRegisSource<CT>;
 			/** 跟随释放对象 */
-			target: Release_.TypeFollowReleaseObject<Release_.TypeReleaseCallBack>;
+			target: Release_.TypeFollowReleaseSupport;
 		}
 	}
 

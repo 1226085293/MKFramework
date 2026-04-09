@@ -61,7 +61,9 @@ export class MKUIManage extends MKInstanceBase {
 	 * @remarks
 	 * open 未注册模块时会使用此函数获取注册数据自动注册
 	 */
-	getRegisDataFunc?: <T extends Constructor<MKViewBase>>(key: T) => MKUIManage_.RegisData<T>;
+	getRegisDataFunc?: <T extends Constructor<MKViewBase>>(
+		key: T
+	) => Omit<MKUIManage_.RegisData<T>, keyof MKUIManage_.RegisConfig<T>> & Partial<MKUIManage_.RegisConfig<T>>;
 	/* --------------- private --------------- */
 	/** 日志 */
 	private _log = new MKLogger("MKUIManage");
@@ -949,7 +951,7 @@ export namespace MKUIManage_ {
 		/** 来源 */
 		source!: _MKUIManage.TypeRegisSource<CT>;
 		/** 跟随释放对象 */
-		target!: MKRelease_.TypeFollowReleaseObject<MKRelease_.TypeReleaseCallBack>;
+		target!: MKRelease_.TypeFollowReleaseSupport;
 	}
 }
 
