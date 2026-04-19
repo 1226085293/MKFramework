@@ -10,16 +10,20 @@ export class ResourcesModuleMVVM extends mk.MVCControlBase<ResourcesModuleMVVMMo
 	/* ------------------------------- segmentation ------------------------------- */
 	async open(): Promise<void> {
 		this._model = await ResourcesModuleMVVMModel.new();
-		this._view = (await ResourcesModuleMVVMView.new())!;
+		this._view = (await ResourcesModuleMVVMView.new(this._model))!;
 	}
 }
 
 @ccclass("ResourcesModuleMVVMView")
 class ResourcesModuleMVVMView extends mk.MVCViewBase<ResourcesModuleMVVMModel> {
-	static new<T extends new (...argsList_: any[]) => any>(this: T): Promise<InstanceType<T> | null> {
+	static new<T extends new (...argsList_: any[]) => any>(this: T, model_: ResourcesModuleMVVMModel): Promise<InstanceType<T> | null> {
 		mk.uiManage.regis(ResourcesModuleMVVMView, "db://assets/resources/Module/Module/MVVM/ResourcesModuleMVVM.prefab", null);
 
-		return mk.uiManage.open(ResourcesModuleMVVMView);
+		return mk.uiManage.open(ResourcesModuleMVVMView, {
+			createConfig: {
+				model: model_,
+			},
+		});
 	}
 
 	layerTypeNum = GlobalConfig.View.LayerType.窗口;

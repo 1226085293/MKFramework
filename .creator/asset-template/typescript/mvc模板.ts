@@ -8,16 +8,20 @@ export class <%CamelCaseClassName%> extends mk.MVCControlBase<<%CamelCaseClassNa
 	/* ------------------------------- segmentation ------------------------------- */
 	async open(): Promise<void> {
 		this._model = await <%CamelCaseClassName%>Model.new();
-		this._view = (await <%CamelCaseClassName%>View.new())!;
+		this._view = (await <%CamelCaseClassName%>View.new(this._model))!;
 	}
 }
 
 @ccclass("<%CamelCaseClassName%>View")
 class <%CamelCaseClassName%>View extends mk.MVCViewBase<<%CamelCaseClassName%>Model> {
-	static new<T extends new (...argsList_: any[]) => any>(this: T): Promise<InstanceType<T> | null> {
+	static new<T extends new (...argsList_: any[]) => any>(this: T, model_: <%CamelCaseClassName%>Model): Promise<InstanceType<T> | null> {
 		mk.uiManage.regis(<%CamelCaseClassName%>View, "db://xxx.prefab", null);
 
-		return mk.uiManage.open(<%CamelCaseClassName%>View);
+		return mk.uiManage.open(<%CamelCaseClassName%>View, {
+			createConfig: {
+				model: model_,
+			},
+		});
 	}
 }
 

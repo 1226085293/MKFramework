@@ -11,6 +11,7 @@ import { Constructor, Prefab, instantiate, js, director, isValid, Scene, Canvas,
 import mkToolObject from "./@Private/Tool/MKToolObject";
 import GlobalConfig from "../Config/GlobalConfig";
 import MKN from "./@Extends/@Node/MKNodes";
+import { ViewBase_ } from "./MKExport";
 
 namespace _MKUIManage {
 	/** 模块类型 */
@@ -559,6 +560,7 @@ export class MKUIManage extends MKInstanceBase {
 		{
 			// 模块配置
 			viewComp.config = {
+				...(config_.createConfig ?? {}),
 				isStatic: false,
 				typeStr: config_.type as string,
 			};
@@ -886,6 +888,8 @@ export namespace MKUIManage_ {
 		type?: _MKUIManage.TypeModule<CT> = "default";
 		/** 父节点 */
 		parent?: Node | null;
+		/** 其他创建配置，继承 ViewBase 类型的 CreateConfig 的扩展属性 */
+		createConfig?: Omit<CT["prototype"]["config"], keyof ViewBase_.CreateConfig>;
 	}
 
 	/** 模块注册配置 */

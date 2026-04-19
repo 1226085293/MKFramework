@@ -6,7 +6,7 @@ const { ccclass, property } = cc._decorator;
 class ResourcesModuleMVCControl extends mk.MVCControlBase<ResourcesModuleMVCModel, ResourcesModuleMVCView> {
 	protected async open(): Promise<void> {
 		this._model = await ResourcesModuleMVCModel.new();
-		this._view = (await ResourcesModuleMVCView.new())!;
+		this._view = (await ResourcesModuleMVCView.new(this._model))!;
 		this._view.event.once("close", () => {
 			this.close();
 		});
@@ -32,10 +32,14 @@ class ResourcesModuleMVCModel extends mk.MVCModelBase {
 }
 
 export class ResourcesModuleMVCView extends mk.MVCViewBase<ResourcesModuleMVCModel> {
-	static new<T extends new (...argsList: any[]) => any>(this: T, ...argsList_: ConstructorParameters<T>): Promise<InstanceType<T> | null> {
+	static new<T extends new (...argsList: any[]) => any>(this: T, model_: ResourcesModuleMVCModel): Promise<InstanceType<T> | null> {
 		mk.uiManage.regis(ResourcesModuleMVCView, "db://assets/resources/Module/Module/MVC/ResourcesModuleMVC.prefab", null);
 
-		return mk.uiManage.open(ResourcesModuleMVCView);
+		return mk.uiManage.open(ResourcesModuleMVCView, {
+			createConfig: {
+				model: model_,
+			},
+		});
 	}
 
 	layerTypeNum = GlobalConfig.View.LayerType.窗口;
