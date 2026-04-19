@@ -767,7 +767,7 @@ declare namespace mk {
 		/** 静态模块 */
 		get isStatic(): boolean;
 		/** 设置模块配置 */
-		set config(config_: _MKLifeCycle.CreateConfig);
+		set config(config_: LifeCycle_.CreateConfig);
 		/** 静态模块 */
 		protected _isStatic: boolean;
 		/** onLoad 任务 */
@@ -779,7 +779,7 @@ declare namespace mk {
 		/** open 任务 */
 		protected _openTask: MKStatusTask<void>;
 		/** 运行状态 */
-		protected _state: _MKLifeCycle.RunState;
+		protected _state: LifeCycle_.RunState;
 		/* Excluded from this release type: _releaseManage */
 		/**
 		 * 重置 data
@@ -861,6 +861,27 @@ declare namespace mk {
 		private _recursiveOpen;
 		/** 递归 close */
 		private _recursiveClose;
+	}
+
+	export declare namespace LifeCycle_ {
+		/** 运行状态 */
+		export enum RunState {
+			/** 等待打开 */
+			WaitOpen = 1,
+			/** 打开中 */
+			Opening = 2,
+			/** 打开 */
+			Open = 4,
+			/** 关闭中 */
+			Closing = 8,
+			/** 关闭 */
+			Close = 16,
+		}
+		/** create 配置 */
+		export interface CreateConfig {
+			/** 静态模块 */
+			isStatic: boolean;
+		}
 	}
 
 	export declare const log: (...argsList_: any[]) => void;
@@ -1850,19 +1871,6 @@ declare namespace mk {
 	}
 
 	declare namespace _MKLifeCycle {
-		/** 运行状态 */
-		enum RunState {
-			/** 等待打开 */
-			WaitOpen = 1,
-			/** 打开中 */
-			Opening = 2,
-			/** 打开 */
-			Open = 4,
-			/** 关闭中 */
-			Closing = 8,
-			/** 关闭 */
-			Close = 16,
-		}
 		/** 递归 open 配置 */
 		interface RecursiveOpenConfig {
 			/** 递归目标节点 */
@@ -1878,11 +1886,6 @@ declare namespace mk {
 			isActive: boolean;
 			/** 父模块配置 */
 			parentConfig: CloseConfig;
-		}
-		/** create 配置 */
-		interface CreateConfig {
-			/** 静态模块 */
-			isStatic: boolean;
 		}
 		/** open 配置 */
 		interface OpenConfig {
@@ -2790,11 +2793,6 @@ declare namespace mk {
 	}
 
 	declare namespace _MKViewBase {
-		/** create 配置 */
-		interface CreateConfig extends _MKLifeCycle.CreateConfig {
-			/** 模块类型 */
-			typeStr: string;
-		}
 		/** 动画配置 */
 		class AnimationConfig {
 			/** 动画枚举表 */
@@ -2929,8 +2927,10 @@ declare namespace mk {
 		event: EventTarget_2<any>;
 		/** 数据访问器 */
 		protected _model: _MVCViewBase.TypeRecursiveReadonlyAndNonFunctionKeys<CT>;
+		/** 设置模块配置 */
+		set config(config_: _MVCViewBase.CreateConfig<CT>);
 		/** 视图构造函数，由继承类型实现并被 control 访问 */
-		static new?<T extends new (...argsList: any[]) => any>(this: T): Promise<InstanceType<T> | null>;
+		static new?<T extends new (...argsList: any[]) => any>(this: T, ...argsList: any[]): Promise<InstanceType<T> | null>;
 	}
 
 	declare namespace _MVCViewBase {
@@ -2944,6 +2944,10 @@ declare namespace mk {
 		}[keyof T];
 		/** 递归只读且无函数 */
 		type TypeRecursiveReadonlyAndNonFunctionKeys<T> = TypeRecursiveReadonly<Pick<T, TypeNonFunctionKeys<T>>>;
+		/** MVC View 创建配置 */
+		interface CreateConfig<CT extends MVCModelBase = MVCModelBase> extends ViewBase_.CreateConfig {
+			model?: TypeRecursiveReadonlyAndNonFunctionKeys<CT>;
+		}
 		{
 		}
 	}
@@ -3355,6 +3359,8 @@ declare namespace mk {
 			type?: _MKUIManage.TypeModule<CT>;
 			/** 父节点 */
 			parent?: Node_2 | null;
+			/** 其他创建配置，继承 ViewBase 类型的 CreateConfig 的扩展属性 */
+			createConfig?: Omit<CT["prototype"]["config"], keyof ViewBase_.CreateConfig>;
 		}
 		/** 模块注册配置 */
 		export class RegisConfig<CT extends Constructor<ViewBase>> {
@@ -3431,7 +3437,7 @@ declare namespace mk {
 		 */
 		typeStr: string;
 		/** 模块配置 */
-		set config(config_: _MKViewBase.CreateConfig);
+		set config(config_: ViewBase_.CreateConfig);
 		/** 打开动画任务 */
 		private _openAnimationTask;
 		protected create(): void;
@@ -3448,6 +3454,14 @@ declare namespace mk {
 		private _setIsAutoMask;
 		private _setIsAutoWidget;
 		private _setIsAutoBlockInput;
+	}
+
+	export declare namespace ViewBase_ {
+		/** create 配置 */
+		export interface CreateConfig extends LifeCycle_.CreateConfig {
+			/** 模块类型 */
+			typeStr: string;
+		}
 	}
 
 	export declare const warn: (...argsList_: any[]) => void;

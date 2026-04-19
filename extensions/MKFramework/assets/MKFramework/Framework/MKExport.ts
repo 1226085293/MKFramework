@@ -5,10 +5,10 @@ import { mkLog } from "./MKLogger";
 export { default as uiManage, MKUIManage_ as UIManage_ } from "./MKUIManage";
 // 生命周期
 export { default as Layer } from "./Module/MKLayer";
-export { default as LifeCycle } from "./Module/MKLifeCycle";
+export { default as LifeCycle, MKLifeCycle_ as LifeCycle_ } from "./Module/MKLifeCycle";
 export { default as SceneDrive } from "./Module/MKSceneDrive";
 // 视图模块
-export { default as ViewBase } from "./Module/MKViewBase";
+export { default as ViewBase, MKViewBase_ as ViewBase_ } from "./Module/MKViewBase";
 export { default as StaticViewBase } from "./Module/MKStaticViewBase";
 // MVC 架构
 export { default as MVCModelBase } from "./Module/MVC/MVCModelBase";

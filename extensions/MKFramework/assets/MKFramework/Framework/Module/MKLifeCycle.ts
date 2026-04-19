@@ -18,21 +18,7 @@ const uiManage = mkDynamicModule.default(import("../MKUIManage"));
 // @weak-end
 const { ccclass, property } = _decorator;
 
-export namespace _MKLifeCycle {
-	/** 运行状态 */
-	export enum RunState {
-		/** 等待打开 */
-		WaitOpen = 1,
-		/** 打开中 */
-		Opening = 2,
-		/** 打开 */
-		Open = 4,
-		/** 关闭中 */
-		Closing = 8,
-		/** 关闭 */
-		Close = 16,
-	}
-
+namespace _MKLifeCycle {
 	/** 递归 open 配置 */
 	export interface RecursiveOpenConfig {
 		/** 递归目标节点 */
@@ -49,12 +35,6 @@ export namespace _MKLifeCycle {
 		isActive: boolean;
 		/** 父模块配置 */
 		parentConfig: CloseConfig;
-	}
-
-	/** create 配置 */
-	export interface CreateConfig {
-		/** 静态模块 */
-		isStatic: boolean;
 	}
 
 	/** open 配置 */
@@ -156,7 +136,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	 * 表示模块未在(关闭/关闭中)状态
 	 */
 	get valid(): boolean {
-		return this.isValid && (this._state & (_MKLifeCycle.RunState.WaitOpen | _MKLifeCycle.RunState.Opening | _MKLifeCycle.RunState.Open)) !== 0;
+		return this.isValid && (this._state & (MKLifeCycle_.RunState.WaitOpen | MKLifeCycle_.RunState.Opening | MKLifeCycle_.RunState.Open)) !== 0;
 	}
 
 	/** 静态模块 */
@@ -165,7 +145,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	}
 
 	/** 设置模块配置 */
-	set config(config_: _MKLifeCycle.CreateConfig) {
+	set config(config_: MKLifeCycle_.CreateConfig) {
 		if (config_.isStatic !== undefined) {
 			this._isStatic = config_.isStatic;
 		}
@@ -183,7 +163,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	/** open 任务 */
 	protected _openTask = new MKStatusTask(false);
 	/** 运行状态 */
-	protected _state = _MKLifeCycle.RunState.Close;
+	protected _state = MKLifeCycle_.RunState.Close;
 	/**
 	 * 释放管理器
 	 * @internal
@@ -250,8 +230,8 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		// 静态模块 create
 		if (this.isStatic) {
 			// 状态更新
-			if (this._state !== _MKLifeCycle.RunState.Opening) {
-				this._state = _MKLifeCycle.RunState.WaitOpen;
+			if (this._state !== MKLifeCycle_.RunState.Opening) {
+				this._state = MKLifeCycle_.RunState.WaitOpen;
 			}
 		}
 
@@ -426,7 +406,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		}
 
 		// 如果模块已经关闭则直接释放
-		if (this._state === _MKLifeCycle.RunState.Close) {
+		if (this._state === MKLifeCycle_.RunState.Close) {
 			this._log.debug("在模块关闭后跟随释放资源会被立即释放");
 			MKRelease.release(object_ as any);
 		} else {
@@ -456,7 +436,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 	async _open(config_?: _MKLifeCycle.OpenConfig, openData_?: _MKLifeCycle.OpenData): Promise<void> {
 		try {
 			// 状态安检
-			if (this._state & (_MKLifeCycle.RunState.Opening | _MKLifeCycle.RunState.Open)) {
+			if (this._state & (MKLifeCycle_.RunState.Opening | MKLifeCycle_.RunState.Open)) {
 				return;
 			}
 
@@ -466,7 +446,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 				this._currentTask = null;
 
 				// 已销毁或已关闭
-				if (!this.isValid || this._state !== _MKLifeCycle.RunState.Opening) {
+				if (!this.isValid || this._state !== MKLifeCycle_.RunState.Opening) {
 					throw "中断";
 				}
 
@@ -489,7 +469,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			}
 
 			// 状态更新
-			this._state = _MKLifeCycle.RunState.Opening;
+			this._state = MKLifeCycle_.RunState.Opening;
 
 			/** 配置 */
 			const config: _MKLifeCycle.OpenConfig = config_ ?? Object.create(null);
@@ -542,7 +522,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			}
 
 			// 状态更新
-			this._state = _MKLifeCycle.RunState.Open;
+			this._state = MKLifeCycle_.RunState.Open;
 			this._openTask.finish(true);
 		} catch (error) {
 			if (error === "中断") {
@@ -566,7 +546,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 			// 已销毁
 			!this.isValid ||
 			// 不在 close 中
-			this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close)
+			this._state & (MKLifeCycle_.RunState.Closing | MKLifeCycle_.RunState.Close)
 		) {
 			return;
 		}
@@ -575,7 +555,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		const config = config_ ?? (Object.create(null) as _MKLifeCycle.CloseConfig);
 
 		// 状态更新
-		this._state = _MKLifeCycle.RunState.Closing;
+		this._state = MKLifeCycle_.RunState.Closing;
 		// 更新有效标记
 		if (this._openData.shareData.originUuidStr === this.uuid) {
 			this._openData.shareData.validCountNum++;
@@ -619,7 +599,7 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 		}
 
 		// 状态更新
-		this._state = _MKLifeCycle.RunState.Close;
+		this._state = MKLifeCycle_.RunState.Close;
 
 		// 销毁自己
 		if (!this.isStatic && !config.isFirst) {
@@ -721,6 +701,28 @@ export class MKLifeCycle extends MKLayer implements MKRelease_.TypeFollowRelease
 				parentConfig: closeConfig,
 			});
 		}
+	}
+}
+
+export namespace MKLifeCycle_ {
+	/** 运行状态 */
+	export enum RunState {
+		/** 等待打开 */
+		WaitOpen = 1,
+		/** 打开中 */
+		Opening = 2,
+		/** 打开 */
+		Open = 4,
+		/** 关闭中 */
+		Closing = 8,
+		/** 关闭 */
+		Close = 16,
+	}
+
+	/** create 配置 */
+	export interface CreateConfig {
+		/** 静态模块 */
+		isStatic: boolean;
 	}
 }
 

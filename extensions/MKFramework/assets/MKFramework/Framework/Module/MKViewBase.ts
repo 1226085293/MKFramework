@@ -1,5 +1,5 @@
 import { EDITOR } from "cc/env";
-import { MKLifeCycle, _MKLifeCycle } from "./MKLifeCycle";
+import { MKLifeCycle, MKLifeCycle_ } from "./MKLifeCycle";
 import mkDynamicModule from "../MKDynamicModule";
 /** @weak */
 import type { MKUIManage_ } from "../MKUIManage";
@@ -14,12 +14,6 @@ const mkUIManage = mkDynamicModule.default(import("../MKUIManage"));
 const { ccclass, property } = _decorator;
 
 namespace _MKViewBase {
-	/** create 配置 */
-	export interface CreateConfig extends _MKLifeCycle.CreateConfig {
-		/** 模块类型 */
-		typeStr: string;
-	}
-
 	/** 动画配置 */
 	@ccclass("MKViewBase/AnimationConfig")
 	export class AnimationConfig {
@@ -166,7 +160,7 @@ export class MKViewBase extends MKLifeCycle {
 	typeStr = "default";
 
 	/** 模块配置 */
-	set config(config_: _MKViewBase.CreateConfig) {
+	set config(config_: MKViewBase_.CreateConfig) {
 		if (config_.isStatic !== undefined) {
 			this._isStatic = config_.isStatic;
 		}
@@ -204,7 +198,7 @@ export class MKViewBase extends MKLifeCycle {
 	async close(config_?: Omit<MKUIManage_.CloseConfig<any>, "type" | "isAll">): Promise<void> {
 		// @weak-end
 		// 不在关闭中或者已经关闭代表外部调用
-		if (!(this._state & (_MKLifeCycle.RunState.Closing | _MKLifeCycle.RunState.Close))) {
+		if (!(this._state & (MKLifeCycle_.RunState.Closing | MKLifeCycle_.RunState.Close))) {
 			// @weak-start-include-MKUIManage
 			await mkUIManage.close(this, config_);
 			// @weak-end
@@ -387,6 +381,14 @@ export class MKViewBase extends MKLifeCycle {
 				this.getComponent(BlockInputEvents)?.destroy();
 			}
 		}
+	}
+}
+
+export namespace MKViewBase_ {
+	/** create 配置 */
+	export interface CreateConfig extends MKLifeCycle_.CreateConfig {
+		/** 模块类型 */
+		typeStr: string;
 	}
 }
 
