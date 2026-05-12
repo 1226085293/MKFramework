@@ -30,7 +30,7 @@
   "uuid": "0db88ab0-0e0d-4a27-98dc-7d2c966dad01",
   "version": "3.8.0",
   "dependencies": {
-    "protobufjs": "^7.4.0"
+    "protobufjs": "^7.5.8"
   },
   "MKFramework": {
     "version": "开发版"
