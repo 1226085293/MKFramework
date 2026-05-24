@@ -5,6 +5,8 @@ import cjson from "cjson";
 import prettier from "prettier";
 import axios from "axios";
 import glob from "fast-glob";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 // 修改模块让其正常加载
 [path.join(__dirname, "../node_modules/isomorphic-git/index"), path.join(__dirname, "../node_modules/isomorphic-git/http/node/index")].forEach(
@@ -18,6 +20,23 @@ import glob from "fast-glob";
 
 import isomorphicGit from "isomorphic-git";
 import http from "isomorphic-git/http/node";
+
+const execFileAsync = promisify(execFile);
+
+async function getRemoteTags(remoteUrl: string): Promise<string[]> {
+	const { stdout } = await execFileAsync("git", ["ls-remote", "--tags", remoteUrl]);
+
+	return (
+		stdout
+			.split(/\r?\n/)
+			.map((line) => line.trim())
+			.filter(Boolean)
+			.map((line) => line.split("refs/tags/")[1])
+			.filter(Boolean)
+			// 过滤 annotated tag 的 ^{} 记录
+			.filter((tag) => !tag.endsWith("^{}"))
+	);
+}
 
 export default async function install(versionStr_?: string): Promise<void> {
 	/** 用户名 */
@@ -69,21 +88,36 @@ export default async function install(versionStr_?: string): Promise<void> {
 		})
 		.then(async () => {
 			console.log(Editor.I18n.t("mk-framework.获取版本"));
-			const tagsUrl = `https://gitee.com/${giteeOwner}/${repo}/tags`;
-			const html = (await axios.get(tagsUrl)).data as string;
-			const tags = html.match(/(?<=(data-ref="))([^"]*)(?=")/g) as string[];
 
-			tags.sort((a, b) => {
-				const aVersion = a[0] === "v" ? -Number(a.slice(1).replace(/\./g, "")) : 999;
-				const bVersion = b[0] === "v" ? -Number(b.slice(1).replace(/\./g, "")) : 999;
+			const tags = await getRemoteTags(giteeRemoteUrl);
+			const versionTags = tags.filter((tag) => /^v\d+(?:\.\d+)*$/.test(tag));
 
-				return aVersion - bVersion;
+			if (!versionTags.length) {
+				return Promise.reject("未获取到有效版本标签");
+			}
+
+			versionTags.sort((a, b) => {
+				const aParts = a.slice(1).split(".").map(Number);
+				const bParts = b.slice(1).split(".").map(Number);
+				const len = Math.max(aParts.length, bParts.length);
+
+				for (let i = 0; i < len; i++) {
+					const diff = (bParts[i] ?? 0) - (aParts[i] ?? 0);
+					if (diff !== 0) {
+						return diff;
+					}
+				}
+
+				return 0;
 			});
 
-			latestStableVersionStr = tags[0];
-			nextVersionStr = "v" + (Number(latestStableVersionStr.match(/\d+/g)!.join("")) + 1).toString().replace(/(\d)(?=\d)/g, "$1.");
+			latestStableVersionStr = versionTags[0];
 
-			version = versionStr_ || tags[0];
+			const latestParts = latestStableVersionStr.slice(1).split(".").map(Number);
+			latestParts[latestParts.length - 1] += 1;
+			nextVersionStr = `v${latestParts.join(".")}`;
+
+			version = versionStr_ || latestStableVersionStr;
 		})
 		.then(async () => {
 			console.log(Editor.I18n.t("mk-framework.下载框架") + `(${version})`);

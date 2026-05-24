@@ -8,8 +8,9 @@ const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const cjson_1 = __importDefault(require("cjson"));
 const prettier_1 = __importDefault(require("prettier"));
-const axios_1 = __importDefault(require("axios"));
 const fast_glob_1 = __importDefault(require("fast-glob"));
+const child_process_1 = require("child_process");
+const util_1 = require("util");
 // 修改模块让其正常加载
 [path_1.default.join(__dirname, "../node_modules/isomorphic-git/index"), path_1.default.join(__dirname, "../node_modules/isomorphic-git/http/node/index")].forEach((p) => {
     if (fs_extra_1.default.existsSync(p + ".js") && fs_extra_1.default.existsSync(p + ".cjs")) {
@@ -19,6 +20,18 @@ const fast_glob_1 = __importDefault(require("fast-glob"));
 });
 const isomorphic_git_1 = __importDefault(require("isomorphic-git"));
 const node_1 = __importDefault(require("isomorphic-git/http/node"));
+const execFileAsync = (0, util_1.promisify)(child_process_1.execFile);
+async function getRemoteTags(remoteUrl) {
+    const { stdout } = await execFileAsync("git", ["ls-remote", "--tags", remoteUrl]);
+    return (stdout
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => line.split("refs/tags/")[1])
+        .filter(Boolean)
+        // 过滤 annotated tag 的 ^{} 记录
+        .filter((tag) => !tag.endsWith("^{}")));
+}
 async function install(versionStr_) {
     /** 用户名 */
     const giteeOwner = "muzzik";
@@ -65,17 +78,29 @@ async function install(versionStr_) {
     })
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.获取版本"));
-        const tagsUrl = `https://gitee.com/${giteeOwner}/${repo}/tags`;
-        const html = (await axios_1.default.get(tagsUrl)).data;
-        const tags = html.match(/(?<=(data-ref="))([^"]*)(?=")/g);
-        tags.sort((a, b) => {
-            const aVersion = a[0] === "v" ? -Number(a.slice(1).replace(/\./g, "")) : 999;
-            const bVersion = b[0] === "v" ? -Number(b.slice(1).replace(/\./g, "")) : 999;
-            return aVersion - bVersion;
+        const tags = await getRemoteTags(giteeRemoteUrl);
+        const versionTags = tags.filter((tag) => /^v\d+(?:\.\d+)*$/.test(tag));
+        if (!versionTags.length) {
+            return Promise.reject("未获取到有效版本标签");
+        }
+        versionTags.sort((a, b) => {
+            var _a, _b;
+            const aParts = a.slice(1).split(".").map(Number);
+            const bParts = b.slice(1).split(".").map(Number);
+            const len = Math.max(aParts.length, bParts.length);
+            for (let i = 0; i < len; i++) {
+                const diff = ((_a = bParts[i]) !== null && _a !== void 0 ? _a : 0) - ((_b = aParts[i]) !== null && _b !== void 0 ? _b : 0);
+                if (diff !== 0) {
+                    return diff;
+                }
+            }
+            return 0;
         });
-        latestStableVersionStr = tags[0];
-        nextVersionStr = "v" + (Number(latestStableVersionStr.match(/\d+/g).join("")) + 1).toString().replace(/(\d)(?=\d)/g, "$1.");
-        version = versionStr_ || tags[0];
+        latestStableVersionStr = versionTags[0];
+        const latestParts = latestStableVersionStr.slice(1).split(".").map(Number);
+        latestParts[latestParts.length - 1] += 1;
+        nextVersionStr = `v${latestParts.join(".")}`;
+        version = versionStr_ || latestStableVersionStr;
     })
         .then(async () => {
         console.log(Editor.I18n.t("mk-framework.下载框架") + `(${version})`);
