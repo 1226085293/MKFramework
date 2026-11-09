@@ -99,7 +99,7 @@
 		"fast-glob": "^3.3.2",
 		"fs-extra": "^11.2.0",
 		"glob": "^11.1.0",
-		"isomorphic-git": "^1.25.9",
+		"isomorphic-git": "^1.38.6",
 		"micromatch": "^4.0.8",
 		"prettier": "^3.2.5",
 		"ts-morph": "^26.0.0"
